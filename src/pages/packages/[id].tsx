@@ -187,8 +187,8 @@ export default function PackageDetail() {
                </div>
             </div>
 
-            {/* RIGHT SIDEBAR: BOOKING CARD */}
-            <div className="lg:w-1/3">
+            {/* RIGHT SIDEBAR: BOOKING CARD (Desktop Sticky) */}
+            <div className="lg:w-1/3 hidden lg:block">
                <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -255,6 +255,31 @@ export default function PackageDetail() {
             </div>
 
          </div>
+
+         {/* MOBILE STICKY BOTTOM BAR */}
+         <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/90 backdrop-blur-xl border-t border-gray-200 lg:hidden z-50 flex items-center justify-between shadow-[0_-5px_20px_rgba(0,0,0,0.1)]">
+            <div>
+               <div className="text-xs text-gray-500 font-bold uppercase">Total Harga</div>
+               <div className="text-xl font-black text-emerald-700">Rp {totalPrice.toLocaleString('id-ID')}</div>
+               <div className="text-[10px] text-gray-400">/{pax} pax</div>
+            </div>
+            <button
+               onClick={() => {
+                  // Scroll to booking form or open modal in real implementation
+                  // For now, trigger booking directly if basic validation passes, or scroll to top
+                  if (!date) {
+                     window.scrollTo({ top: 0, behavior: 'smooth' });
+                     addToast("Mohon pilih tanggal di atas", "default");
+                  } else {
+                     handleBooking();
+                  }
+               }}
+               className="bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-emerald-600/30 flex items-center gap-2 active:scale-95 transition"
+            >
+               Pesan <ArrowRight className="w-4 h-4" />
+            </button>
+         </div>
+
       </Layout>
    );
 }
