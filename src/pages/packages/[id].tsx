@@ -21,11 +21,19 @@ export default function PackageDetail() {
    const pkg = PACKAGES.find(p => p.id === id);
    const itinerary = ITINERARY_DETAIL; // Using static detailed mock for demo
 
-   if (!pkg && typeof window !== 'undefined') {
-      return <Layout><div className="min-h-screen flex items-center justify-center">Loading...</div></Layout>;
+   // Fix: Consistent loading state for Server/Client hydration
+   if (!pkg) {
+      return (
+         <Layout>
+            <div className="min-h-screen flex items-center justify-center text-gray-500 font-medium bg-slate-50">
+               <div className="animate-pulse flex flex-col items-center gap-3">
+                  <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+                  <span className="text-sm tracking-wide text-emerald-800">MEMUAT PAKET...</span>
+               </div>
+            </div>
+         </Layout>
+      );
    }
-
-   if (!pkg) return null;
 
    const totalPrice = pkg.price * pax;
 
@@ -265,11 +273,9 @@ export default function PackageDetail() {
             </div>
             <button
                onClick={() => {
-                  // Scroll to booking form or open modal in real implementation
-                  // For now, trigger booking directly if basic validation passes, or scroll to top
                   if (!date) {
                      window.scrollTo({ top: 0, behavior: 'smooth' });
-                     addToast("Mohon pilih tanggal di atas", "default");
+                     addToast("Mohon pilih tanggal di atas", "error");
                   } else {
                      handleBooking();
                   }
