@@ -1,6 +1,6 @@
 import Layout from '@/components/Layout';
 import { EVENTS } from '@/data/mockData';
-import { Calendar, MapPin, Search, Ticket } from 'lucide-react';
+import { Calendar, MapPin, Search, Ticket, Share2 } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '@/components/ui';
@@ -19,156 +19,168 @@ export default function EventsPage() {
     return matchCategory && matchSearch;
   });
 
+  const featuredEvent = EVENTS[0]; // Assume first event is featured
+
   const handleRemindMe = (eventTitle: string) => {
     addToast(`Pengingat diset untuk ${eventTitle}! Kami akan mengirim notifikasi.`, 'success');
   };
 
   return (
     <Layout title="Event Tahunan - BorneoTrip">
-      {/* HEADER */}
-      <div className="bg-green-900 text-white py-20 relative overflow-hidden">
-        <motion.div
-          initial={{ scale: 1.2 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 15, repeat: Infinity, repeatType: "reverse", ease: "linear" }}
-          className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1544550581-5f7ceaf7f992?auto=format&fit=crop&q=80')] bg-cover bg-center opacity-30"
-        />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
+
+      {/* 1. IMMERSIVE HERO WITH FEATURED EVENT */}
+      <div className="relative min-h-[70vh] flex items-center bg-black overflow-hidden group">
+        <div className="absolute inset-0 z-0">
+          <img src={featuredEvent.imageUrl} className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition duration-[2s]" alt={featuredEvent.title} />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+        </div>
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-20">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-4xl md:text-6xl font-extrabold mb-6"
+            className="max-w-3xl"
           >
-            Kalender Event
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.8 }}
-            className="text-green-100 text-lg max-w-2xl mx-auto"
-          >
-            Temukan festival budaya magis dan perayaan alam yang hanya ada setahun sekali di Kalimantan Timur.
-          </motion.p>
+            <span className="inline-block px-3 py-1 rounded-full bg-orange-500 text-white text-xs font-bold uppercase tracking-widest mb-4">
+              🔥 Event Terpanas Bulan Ini
+            </span>
+            <h1 className="text-4xl md:text-7xl font-black text-white mb-6 leading-tight">
+              {featuredEvent.title}
+            </h1>
+            <div className="flex flex-wrap items-center gap-6 text-white/90 text-lg mb-8 font-medium">
+              <span className="flex items-center gap-2"><Calendar className="w-5 h-5 text-green-400" /> {featuredEvent.date}</span>
+              <span className="flex items-center gap-2"><MapPin className="w-5 h-5 text-green-400" /> {featuredEvent.location}</span>
+            </div>
+            <p className="text-gray-300 text-xl max-w-2xl mb-10 leading-relaxed">
+              {featuredEvent.description}
+            </p>
+            <div className="flex gap-4">
+              <button className="bg-green-600 hover:bg-green-500 text-white px-8 py-4 rounded-full font-bold text-lg transition transform hover:scale-105 shadow-lg shadow-green-900/50 flex items-center gap-2" onClick={() => handleRemindMe(featuredEvent.title)}>
+                <Ticket className="w-5 h-5" /> Dapatkan Tiket
+              </button>
+              <button className="bg-white/10 hover:bg-white/20 backdrop-blur text-white px-6 py-4 rounded-full font-bold text-lg transition border border-white/20 flex items-center gap-2">
+                <Share2 className="w-5 h-5" /> Share
+              </button>
+            </div>
+          </motion.div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 -mt-10 relative z-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-20">
 
-        {/* FILTERS CARD */}
+        {/* 2. SEARCH & FILTER BAR */}
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="bg-white p-6 rounded-2xl shadow-xl border border-gray-100 mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="sticky top-24 z-30 bg-white/90 backdrop-blur-xl p-4 rounded-2xl shadow-xl border border-gray-200/50 mb-12"
         >
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            {/* Categories */}
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex overflow-x-auto pb-2 md:pb-0 gap-2 w-full md:w-auto hide-scrollbar">
               {categories.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
-                  className={`px-5 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition transform hover:scale-105 relative ${activeCategory === cat
-                      ? 'text-white shadow-lg shadow-green-200'
-                      : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+                  className={`px-6 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all ${activeCategory === cat
+                    ? 'bg-green-900 text-white shadow-lg shadow-green-900/20'
+                    : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
                     }`}
                 >
-                  {activeCategory === cat && (
-                    <motion.div
-                      layoutId="activeEventCat"
-                      className="absolute inset-0 bg-green-600 rounded-full"
-                    />
-                  )}
-                  <span className="relative z-10">{cat}</span>
+                  {cat}
                 </button>
               ))}
             </div>
 
-            {/* Search */}
-            <div className="relative w-full md:w-80">
-              <Search className="absolute left-4 top-3.5 text-gray-400 w-5 h-5" />
+            <div className="relative w-full md:w-96">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Cari event atau lokasi..."
+                placeholder="Cari festival, konser, atau lokasi..."
                 className="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-500 transition"
               />
             </div>
           </div>
         </motion.div>
 
-        {/* EVENTS GRID */}
-        {filteredEvents.length > 0 ? (
-          <motion.div
-            layout
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-          >
-            <AnimatePresence mode="popLayout">
-              {filteredEvents.map((event) => (
-                <motion.div
-                  layout
-                  key={event.id}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.3 }}
-                  className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-gray-100 group flex flex-col h-full"
-                >
-                  <div className="relative h-60 overflow-hidden">
-                    <img
-                      src={event.imageUrl}
-                      alt={event.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition duration-700"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
-                    <div className="absolute top-4 right-4 bg-white/95 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-green-800 shadow-sm border border-green-100">
-                      {event.category}
-                    </div>
-                    <div className="absolute bottom-4 left-4 text-white font-medium flex items-center text-sm">
-                      <Calendar className="w-4 h-4 mr-2" /> {event.date}
-                    </div>
-                  </div>
-
-                  <div className="p-6 flex-grow flex flex-col">
-                    <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2">{event.title}</h3>
-                    <div className="flex items-center text-gray-500 text-sm mb-4">
-                      <MapPin className="w-4 h-4 mr-1 text-gray-400" />
-                      {event.location}
-                    </div>
-
-                    <p className="text-gray-600 text-sm line-clamp-3 mb-6 flex-grow">
-                      {event.description}
-                    </p>
-
-                    <div className="pt-5 border-t border-gray-100 flex justify-between items-center group/btn">
-                      <div className="flex gap-1.5 flex-wrap">
-                        {event.tags.slice(0, 2).map((tag) => (
-                          <span key={tag} className="text-[10px] uppercase font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded">{tag}</span>
-                        ))}
+        {/* 3. EVENTS GRID */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+            <Calendar className="w-6 h-6 text-green-600" /> Agenda Mendatang
+          </h2>
+          {filteredEvents.length > 0 ? (
+            <motion.div
+              layout
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            >
+              <AnimatePresence mode="popLayout">
+                {filteredEvents.map((event, idx) => (
+                  <motion.div
+                    layout
+                    key={event.id}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ delay: idx * 0.1 }}
+                    className="bg-white rounded-[2rem] overflow-hidden shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-gray-100 group flex flex-col h-full cursor-pointer"
+                  >
+                    <div className="relative h-64 overflow-hidden">
+                      <img
+                        src={event.imageUrl}
+                        alt={event.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition duration-700"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80"></div>
+                      <div className="absolute top-4 right-4 bg-white/30 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-white border border-white/20">
+                        {event.category}
                       </div>
-                      <button
-                        onClick={() => handleRemindMe(event.title)}
-                        className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center text-green-600 group-hover/btn:bg-green-600 group-hover/btn:text-white transition-colors"
-                      >
-                        <Ticket className="w-5 h-5" />
-                      </button>
+                      <div className="absolute bottom-4 left-4 right-4 text-white">
+                        <div className="flex items-center gap-2 text-sm font-medium mb-1 text-green-300">
+                          <Calendar className="w-4 h-4" /> {event.date}
+                        </div>
+                        <h3 className="text-xl font-bold leading-tight group-hover:text-green-300 transition">{event.title}</h3>
+                      </div>
                     </div>
-                  </div>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </motion.div>
-        ) : (
-          <div className="text-center py-20">
-            <div className="bg-gray-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Search className="w-8 h-8 text-gray-400" />
+
+                    <div className="p-6 flex-grow flex flex-col justify-between">
+                      <div>
+                        <div className="flex items-start text-gray-500 text-sm mb-4 gap-2">
+                          <MapPin className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" />
+                          <span className="line-clamp-1">{event.location}</span>
+                        </div>
+                        <p className="text-gray-600 text-sm line-clamp-3 mb-6 bg-gray-50 p-3 rounded-xl italic">
+                          "{event.description}"
+                        </p>
+                      </div>
+
+                      <div className="flex items-center justify-between mt-auto">
+                        <div className="flex -space-x-2">
+                          {[1, 2, 3].map(i => <div key={i} className="w-8 h-8 rounded-full bg-gray-200 border-2 border-white"></div>)}
+                          <div className="w-8 h-8 rounded-full bg-gray-100 border-2 border-white flex items-center justify-center text-[10px] font-bold text-gray-500">+120</div>
+                        </div>
+                        <button
+                          onClick={() => handleRemindMe(event.title)}
+                          className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center text-green-600 hover:bg-green-600 hover:text-white transition-all shadow-md active:scale-90"
+                        >
+                          <Ticket className="w-5 h-5" />
+                        </button>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
+          ) : (
+            <div className="text-center py-20 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
+              <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center mx-auto mb-4 text-gray-300 shadow-sm">
+                <Search className="w-10 h-10" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900">Event tidak ditemukan</h3>
+              <p className="text-gray-500 max-w-sm mx-auto mt-2">Coba kata kunci lain atau reset filter kategori.</p>
+              <button onClick={() => { setActiveCategory('All'); setSearchTerm(''); }} className="mt-6 text-green-600 font-bold hover:underline">Reset Filter</button>
             </div>
-            <h3 className="text-xl font-bold text-gray-900">Event tidak ditemukan</h3>
-            <p className="text-gray-500">Coba ubah kata kunci atau kategori pencarian Anda.</p>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </Layout>
   );
