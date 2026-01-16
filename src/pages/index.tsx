@@ -6,15 +6,17 @@ import Testimonials from '@/components/Testimonials';
 import { EVENTS, PACKAGES } from '@/data/mockData';
 import { ArrowRight, MapPin, Clock } from 'lucide-react';
 import Link from 'next/link';
+import RegionExplorer from '@/components/RegionExplorer';
 
 export default function Home() {
    return (
       <Layout>
          {/* 1. DYNAMIC HERO SECTION WITH VIDEO */}
-         <section className="relative min-h-[95vh] flex flex-col justify-end bg-black overflow-visible z-10 rounded-b-[3.5rem] shadow-2xl mb-20 group">
+         {/* 1. DYNAMIC HERO SECTION WITH VIDEO */}
+         <section className="relative min-h-[95vh] flex flex-col justify-end bg-black overflow-visible z-10 rounded-b-[2.5rem] md:rounded-b-[3.5rem] shadow-2xl mb-12 md:mb-20 group">
 
             {/* Video Background */}
-            <div className="absolute inset-0 z-0 rounded-b-[3.5rem] overflow-hidden">
+            <div className="absolute inset-0 z-0 rounded-b-[2rem] md:rounded-b-[3.5rem] overflow-hidden">
                {/* Fallback Image */}
                <img
                   src="https://images.unsplash.com/photo-1596401057633-565652b5d249?auto=format&fit=crop&q=80"
@@ -29,7 +31,7 @@ export default function Home() {
                   playsInline
                   className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
                >
-                  <source src="https://videos.pexels.com/video-files/4553282/4553282-uhd_2560_1440_30fps.mp4" type="video/mp4" />
+                  <source src="/video/bumper.mp4" type="video/mp4" />
                </video>
 
                {/* Dark Overlay for Text Readability */}
@@ -52,7 +54,7 @@ export default function Home() {
                   >
                      🌱 Sustainable Tourism
                   </motion.span>
-                  <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white tracking-tight leading-tight mb-8 drop-shadow-lg">
+                  <h1 className="text-4xl md:text-7xl lg:text-8xl font-black text-white tracking-tight leading-tight mb-6 md:mb-8 drop-shadow-lg">
                      The Heart of <br />
                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-300">Borneo Island</span>
                   </h1>
@@ -74,17 +76,31 @@ export default function Home() {
          </section>
 
 
-         {/* PARTNER LOGOS */}
-         <div className="py-12 bg-white pt-32">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-               <p className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-8">Didukung Oleh</p>
-               <div className="flex flex-wrap justify-center gap-8 md:gap-16 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
-                  {/* Placeholders for logos (Wonderful Indonesia, etc) */}
-                  <div className="text-2xl font-black text-gray-800 flex items-center gap-2"><div className="w-8 h-8 bg-green-600 rounded-full"></div> WONDERFUL INDONESIA</div>
-                  <div className="text-2xl font-black text-gray-800 flex items-center gap-2"><div className="w-8 h-8 bg-blue-600 rounded-full"></div> DISPAR KALTIM</div>
-                  <div className="text-2xl font-black text-gray-800 flex items-center gap-2"><div className="w-8 h-8 bg-orange-600 rounded-full"></div> WWF INDONESIA</div>
-                  <div className="text-2xl font-black text-gray-800 flex items-center gap-2"><div className="w-8 h-8 bg-emerald-600 rounded-full"></div> JEJAKIN</div>
-               </div>
+         {/* PARTNER LOGOS MARQUEE */}
+         <div className="py-12 bg-white pt-32 overflow-hidden">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-8">
+               <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">Didukung Oleh</p>
+            </div>
+
+            <div className="relative w-full flex overflow-hidden">
+               <motion.div
+                  className="flex items-center whitespace-nowrap"
+                  animate={{ x: ["0%", "-50%"] }}
+                  transition={{ repeat: Infinity, duration: 40, ease: "linear" }}
+               >
+                  {/* Seamless loop: Original List + Duplicate List */}
+                  {[...Array(2)].map((_, i) => (
+                     <div key={i} className="flex gap-12 md:gap-24 items-center pr-12 md:pr-24 flex-shrink-0">
+                        <img src="/logo/bankaltimtara.png" alt="Bankaltimtara" className="h-10 md:h-14 w-auto object-contain grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition duration-500" />
+                        <img src="/logo/pemprov-kaltim.png" alt="Pemprov Kaltim" className="h-10 md:h-14 w-auto object-contain grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition duration-500" />
+                        <img src="/logo/dispar-kaltim.png" alt="Dispar Kaltim" className="h-10 md:h-14 w-auto object-contain grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition duration-500" />
+                        <img src="/logo/kemenparekraf.png" alt="Kemenparekraf" className="h-10 md:h-14 w-auto object-contain grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition duration-500" />
+                        <img src="/logo/wonderful-indonesia.png" alt="Wonderful Indonesia" className="h-10 md:h-14 w-auto object-contain grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition duration-500" />
+                        <img src="/logo/wwf.png" alt="WWF" className="h-10 md:h-14 w-auto object-contain grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition duration-500" />
+                        <img src="/logo/jejakin.png" alt="Jejakin" className="h-10 md:h-14 w-auto object-contain grayscale hover:grayscale-0 opacity-60 hover:opacity-100 transition duration-500" />
+                     </div>
+                  ))}
+               </motion.div>
             </div>
          </div>
 
@@ -95,6 +111,9 @@ export default function Home() {
             items={EVENTS}
             linkHref="/events"
          />
+
+         {/* 4. CITY EXPLORATION SECTION */}
+         <RegionExplorer />
 
          {/* 4. POPULAR PACKAGES (Custom Grid for visual variety) */}
          <section className="py-16 md:py-24 bg-gray-50">

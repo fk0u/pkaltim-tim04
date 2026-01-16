@@ -25,8 +25,8 @@ export default function SearchWidget() {
           <button
             onClick={() => setActiveTab('Event')}
             className={`px-6 py-2.5 rounded-full text-sm font-bold flex items-center gap-2 transition-all ${activeTab === 'Event'
-                ? 'bg-white text-green-800 shadow-md'
-                : 'text-white hover:bg-white/10'
+              ? 'bg-white text-green-800 shadow-md'
+              : 'text-white hover:bg-white/10'
               }`}
           >
             <Ticket className="w-4 h-4" /> Cari Event
@@ -34,8 +34,8 @@ export default function SearchWidget() {
           <button
             onClick={() => setActiveTab('Package')}
             className={`px-6 py-2.5 rounded-full text-sm font-bold flex items-center gap-2 transition-all ${activeTab === 'Package'
-                ? 'bg-white text-green-800 shadow-md'
-                : 'text-white hover:bg-white/10'
+              ? 'bg-white text-green-800 shadow-md'
+              : 'text-white hover:bg-white/10'
               }`}
           >
             <Palmtree className="w-4 h-4" /> Cari Paket
@@ -44,7 +44,7 @@ export default function SearchWidget() {
       </div>
 
       {/* Main Bar */}
-      <div className="bg-white rounded-[2rem] shadow-2xl p-4 md:p-3 relative z-20">
+      <div className="bg-white rounded-[2rem] shadow-2xl p-4 md:p-3 relative z-20 mx-4 md:mx-0">
         <div className="flex flex-col md:flex-row gap-4 md:gap-0 md:items-center">
 
           {/* 1. Destination */}
@@ -68,7 +68,7 @@ export default function SearchWidget() {
           </div>
 
           {/* 3. Travelers */}
-          <div className="flex-initial md:w-[260px] relative pb-4 md:pb-0 md:px-4 px-2">
+          <div className="flex-initial md:w-[260px] relative pb-4 md:pb-0 md:px-4 px-2 border-b md:border-b-0 border-gray-100 md:border-none">
             <TravelersInput label="Peserta" />
           </div>
 
@@ -77,7 +77,7 @@ export default function SearchWidget() {
             <button
               onClick={handleSearch}
               disabled={isSearching}
-              className="w-full md:w-auto h-14 md:h-16 px-8 bg-green-600 hover:bg-green-700 text-white font-bold rounded-[1.5rem] shadow-lg shadow-green-200 transition transform hover:scale-[1.02] flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed text-lg"
+              className="w-full md:w-auto h-12 md:h-16 px-8 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl md:rounded-[1.5rem] shadow-lg shadow-green-200 transition transform hover:scale-[1.02] flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed text-lg"
             >
               {isSearching ? <div className="animate-spin w-5 h-5 border-2 border-white rounded-full border-t-transparent"></div> : <Search className="w-6 h-6" />}
               <span className="md:hidden">Cari Sekarang</span>
