@@ -39,26 +39,27 @@ export default function Home() {
                <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-black/20"></div>
             </div>
 
-            <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-36 md:pb-48">
+            {/* Content Container - Added pt-32 to prevent overlap with Navbar on small screens */}
+            <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-12 pt-32 md:pb-48 md:pt-0 flex flex-col justify-end h-full">
                <motion.div
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, ease: "easeOut" }}
-                  className="text-center mb-0"
+                  transition={{ delay: 3, duration: 1, ease: "easeOut" }}
+                  className="text-center mb-4"
                >
                   <motion.span
                      initial={{ opacity: 0, scale: 0.9 }}
                      animate={{ opacity: 1, scale: 1 }}
-                     transition={{ delay: 0.5, duration: 0.5 }}
-                     className="inline-block py-1.5 px-4 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-emerald-300 text-sm font-bold tracking-widest uppercase mb-8 shadow-lg"
+                     transition={{ delay: 3.5, duration: 0.5 }}
+                     className="inline-block py-1 px-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-emerald-300 text-[10px] md:text-sm font-bold tracking-widest uppercase mb-3 md:mb-8 shadow-lg"
                   >
                      🌱 Sustainable Tourism
                   </motion.span>
-                  <h1 className="text-4xl md:text-7xl lg:text-8xl font-black text-white tracking-tight leading-tight mb-6 md:mb-8 drop-shadow-lg">
+                  <h1 className="text-3xl md:text-7xl lg:text-8xl font-black text-white tracking-tight leading-tight mb-3 md:mb-8 drop-shadow-lg">
                      The Heart of <br />
                      <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-300">Borneo Island</span>
                   </h1>
-                  <p className="text-lg md:text-xl text-gray-200 max-w-2xl mx-auto leading-relaxed font-light mb-10">
+                  <p className="text-xs md:text-xl text-gray-200 max-w-2xl mx-auto leading-relaxed font-light mb-4 md:mb-10 px-4">
                      Jelajahi keajaiban alam liar Kalimantan Timur. Dari hutan hujan purba Wehea hingga surga bawah laut Derawan.
                   </p>
                </motion.div>
@@ -67,8 +68,8 @@ export default function Home() {
                <motion.div
                   initial={{ opacity: 0, y: 40 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3, duration: 0.8 }}
-                  className="md:absolute md:-bottom-24 md:left-4 md:right-4"
+                  transition={{ delay: 3.8, duration: 0.8 }}
+                  className="w-full md:absolute md:-bottom-24 md:left-4 md:right-4 pb-8 md:pb-0"
                >
                   <SearchWidget />
                </motion.div>

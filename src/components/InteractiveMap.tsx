@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Map, { Marker, Popup, NavigationControl } from 'react-map-gl';
+import Map, { Marker, Popup, NavigationControl } from 'react-map-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { REGIONS } from '@/data/mockData';
 import { MapPin, ArrowRight } from 'lucide-react';
@@ -36,7 +36,7 @@ export default function InteractiveMap() {
                         longitude={region.coordinates.lng}
                         latitude={region.coordinates.lat}
                         anchor="bottom"
-                        onClick={(e: import('react-map-gl').MapLayerMouseEvent) => {
+                        onClick={(e: any) => {
                             // If we let the click propagate, we might close the popup
                             e.originalEvent.stopPropagation();
                             setPopupInfo(region);

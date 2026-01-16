@@ -40,14 +40,14 @@ export default function TravelersInput({ label, onChange }: TravelersInputProps)
 
     return (
         <div className="relative group" ref={containerRef}>
-            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-2 px-1">{label}</label>
+            <label className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-wider block mb-1 md:mb-2 px-1">{label}</label>
             <div
                 className="relative cursor-pointer"
                 onClick={() => setIsOpen(!isOpen)}
             >
-                <Users className={`absolute left-0 top-3 transition ${isOpen ? 'text-green-500' : 'text-gray-400'}`} />
-                <div className="w-full pl-8 pr-4 py-2 bg-transparent">
-                    <span className="font-bold text-gray-900 text-lg">
+                <Users className={`absolute left-0 top-3 transition w-4 h-4 md:w-6 md:h-6 ${isOpen ? 'text-green-500' : 'text-gray-400'}`} style={{ top: '50%', transform: 'translateY(-50%)' }} />
+                <div className="w-full pl-6 md:pl-8 pr-4 py-2 bg-transparent">
+                    <span className="font-bold text-gray-900 text-sm md:text-lg">
                         {adults} Dewasa{children > 0 ? `, ${children} Anak` : ''}
                     </span>
                 </div>

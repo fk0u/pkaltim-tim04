@@ -223,6 +223,26 @@ export const EVENTS: Event[] = [
     category: 'Nature',
     tags: ['Music', 'River View', 'Night Market'],
   },
+  {
+    id: 'e4',
+    title: 'Festival Mahakam',
+    location: 'Sungai Mahakam, Samarinda',
+    date: '1 - 3 November 2026',
+    description: 'Festival sungai terbesar dengan berbagai lomba perahu naga, berenang menyeberangi sungai, dan kuliner khas.',
+    imageUrl: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&q=80',
+    category: 'Culture',
+    tags: ['River Festival', 'Traditional Boat', 'Culinary'],
+  },
+  {
+    id: 'e5',
+    title: 'Balikpapan Fest',
+    location: 'BSCC Dome, Balikpapan',
+    date: '20 Oktober 2026',
+    description: 'Pameran ekonomi kreatif, fashion show batik Kaltim, dan konser musik dalam rangka HUT Kota Balikpapan.',
+    imageUrl: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80',
+    category: 'Culinary',
+    tags: ['Creative Economy', 'Fashion', 'Concert'],
+  },
 ];
 
 export const PACKAGES: TourPackage[] = [
@@ -258,6 +278,28 @@ export const PACKAGES: TourPackage[] = [
     description: 'Wisata sejarah di Samarinda dan menyusuri sungai Mahakam dengan kapal wisata tradisional Pesut Etam.',
     imageUrl: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&q=80',
     facilities: ['Hotel Bintang 3', 'River Cruise Ticket', 'Pemandu Wisata', 'Dinner'],
+  },
+  {
+    id: 'p4',
+    title: 'Samboja Lodge Orangutan Experience',
+    duration: '2D1N',
+    price: 1800000,
+    location: 'Samboja, Kutai Kartanegara',
+    ecoRating: 5,
+    description: 'Menginap di lodge eksklusif di tengah hutan rehabilitasi Orangutan BOS Foundation.',
+    imageUrl: 'https://images.unsplash.com/photo-1599540209228-468ae39e2468?auto=format&fit=crop&q=80',
+    facilities: ['Ecolodge Stay', 'Orangutan Feeding', 'Forest School', 'Vegetarian Meals'],
+  },
+  {
+    id: 'p5',
+    title: 'Maratua Paradise Luxury Escape',
+    duration: '4D3N',
+    price: 5500000,
+    location: 'Maratua, Berau',
+    ecoRating: 4,
+    description: 'Liburan mewah di resort atas air Maratua dengan akses langsung ke spot diving kelas dunia.',
+    imageUrl: 'https://images.unsplash.com/photo-1577717903315-1691ae25ab3f?auto=format&fit=crop&q=80',
+    facilities: ['Water Villa', 'Diving Gear', 'Speedboat Transfer', 'Full Board Meals'],
   },
 ];
 
