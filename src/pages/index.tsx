@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { motion, MotionProps } from 'framer-motion';
 import Layout from '@/components/Layout';
 import SearchWidget from '@/components/SearchWidget';
 import HorizontalScroll from '@/components/HorizontalScroll';
@@ -7,11 +7,20 @@ import { EVENTS, PACKAGES } from '@/data/mockData';
 import { ArrowRight, MapPin, Clock } from 'lucide-react';
 import Link from 'next/link';
 import RegionExplorer from '@/components/RegionExplorer';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function Home() {
+   const { t } = useLanguage();
+
+   const fadeInUp: MotionProps = {
+      initial: { opacity: 0, y: 40 },
+      whileInView: { opacity: 1, y: 0 },
+      viewport: { once: true, margin: "-100px" },
+      transition: { duration: 0.8, ease: "easeOut" }
+   };
+
    return (
       <Layout>
-         {/* 1. DYNAMIC HERO SECTION WITH VIDEO */}
          {/* 1. DYNAMIC HERO SECTION WITH VIDEO */}
          <section className="relative min-h-[95vh] flex flex-col justify-end bg-black overflow-visible z-10 rounded-b-[2.5rem] md:rounded-b-[3.5rem] shadow-2xl mb-12 md:mb-20 group">
 
@@ -53,14 +62,14 @@ export default function Home() {
                      transition={{ delay: 3.5, duration: 0.5 }}
                      className="inline-block py-1 px-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-emerald-300 text-[10px] md:text-sm font-bold tracking-widest uppercase mb-3 md:mb-8 shadow-lg"
                   >
-                     🌱 Sustainable Tourism
+                     {t.hero.badge}
                   </motion.span>
                   <h1 className="text-3xl md:text-7xl lg:text-8xl font-black text-white tracking-tight leading-tight mb-3 md:mb-8 drop-shadow-lg">
-                     The Heart of <br />
-                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-300">Borneo Island</span>
+                     {t.hero.title1} <br />
+                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-300">{t.hero.title2}</span>
                   </h1>
                   <p className="text-xs md:text-xl text-gray-200 max-w-2xl mx-auto leading-relaxed font-light mb-4 md:mb-10 px-4">
-                     Jelajahi keajaiban alam liar Kalimantan Timur. Dari hutan hujan purba Wehea hingga surga bawah laut Derawan.
+                     {t.hero.subtitle}
                   </p>
                </motion.div>
 
@@ -106,20 +115,24 @@ export default function Home() {
          </div>
 
          {/* 3. EVENT HORIZONTAL SCROLL */}
-         <HorizontalScroll
-            title="Event Paling Ditunggu"
-            subtitle="Festival budaya dan ekowisata yang hanya terjadi setahun sekali."
-            items={EVENTS}
-            linkHref="/events"
-         />
+         <motion.div {...fadeInUp}>
+            <HorizontalScroll
+               title="Event Paling Ditunggu"
+               subtitle="Festival budaya dan ekowisata yang hanya terjadi setahun sekali."
+               items={EVENTS}
+               linkHref="/events"
+            />
+         </motion.div>
 
          {/* 4. CITY EXPLORATION SECTION */}
-         <RegionExplorer />
+         <motion.div {...fadeInUp}>
+            <RegionExplorer />
+         </motion.div>
 
          {/* 4. POPULAR PACKAGES (Custom Grid for visual variety) */}
          <section className="py-16 md:py-24 bg-gray-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-               <div className="flex justify-between items-end mb-12">
+               <motion.div {...fadeInUp} className="flex justify-between items-end mb-12">
                   <div>
                      <h2 className="text-3xl font-bold text-gray-900">Rekomendasi Paket Wisata</h2>
                      <p className="text-gray-500 mt-2">Kurasi perjalanan terbaik dengan dampak lingkungan positif.</p>
@@ -127,51 +140,61 @@ export default function Home() {
                   <Link href="/packages" className="hidden md:flex text-green-600 font-semibold hover:underline items-center gap-1 group">
                      Lihat Semua Paket <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
                   </Link>
-               </div>
+               </motion.div>
 
                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                   {/* Featured Large Card */}
-                  <Link href={`/packages/${PACKAGES[0].id}`} className="md:col-span-2 lg:col-span-2 row-span-2 group cursor-pointer">
-                     <div className="relative h-full min-h-[400px] rounded-3xl overflow-hidden shadow-md">
-                        <img src={PACKAGES[0].imageUrl} className="w-full h-full object-cover group-hover:scale-105 transition duration-700" alt={PACKAGES[0].title} />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-                        <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-lg text-xs font-bold text-green-800">
-                           Top Rated
-                        </div>
-                        <div className="absolute bottom-0 p-8 text-white">
-                           <div className="flex items-center gap-2 mb-2 text-green-300 font-bold text-sm">
-                              <span>{PACKAGES[0].duration}</span> • <span>{PACKAGES[0].location}</span>
+                  <motion.div {...fadeInUp} className="md:col-span-2 lg:col-span-2 row-span-2">
+                     <Link href={`/packages/${PACKAGES[0].id}`} className="block h-full group cursor-pointer relative">
+                        <div className="h-full min-h-[400px] rounded-3xl overflow-hidden shadow-md transform transition duration-500 hover:-translate-y-1 hover:shadow-2xl">
+                           <img src={PACKAGES[0].imageUrl} className="w-full h-full object-cover group-hover:scale-105 transition duration-700" alt={PACKAGES[0].title} />
+                           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                           <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-lg text-xs font-bold text-green-800">
+                              Top Rated
                            </div>
-                           <h3 className="text-3xl font-bold mb-4 leading-tight">{PACKAGES[0].title}</h3>
-                           <p className="text-gray-200 line-clamp-2 mb-6">{PACKAGES[0].description}</p>
-                           <div className="flex items-center justify-between">
-                              <div className="text-lg font-bold text-orange-400">Rp {PACKAGES[0].price.toLocaleString('id-ID')}</div>
-                              <span className="bg-white/20 hover:bg-white/30 backdrop-blur px-4 py-2 rounded-full text-sm font-semibold transition">Lihat Detail</span>
-                           </div>
-                        </div>
-                     </div>
-                  </Link>
-
-                  {/* Standard Cards */}
-                  {PACKAGES.slice(1, 4).map((pkg) => (
-                     <Link href={`/packages/${pkg.id}`} key={pkg.id} className="group cursor-pointer">
-                        <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition duration-300 border border-gray-100 h-full flex flex-col">
-                           <div className="relative h-48 overflow-hidden">
-                              <img src={pkg.imageUrl} className="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt={pkg.title} />
-                              <div className="absolute bottom-2 right-2 bg-black/60 backdrop-blur px-2 py-1 rounded text-[10px] font-bold text-white flex items-center gap-1">
-                                 <Clock className="w-3 h-3" /> {pkg.duration}
+                           <div className="absolute bottom-0 p-8 text-white w-full">
+                              <div className="flex items-center gap-2 mb-2 text-green-300 font-bold text-sm">
+                                 <span>{PACKAGES[0].duration}</span> • <span>{PACKAGES[0].location}</span>
                               </div>
-                           </div>
-                           <div className="p-5 flex flex-col flex-grow">
-                              <div className="text-xs text-gray-400 mb-1 flex items-center gap-1"><MapPin className="w-3 h-3" /> {pkg.location}</div>
-                              <h3 className="font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-green-700 transition">{pkg.title}</h3>
-                              <div className="mt-auto pt-3 border-t border-gray-50 flex justify-between items-center">
-                                 <span className="text-xs bg-green-50 text-green-700 px-2 py-1 rounded font-bold">🌱 Eco {pkg.ecoRating}/5</span>
-                                 <span className="font-bold text-orange-600 text-sm">Rp {pkg.price.toLocaleString('id-ID')}</span>
+                              <h3 className="text-3xl font-bold mb-4 leading-tight">{PACKAGES[0].title}</h3>
+                              <p className="text-gray-200 line-clamp-2 mb-6">{PACKAGES[0].description}</p>
+                              <div className="flex items-center justify-between">
+                                 <div className="text-lg font-bold text-orange-400">Rp {PACKAGES[0].price.toLocaleString('id-ID')}</div>
+                                 <span className="bg-white/20 hover:bg-white/30 backdrop-blur px-4 py-2 rounded-full text-sm font-semibold transition">Lihat Detail</span>
                               </div>
                            </div>
                         </div>
                      </Link>
+                  </motion.div>
+
+                  {/* Standard Cards */}
+                  {PACKAGES.slice(1, 4).map((pkg, idx) => (
+                     <motion.div
+                        key={pkg.id}
+                        initial={{ opacity: 0, y: 40 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: idx * 0.1, duration: 0.8 }}
+                     >
+                        <Link href={`/packages/${pkg.id}`} className="group cursor-pointer h-full block">
+                           <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition duration-300 border border-gray-100 h-full flex flex-col transform hover:-translate-y-2">
+                              <div className="relative h-48 overflow-hidden">
+                                 <img src={pkg.imageUrl} className="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt={pkg.title} />
+                                 <div className="absolute bottom-2 right-2 bg-black/60 backdrop-blur px-2 py-1 rounded text-[10px] font-bold text-white flex items-center gap-1">
+                                    <Clock className="w-3 h-3" /> {pkg.duration}
+                                 </div>
+                              </div>
+                              <div className="p-5 flex flex-col flex-grow">
+                                 <div className="text-xs text-gray-400 mb-1 flex items-center gap-1"><MapPin className="w-3 h-3" /> {pkg.location}</div>
+                                 <h3 className="font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-green-700 transition">{pkg.title}</h3>
+                                 <div className="mt-auto pt-3 border-t border-gray-50 flex justify-between items-center">
+                                    <span className="text-xs bg-green-50 text-green-700 px-2 py-1 rounded font-bold">🌱 Eco {pkg.ecoRating}/5</span>
+                                    <span className="font-bold text-orange-600 text-sm">Rp {pkg.price.toLocaleString('id-ID')}</span>
+                                 </div>
+                              </div>
+                           </div>
+                        </Link>
+                     </motion.div>
                   ))}
                </div>
 
@@ -186,7 +209,7 @@ export default function Home() {
          {/* 5. SUSTAINABILITY BANNER (Redesigned) */}
          <section className="py-20 bg-emerald-900 text-white relative overflow-hidden">
             <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1518531933037-91b2f5d2294c?auto=format&fit=crop&q=80')] bg-cover bg-fixed opacity-10 mix-blend-overlay"></div>
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col md:flex-row items-center gap-12">
+            <motion.div {...fadeInUp} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col md:flex-row items-center gap-12">
                <div className="md:w-1/2">
                   <h2 className="text-4xl font-bold mb-6 leading-tight">Berwisata Sambil <span className="text-emerald-400">Menjaga Bumi</span></h2>
                   <p className="text-emerald-100/80 text-lg mb-8 leading-relaxed">
@@ -209,11 +232,13 @@ export default function Home() {
                      <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition" />
                   </Link>
                </div>
-            </div>
+            </motion.div>
          </section>
 
          {/* 6. TESTIMONIALS */}
-         <Testimonials />
+         <motion.div {...fadeInUp}>
+            <Testimonials />
+         </motion.div>
 
       </Layout>
    );

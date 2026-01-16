@@ -26,7 +26,7 @@ export const REGIONS = [
     villages: "10/100",
     coordinates: { lat: 2.1491, lng: 117.4933 },
     destinations: ["Kepulauan Derawan", "Danau Labuan Cermin", "Gua Haji Mangku", "Pulau Kakaban"],
-    imageUrl: "https://images.unsplash.com/photo-1577717903315-1691ae25ab3f?auto=format&fit=crop&q=80"
+    imageUrl: "https://jadesta.kemenparekraf.go.id/imgpost/62567.jpg?auto=format&fit=crop&q=80"
   },
   {
     id: 2,
@@ -41,7 +41,7 @@ export const REGIONS = [
     villages: "4/190",
     coordinates: { lat: -0.2173, lng: 115.6961 },
     destinations: ["Gua Pendorong", "Air Terjun Jantur Inar", "Cagar Alam Kersik Luway"],
-    imageUrl: "https://images.unsplash.com/photo-1623345805780-8f6e86152e04?auto=format&fit=crop&q=80"
+    imageUrl: "https://wonderfulindonesia.co.id/wp-content/uploads/2025/03/Air-Terjun-Jantur-Inar-1.webp?auto=format&fit=crop&q=80"
   },
   {
     id: 3,
@@ -56,7 +56,7 @@ export const REGIONS = [
     villages: "44/193",
     coordinates: { lat: -0.4005, lng: 116.9835 },
     destinations: ["Taman Nasional Kutai", "Museum Mulawarman", "Desa Budaya Lekaq Kidau", "Pulau Kumala"],
-    imageUrl: "https://images.unsplash.com/photo-1599540209228-468ae39e2468?auto=format&fit=crop&q=80"
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/3/34/Museum_Mulawarman.jpg?auto=format&fit=crop&q=80"
   },
   {
     id: 4,
@@ -71,7 +71,7 @@ export const REGIONS = [
     villages: "2/139",
     coordinates: { lat: 0.5053, lng: 117.5332 },
     destinations: ["Pantai Teluk Lombok", "Taman Nasional Kutai", "Gua Karst Mangkalihat", "Pantai Aquatic"],
-    imageUrl: "https://images.unsplash.com/photo-1518531933037-91b2f5d2294c?auto=format&fit=crop&q=80"
+    imageUrl: "https://selasar.co/assets/images/news/2023/11/taman-nasional-kutai-surga-alam-di-kalimantan-timur-655b34a224d56.jpeg?auto=format&fit=crop&q=80"
   },
   {
     id: 5,
@@ -86,7 +86,7 @@ export const REGIONS = [
     villages: "0/50",
     coordinates: { lat: 0.9997, lng: 114.4994 },
     destinations: ["Batu Dinding", "Air Terjun Kohong", "Riam Udang", "Desa Wisata Long Apari"],
-    imageUrl: "https://images.unsplash.com/photo-1544234053-ec55490b4d4b?auto=format&fit=crop&q=80"
+    imageUrl: "https://infobenua.com/wp-content/uploads/2024/12/IMG-20241204-WA0054.jpg?auto=format&fit=crop&q=80"
   },
   {
     id: 6,
@@ -101,7 +101,7 @@ export const REGIONS = [
     villages: "5/139",
     coordinates: { lat: -1.9054, lng: 116.1956 },
     destinations: ["Museum Sadurengas", "Kampung Warna Warni", "Air Terjun Doyam Seriam"],
-    imageUrl: "https://images.unsplash.com/photo-1627918825624-94576136d0b6?auto=format&fit=crop&q=80"
+    imageUrl: "https://space-kd.sgp1.cdn.digitaloceanspaces.com/pusaranmedia/lg/news-lg-1682580794.jpeg?auto=format&fit=crop&q=80"
   },
   {
     id: 7,
@@ -116,7 +116,7 @@ export const REGIONS = [
     villages: "24/30",
     coordinates: { lat: -1.2583, lng: 116.7909 },
     destinations: ["Titik Nol IKN", "Pantai Tanjung Jumlai", "Ekowisata Mangrove Penajam"],
-    imageUrl: "https://images.unsplash.com/photo-1605809896937-fd5e8284534a?auto=format&fit=crop&q=80"
+    imageUrl: "https://space-kd.sgp1.cdn.digitaloceanspaces.com/pusaranmedia/lg/news-lg-1682580794.jpeg?auto=format&fit=crop&q=80"
   },
   {
     id: 8,
@@ -131,7 +131,7 @@ export const REGIONS = [
     villages: "34/0",
     coordinates: { lat: -1.2379, lng: 116.8529 },
     destinations: ["Pantai Melawai", "Hutan Lindung Sungai Wain", "Kebun Raya Balikpapan", "Penangkaran Buaya Teritip"],
-    imageUrl: "https://images.unsplash.com/photo-1565529514757-017a473347c6?auto=format&fit=crop&q=80"
+    imageUrl: "https://asset.kompas.com/crops/3JKbuAIurwWwDDKDe5bho1LtDKM=/0x82:1000x749/1200x800/data/photo/2023/03/04/6403706778e69.jpg?auto=format&fit=crop&q=80"
   },
   {
     id: 9,
@@ -146,7 +146,7 @@ export const REGIONS = [
     villages: "15/0",
     coordinates: { lat: 0.1333, lng: 117.5000 },
     destinations: ["Bontang Kuala", "Pulau Beras Basah", "Taman Nasional Kutai", "Cafe Singapore"],
-    imageUrl: "https://images.unsplash.com/photo-1545648583-16d773eb4eb9?auto=format&fit=crop&q=80"
+    imageUrl: "https://www.niaga.asia/wp-content/uploads/2023/10/9-pkt.png?auto=format&fit=crop&q=80"
   },
   {
     id: 10,
@@ -161,7 +161,7 @@ export const REGIONS = [
     villages: "59/0",
     coordinates: { lat: -0.5022, lng: 117.1536 },
     destinations: ["Islamic Center Samarinda", "Desa Pampang", "Sungai Mahakam", "Air Terjun Tanah Merah"],
-    imageUrl: "https://images.unsplash.com/photo-1584283570624-b632906b38c2?auto=format&fit=crop&q=80"
+    imageUrl: "https://ik.imagekit.io/tvlk/blog/2024/12/shutterstock_2371326515.jpg?auto=format&fit=crop&q=80"
   }
 ];
 
@@ -254,7 +254,7 @@ export const PACKAGES: TourPackage[] = [
     location: 'Muara Wahau, Kutai Timur',
     ecoRating: 5,
     description: 'Petualangan masuk ke jantung hutan hujan tropis tertua, bertemu Orangutan liar, dan tinggal bersama suku Dayak Wehea.',
-    imageUrl: 'https://images.unsplash.com/photo-1518182170546-0766ce6fdd93?auto=format&fit=crop&q=80',
+    imageUrl: 'https://hutanlindungwehea.id/wp-content/uploads/2021/11/2.-sejarah-lansakp-hutan-scaled.jpg?auto=format&fit=crop&q=80',
     facilities: ['Homestay Lokal', 'Guide Dayak', 'Makan Tradisional', 'Donasi Konservasi'],
   },
   {

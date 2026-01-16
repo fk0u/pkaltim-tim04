@@ -1,11 +1,16 @@
 import Link from 'next/link';
-import { Menu, Search, User, X, ChevronRight, MapPin } from 'lucide-react';
+import { Menu, Search, User, X, ChevronRight, Globe, LogOut, LayoutDashboard } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const { t, locale, toggleLanguage } = useLanguage();
+  const { user, isAuthenticated, logout } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -25,12 +30,12 @@ export default function Navbar() {
   }, [isMenuOpen]);
 
   const menuItems = [
-    { title: 'Home', href: '/' },
-    { title: 'Events', href: '/events' },
-    { title: 'Packages', href: '/packages' },
-    { title: 'About Us', href: '/about' },
-    { title: 'Sustainability', href: '/sustainability' },
-    { title: 'Contact', href: '/contact' },
+    { title: t.nav.home, href: '/' },
+    { title: t.nav.events, href: '/events' },
+    { title: t.nav.packages, href: '/packages' },
+    { title: t.nav.about, href: '/about' },
+    { title: t.nav.sustainability, href: '/sustainability' },
+    { title: t.nav.contact, href: '/contact' },
   ];
 
   return (
@@ -41,7 +46,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
           {/* Logo */}
-          <Link href="/" className="flex-shrink-0 flex items-center gap-2 group relative z-[101]">
+          <Link href="/" className="flex-shrink-0 flex items-center gap-2 group relative z-[101] outline-none">
             <span className={`text-2xl font-extrabold tracking-tight transition-colors ${isScrolled || isMenuOpen ? 'text-green-800' : 'text-white'
               }`}>
               BorneoTrip<span className="text-emerald-500">.</span>
@@ -49,10 +54,10 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex space-x-10 items-center">
+          <div className="hidden md:flex space-x-8 items-center">
             {menuItems.slice(0, 5).map((item) => (
               <Link
-                key={item.title}
+                key={item.href}
                 href={item.href}
                 className={`text-sm font-bold tracking-wide hover:text-emerald-500 transition-colors ${isScrolled ? 'text-gray-600' : 'text-white/90'
                   }`}
@@ -63,21 +68,80 @@ export default function Navbar() {
           </div>
 
           {/* Right Actions */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-3">
+            {/* Language Toggle */}
+            <button
+              onClick={toggleLanguage}
+              className={`p-2 rounded-full flex items-center gap-1 font-bold text-xs transition ${isScrolled ? 'bg-gray-100 text-gray-700 hover:bg-gray-200' : 'bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm'
+                }`}
+            >
+              <Globe className="w-4 h-4" />
+              <span>{locale.toUpperCase()}</span>
+            </button>
+
             <button className={`p-2 rounded-full hover:bg-black/5 transition ${isScrolled ? 'text-gray-600' : 'text-white'
               }`}>
               <Search className="w-5 h-5" />
             </button>
-            <Link href="/contact" className={`flex items-center gap-2 text-sm font-bold px-6 py-2.5 rounded-full transition shadow-lg hover:shadow-xl hover:-translate-y-0.5 ${isScrolled
+
+            {isAuthenticated && user ? (
+              <div className="relative">
+                <button
+                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition ${isScrolled ? 'bg-gray-100/80 hover:bg-gray-200' : 'bg-white/20 hover:bg-white/30 backdrop-blur-md text-white'}`}
+                >
+                  <img src={user.avatar} alt={user.name} className="w-7 h-7 rounded-full border border-white/50" />
+                  <span className={`text-sm font-bold max-w-[100px] truncate ${isScrolled ? 'text-gray-900' : 'text-white'}`}>{user.name}</span>
+                </button>
+
+                <AnimatePresence>
+                  {isUserMenuOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      className="absolute right-0 top-full mt-2 w-56 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 overflow-hidden"
+                      onMouseLeave={() => setIsUserMenuOpen(false)}
+                    >
+                      <div className="px-4 py-3 border-b border-gray-100 bg-gray-50/50">
+                        <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">Signed in as</p>
+                        <p className="text-sm font-bold text-gray-900 truncate">{user.email}</p>
+                      </div>
+                      <Link href={`/dashboard/${user.role === 'client' ? 'client' : 'admin'}`} className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition">
+                        <LayoutDashboard className="w-4 h-4" /> Dashboard
+                      </Link>
+                      <button
+                        onClick={logout}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 transition text-left"
+                      >
+                        <LogOut className="w-4 h-4" /> Sign Out
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ) : (
+              <Link href="/login" className={`flex items-center gap-2 text-sm font-bold px-6 py-2.5 rounded-full transition shadow-lg hover:shadow-xl hover:-translate-y-0.5 ${isScrolled
                 ? 'text-white bg-green-800 hover:bg-green-900'
                 : 'text-green-900 bg-white hover:bg-gray-50'
-              }`}>
-              Book Now
-            </Link>
+                }`}>
+                {t.common.signIn}
+              </Link>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center z-[101]">
+          <div className="md:hidden flex items-center z-[101] gap-4">
+            {/* Mobile Lang Toggle */}
+            <button
+              onClick={toggleLanguage}
+              className={`p-1.5 rounded-full flex items-center gap-1 font-bold text-[10px] transition ${isScrolled || isMenuOpen ? 'bg-gray-100 text-gray-700' : 'bg-white/10 text-white backdrop-blur-sm'
+                }`}
+            >
+              <Globe className="w-3.5 h-3.5" />
+              <span>{locale.toUpperCase()}</span>
+            </button>
+
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className={`p-2 transition-colors duration-300 ${isScrolled || isMenuOpen ? 'text-green-900' : 'text-white'}`}
@@ -112,7 +176,7 @@ export default function Navbar() {
               <div className="flex-1 flex flex-col justify-center space-y-6">
                 {menuItems.map((item, idx) => (
                   <motion.div
-                    key={item.title}
+                    key={item.href}
                     initial={{ opacity: 0, y: 40 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 20 }}
@@ -137,7 +201,7 @@ export default function Navbar() {
               >
                 <div className="grid grid-cols-2 gap-8 mb-8">
                   <div>
-                    <h4 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Socials</h4>
+                    <h4 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">{t.common.socials}</h4>
                     <ul className="space-y-2 text-sm font-medium text-gray-600">
                       <li><a href="#" className="hover:text-emerald-600">Instagram</a></li>
                       <li><a href="#" className="hover:text-emerald-600">Twitter (X)</a></li>
@@ -145,15 +209,21 @@ export default function Navbar() {
                     </ul>
                   </div>
                   <div>
-                    <h4 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Contact</h4>
+                    <h4 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">{t.common.contact}</h4>
                     <p className="text-sm font-medium text-gray-600 mb-2">hello@borneotrip.id</p>
                     <p className="text-sm font-medium text-gray-600">+62 812 3456 7890</p>
                   </div>
                 </div>
 
-                <button className="w-full py-4 bg-green-900 text-white rounded-2xl font-bold text-lg flex items-center justify-center gap-2 hover:bg-green-800 transition shadow-xl">
-                  Sign In / Register <ChevronRight className="w-5 h-5" />
-                </button>
+                {isAuthenticated && user ? (
+                  <Link href={`/dashboard/${user.role === 'client' ? 'client' : 'admin'}`} onClick={() => setIsMenuOpen(false)} className="w-full py-4 bg-green-900 text-white rounded-2xl font-bold text-lg flex items-center justify-center gap-2 hover:bg-green-800 transition shadow-xl mb-4">
+                    <LayoutDashboard className="w-5 h-5" /> Dashboard
+                  </Link>
+                ) : (
+                  <Link href="/login" onClick={() => setIsMenuOpen(false)} className="w-full py-4 bg-green-900 text-white rounded-2xl font-bold text-lg flex items-center justify-center gap-2 hover:bg-green-800 transition shadow-xl">
+                    {t.common.signIn} <ChevronRight className="w-5 h-5" />
+                  </Link>
+                )}
               </motion.div>
             </div>
           </motion.div>

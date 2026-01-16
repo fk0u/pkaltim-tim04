@@ -1,18 +1,21 @@
 import { useState } from 'react';
-import { Search, Calendar, Ticket, Palmtree } from 'lucide-react';
+import { Search, Ticket, Palmtree } from 'lucide-react';
 import DestinationSearch from './DestinationSearch';
 import TravelersInput from './TravelersInput';
+import { DatePicker, useToast } from '@/components/ui';
 
 export default function SearchWidget() {
   const [activeTab, setActiveTab] = useState<'Event' | 'Package'>('Event');
   const [isSearching, setIsSearching] = useState(false);
+  const [date, setDate] = useState<Date | undefined>(undefined);
+  const [travelers, setTravelers] = useState("1 Dewasa");
+  const { addToast } = useToast();
 
   const handleSearch = () => {
     setIsSearching(true);
     setTimeout(() => {
       setIsSearching(false);
-      // In real app: router.push('/search-results?Query=...')
-      alert("Mencari perjalanan impian Anda...");
+      addToast(`Mencari ${activeTab}: ${activeTab === 'Event' ? 'Tenggarong' : 'Derawan'}...`, 'success');
     }, 1500);
   };
 
@@ -25,7 +28,7 @@ export default function SearchWidget() {
           <button
             onClick={() => setActiveTab('Event')}
             className={`px-4 md:px-6 py-2 md:py-2.5 rounded-full text-xs md:text-sm font-bold flex items-center gap-2 transition-all ${activeTab === 'Event'
-              ? 'bg-white text-green-800 shadow-md'
+              ? 'bg-white text-green-800 shadow-md transform scale-105'
               : 'text-white hover:bg-white/10'
               }`}
           >
@@ -34,7 +37,7 @@ export default function SearchWidget() {
           <button
             onClick={() => setActiveTab('Package')}
             className={`px-4 md:px-6 py-2 md:py-2.5 rounded-full text-xs md:text-sm font-bold flex items-center gap-2 transition-all ${activeTab === 'Package'
-              ? 'bg-white text-green-800 shadow-md'
+              ? 'bg-white text-green-800 shadow-md transform scale-105'
               : 'text-white hover:bg-white/10'
               }`}
           >
@@ -44,7 +47,7 @@ export default function SearchWidget() {
       </div>
 
       {/* Main Bar */}
-      <div className="bg-white rounded-[1.5rem] md:rounded-[2rem] shadow-2xl p-3 md:p-3 relative z-20 mx-3 md:mx-0">
+      <div className="bg-white rounded-[1.5rem] md:rounded-[2rem] shadow-2xl p-3 md:p-3 relative z-20 mx-3 md:mx-0 ring-1 ring-black/5">
         <div className="flex flex-col md:flex-row gap-2 md:gap-0 md:items-center">
 
           {/* 1. Destination */}
@@ -56,20 +59,18 @@ export default function SearchWidget() {
           </div>
 
           {/* 2. Date */}
-          <div className="flex-initial md:w-[220px] relative border-b md:border-b-0 md:border-r border-gray-100 pb-3 md:pb-0 md:px-4 px-2">
-            <label className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-wider block mb-1 md:mb-2 px-1">Tanggal</label>
-            <div className="relative group">
-              <Calendar className="absolute left-0 top-3 text-gray-400 group-focus-within:text-green-500 transition w-4 h-4 md:w-6 md:h-6" style={{ top: '50%', transform: 'translateY(-50%)' }} />
-              <input
-                type="date"
-                className="w-full pl-6 md:pl-8 pr-2 py-2 bg-transparent border-none focus:ring-0 font-bold text-gray-800 text-sm md:text-base p-0 cursor-pointer"
-              />
-            </div>
+          <div className="flex-initial md:w-[240px] relative border-b md:border-b-0 md:border-r border-gray-100 pb-3 md:pb-0 md:px-4 px-2 z-20">
+            <DatePicker
+              label="Tanggal"
+              selected={date}
+              onChange={setDate}
+              placeholder="Pilih Tanggal"
+            />
           </div>
 
           {/* 3. Travelers */}
-          <div className="flex-initial md:w-[260px] relative pb-3 md:pb-0 md:px-4 px-2 border-b md:border-b-0 border-gray-100 md:border-none">
-            <TravelersInput label="Peserta" />
+          <div className="flex-initial md:w-[260px] relative pb-3 md:pb-0 md:px-4 px-2 border-b md:border-b-0 border-gray-100 md:border-none z-10">
+            <TravelersInput label="Peserta" onChange={setTravelers} />
           </div>
 
           {/* 4. Button */}
@@ -77,7 +78,7 @@ export default function SearchWidget() {
             <button
               onClick={handleSearch}
               disabled={isSearching}
-              className="w-full md:w-auto h-11 md:h-16 px-8 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl md:rounded-[1.5rem] shadow-lg shadow-green-200 transition transform hover:scale-[1.02] flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed text-base md:text-lg"
+              className="w-full md:w-auto h-11 md:h-16 px-8 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl md:rounded-[1.5rem] shadow-lg shadow-green-200 transition transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed text-base md:text-lg"
             >
               {isSearching ? <div className="animate-spin w-4 h-4 md:w-5 md:h-5 border-2 border-white rounded-full border-t-transparent"></div> : <Search className="w-5 h-5 md:w-6 md:h-6" />}
               <span className="md:hidden">Cari Sekarang</span>
