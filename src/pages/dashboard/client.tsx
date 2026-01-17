@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui';
 import Modal from '@/components/ui/Modal';
+import { PACKAGES } from '@/data/mockData';
 
 export default function ClientDashboard() {
     const { user, logout, isAuthenticated } = useAuth();
@@ -165,23 +166,24 @@ export default function ClientDashboard() {
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                    {[1, 2, 3].map((i) => (
+                                    {/* Use Real Data from Mock */}
+                                    {PACKAGES.slice(0, 3).map((pkg) => (
                                         <motion.div
-                                            key={i}
+                                            key={pkg.id}
                                             whileHover={{ y: -8 }}
                                             className="bg-slate-50 rounded-3xl p-4 cursor-pointer group hover:bg-white hover:shadow-xl transition-all duration-300 border border-slate-100"
-                                            onClick={() => router.push(`/packages/${i}`)}
+                                            onClick={() => router.push(`/packages/${pkg.id}`)}
                                         >
                                             <div className="h-44 rounded-2xl bg-gray-200 mb-4 overflow-hidden relative">
-                                                <img src={`https://source.unsplash.com/random/400x300?forest,river,${i}`} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
+                                                <img src={pkg.imageUrl} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" alt={pkg.title} />
                                                 <div className="absolute top-3 right-3 bg-black/60 backdrop-blur px-2.5 py-1 rounded-lg text-[10px] font-bold text-white flex items-center gap-1">
-                                                    <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" /> 4.9
+                                                    <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" /> {pkg.rating}
                                                 </div>
                                             </div>
-                                            <h4 className="font-bold text-slate-900 text-lg mb-1 leading-tight group-hover:text-emerald-700 transition">Orangutan River Cruise</h4>
-                                            <p className="text-xs text-slate-500 mb-4 flex items-center gap-1 font-medium"><MapPin className="w-3 h-3" /> Tanjung Puting</p>
+                                            <h4 className="font-bold text-slate-900 text-lg mb-1 leading-tight group-hover:text-emerald-700 transition line-clamp-1">{pkg.title}</h4>
+                                            <p className="text-xs text-slate-500 mb-4 flex items-center gap-1 font-medium"><MapPin className="w-3 h-3" /> {pkg.location}</p>
                                             <div className="flex items-center justify-between border-t border-gray-100 pt-4">
-                                                <span className="text-emerald-700 font-black text-lg">IDR 3.5jt</span>
+                                                <span className="text-emerald-700 font-black text-lg">Rp {(pkg.price / 1000000).toFixed(1)}jt</span>
                                                 <div className="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-white transition">
                                                     <ArrowRight className="w-4 h-4" />
                                                 </div>

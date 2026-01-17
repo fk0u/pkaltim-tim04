@@ -20,7 +20,7 @@ export default function SearchWidget() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto transform translate-y-4 md:translate-y-12 relative z-30">
+    <div className="max-w-5xl mx-auto relative z-30">
 
       {/* Floating Tabs */}
       <div className="flex justify-center mb-3 md:mb-6">

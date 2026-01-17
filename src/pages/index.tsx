@@ -73,12 +73,13 @@ export default function Home() {
                   </p>
                </motion.div>
 
+
                {/* 2. SMART SEARCH WIDGET - Positioned to overlap */}
                <motion.div
                   initial={{ opacity: 0, y: 40 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 3.8, duration: 0.8 }}
-                  className="w-full md:absolute md:-bottom-24 md:left-4 md:right-4 pb-8 md:pb-0"
+                  className="w-full md:absolute md:-bottom-32 md:left-0 md:right-0 px-4 md:px-0 z-20"
                >
                   <SearchWidget />
                </motion.div>

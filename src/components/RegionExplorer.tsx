@@ -76,8 +76,8 @@ export default function RegionExplorer() {
                                 {/* Badge */}
                                 <div className="absolute top-4 left-4">
                                     <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest backdrop-blur-md border ${region.type === 'Kota'
-                                            ? 'bg-blue-500/20 border-blue-400 text-blue-100'
-                                            : 'bg-emerald-500/20 border-emerald-400 text-emerald-100'
+                                        ? 'bg-blue-500/20 border-blue-400 text-blue-100'
+                                        : 'bg-emerald-500/20 border-emerald-400 text-emerald-100'
                                         }`}>
                                         {region.type}
                                     </span>
@@ -158,9 +158,9 @@ export default function RegionExplorer() {
                                     </div>
                                 </div>
 
-                                <button className="mt-auto w-full py-3 rounded-xl bg-gray-900 hover:bg-emerald-600 text-white font-bold text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-gray-200">
+                                <Link href={`/destinations/${region.id}`} className="mt-auto w-full py-3 rounded-xl bg-gray-900 hover:bg-emerald-600 text-white font-bold text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-gray-200">
                                     Jelajahi Profil Lengkap
-                                </button>
+                                </Link>
                             </div>
                         </motion.div>
                     ))}
