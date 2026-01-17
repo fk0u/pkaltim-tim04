@@ -7,6 +7,7 @@ import { ArrowLeft, CheckCircle, ShieldCheck, User, Calendar, Users, MapPin, Bad
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function CheckoutPage() {
     const { user, login } = useAuth();
@@ -26,6 +27,7 @@ export default function CheckoutPage() {
     const [bookingId, setBookingId] = useState('');
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setBookingId(`BK-${Math.floor(Math.random() * 1000000)}`);
     }, []);
 
@@ -136,7 +138,13 @@ export default function CheckoutPage() {
                                             </div>
                                         ) : (
                                             <div className="mb-8 flex items-center gap-4 bg-emerald-50/50 p-4 rounded-2xl border border-emerald-100/50">
-                                                <img src={user.avatar} className="w-12 h-12 rounded-full ring-2 ring-white" alt={user.name} />
+                                                <Image 
+                                                    src={user.avatar || '/logo/default-avatar.png'} 
+                                                    width={48} 
+                                                    height={48} 
+                                                    className="rounded-full ring-2 ring-white object-cover" 
+                                                    alt={user.name} 
+                                                />
                                                 <div>
                                                     <p className="text-xs font-bold text-emerald-600 uppercase tracking-wide">Logged in as</p>
                                                     <p className="font-bold text-gray-900">{user.name}</p>
@@ -345,7 +353,13 @@ export default function CheckoutPage() {
 
                                     {/* Package Card Tiny */}
                                     <div className="flex gap-4 mb-6 pb-6 border-b border-gray-100">
-                                        <img src={pkgImage} className="w-20 h-20 rounded-xl object-cover shadow-sm bg-gray-200" alt={pkgName} />
+                                        <Image 
+                                            src={pkgImage} 
+                                            width={80} 
+                                            height={80} 
+                                            className="rounded-xl object-cover shadow-sm bg-gray-200" 
+                                            alt={pkgName} 
+                                        />
                                         <div>
                                             <p className="text-xs text-gray-500 font-bold mb-1">PAKET WISATA</p>
                                             <h4 className="font-bold text-gray-900 text-sm leading-tight line-clamp-2">{pkgName}</h4>
