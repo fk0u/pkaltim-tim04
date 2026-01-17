@@ -37,7 +37,7 @@ export default function AdminDashboard() {
         <AdminLayout title="Overview">
             <div className="max-w-7xl mx-auto">
                 {/* Unique Welcome Banner */}
-                <div className="bg-gradient-to-r from-emerald-800 to-teal-900 rounded-3xl p-8 text-white mb-10 shadow-xl relative overflow-hidden">
+                <div className="bg-linear-to-r from-emerald-800 to-teal-900 rounded-3xl p-8 text-white mb-10 shadow-xl relative overflow-hidden">
                     <div className="absolute top-0 right-0 opacity-10">
                         <svg width="400" height="400" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                             <path fill="#FFFFFF" d="M47.7,-61.4C60.9,-51.1,69.9,-34.7,73.4,-17.8C76.9,-0.8,74.9,16.7,66.3,30.8C57.7,44.9,42.5,55.6,26.5,62.3C10.5,69,-6.4,71.7,-21.8,66.8C-37.2,61.9,-51.1,49.4,-60.8,34.4C-70.5,19.4,-75.9,1.9,-72.6,-13.7C-69.2,-29.3,-57.1,-43,-43.3,-53.1C-29.4,-63.3,-14.7,-69.9,1.3,-71.4C17.3,-73,34.5,-69.5,47.7,-61.4Z" transform="translate(100 100)" />
@@ -72,7 +72,7 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Recent Bookings Table */}
-                <div className="bg-white rounded-[2rem] shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
+                <div className="bg-white rounded-4xl shadow-xl shadow-gray-200/50 border border-gray-100 overflow-hidden">
                     <div className="p-8 border-b border-gray-100 flex justify-between items-center">
                         <div>
                             <h2 className="text-xl font-bold text-gray-900">Booking Terbaru</h2>
@@ -112,7 +112,7 @@ export default function AdminDashboard() {
                                             </span>
                                         </td>
                                         <td className="px-8 py-5">
-                                            <button className="p-2 hover:bg-gray-200 rounded-lg transition text-gray-400 hover:text-gray-900 opacity-0 group-hover:opacity-100">
+                                            <button className="p-2 hover:bg-gray-200 rounded-lg transition text-gray-400 hover:text-gray-900 opacity-0 group-hover:opacity-100" aria-label="Actions">
                                                 <MoreHorizontal className="w-4 h-4" />
                                             </button>
                                         </td>

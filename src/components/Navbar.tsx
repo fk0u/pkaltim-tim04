@@ -98,7 +98,7 @@ export default function Navbar({ isTransparent = true }: { isTransparent?: boole
                   className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition ${isSolid ? 'bg-gray-100/80 hover:bg-gray-200' : 'bg-white/20 hover:bg-white/30 backdrop-blur-md text-white'}`}
                 >
                   <Image 
-                    src={user.avatar} 
+                    src={user.avatar || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"} 
                     alt={user.name} 
                     className="rounded-full border border-white/50"
                     width={28}

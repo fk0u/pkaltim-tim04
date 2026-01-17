@@ -5,7 +5,7 @@ import { useToast } from '@/components/ui';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, CheckCircle, ShieldCheck, User, Calendar, Users, MapPin, BadgeCheck, Banknote, Wallet, Building2, QrCode } from 'lucide-react';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 export default function CheckoutPage() {
@@ -22,7 +22,12 @@ export default function CheckoutPage() {
     const pkgName = pkg ? (pkg as string) : "Paket Wisata";
     const totalPrice = price ? parseInt(price as string) : 0;
     const pkgImage = image ? (image as string) : "https://images.unsplash.com/photo-1596401057633-565652b5d249?auto=format&fit=crop&q=80";
-    const bookingId = `BK-${Math.floor(Math.random() * 1000000)}`;
+    // const bookingId = `BK-${Math.floor(Math.random() * 1000000)}`; // Moved to state to avoid hydration error
+    const [bookingId, setBookingId] = useState('');
+
+    useEffect(() => {
+        setBookingId(`BK-${Math.floor(Math.random() * 1000000)}`);
+    }, []);
 
     const handlePayment = () => {
         if (!user) {
@@ -68,8 +73,7 @@ export default function CheckoutPage() {
                             {/* Connector Line */}
                             <div className="absolute top-5 left-[10%] right-[10%] h-1 bg-gray-200 -z-10 rounded-full"></div>
                             <div 
-                                className="absolute top-5 left-[10%] h-1 bg-emerald-500 -z-10 rounded-full transition-all duration-700 ease-in-out" 
-                                style={{ width: step === 1 ? '0%' : step === 2 ? '40%' : '80%' }}
+                                className={`absolute top-5 left-[10%] h-1 bg-emerald-500 -z-10 rounded-full transition-all duration-700 ease-in-out ${step === 1 ? 'w-0' : step === 2 ? 'w-[40%]' : 'w-[80%]'}`} 
                             ></div>
 
                             {steps.map((s) => (
@@ -113,7 +117,7 @@ export default function CheckoutPage() {
                                         </div>
 
                                         {!user ? (
-                                            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-2xl mb-8 border border-blue-100">
+                                            <div className="bg-linear-to-r from-blue-50 to-indigo-50 p-6 rounded-2xl mb-8 border border-blue-100">
                                                 <div className="flex gap-4">
                                                     <div className="bg-white p-2 rounded-lg shadow-sm h-fit">
                                                         <User className="w-5 h-5 text-blue-600" />
@@ -132,7 +136,7 @@ export default function CheckoutPage() {
                                             </div>
                                         ) : (
                                             <div className="mb-8 flex items-center gap-4 bg-emerald-50/50 p-4 rounded-2xl border border-emerald-100/50">
-                                                <img src={user.avatar} className="w-12 h-12 rounded-full ring-2 ring-white" />
+                                                <img src={user.avatar} className="w-12 h-12 rounded-full ring-2 ring-white" alt={user.name} />
                                                 <div>
                                                     <p className="text-xs font-bold text-emerald-600 uppercase tracking-wide">Logged in as</p>
                                                     <p className="font-bold text-gray-900">{user.name}</p>
@@ -299,7 +303,7 @@ export default function CheckoutPage() {
                                         className="bg-white p-8 md:p-14 rounded-3xl shadow-xl border border-gray-100 text-center relative overflow-hidden"
                                     >
                                         {/* Background decoration */}
-                                        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-400 to-teal-500"></div>
+                                        <div className="absolute top-0 left-0 w-full h-2 bg-linear-to-r from-emerald-400 to-teal-500"></div>
 
                                         <div className="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 ring-8 ring-emerald-50">
                                             <CheckCircle className="w-12 h-12 text-emerald-600" />
@@ -333,7 +337,7 @@ export default function CheckoutPage() {
                         <div className="lg:col-span-1">
                             <div className="sticky top-28 space-y-6">
                                 <div className="bg-white p-6 rounded-3xl shadow-lg border border-gray-100 overflow-hidden relative">
-                                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 to-pink-500"></div>
+                                    <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-orange-400 to-pink-500"></div>
                                     <h3 className="font-bold text-gray-900 mb-6 flex items-center gap-2">
                                         <BadgeCheck className="w-5 h-5 text-orange-500" />
                                         Ringkasan Pesanan
@@ -341,7 +345,7 @@ export default function CheckoutPage() {
 
                                     {/* Package Card Tiny */}
                                     <div className="flex gap-4 mb-6 pb-6 border-b border-gray-100">
-                                        <img src={pkgImage} className="w-20 h-20 rounded-xl object-cover shadow-sm bg-gray-200" />
+                                        <img src={pkgImage} className="w-20 h-20 rounded-xl object-cover shadow-sm bg-gray-200" alt={pkgName} />
                                         <div>
                                             <p className="text-xs text-gray-500 font-bold mb-1">PAKET WISATA</p>
                                             <h4 className="font-bold text-gray-900 text-sm leading-tight line-clamp-2">{pkgName}</h4>

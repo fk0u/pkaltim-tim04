@@ -36,9 +36,9 @@ export default function ClientDashboard() {
     return (
         <Layout title={`Dashboard ${user.name} - BorneoTrip`}>
             {/* Background Layer */}
-            <div className="absolute top-0 left-0 w-full h-[550px] lg:h-[700px] bg-[#022c22] z-0">
+            <div className="absolute top-0 left-0 w-full h-137.5 lg:h-175 bg-[#022c22] z-0">
                 <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1596401057633-565652b5d249?auto=format&fit=crop&q=80')] bg-cover bg-center opacity-20 mix-blend-overlay"></div>
-                <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-[#022c22]/60 to-slate-50"></div>
+                <div className="absolute inset-0 bg-linear-to-b from-black/50 via-[#022c22]/60 to-slate-50"></div>
             </div>
 
             <div className="min-h-screen pt-24 md:pt-36 pb-20 relative z-10">
@@ -61,7 +61,7 @@ export default function ClientDashboard() {
                                 </div>
                             </div>
                             <h1 className="text-4xl md:text-5xl lg:text-7xl font-black mb-4 leading-tight tracking-tight drop-shadow-xl">
-                                Halo, <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-300">{user.name.split(' ')[0]}</span>
+                                Halo, <span className="text-transparent bg-clip-text bg-linear-to-r from-emerald-400 to-cyan-300">{user.name.split(' ')[0]}</span>
                                 <span className="inline-block ml-3 animate-wave origin-bottom-right">👋</span>
                             </h1>
                             <p className="text-lg md:text-xl text-emerald-100/90 max-w-2xl font-medium leading-relaxed drop-shadow-md">
@@ -87,7 +87,7 @@ export default function ClientDashboard() {
                                 <img
                                     src={user.avatar}
                                     alt="Profile"
-                                    className="relative w-20 h-20 lg:w-24 lg:h-24 rounded-full border-[4px] border-[#022c22] shadow-2xl object-cover ring-2 ring-emerald-500/50"
+                                    className="relative w-20 h-20 lg:w-24 lg:h-24 rounded-full border-4 border-[#022c22] shadow-2xl object-cover ring-2 ring-emerald-500/50"
                                 />
                             </motion.div>
                         </motion.div>
@@ -121,7 +121,7 @@ export default function ClientDashboard() {
                                         }}
                                     >
                                         <div className="flex flex-col md:flex-row gap-6 lg:gap-8">
-                                            <div className="w-full md:w-2/5 h-64 md:h-auto relative rounded-[2rem] overflow-hidden shadow-lg">
+                                            <div className="w-full md:w-2/5 h-64 md:h-auto relative rounded-4xl overflow-hidden shadow-lg">
                                                 <img src={activeTrip.pkgImage} className="w-full h-full object-cover group-hover:scale-105 transition duration-1000" alt="Trip" />
                                                 <div className="absolute top-4 left-4 bg-white/95 backdrop-blur px-3 py-1.5 rounded-full text-xs font-extrabold text-emerald-800 shadow-lg flex items-center gap-1.5 ring-1 ring-emerald-500/10">
                                                     <Clock className="w-3.5 h-3.5" /> {new Date(activeTrip.date).toLocaleDateString()}
@@ -179,7 +179,7 @@ export default function ClientDashboard() {
                             </motion.div>
 
                             {/* Recommendations - Solid Background for Visibility */}
-                            <div className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-gray-100">
+                            <div className="bg-white rounded-4xl p-8 shadow-xl border border-gray-100">
                                 <div className="flex items-center justify-between mb-8">
                                     <h3 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
                                         <Heart className="w-6 h-6 text-pink-500 fill-pink-500" /> Rekomendasi 2026
@@ -221,20 +221,20 @@ export default function ClientDashboard() {
                             {/* Gamification */}
                             <motion.div
                                 whileHover={{ scale: 1.02 }}
-                                className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-[2.5rem] p-8 text-white text-center relative overflow-hidden shadow-2xl shadow-emerald-500/20"
+                                className="bg-linear-to-br from-emerald-500 to-teal-600 rounded-4xl p-8 text-white text-center relative overflow-hidden shadow-2xl shadow-emerald-500/20"
                             >
                                 <div className="relative z-10">
                                     <h4 className="text-xs font-bold uppercase tracking-widest opacity-80 mb-3 text-emerald-100">Level Kamu</h4>
                                     <div className="text-5xl font-black mb-2 tracking-tight">Explorer</div>
                                     <p className="text-sm font-medium text-emerald-50 mb-8">Hanya 50 XP lagi untuk naik ke Elite Member!</p>
                                     <div className="w-full bg-black/20 rounded-full h-4 mb-3 p-1 backdrop-blur-sm">
-                                        <div className="bg-gradient-to-r from-emerald-200 to-white h-2 rounded-full shadow-lg w-[85%]"></div>
+                                        <div className="bg-linear-to-r from-emerald-200 to-white h-2 rounded-full shadow-lg w-[85%]"></div>
                                     </div>
                                 </div>
                             </motion.div>
 
                             {/* Menu Grid */}
-                            <div className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-gray-100/80">
+                            <div className="bg-white rounded-4xl p-8 shadow-xl border border-gray-100/80">
                                 <h3 className="font-bold text-slate-900 mb-6 flex items-center gap-2">Menu Cepat</h3>
                                 <div className="grid grid-cols-2 gap-4">
                                     {[
@@ -283,7 +283,7 @@ export default function ClientDashboard() {
                 <div className="space-y-4">
                     {[1, 2, 3].map((i) => (
                         <div key={i} className="flex gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                            <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0"><Bell className="w-5 h-5" /></div>
+                            <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0"><Bell className="w-5 h-5" /></div>
                             <div>
                                 <h4 className="font-bold text-slate-900 text-sm">Pembayaran Berhasil</h4>
                                 <p className="text-xs text-slate-500 mt-1">Pembayaran untuk trip Derawan telah dikonfirmasi. Selamat berlibur!</p>
@@ -297,7 +297,7 @@ export default function ClientDashboard() {
             {/* 3. Profile/Settings Modal */}
             <Modal isOpen={activeModal === 'profile'} onClose={() => setActiveModal(null)} title="Pengaturan Profil">
                 <div className="flex flex-col items-center mb-6">
-                    <img src={user.avatar} className="w-24 h-24 rounded-full mb-4 border-4 border-slate-100" />
+                    <img src={user.avatar} className="w-24 h-24 rounded-full mb-4 border-4 border-slate-100" alt={user.name} />
                     <h3 className="text-xl font-bold text-slate-900">{user.name}</h3>
                     <p className="text-slate-500">{user.email}</p>
                 </div>
