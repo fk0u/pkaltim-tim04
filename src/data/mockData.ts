@@ -252,6 +252,7 @@ export const PACKAGES: TourPackage[] = [
     duration: '4D3N',
     price: 3500000,
     location: 'Muara Wahau, Kutai Timur',
+    rating: 4.8,
     ecoRating: 5,
     description: 'Petualangan masuk ke jantung hutan hujan tropis tertua, bertemu Orangutan liar, dan tinggal bersama suku Dayak Wehea.',
     imageUrl: 'https://hutanlindungwehea.id/wp-content/uploads/2021/11/2.-sejarah-lansakp-hutan-scaled.jpg?auto=format&fit=crop&q=80',
@@ -263,6 +264,7 @@ export const PACKAGES: TourPackage[] = [
     duration: '3D2N',
     price: 2800000,
     location: 'Biduk-Biduk, Berau',
+    rating: 4.9,
     ecoRating: 4,
     description: 'Berenang di danau dua rasa Labuan Cermin dan berinteraksi ramah dengan Hiu Paus di Talisayan.',
     imageUrl: 'https://images.unsplash.com/photo-1582967788606-a171f1080ca8?auto=format&fit=crop&q=80',
@@ -274,6 +276,7 @@ export const PACKAGES: TourPackage[] = [
     duration: '2D1N',
     price: 1200000,
     location: 'Samarinda',
+    rating: 4.5,
     ecoRating: 3,
     description: 'Wisata sejarah di Samarinda dan menyusuri sungai Mahakam dengan kapal wisata tradisional Pesut Etam.',
     imageUrl: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&q=80',
@@ -285,6 +288,7 @@ export const PACKAGES: TourPackage[] = [
     duration: '2D1N',
     price: 1800000,
     location: 'Samboja, Kutai Kartanegara',
+    rating: 4.7,
     ecoRating: 5,
     description: 'Menginap di lodge eksklusif di tengah hutan rehabilitasi Orangutan BOS Foundation.',
     imageUrl: 'https://images.unsplash.com/photo-1599540209228-468ae39e2468?auto=format&fit=crop&q=80',
@@ -296,6 +300,7 @@ export const PACKAGES: TourPackage[] = [
     duration: '4D3N',
     price: 5500000,
     location: 'Maratua, Berau',
+    rating: 5.0,
     ecoRating: 4,
     description: 'Liburan mewah di resort atas air Maratua dengan akses langsung ke spot diving kelas dunia.',
     imageUrl: 'https://images.unsplash.com/photo-1577717903315-1691ae25ab3f?auto=format&fit=crop&q=80',
@@ -303,37 +308,168 @@ export const PACKAGES: TourPackage[] = [
   },
 ];
 
-export const ITINERARY_DETAIL: ItineraryDetail = {
-  id: 'i1',
-  packageId: 'p1',
-  title: 'Eksplorasi Hutan Wehea & Dayak Culture - 4D3N',
-  badges: ['Eco-Friendly', 'Support Local', 'Nature'],
-  days: [
-    {
-      day: 1,
-      title: 'Kedatangan & Sambutan Adat',
-      activities: [
-        { time: '09:00', title: 'Penjemputan Bandara', description: 'Tiba di Bandara Berau/Samarinda, perjalanan darat menuju Muara Wahau.', type: 'Transport' },
-        { time: '15:00', title: 'Tiba di Desa Nehas Liah Bing', description: 'Disambut upacara adat Dayak Wehea dan check-in di Homestay warga.', type: 'Activity' },
-        { time: '19:00', title: 'Makan Malam Tradisional', description: 'Menikmati hidangan khas Dayak seperti Lemang dan Ikan Bakar.', type: 'Meal' },
-      ]
-    },
-    {
-      day: 2,
-      title: 'Trekking Hutan Lindung Wehea',
-      activities: [
-        { time: '05:00', title: 'Sunrise & Bird Watching', description: 'Melihat aktivitas burung Enggang di pagi hari.', type: 'Activity' },
-        { time: '08:00', title: 'Jungle Trekking', description: 'Menjelajahi hutan primer, identifikasi tanaman obat, dan mencari jejak satwa liar.', type: 'Activity' },
-        { time: '12:00', title: 'Makan Siang di Sungai', description: 'Piknik ramah lingkungan di pinggir sungai Wehea.', type: 'Meal' },
-      ]
-    },
-    {
-      day: 3,
-      title: 'Konservasi & Interaksi Budaya',
-      activities: [
-        { time: '09:00', title: 'Workshop Anyaman', description: 'Belajar menganyam rotan bersama ibu-ibu pengrajin lokal.', type: 'Activity' },
-        { time: '14:00', title: 'Penanaman Pohon', description: 'Program adopsi pohon ulin sebagai jejak positif wisatawan.', type: 'Activity' },
-      ]
-    }
-  ]
-};
+export const ITINERARY_DETAILS: ItineraryDetail[] = [
+  {
+    id: 'i1',
+    packageId: 'p1',
+    title: 'Eksplorasi Hutan Wehea & Dayak Culture - 4D3N',
+    badges: ['Eco-Friendly', 'Support Local', 'Nature'],
+    days: [
+      {
+        day: 1,
+        title: 'Kedatangan & Sambutan Adat',
+        activities: [
+          { time: '09:00', title: 'Penjemputan Bandara', description: 'Tiba di Bandara Berau/Samarinda, perjalanan darat menuju Muara Wahau.', type: 'Transport' },
+          { time: '15:00', title: 'Tiba di Desa Nehas Liah Bing', description: 'Disambut upacara adat Dayak Wehea dan check-in di Homestay warga.', type: 'Activity' },
+          { time: '19:00', title: 'Makan Malam Tradisional', description: 'Menikmati hidangan khas Dayak seperti Lemang dan Ikan Bakar.', type: 'Meal' },
+        ]
+      },
+      {
+        day: 2,
+        title: 'Trekking Hutan Lindung Wehea',
+        activities: [
+          { time: '05:00', title: 'Sunrise & Bird Watching', description: 'Melihat aktivitas burung Enggang di pagi hari.', type: 'Activity' },
+          { time: '08:00', title: 'Jungle Trekking', description: 'Menjelajahi hutan primer, identifikasi tanaman obat, dan mencari jejak satwa liar.', type: 'Activity' },
+          { time: '12:00', title: 'Makan Siang di Sungai', description: 'Piknik ramah lingkungan di pinggir sungai Wehea.', type: 'Meal' },
+        ]
+      },
+      {
+        day: 3,
+        title: 'Konservasi & Interaksi Budaya',
+        activities: [
+          { time: '09:00', title: 'Workshop Anyaman', description: 'Belajar menganyam rotan bersama ibu-ibu pengrajin lokal.', type: 'Activity' },
+          { time: '14:00', title: 'Penanaman Pohon', description: 'Program adopsi pohon ulin sebagai jejak positif wisatawan.', type: 'Activity' },
+        ]
+      },
+      {
+        day: 4,
+        title: 'Perpisahan',
+        activities: [
+          { time: '08:00', title: 'Sarapan & Check Out', description: 'Persiapan kembali ke bandara.', type: 'Meal' },
+          { time: '13:00', title: 'Drop Bandara', description: 'Tiba di bandara untuk penerbangan pulang.', type: 'Transport' },
+        ]
+      }
+    ]
+  },
+  {
+    id: 'i2',
+    packageId: 'p2',
+    title: 'Labuan Cermin & Whale Shark Ecotourism - 3D2N',
+    badges: ['Marine Life', 'Adventure', 'Snorkeling'],
+    days: [
+      {
+        day: 1,
+        title: 'Perjalanan ke Biduk-Biduk',
+        activities: [
+          { time: '10:00', title: 'Arrival Berau', description: 'Penjemputan di Bandara Kalimarau.', type: 'Transport' },
+          { time: '11:00', title: 'Road Trip to Biduk-Biduk', description: 'Perjalanan darat 6 jam dengan pemandangan hutan tropis.', type: 'Transport' },
+          { time: '18:00', title: 'Check-in Homestay', description: 'Istirahat di penginapan tepi pantai.', type: 'Activity' },
+        ]
+      },
+      {
+        day: 2,
+        title: 'Labuan Cermin & Kaniungan',
+        activities: [
+          { time: '08:00', title: 'Labuan Cermin', description: 'Berenang di danau dua rasa yang kristal.', type: 'Activity' },
+          { time: '13:00', title: 'Pulau Kaniungan', description: 'Snorkeling dan melihat penyu.', type: 'Activity' },
+        ]
+      },
+      {
+        day: 3,
+        title: 'Whale Shark Talisayan',
+        activities: [
+          { time: '05:00', title: 'Talisayan', description: 'Melihat Hiu Paus di bagan nelayan.', type: 'Activity' },
+          { time: '10:00', title: 'Return', description: 'Perjalanan kembali ke Berau.', type: 'Transport' },
+        ]
+      }
+    ]
+  },
+  {
+    id: 'i3',
+    packageId: 'p3',
+    title: 'Samarinda City & Mahakam River Cruise - 2D1N',
+    badges: ['Culture', 'History', 'City Tour'],
+    days: [
+      {
+        day: 1,
+        title: 'City Tour Samarinda',
+        activities: [
+          { time: '09:00', title: 'Islamic Center', description: 'Mengunjungi masjid terbesar di Asia Tenggara.', type: 'Activity' },
+          { time: '16:00', title: 'Mahakam River Cruise', description: 'Susur sungai Mahakam saat sunset dengan kapal pesut.', type: 'Activity' },
+          { time: '19:00', title: 'Kuliner Tepian', description: 'Makan malam seafood di tepian Mahakam.', type: 'Meal' },
+        ]
+      },
+      {
+        day: 2,
+        title: 'Budaya Pampang',
+        activities: [
+          { time: '09:00', title: 'Desa Budaya Pampang', description: 'Melihat tarian adat Dayak Kenyah (Hari Minggu).', type: 'Activity' },
+          { time: '13:00', title: 'Souvenir Shopping', description: 'Belanja oleh-oleh khas Kaltim di Citra Niaga.', type: 'Activity' },
+        ]
+      }
+    ]
+  },
+  {
+    id: 'i4',
+    packageId: 'p4',
+    title: 'Samboja Lodge Orangutan Experience - 2D1N',
+    badges: ['Conservation', 'Wildlife', 'Exclusive'],
+    days: [
+      {
+        day: 1,
+        title: 'Welcome to Samboja',
+        activities: [
+          { time: '10:00', title: 'Check-in Lodge', description: 'Tiba di Samboja Lodge yang asri.', type: 'Activity' },
+          { time: '15:00', title: 'Island Tour', description: 'Melihat orangutan di pulau buatan pra-pelepasliaran.', type: 'Activity' },
+        ]
+      },
+      {
+        day: 2,
+        title: 'Sun Bear Sanctuary',
+        activities: [
+          { time: '08:00', title: 'Suaka Beruang Madu', description: 'Mengunjungi pusat rehabilitasi beruang madu.', type: 'Activity' },
+          { time: '11:00', title: 'Forest Walk', description: 'Jalan santai di hutan sekitar lodge.', type: 'Activity' },
+        ]
+      }
+    ]
+  },
+  {
+    id: 'i5',
+    packageId: 'p5',
+    title: 'Maratua Paradise Luxury Escape - 4D3N',
+    badges: ['Luxury', 'Diving', 'Honeymoon'],
+    days: [
+      {
+        day: 1,
+        title: 'Arrival Paradise',
+        activities: [
+          { time: '14:00', title: 'Speedboat Transfer', description: 'Menyeberang dari Berau/Tarakan ke Maratua.', type: 'Transport' },
+          { time: '16:00', title: 'Check-in Water Villa', description: 'Menikmati villa di atas air.', type: 'Activity' },
+        ]
+      },
+      {
+        day: 2,
+        title: 'Kakaban & Sangalaki',
+        activities: [
+          { time: '08:00', title: 'Jellyfish Lake', description: 'Berenang dengan ubur-ubur tak menyengat di Kakaban.', type: 'Activity' },
+          { time: '13:00', title: 'Manta Point', description: 'Diving/Snorkeling melihat Manta Ray di Sangalaki.', type: 'Activity' },
+        ]
+      },
+      {
+        day: 3,
+        title: 'Maratua Exploration',
+        activities: [
+          { time: '09:00', title: 'Gua Halo Tabung', description: 'Berenang di gua air payau yang eksotis.', type: 'Activity' },
+          { time: '16:00', title: 'Sunset at Pier', description: 'Menikmati sunset.', type: 'Activity' },
+        ]
+      },
+      {
+        day: 4,
+        title: 'Departure',
+        activities: [
+          { time: '09:00', title: 'Check Out', description: 'Kembali ke daratan utama.', type: 'Transport' },
+        ]
+      }
+    ]
+  }
+];

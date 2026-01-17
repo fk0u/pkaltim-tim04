@@ -1,5 +1,5 @@
 import Layout from '@/components/Layout';
-import { ITINERARY_DETAIL, PACKAGES } from '@/data/mockData';
+import { ITINERARY_DETAILS, PACKAGES } from '@/data/mockData';
 import { useRouter } from 'next/router';
 import { Clock, MapPin, ShieldCheck, CheckCircle2, Utensils, Bus, Camera, BedDouble, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -19,7 +19,8 @@ export default function PackageDetail() {
    // We'll just look up the package info from PACKAGES and use the single ITINERARY_DETAIL for the timeline.
 
    const pkg = PACKAGES.find(p => p.id === id);
-   const itinerary = ITINERARY_DETAIL; // Using static detailed mock for demo
+   // Find specific itinerary for this package, or use the first one as fallback/template
+   const itinerary = ITINERARY_DETAILS.find(i => i.packageId === id) || ITINERARY_DETAILS[0];
 
    // Fix: Consistent loading state for Server/Client hydration
    if (!pkg) {

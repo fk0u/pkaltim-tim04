@@ -15,6 +15,7 @@ export interface TourPackage {
   duration: string; // e.g., "3D2N"
   price: number;
   location: string;
+  rating: number; // General user rating 1-5
   ecoRating: 1 | 2 | 3 | 4 | 5; // 5 is highest
   description: string;
   imageUrl: string;
@@ -38,7 +39,7 @@ export interface ItineraryDetail {
   id: string;
   packageId: string;
   title: string;
-  badges: ('Eco-Friendly' | 'Support Local' | 'Nature')[];
+  badges: ('Eco-Friendly' | 'Support Local' | 'Nature' | 'Marine Life' | 'Adventure' | 'Snorkeling' | 'Culture' | 'History' | 'City Tour' | 'Conservation' | 'Wildlife' | 'Exclusive' | 'Luxury' | 'Diving' | 'Honeymoon')[];
   days: DailyItinerary[];
 }
 
