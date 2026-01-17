@@ -20,7 +20,7 @@ export default function Home() {
    };
 
    return (
-      <Layout>
+      <Layout transparentNavbar={true}>
          {/* 1. DYNAMIC HERO SECTION WITH VIDEO */}
          <section className="relative min-h-[95vh] flex flex-col justify-end bg-black overflow-visible z-10 rounded-b-[2.5rem] md:rounded-b-[3.5rem] shadow-2xl mb-12 md:mb-20 group">
 

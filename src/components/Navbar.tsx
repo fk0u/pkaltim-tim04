@@ -5,12 +5,15 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
 
-export default function Navbar() {
+export default function Navbar({ isTransparent = true }: { isTransparent?: boolean }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const { t, locale, toggleLanguage } = useLanguage();
   const { user, isAuthenticated, logout } = useAuth();
+
+  // Combine scroll state with prop (if not transparent, always behave as scrolled/solid)
+  const isSolid = isScrolled || !isTransparent;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -40,14 +43,14 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed w-full z-[100] transition-all duration-300 ${isScrolled ? 'bg-white/90 backdrop-blur-md shadow-sm py-3' : 'bg-transparent py-4 md:py-6'
+      className={`fixed w-full z-[100] transition-all duration-300 ${isSolid ? 'bg-white/90 backdrop-blur-md shadow-sm py-3' : 'bg-transparent py-4 md:py-6'
         }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
           {/* Logo */}
           <Link href="/" className="flex-shrink-0 flex items-center gap-2 group relative z-[101] outline-none">
-            <span className={`text-2xl font-extrabold tracking-tight transition-colors ${isScrolled || isMenuOpen ? 'text-green-800' : 'text-white'
+            <span className={`text-2xl font-extrabold tracking-tight transition-colors ${isSolid || isMenuOpen ? 'text-green-800' : 'text-white'
               }`}>
               BorneoTrip<span className="text-emerald-500">.</span>
             </span>
@@ -59,7 +62,7 @@ export default function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`text-sm font-bold tracking-wide hover:text-emerald-500 transition-colors ${isScrolled ? 'text-gray-600' : 'text-white/90'
+                className={`text-sm font-bold tracking-wide hover:text-emerald-500 transition-colors ${isSolid ? 'text-gray-600' : 'text-white/90'
                   }`}
               >
                 {item.title}
@@ -72,14 +75,14 @@ export default function Navbar() {
             {/* Language Toggle */}
             <button
               onClick={toggleLanguage}
-              className={`p-2 rounded-full flex items-center gap-1 font-bold text-xs transition ${isScrolled ? 'bg-gray-100 text-gray-700 hover:bg-gray-200' : 'bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm'
+              className={`p-2 rounded-full flex items-center gap-1 font-bold text-xs transition ${isSolid ? 'bg-gray-100 text-gray-700 hover:bg-gray-200' : 'bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm'
                 }`}
             >
               <Globe className="w-4 h-4" />
               <span>{locale.toUpperCase()}</span>
             </button>
 
-            <button className={`p-2 rounded-full hover:bg-black/5 transition ${isScrolled ? 'text-gray-600' : 'text-white'
+            <button className={`p-2 rounded-full hover:bg-black/5 transition ${isSolid ? 'text-gray-600' : 'text-white'
               }`}>
               <Search className="w-5 h-5" />
             </button>
@@ -88,10 +91,10 @@ export default function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition ${isScrolled ? 'bg-gray-100/80 hover:bg-gray-200' : 'bg-white/20 hover:bg-white/30 backdrop-blur-md text-white'}`}
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition ${isSolid ? 'bg-gray-100/80 hover:bg-gray-200' : 'bg-white/20 hover:bg-white/30 backdrop-blur-md text-white'}`}
                 >
                   <img src={user.avatar} alt={user.name} className="w-7 h-7 rounded-full border border-white/50" />
-                  <span className={`text-sm font-bold max-w-[100px] truncate ${isScrolled ? 'text-gray-900' : 'text-white'}`}>{user.name}</span>
+                  <span className={`text-sm font-bold max-w-[100px] truncate ${isSolid ? 'text-gray-900' : 'text-white'}`}>{user.name}</span>
                 </button>
 
                 <AnimatePresence>
@@ -121,7 +124,7 @@ export default function Navbar() {
                 </AnimatePresence>
               </div>
             ) : (
-              <Link href="/login" className={`flex items-center gap-2 text-sm font-bold px-6 py-2.5 rounded-full transition shadow-lg hover:shadow-xl hover:-translate-y-0.5 ${isScrolled
+              <Link href="/login" className={`flex items-center gap-2 text-sm font-bold px-6 py-2.5 rounded-full transition shadow-lg hover:shadow-xl hover:-translate-y-0.5 ${isSolid
                 ? 'text-white bg-green-800 hover:bg-green-900'
                 : 'text-green-900 bg-white hover:bg-gray-50'
                 }`}>
@@ -135,7 +138,7 @@ export default function Navbar() {
             {/* Mobile Lang Toggle */}
             <button
               onClick={toggleLanguage}
-              className={`p-1.5 rounded-full flex items-center gap-1 font-bold text-[10px] transition ${isScrolled || isMenuOpen ? 'bg-gray-100 text-gray-700' : 'bg-white/10 text-white backdrop-blur-sm'
+              className={`p-1.5 rounded-full flex items-center gap-1 font-bold text-[10px] transition ${isSolid || isMenuOpen ? 'bg-gray-100 text-gray-700' : 'bg-white/10 text-white backdrop-blur-sm'
                 }`}
             >
               <Globe className="w-3.5 h-3.5" />
@@ -144,7 +147,7 @@ export default function Navbar() {
 
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className={`p-2 transition-colors duration-300 ${isScrolled || isMenuOpen ? 'text-green-900' : 'text-white'}`}
+              className={`p-2 transition-colors duration-300 ${isSolid || isMenuOpen ? 'text-green-900' : 'text-white'}`}
             >
               <AnimatePresence mode='wait'>
                 {isMenuOpen ? (
