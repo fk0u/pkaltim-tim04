@@ -1,64 +1,52 @@
-# User Flow Diagram
+# User Flow - BorneoTrip
 
-Dokumen ini menjelaskan alur perjalanan pengguna (User Journey) utama dalam aplikasi BorneoTrip.
+Berikut adalah alur pengguna utama dalam aplikasi, mulai dari pendaratan hingga pasca-pembelian.
 
-## 1. Alur Registrasi & Login (Onboarding)
+## 1. Discovery & Search (Pencarian Wisata)
+**Goal**: User menemukan paket wisata yang sesuai dengan keinginan mereka.
 
-```mermaid
-graph TD
-    A[Mulai] --> B{Punya Akun?}
-    B -- Tidak --> C[Halaman Register]
-    C --> D[Isi Nama, Email, Password]
-    D --> E[Simulasi: Simpan ke LocalStorage]
-    E --> F[Auto Login & Redirect Dashboard]
-    
-    B -- Ya --> G[Halaman Login]
-    G --> H[Input Email & Password]
-    H --> I{Validasi Credential}
-    I -- Gagal --> J[Tampilkan Error Toast]
-    J --> H
-    I -- Sukses --> K{Cek Role}
-    K -- Traveler --> L[Client Dashboard]
-    K -- Admin --> M[Admin Dashboard]
-```
+1.  **Landing Page (`/`)**:
+    *   User melihat video hero banner yang immersive.
+    *   User menggunakan **Search Widget** (Lokasi, Tanggal, Tipe).
+    *   *Action*: Klik "Cari" atau klik salah satu kartu "Destinasi Populer".
 
-## 2. Alur Pemesanan Paket (Booking Flow)
+2.  **Explore Pages (`/packages` atau `/events`)**:
+    *   User melihat daftar hasil pencarian.
+    *   User menggunakan filter (Harga, Durasi, Kategori).
+    *   *Action*: Klik kartu paket untuk melihat detail.
 
-```mermaid
-graph LR
-    A[Homepage] --> B[Klik 'Lihat Paket']
-    B --> C[Halaman List Paket]
-    C --> D[Pilih Paket Spesifik]
-    
-    D --> E[Halaman Detail Paket]
-    E --> F[Lihat Itinerary & Fasilitas]
-    F --> G[Pilih Tanggal & Jumlah Pax]
-    G --> H[Klik 'Pesan Sekarang']
-    
-    H --> I[Halaman Checkout]
-    I --> J[Review Pesanan]
-    J --> K[Isi Data Kontak]
-    K --> L[Simulasi Bayar]
-    
-    L --> M[Halaman Sukses]
-    M --> N[Download E-Voucher]
-    N --> O[Redirect ke Dashboard]
-```
+3.  **Detail Page (`/packages/[id]`)**:
+    *   User membaca deskripsi lengkap, itinerary harian, dan apa yang termasuk.
+    *   User melihat galeri foto.
+    *   *Action*: Klik tombol "Book Now".
 
-## 3. Alur Pencarian Event (Discovery Flow)
+## 2. Booking & Checkout Process
+**Goal**: User melakukan pemesanan dan pembayaran.
 
-```mermaid
-graph TD
-    A[Homepage] --> B[Search Widget]
-    B --> C{Pilih Tab}
-    C -- Event --> D[Input Lokasi/Nama Event]
-    C -- Paket --> E[Input Destinasi]
-    
-    D --> F[Tekan 'Cari']
-    E --> F
-    
-    F --> G[Halaman Hasil Pencarian]
-    G --> H[Filter Kategori (Culture/Nature)]
-    H --> I[Klik Kartu Event]
-    I --> J[Modal Detail Event / Remind Me]
-```
+1.  **Pre-Checkout Check**:
+    *   Sistem mengecek apakah user sudah login.
+    *   *Decision*:
+        *   Jika **Belum Login**: Redirect ke halaman Login (`/login`). Setelah login, redirect kembali ke Checkout.
+        *   Jika **Sudah Login**: Lanjut ke halaman Checkout.
+
+2.  **Checkout Page (`/checkout`)**:
+    *   **Step 1: Review**: User melihat ringkasan pesanan (Nama Paket, Tanggal, Jumlah Pax, Total Harga).
+    *   **Step 2: Payment**: User memilih metode pembayaran (Transfer, E-Wallet, QRIS) - *Simulasi*.
+    *   **Step 3: Confirmation**: User mengklik "Bayar Sekarang".
+    *   *System Action*: `addBooking()` dipanggil, data disimpan ke `Global Context` & `localStorage`.
+    *   *Feedback*: Toast "Pembayaran Berhasil" muncul.
+
+3.  **Post-Purchase (Dashboard)**:
+    *   **Client Dashboard (`/dashboard/client`)**:
+        *   User otomatis diarahkan ke dashboard setelah login/checkout.
+        *   **Active Trip**: Kartu paket yang baru dibeli muncul paling atas sebagai "Active Trip".
+        *   *Action*: User bisa melihat voucher, itinerary, atau menghubungi support.
+    *   **Admin Dashboard (`/dashboard/admin`)** (Untuk Staff):
+        *   Admin melihat statistik Total Revenue dan Total Booking bertambah.
+        *   Admin melihat data booking user di tabel "Booking Terbaru".
+        *   *Action*: Admin mengubah status booking (misal: dari Pending ke Confirmed).
+
+## 4. Authentication Flow
+
+*   **Registration (`/register`)**: User baru mengisi Nama, Email, Password. -> Auto Login -> Redirect ke Dashboard.
+*   **Login (`/login`)**: User memilih role (Traveler/Staff). Input kredensial. -> Validasi Mock -> Redirect ke Dashboard sesuai Role.

@@ -1,50 +1,52 @@
-# Product Specification Document (PSD)
-**Project:** BorneoTrip Frontend Engineering
-**Architecture Pattern:** Monolithic Frontend (Next.js Pages Directory)
+# Project Structure Documentation (PSD)
 
-## 1. System Overview
-Aplikasi ini dibangun sebagai Single Page Application (SPA) hybrid menggunakan Next.js. Fokus utama adalah pada **Client-Side Interactivity** untuk memberikan nuansa aplikasi native.
+Struktur folder proyek ini mengikuti konvensi **Next.js Pages Router** yang dikombinasikan dengan arsitektur **Feature-First** (untuk komponen).
 
-## 2. Component Design System
-Kami menggunakan sistem desain atomik yang dimodifikasi.
+```
+d:\Project\TIM-04
+├── docs/                   # Dokumentasi Proyek (PRD, Architecture, ERD, dll)
+├── public/                 # Aset statis (Gambar, Video, Logo)
+│   ├── logo/
+│   ├── picture/
+│   └── video/              # Berisi 'bumper.webm'
+├── src/
+│   ├── components/         # Komponen UI Reusable
+│   │   ├── layouts/        # Layout wrapper (Admin, Guest)
+│   │   ├── ui/             # Atomic components (Button, Modal, Toast)
+│   │   └── ...             # Feature components (SearchWidget, InteractiveMap)
+│   ├── contexts/           # Global State Management
+│   │   ├── AuthContext.tsx    # Manajemen Login/Register
+│   │   ├── BookingContext.tsx # Manajemen Transaksi & Statistik
+│   │   └── LanguageContext.tsx
+│   ├── data/               # Mock Data (Database Simulasi)
+│   │   └── mockData.ts     # Single source of truth untuk Events & Packages
+│   ├── pages/              # Routing & Views
+│   │   ├── api/            # API Routes (Next.js serverless functions - limited use)
+│   │   ├── dashboard/      # Halaman Dashboard (Protected Routes)
+│   │   │   ├── admin.tsx   # Dashboard Admin
+│   │   │   └── client.tsx  # Dashboard User
+│   │   ├── events/         # Fitur Event
+│   │   ├── packages/       # Fitur Paket Wisata
+│   │   ├── _app.tsx        # Global Wrapper (Context Providers)
+│   │   └── index.tsx       # Homepage
+│   ├── styles/             # Global CSS & Tailwind Directives
+│   └── types/              # TypeScript Definitions
+├── next.config.ts          # Konfigurasi Next.js
+├── tailwind.config.ts      # Konfigurasi Tema & Warna
+└── package.json            # Dependensi Proyek
+```
 
-### 2.1. Basic Atoms (UI Kit)
-- **Button**: Varian (Primary, Secondary, Ghost). State (Hover, Active, Disabled).
-- **Input/Select**: Floating labels, error states.
-- **Icons**: Lucide-React consistency (24px default).
-- **Typography**: Sans-serif geometric font (Inter/Plus Jakarta Sans look-alike).
+## Key Files & Responsibilities
 
-### 2.2. Molecules
-- **PackageCard**: Image + Title + Price + Rating Badge.
-- **EventCard**: Date Badge + Location + CTA.
-- **SectionHeader**: Title + Subtitle + "View All" Link.
+1.  **`src/data/mockData.ts`**:
+    *   Berperan sebagai "Dummy Database". Semua data paket wisata, event, dan itinerari disimpan di sini.
 
-### 2.3. Organisms (Complex)
-- **Navbar**: Responsive, sticky, glassmorphism, mobile drawer.
-- **Footer**: Multi-column links + Socials + Newsletter.
-- **BookingWidget**: Sticky sidebar dengan kalkulasi harga real-time.
-- **AdminTable**: Sortable, filterable, pagination, status badges.
+2.  **`src/contexts/BookingContext.tsx`**:
+    *   Logic inti aplikasi. Menghubungkan UI Checkout dengan Dashboard.
+    *   Menggunakan `localStorage` key `bt_bookings` untuk persistensi data.
 
-## 3. Data Flow Specification
+3.  **`src/pages/checkout.tsx`**:
+    *   Orkestra utama proses pemesanan. Memvalidasi user login sebelum mengizinkan pembayaran.
 
-### 3.1. Authentication
-- **Simulation**: Menggunakan `AuthContext` (React Context) + `localStorage`.
-- **States**: `isAuthenticated`, `user`, `role` ('client' | 'admin').
-- **Protection**: HOC / Hooks (`useAuth`) pada halaman sensitif (`dashboard/*`).
-
-### 3.2. Booking Flow Data
-1.  **Selection**: User memilih `packageId`, `date`, `pax` (Package Detail).
-2.  **Checkout**: Data dikirim via Router/Context ke halaman Checkout.
-3.  **Submission**: Form submit -> Mock API Call -> Update Local State -> Redirect Success.
-
-## 4. Asset Guidelines
-- **Images**: Unsplash source untuk mock. Ratio 16:9 untuk Hero, 1:1 untuk Avatar, 4:3 untuk Cards.
-- **Colors**:
-  - Primary: Emerald Green (`#059669`, `#047857`) -> Kesan Alam/Hutan.
-  - Secondary: Orange/Amber (`#f59e0b`) -> Kesan Hangat/Matahri/Borneo.
-  - Neutral: Slate (`#f8fafc` to `#0f172a`).
-
-## 5. Error Handling Specifications
-- **Toast Notifications**: Wajib muncul untuk sukses/gagal aksi (e.g., "Booking Berhasil", "Login Gagal").
-- **Empty States**: Tabel kosong harus menampilkan ilustrasi/teks help.
-- **Loading States**: Skeleton loading pada saat fetch data (simulasi delay).
+4.  **`src/pages/dashboard/`**:
+    *   Area privat yang tersegmentasi berdasarkan `user.role` dari `AuthContext`.

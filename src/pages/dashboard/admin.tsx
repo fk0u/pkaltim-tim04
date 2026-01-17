@@ -1,5 +1,6 @@
 import AdminLayout from '@/components/layouts/AdminLayout';
 import { useAuth } from '@/contexts/AuthContext';
+import { useBooking } from '@/contexts/BookingContext';
 import { motion } from 'framer-motion';
 import { Users, DollarSign, Package, TrendingUp, MoreHorizontal, CheckCircle } from 'lucide-react';
 import { useRouter } from 'next/router';
@@ -9,6 +10,7 @@ import { PACKAGES } from '@/data/mockData';
 
 export default function AdminDashboard() {
     const { user, isAuthenticated } = useAuth();
+    const { bookings, stats } = useBooking();
     const router = useRouter();
 
     useEffect(() => {
@@ -18,18 +20,17 @@ export default function AdminDashboard() {
 
     if (!user) return null;
 
-    const stats = [
-        { label: 'Total Booking', val: '124', icon: Package, color: 'blue' },
-        { label: 'Pendapatan', val: 'Rp 450M', icon: DollarSign, color: 'emerald' },
-        { label: 'User Baru', val: '1,203', icon: Users, color: 'orange' },
+    const statCards = [
+        { label: 'Total Booking', val: stats.totalBookings.toString(), icon: Package, color: 'blue' },
+        { label: 'Revenue', val: `Rp ${(stats.totalRevenue / 1000000).toFixed(1)}M`, icon: DollarSign, color: 'emerald' },
+        { label: 'Active Travelers', val: stats.activeTravelers.toString(), icon: Users, color: 'orange' },
         { label: 'Growth', val: '+12.5%', icon: TrendingUp, color: 'purple' },
     ];
 
-    const recentBookings = [
-        { id: '#BK-001', guest: 'Budi Santoso', pkg: PACKAGES[0]?.title || 'Derawan Paradise', date: '20 Feb', status: 'Paid', amount: 'Rp 5.200.000' },
-        { id: '#BK-002', guest: 'Sarah Jenkins', pkg: PACKAGES[1]?.title || 'Orangutan Tour', date: '22 Feb', status: 'Pending', amount: 'Rp 8.500.000' },
-        { id: '#BK-003', guest: 'Ahmad Dani', pkg: PACKAGES[2]?.title || 'Mahakam Safari', date: '25 Feb', status: 'Paid', amount: 'Rp 4.100.000' },
-        { id: '#BK-004', guest: 'Rina Nose', pkg: PACKAGES[0]?.title || 'Kakaban Trip', date: '28 Feb', status: 'Pending', amount: 'Rp 3.500.000' },
+    const recentBookings = bookings.length > 0 ? bookings.slice(0, 5) : [
+        { id: '#BK-001', userId: 'usr1', userName: 'Budi Santoso', pkgTitle: PACKAGES[0]?.title || 'Derawan Paradise', date: '2026-02-20', status: 'Paid', totalPrice: 5200000 },
+        { id: '#BK-002', userId: 'usr2', userName: 'Sarah Jenkins', pkgTitle: PACKAGES[1]?.title || 'Orangutan Tour', date: '2026-02-22', status: 'Pending', totalPrice: 8500000 },
+        { id: '#BK-003', userId: 'usr3', userName: 'Ahmad Dani', pkgTitle: PACKAGES[2]?.title || 'Mahakam Safari', date: '2026-02-25', status: 'Paid', totalPrice: 4100000 },
     ];
 
     return (
@@ -50,7 +51,7 @@ export default function AdminDashboard() {
 
                 {/* Stats Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-                    {stats.map((stat, idx) => (
+                    {statCards.map((stat, idx) => (
                         <motion.div
                             key={idx}
                             initial={{ opacity: 0, y: 20 }}
@@ -96,14 +97,14 @@ export default function AdminDashboard() {
                                     <tr key={idx} className="hover:bg-gray-50/80 transition group">
                                         <td className="px-8 py-5 font-mono text-sm font-medium text-emerald-600">{booking.id}</td>
                                         <td className="px-8 py-5">
-                                            <div className="font-bold text-gray-900">{booking.guest}</div>
+                                            <div className="font-bold text-gray-900">{booking.userName || (booking as any).guest}</div>
                                             <div className="text-xs text-gray-400">Verified User</div>
                                         </td>
                                         <td className="px-8 py-5 text-sm text-gray-600">
-                                            <div className="font-medium text-gray-900">{booking.pkg}</div>
-                                            <div className="text-xs text-gray-400">{booking.date}</div>
+                                            <div className="font-medium text-gray-900">{booking.pkgTitle || (booking as any).pkg}</div>
+                                            <div className="text-xs text-gray-400">{new Date(booking.date).toLocaleDateString()}</div>
                                         </td>
-                                        <td className="px-8 py-5 font-bold text-gray-900">{booking.amount}</td>
+                                        <td className="px-8 py-5 font-bold text-gray-900">Rp {((booking.totalPrice || parseInt((booking as any).amount?.replace(/\D/g, '') || '0')) / 1000000).toFixed(1)}jt</td>
                                         <td className="px-8 py-5">
                                             <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ring-1 ring-inset ${booking.status === 'Paid' ? 'bg-emerald-50 text-emerald-700 ring-emerald-600/20' : 'bg-orange-50 text-orange-700 ring-orange-600/20'}`}>
                                                 {booking.status === 'Paid' ? <CheckCircle className="w-3 h-3" /> : <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></div>}

@@ -40,9 +40,10 @@ Dipilih karena stabilitas, kemudahan SEO (penting untuk pariwisata), dan routing
 
 ### 3. State Management: React Context API
 Untuk skala aplikasi ini, Redux terlalu kompleks. Context API cukup untuk:
-- `AuthContext`: Menyimpan sesi user dan role.
+- `AuthContext`: Menyimpan sesi user, role, dan logika login/logout.
 - `LanguageContext`: Menyimpan preferensi bahasa (i18n sederhana).
-- `ToastContext`: Antrian notifikasi global.
+- `BookingContext`: Mengelola state transaksi booking, persistensi ke `localStorage`, dan kalkulasi statistik dashboard secara real-time.
+- `ToastContext`: Antrian notifikasi global untuk feedback user (Success/Error).
 
 ### 4. Animation: Framer Motion
 Digunakan untuk memberikan kesan "Premium App".

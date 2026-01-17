@@ -1,62 +1,47 @@
 # User Personas
-Berikut adalah representasi target pengguna BorneoTrip untuk memahami kebutuhan UX.
 
-## 1. Sarah "The Eco-Conscious Explorer"
-**Role**: Traveler (Nasional/Internasional)
-**Usia**: 26 Tahun
-**Pekerjaan**: Digital Marketer di Jakarta
-**Tech Savvy**: TInggi
+## 1. The Eco-Conscious Traveler
+**Name**: Sarah (28)
+**Occupation**: UI/UX Designer di Jakarta
+**Goals**:
+- Mencari liburan yang tidak merusak alam (guilt-free travel).
+- Ingin melihat orangutan di habitat aslinya sebelum punah.
+- Mencari pengalaman otentik budaya lokal.
+**Frustrations**:
+- Sulit menemukan info paket wisata yang terpercaya di Kalimantan.
+- Website travel lokal seringkali jelek, lambat, dan tidak transparan soal harga.
+- Khawatir dengan dampak pariwisata massal terhadap lingkungan.
+**Solution by BorneoTrip**:
+- **Sustainability Badges**: Label jelas mana paket yang ramah lingkungan.
+- **Detailed Itinerary**: Transparansi penuh tentang aktivitas.
+- **Modern UI**: Pengalaman booking yang semudah memesan di Traveloka.
 
-### Bio
-Sarah suka traveling tapi mulai merasa bersalah dengan jejak karbon penerbangan. Dia mencari liburan yang "healing" tapi juga memberi dampak positif. Dia rela membayar lebih untuk pengalaman otentik dan ramah lingkungan.
+## 2. The Local Explorer
+**Name**: Budi (35)
+**Occupation**: Pegawai BUMN di Balikpapan
+**Goals**:
+- Membawa keluarga liburan akhir pekan dekat IKN.
+- Mencari event atau festival budaya untuk edukasi anak-anak.
+- Ingin proses booking yang cepat dan instan.
+**Frustrations**:
+- Info event seringkali hanya lewat broadcast WhatsApp atau Instagram yang tidak update.
+- Harus kontak manual ke banyak agen untuk tanya harga.
+**Solution by BorneoTrip**:
+- **Event Calendar**: Daftar event terpusat dengan tanggal dan lokasi akurat.
+- **Instant Booking**: Tidak perlu chat WA, langsung book via web.
+- **Family Friendly Filters**: Mudah mencari paket yang cocok untuk anak.
 
-### Goals
-- Mencari tempat liburan yang tenang dan jauh dari keramaian (hidden gems).
-- Ingin berinteraksi dengan budaya lokal secara hormat.
-- Membutuhkan kepastian fasilitas (toilet bersih, makanan higienis) meskipun di alam.
-
-### Frustrations
-- Sulit mencari info valid tentang event budaya di daerah terpencil.
-- Web travel agent biasa tidak mencantumkan info eco-rating.
-- Proses booking via WhatsApp dengan operator lokal sering lambat dan tidak profesional.
-
----
-
-## 2. Pak Budi "The Local Operator"
-**Role**: Mitra / Admin Lokal
-**Usia**: 45 Tahun
-**Pekerjaan**: Pemilik Kapal Wisata di Derawan
-**Tech Savvy**: Menengah
-
-### Bio
-Pak Budi punya bisnis wisata turun temurun. Dia ingin tamunya lebih banyak, tapi kesulitan memasarkan secara digital. Dia bergantung pada mulut ke mulut atau broker.
-
-### Goals
-- Mendapatkan booking jauh-jauh hari agar bisa mengatur logistik.
-- Ingin pembayaran yang jelas dan tercatat rapi.
-- Ingin mempromosikan paket spesialnya (misal: trip konservasi penyu) yang jarang diketahui.
-
-### Frustrations
-- Pembukuan manual sering selisih.
-- Tamu sering cancel mendadak tanpa DP.
-- Tidak punya website sendiri yang bagus.
-
----
-
-## 3. Rina "The Festival Hunter"
-**Role**: Traveler (Gen Z Lokal Kaltim)
-**Usia**: 21 Tahun
-**Pekerjaan**: Mahasiswa di Samarinda
-**Tech Savvy**: Sangat Tinggi
-
-### Bio
-Rina suka membuat konten TikTok/Instagram. Dia selalu memburu event-event hits seperti Festival Erau atau konser jazz tepi sungai untuk konten sosial medianya.
-
-### Goals
-- Tahu jadwal event setahun penuh biar bisa nabung.
-- Tiket event yang mudah dibeli online (tidak antri).
-- Spot foto instagramable.
-
-### Frustrations
-- Info event sering dadakan (H-7).
-- Website info event sering crash atau cuma poster buram.
+## 3. The Digital Aris (Admin)
+**Name**: Aris (40)
+**Occupation**: Pemilik Tour Travel Lokal
+**Goals**:
+- Mengelola pesanan yang masuk dari berbagai channel.
+- Memantau pendapatan harian.
+- Mengirim voucher tiket ke pelanggan dengan cepat.
+**Frustrations**:
+- Sering *overbooking* karena pencatatan manual di buku/Excel.
+- Repot menjawab pertanyaan sepele yang berulang di chat.
+**Solution by BorneoTrip**:
+- **Admin Dashboard**: Satu tempat untuk semua booking.
+- **Auto Booking**: Sistem otomatis mengurangi slot.
+- **Automated Voucher**: E-Voucher terbit otomatis setelah pembayaran.

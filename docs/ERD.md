@@ -1,76 +1,88 @@
-# Entity Relationship Diagram (ERD)
+# Entity Relationship Diagram (ERD) - BorneoTrip
 
-Meskipun saat ini menggunakan Mock Data, berikut adalah rancangan skema database relasional untuk BorneoTrip.
+Dokumen ini menjelaskan struktur data yang digunakan dalam aplikasi. Karena aplikasi ini menggunakan **Frontend-First Architecture** tanpa database relasional (SQL), skema di bawah ini merepresentasikan struktur Objek JSON yang dikelola di memori/local storage.
+
+## Entities
+
+### 1. User
+Menyimpan data pengguna (Traveler, Admin, Operator).
+| Key | Type | Description |
+| :--- | :--- | :--- |
+| `id` | string | Unique identifier (e.g., `'usr1'`) |
+| `name` | string | Nama lengkap user |
+| `email` | string | Email login |
+| `role` | enum | `'client' | 'admin' | 'staff'` |
+| `avatar` | string | URL foto profil |
+| `preferences` | object | Preferensi travel (opsional) |
+
+### 2. TourPackage (Paket Wisata)
+Menyimpan data produk wisata.
+| Key | Type | Description |
+| :--- | :--- | :--- |
+| `id` | string | PKG-ID (e.g., `'pkg-derawan'`) |
+| `title` | string | Nama paket wisata |
+| `category` | string | Kategori (Nature, Culture, Adventure) |
+| `duration` | string | Durasi (e.g., "3 Days 2 Nights") |
+| `price` | number | Harga per pax dalam Rupiah |
+| `location` | string | Lokasi utama |
+| `rating` | number | Rating bintang (1.0 - 5.0) |
+| `description` | string | Deskripsi singkat listing |
+| `details` | object | Detail lengkap (overview, timeline) |
+| `badges` | array | Label khusus (`['sustainable', 'best-seller']`) |
+
+### 3. Event (Event Tahunan)
+Menyimpan data festival atau event khusus.
+| Key | Type | Description |
+| :--- | :--- | :--- |
+| `id` | string | Event ID |
+| `title` | string | Nama event |
+| `date` | string | Tanggal pelaksanaan |
+| `location` | string | Tempat pelaksanaan |
+| `description` | string | Deskripsi event |
+| `price` | number | Harga tiket masuk (0 jika gratis) |
+| `availableSeats` | number | Kapasitas tiket |
+| `coordinates` | object | `{ lat: number, lng: number }` untuk peta |
+
+### 4. Booking (Transaksi)
+Menyimpan data transaksi pemesanan paket oleh user.
+| Key | Type | Description |
+| :--- | :--- | :--- |
+| `id` | string | Booking ID (e.g., `'BK-123456'`) |
+| `userId` | string | FK ke User.id |
+| `userName` | string | Snapshot nama user saat booking |
+| `packageId` | string | FK ke TourPackage.id |
+| `pkgTitle` | string | Snapshot nama paket |
+| `pkgImage` | string | Snapshot gambar paket |
+| `date` | string | Tanggal keberangkatan (ISO String) |
+| `pax` | number | Jumlah peserta |
+| `totalPrice` | number | Total pembayaran (price * pax) |
+| `status` | enum | `'Pending' | 'Paid' | 'Confirmed' | 'Completed'` |
+| `createdAt` | string | Timestamp pembuatan booking |
+
+## Relationships
 
 ```mermaid
 erDiagram
-    USERS ||--o{ BOOKINGS : makes
-    USERS {
+    User ||--o{ Booking : places
+    TourPackage ||--o{ Booking : contains
+    User {
         string id PK
-        string name
+        string role
         string email
-        string password_hash
-        string role "admin|client"
-        string avatar_url
-        int xp_points
-        string membership_tier
     }
-
-    PACKAGES ||--o{ BOOKINGS : included_in
-    PACKAGES ||--o{ ITINERARY_DAYS : has
-    PACKAGES {
+    TourPackage {
         string id PK
-        string title
-        string location
-        int price
-        int duration_days
-        float eco_rating
-        text description
+        number price
         string category
     }
-
-    ITINERARY_DAYS ||--o{ ACTIVITIES : contains
-    ITINERARY_DAYS {
+    Event {
         string id PK
-        string package_id FK
-        int day_number
-        string title
+        string date
     }
-
-    ACTIVITIES {
+    Booking {
         string id PK
-        string day_id FK
-        string time
-        string title
-        string type "meal|transport|activity"
-    }
-
-    BOOKINGS {
-        string id PK
-        string user_id FK
-        string package_id FK
-        date booking_date
-        date travel_date
-        int pax_count
-        int total_amount
-        string status "pending|paid|confirmed|cancelled"
-        string payment_method
-    }
-
-    EVENTS {
-        string id PK
-        string title
-        string location
-        date event_date
-        string category
-        text description
+        string userId FK
+        string packageId FK
+        string status
     }
 ```
-
-## Penjelasan Entitas
-
-1.  **USERS**: Menyimpan data pengguna, baik traveler maupun admin. Menyimpan progres gamifikasi (XP/Tier).
-2.  **PACKAGES**: Produk utama yang dijual. Berisi info dasar harga dan lokasi.
-3.  **BOOKINGS**: Tabel transaksi. Menghubungkan User dengan Package. Punya status daur hidup transaksi.
-4.  **ITINERARY_DAYS & ACTIVITIES**: Struktur detail untuk itinerary paket. Relasi One-to-Many berjenjang.
-5.  **EVENTS**: Entitas terpisah untuk kalender event, tidak selalu transaksional (bisa hanya informatif).

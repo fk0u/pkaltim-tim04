@@ -1,5 +1,6 @@
 import Layout from '@/components/Layout';
 import { useAuth } from '@/contexts/AuthContext';
+import { useBooking } from '@/contexts/BookingContext';
 import { motion } from 'framer-motion';
 import { Calendar, MapPin, Clock, CheckCircle, ArrowRight, Wallet, Bell, Settings, Star, ChevronRight, Share2, Heart, Camera, Trophy, User, LogOut, FileText, CreditCard } from 'lucide-react';
 import { useRouter } from 'next/router';
@@ -10,9 +11,14 @@ import { PACKAGES } from '@/data/mockData';
 
 export default function ClientDashboard() {
     const { user, logout, isAuthenticated } = useAuth();
+    const { getBookingsByUserId } = useBooking();
     const router = useRouter();
     const { addToast } = useToast();
     const [activeModal, setActiveModal] = useState<string | null>(null);
+
+    // Get user bookings
+    const userBookings = user ? getBookingsByUserId(user.id) : [];
+    const activeTrip = userBookings.length > 0 ? userBookings[0] : null;
 
     useEffect(() => {
         if (!isAuthenticated) router.push('/login');
@@ -105,56 +111,71 @@ export default function ClientDashboard() {
                                     </h2>
                                 </div>
 
-                                <div
-                                    className="bg-white rounded-[2.5rem] p-4 lg:p-6 shadow-2xl shadow-black/20 relative group cursor-pointer hover:shadow-emerald-900/10 transition-all duration-500 border border-white/10"
-                                    onClick={(e) => {
-                                        // Prevent modal open if clicking buttons inside
-                                        if ((e.target as HTMLElement).closest('button')) return;
-                                        setActiveModal('trip_detail');
-                                    }}
-                                >
-                                    <div className="flex flex-col md:flex-row gap-6 lg:gap-8">
-                                        <div className="w-full md:w-2/5 h-64 md:h-auto relative rounded-[2rem] overflow-hidden shadow-lg">
-                                            <img src={PACKAGES[0].imageUrl} className="w-full h-full object-cover group-hover:scale-105 transition duration-1000" alt="Trip" />
-                                            <div className="absolute top-4 left-4 bg-white/95 backdrop-blur px-3 py-1.5 rounded-full text-xs font-extrabold text-emerald-800 shadow-lg flex items-center gap-1.5 ring-1 ring-emerald-500/10">
-                                                <Clock className="w-3.5 h-3.5" /> 20 Feb • {PACKAGES[0].duration}
-                                            </div>
-                                        </div>
-
-                                        <div className="flex-1 flex flex-col justify-center py-2 md:py-4 pr-2">
-                                            <div className="flex flex-wrap justify-between items-start mb-4 gap-2">
-                                                <div>
-                                                    <h3 className="text-2xl lg:text-3xl font-black text-slate-900 mb-2 leading-tight">{PACKAGES[0].title}</h3>
-                                                    <div className="flex items-center gap-2 text-sm font-bold text-slate-500">
-                                                        <MapPin className="w-4 h-4 text-emerald-500" /> {PACKAGES[0].location}
-                                                    </div>
+                                {activeTrip ? (
+                                    <div
+                                        className="bg-white rounded-[2.5rem] p-4 lg:p-6 shadow-2xl shadow-black/20 relative group cursor-pointer hover:shadow-emerald-900/10 transition-all duration-500 border border-white/10"
+                                        onClick={(e) => {
+                                            // Prevent modal open if clicking buttons inside
+                                            if ((e.target as HTMLElement).closest('button')) return;
+                                            setActiveModal('trip_detail');
+                                        }}
+                                    >
+                                        <div className="flex flex-col md:flex-row gap-6 lg:gap-8">
+                                            <div className="w-full md:w-2/5 h-64 md:h-auto relative rounded-[2rem] overflow-hidden shadow-lg">
+                                                <img src={activeTrip.pkgImage} className="w-full h-full object-cover group-hover:scale-105 transition duration-1000" alt="Trip" />
+                                                <div className="absolute top-4 left-4 bg-white/95 backdrop-blur px-3 py-1.5 rounded-full text-xs font-extrabold text-emerald-800 shadow-lg flex items-center gap-1.5 ring-1 ring-emerald-500/10">
+                                                    <Clock className="w-3.5 h-3.5" /> {new Date(activeTrip.date).toLocaleDateString()}
                                                 </div>
-                                                <span className="bg-emerald-50 text-emerald-700 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide border border-emerald-100 shadow-sm">Confirmed</span>
                                             </div>
 
-                                            <p className="text-slate-600 text-sm lg:text-base leading-relaxed mb-8 max-w-lg">
-                                                {PACKAGES[0].description}
-                                            </p>
+                                            <div className="flex-1 flex flex-col justify-center py-2 md:py-4 pr-2">
+                                                <div className="flex flex-wrap justify-between items-start mb-4 gap-2">
+                                                    <div>
+                                                        <h3 className="text-2xl lg:text-3xl font-black text-slate-900 mb-2 leading-tight">{activeTrip.pkgTitle}</h3>
+                                                        <div className="flex items-center gap-2 text-sm font-bold text-slate-500">
+                                                            <MapPin className="w-4 h-4 text-emerald-500" /> {activeTrip.location}
+                                                        </div>
+                                                    </div>
+                                                    <span className="bg-emerald-50 text-emerald-700 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide border border-emerald-100 shadow-sm">{activeTrip.status}</span>
+                                                </div>
 
-                                            <div className="grid grid-cols-2 gap-4 mt-auto">
-                                                <motion.button
-                                                    whileTap={{ scale: 0.95 }}
-                                                    className="bg-emerald-900 text-white font-bold py-4 px-6 rounded-2xl hover:bg-emerald-800 transition flex items-center justify-center gap-2 text-sm shadow-xl shadow-emerald-900/20"
-                                                    onClick={() => setActiveModal('voucher')}
-                                                >
-                                                    <Wallet className="w-4 h-4" /> Buka E-Voucher
-                                                </motion.button>
-                                                <motion.button
-                                                    whileTap={{ scale: 0.95 }}
-                                                    className="bg-slate-50 text-slate-700 font-bold py-4 px-6 rounded-2xl hover:bg-slate-100 transition text-sm border border-slate-200 flex items-center justify-center gap-2"
-                                                    onClick={() => setActiveModal('itinerary')}
-                                                >
-                                                    <Share2 className="w-4 h-4" /> Sharing
-                                                </motion.button>
+                                                <p className="text-slate-600 text-sm lg:text-base leading-relaxed mb-8 max-w-lg">
+                                                    Booking ID: #{activeTrip.id}. {activeTrip.pax} Pax. Bersiaplah untuk petualangan seru!
+                                                </p>
+
+                                                <div className="grid grid-cols-2 gap-4 mt-auto">
+                                                    <motion.button
+                                                        whileTap={{ scale: 0.95 }}
+                                                        className="bg-emerald-900 text-white font-bold py-4 px-6 rounded-2xl hover:bg-emerald-800 transition flex items-center justify-center gap-2 text-sm shadow-xl shadow-emerald-900/20"
+                                                        onClick={() => setActiveModal('voucher')}
+                                                    >
+                                                        <Wallet className="w-4 h-4" /> Buka E-Voucher
+                                                    </motion.button>
+                                                    <motion.button
+                                                        whileTap={{ scale: 0.95 }}
+                                                        className="bg-slate-50 text-slate-700 font-bold py-4 px-6 rounded-2xl hover:bg-slate-100 transition text-sm border border-slate-200 flex items-center justify-center gap-2"
+                                                        onClick={() => setActiveModal('itinerary')}
+                                                    >
+                                                        <Share2 className="w-4 h-4" /> Sharing
+                                                    </motion.button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                ) : (
+                                    <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-[2.5rem] p-8 text-center text-white">
+                                        <h3 className="text-xl font-bold mb-2">Belum ada perjalanan aktif</h3>
+                                        <p className="opacity-80 mb-6">Jelajahi paket wisata kami dan mulai petualanganmu!</p>
+                                        <motion.button
+                                            whileHover={{ scale: 1.05 }}
+                                            whileTap={{ scale: 0.95 }}
+                                            onClick={() => router.push('/packages')}
+                                            className="bg-emerald-400 text-emerald-900 px-6 py-3 rounded-xl font-bold"
+                                        >
+                                            Cari Paket Wisata
+                                        </motion.button>
+                                    </div>
+                                )}
                             </motion.div>
 
                             {/* Recommendations - Solid Background for Visibility */}

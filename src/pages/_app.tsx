@@ -2,6 +2,7 @@ import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { BookingProvider } from "@/contexts/BookingContext";
 import { ToastProvider } from "@/components/ui";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/router";
@@ -11,10 +12,11 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <AuthProvider>
-      <LanguageProvider>
-        <ToastProvider>
-          <AnimatePresence mode="wait">
-            <motion.div
+      <BookingProvider>
+        <LanguageProvider>
+          <ToastProvider>
+            <AnimatePresence mode="wait">
+              <motion.div
               key={router.pathname}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -26,7 +28,8 @@ export default function App({ Component, pageProps }: AppProps) {
             </motion.div>
           </AnimatePresence>
         </ToastProvider>
-      </LanguageProvider>
+        </LanguageProvider>
+      </BookingProvider>
     </AuthProvider>
   );
 }

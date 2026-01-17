@@ -1,5 +1,6 @@
 import Layout from '@/components/Layout';
 import { useAuth } from '@/contexts/AuthContext';
+import { useBooking } from '@/contexts/BookingContext';
 import { useToast } from '@/components/ui';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, CreditCard, CheckCircle, ShieldCheck } from 'lucide-react';
@@ -9,21 +10,41 @@ import Link from 'next/link';
 
 export default function CheckoutPage() {
     const { user, login } = useAuth();
+    const { addBooking } = useBooking();
     const { addToast } = useToast();
     const router = useRouter();
     const [step, setStep] = useState(1);
     const [isProcessing, setIsProcessing] = useState(false);
 
-    const { pkg, date, pax, price } = router.query;
+    const { pkg, date, pax, price, id, location, image } = router.query;
 
     // Mock Package Data Retrieval (in real app, use ID to fetch)
-    const pkgName = pkg ? (pkg as string).replace(/-/g, ' ') : "Paket Wisata";
+    const pkgName = pkg ? (pkg as string) : "Paket Wisata"; // Use raw string as title
     const totalPrice = price ? parseInt(price as string) : 0;
+    const pkgImage = image ? (image as string) : "https://images.unsplash.com/photo-1596401057633-565652b5d249?auto=format&fit=crop&q=80";
 
     const handlePayment = () => {
+        if (!user) {
+            addToast("Silakan login terlebih dahulu", "error");
+            router.push('/login');
+            return;
+        }
+
         setIsProcessing(true);
         // Simulate API call
         setTimeout(() => {
+            addBooking({
+                userId: user.id || 'guest',
+                userName: user.name,
+                packageId: (id as string) || 'PKG-CUSTOM',
+                pkgTitle: pkgName,
+                pkgImage: pkgImage,
+                location: (location as string) || 'East Kalimantan',
+                date: (date as string) || new Date().toISOString(),
+                pax: Number(pax) || 1,
+                totalPrice: totalPrice || 0,
+            });
+
             setIsProcessing(false);
             setStep(3);
             addToast("Pembayaran Berhasil! Booking terkonfirmasi.", "success");
