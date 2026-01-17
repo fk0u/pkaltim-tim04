@@ -2,7 +2,7 @@ import Layout from '@/components/Layout';
 import { ITINERARY_DETAILS, PACKAGES } from '@/data/mockData';
 import { useRouter } from 'next/router';
 import { Clock, MapPin, ShieldCheck, CheckCircle2, Utensils, Bus, Camera, BedDouble, ArrowRight } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { DatePicker, Counter, useToast } from '@/components/ui';
 
@@ -68,7 +68,7 @@ export default function PackageDetail() {
                alt={pkg.title}
                className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/40 to-transparent"></div>
+            <div className="absolute inset-0 bg-linear-to-t from-gray-900 via-gray-900/40 to-transparent"></div>
             <motion.div
                initial={{ opacity: 0, y: 30 }}
                animate={{ opacity: 1, y: 0 }}
@@ -107,7 +107,7 @@ export default function PackageDetail() {
                   viewport={{ once: true }}
                   className="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 mb-8 relative overflow-hidden"
                >
-                  <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-400 to-cyan-500"></div>
+                  <div className="absolute top-0 left-0 w-full h-2 bg-linear-to-r from-emerald-400 to-cyan-500"></div>
                   <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                      <Camera className="w-6 h-6 text-emerald-600" /> Sekilas Perjalanan
                   </h2>
@@ -120,7 +120,7 @@ export default function PackageDetail() {
                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         {pkg.facilities.map(f => (
                            <div key={f} className="flex items-center gap-3 text-gray-700 bg-white p-3 rounded-xl shadow-sm border border-gray-100">
-                              <CheckCircle2 className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+                              <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
                               <span className="font-medium">{f}</span>
                            </div>
                         ))}
@@ -134,7 +134,7 @@ export default function PackageDetail() {
                   </h2>
 
                   <div className="space-y-12">
-                     {itinerary.days.map((day, dayIdx) => (
+                     {itinerary.days.map((day) => (
                         <motion.div
                            key={day.day}
                            initial={{ opacity: 0, x: -20 }}
@@ -143,7 +143,7 @@ export default function PackageDetail() {
                            transition={{ delay: 0.1 }}
                            className="relative pl-8 border-l-2 border-emerald-100/50"
                         >
-                           <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-emerald-500 ring-4 ring-emerald-50 shadow-lg"></div>
+                           <div className="absolute -left-2.25 top-0 w-4 h-4 rounded-full bg-emerald-500 ring-4 ring-emerald-50 shadow-lg"></div>
                            <h3 className="text-xl font-bold text-gray-900 mb-6 bg-emerald-50/50 inline-block px-4 py-2 rounded-lg border border-emerald-100">
                               Hari {day.day}: <span className="text-emerald-800">{day.title}</span>
                            </h3>
@@ -169,10 +169,10 @@ export default function PackageDetail() {
                                     >
                                        {/* Connector Line (except last item) */}
                                        {idx !== day.activities.length - 1 && (
-                                          <div className="absolute left-[22px] top-12 bottom-[-40px] w-[2px] bg-gray-100 dashed-line"></div>
+                                          <div className="absolute left-5.5 top-12 -bottom-10 w-0.5 bg-gray-100 dashed-line"></div>
                                        )}
 
-                                       <div className={`relative z-10 w-11 h-11 rounded-full flex-shrink-0 flex items-center justify-center ${colorClass} ring-4 transition-transform group-hover:scale-110 shadow-sm`}>
+                                       <div className={`relative z-10 w-11 h-11 rounded-full shrink-0 flex items-center justify-center ${colorClass} ring-4 transition-transform group-hover:scale-110 shadow-sm`}>
                                           <Icon className="w-5 h-5" />
                                        </div>
 

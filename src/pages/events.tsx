@@ -1,22 +1,23 @@
 import Layout from '@/components/Layout';
 import { EVENTS } from '@/data/mockData';
-import { Calendar, MapPin, Search, Ticket, Share2, ArrowRight } from 'lucide-react';
+import { Calendar, MapPin, Search, Ticket, Share2 } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '@/components/ui';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+// import { useRouter } from 'next/router'; // Removed unused import
+import Image from 'next/image';
 
 export default function EventsPage() {
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
   const { addToast } = useToast();
-  const router = useRouter();
+  // const router = useRouter(); // Removed unused variable
 
   const categories = ['All', 'Culture', 'Nature', 'Sustainability', 'Culinary'];
 
   const filteredEvents = EVENTS.filter(event => {
-    const matchCategory = activeCategory === 'All' || event.category === activeCategory;
+    const matchCategory = activeCategory === 'All' || activeCategory === event.category;
     const matchSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       event.location.toLowerCase().includes(searchTerm.toLowerCase());
     return matchCategory && matchSearch;
@@ -35,8 +36,15 @@ export default function EventsPage() {
       {/* 1. IMMERSIVE HERO WITH FEATURED EVENT */}
       <div className="relative min-h-[70vh] flex items-center bg-black overflow-hidden group">
         <div className="absolute inset-0 z-0">
-          <img src={featuredEvent.imageUrl} className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition duration-[2s]" alt={featuredEvent.title} />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+          <Image 
+            src={featuredEvent.imageUrl} 
+            className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition duration-[2s]" 
+            alt={featuredEvent.title} 
+            width={1920}
+            height={1080}
+            priority
+          />
+          <div className="absolute inset-0 bg-linear-to-t from-black via-black/40 to-transparent"></div>
         </div>
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-20">
           <motion.div
@@ -127,14 +135,16 @@ export default function EventsPage() {
                     exit={{ opacity: 0, scale: 0.9 }}
                     transition={{ delay: idx * 0.1 }}
                   >
-                    <Link href={`/events/${event.id}`} className="bg-white rounded-[2rem] overflow-hidden shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-gray-100 group flex flex-col h-full cursor-pointer relative">
+                    <Link href={`/events/${event.id}`} className="bg-white rounded-4xl overflow-hidden shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-gray-100 group flex flex-col h-full cursor-pointer relative">
                       <div className="relative h-64 overflow-hidden">
-                        <img
+                        <Image
                           src={event.imageUrl}
                           alt={event.title}
                           className="w-full h-full object-cover group-hover:scale-110 transition duration-700"
+                          width={400}
+                          height={300}
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80"></div>
+                        <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent opacity-80"></div>
                         <div className="absolute top-4 right-4 bg-white/30 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-white border border-white/20">
                           {event.category}
                         </div>
@@ -146,14 +156,14 @@ export default function EventsPage() {
                         </div>
                       </div>
 
-                      <div className="p-6 flex-grow flex flex-col justify-between">
+                      <div className="p-6 grow flex flex-col justify-between">
                         <div>
                           <div className="flex items-start text-gray-500 text-sm mb-4 gap-2">
-                            <MapPin className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" />
+                            <MapPin className="w-4 h-4 mt-0.5 text-green-600 shrink-0" />
                             <span className="line-clamp-1">{event.location}</span>
                           </div>
                           <p className="text-gray-600 text-sm line-clamp-3 mb-6 bg-gray-50 p-3 rounded-xl italic">
-                            "{event.description}"
+                            &quot;{event.description}&quot;
                           </p>
                         </div>
 
@@ -164,6 +174,8 @@ export default function EventsPage() {
                           <button
                             onClick={(e) => handleRemindMe(e, event.title)}
                             className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center text-green-600 hover:bg-green-600 hover:text-white transition-all shadow-md active:scale-90"
+                            aria-label={`Ingatkan saya tentang ${event.title}`}
+                            title={`Ingatkan saya tentang ${event.title}`}
                           >
                             <Ticket className="w-4 h-4" />
                           </button>

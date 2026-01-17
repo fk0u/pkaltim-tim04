@@ -1,9 +1,10 @@
 import Link from 'next/link';
-import { Menu, Search, User, X, ChevronRight, Globe, LogOut, LayoutDashboard } from 'lucide-react';
+import { Menu, Search, X, ChevronRight, Globe, LogOut, LayoutDashboard } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
+import Image from 'next/image';
 
 export default function Navbar({ isTransparent = true }: { isTransparent?: boolean }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -43,13 +44,13 @@ export default function Navbar({ isTransparent = true }: { isTransparent?: boole
 
   return (
     <nav
-      className={`fixed w-full z-[100] transition-all duration-300 ${isSolid ? 'bg-white/90 backdrop-blur-md shadow-sm py-3' : 'bg-transparent py-4 md:py-6'
+      className={`fixed w-full z-100 transition-all duration-300 ${isSolid ? 'bg-white/90 backdrop-blur-md shadow-sm py-3' : 'bg-transparent py-4 md:py-6'
         }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
           {/* Logo */}
-          <Link href="/" className="flex-shrink-0 flex items-center gap-2 group relative z-[101] outline-none">
+          <Link href="/" className="shrink-0 flex items-center gap-2 group relative z-101 outline-none">
             <span className={`text-2xl font-extrabold tracking-tight transition-colors ${isSolid || isMenuOpen ? 'text-green-800' : 'text-white'
               }`}>
               BorneoTrip<span className="text-emerald-500">.</span>
@@ -77,13 +78,16 @@ export default function Navbar({ isTransparent = true }: { isTransparent?: boole
               onClick={toggleLanguage}
               className={`p-2 rounded-full flex items-center gap-1 font-bold text-xs transition ${isSolid ? 'bg-gray-100 text-gray-700 hover:bg-gray-200' : 'bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm'
                 }`}
+              aria-label="Toggle language"
             >
               <Globe className="w-4 h-4" />
               <span>{locale.toUpperCase()}</span>
             </button>
 
-            <button className={`p-2 rounded-full hover:bg-black/5 transition ${isSolid ? 'text-gray-600' : 'text-white'
-              }`}>
+            <button 
+              className={`p-2 rounded-full hover:bg-black/5 transition ${isSolid ? 'text-gray-600' : 'text-white'}`}
+              aria-label="Search"
+            >
               <Search className="w-5 h-5" />
             </button>
 
@@ -93,8 +97,14 @@ export default function Navbar({ isTransparent = true }: { isTransparent?: boole
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                   className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition ${isSolid ? 'bg-gray-100/80 hover:bg-gray-200' : 'bg-white/20 hover:bg-white/30 backdrop-blur-md text-white'}`}
                 >
-                  <img src={user.avatar} alt={user.name} className="w-7 h-7 rounded-full border border-white/50" />
-                  <span className={`text-sm font-bold max-w-[100px] truncate ${isSolid ? 'text-gray-900' : 'text-white'}`}>{user.name}</span>
+                  <Image 
+                    src={user.avatar} 
+                    alt={user.name} 
+                    className="rounded-full border border-white/50"
+                    width={28}
+                    height={28}
+                  />
+                  <span className={`text-sm font-bold max-w-25 truncate ${isSolid ? 'text-gray-900' : 'text-white'}`}>{user.name}</span>
                 </button>
 
                 <AnimatePresence>
@@ -134,12 +144,13 @@ export default function Navbar({ isTransparent = true }: { isTransparent?: boole
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center z-[101] gap-4">
+          <div className="md:hidden flex items-center z-101 gap-4">
             {/* Mobile Lang Toggle */}
             <button
               onClick={toggleLanguage}
               className={`p-1.5 rounded-full flex items-center gap-1 font-bold text-[10px] transition ${isSolid || isMenuOpen ? 'bg-gray-100 text-gray-700' : 'bg-white/10 text-white backdrop-blur-sm'
                 }`}
+              aria-label="Toggle language"
             >
               <Globe className="w-3.5 h-3.5" />
               <span>{locale.toUpperCase()}</span>
@@ -148,6 +159,7 @@ export default function Navbar({ isTransparent = true }: { isTransparent?: boole
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className={`p-2 transition-colors duration-300 ${isSolid || isMenuOpen ? 'text-green-900' : 'text-white'}`}
+              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
             >
               <AnimatePresence mode='wait'>
                 {isMenuOpen ? (
@@ -173,7 +185,7 @@ export default function Navbar({ isTransparent = true }: { isTransparent?: boole
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-[100] bg-white text-black md:hidden overflow-y-auto"
+            className="fixed inset-0 z-100 bg-white text-black md:hidden overflow-y-auto"
           >
             <div className="flex flex-col min-h-screen px-6 pt-32 pb-12">
               <div className="flex-1 flex flex-col justify-center space-y-6">
