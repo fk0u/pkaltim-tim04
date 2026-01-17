@@ -5,6 +5,8 @@ import { Users, DollarSign, Package, TrendingUp, MoreHorizontal, CheckCircle } f
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
+import { PACKAGES } from '@/data/mockData';
+
 export default function AdminDashboard() {
     const { user, isAuthenticated } = useAuth();
     const router = useRouter();
@@ -24,10 +26,10 @@ export default function AdminDashboard() {
     ];
 
     const recentBookings = [
-        { id: '#BK-001', guest: 'Budi Santoso', pkg: 'Derawan Paradise', date: '20 Feb', status: 'Paid', amount: 'Rp 5.200.000' },
-        { id: '#BK-002', guest: 'Sarah Jenkins', pkg: 'Orangutan Tour', date: '22 Feb', status: 'Pending', amount: 'Rp 8.500.000' },
-        { id: '#BK-003', guest: 'Ahmad Dani', pkg: 'Mahakam Safari', date: '25 Feb', status: 'Paid', amount: 'Rp 4.100.000' },
-        { id: '#BK-004', guest: 'Rina Nose', pkg: 'Kakaban Trip', date: '28 Feb', status: 'Pending', amount: 'Rp 3.500.000' },
+        { id: '#BK-001', guest: 'Budi Santoso', pkg: PACKAGES[0]?.title || 'Derawan Paradise', date: '20 Feb', status: 'Paid', amount: 'Rp 5.200.000' },
+        { id: '#BK-002', guest: 'Sarah Jenkins', pkg: PACKAGES[1]?.title || 'Orangutan Tour', date: '22 Feb', status: 'Pending', amount: 'Rp 8.500.000' },
+        { id: '#BK-003', guest: 'Ahmad Dani', pkg: PACKAGES[2]?.title || 'Mahakam Safari', date: '25 Feb', status: 'Paid', amount: 'Rp 4.100.000' },
+        { id: '#BK-004', guest: 'Rina Nose', pkg: PACKAGES[0]?.title || 'Kakaban Trip', date: '28 Feb', status: 'Pending', amount: 'Rp 3.500.000' },
     ];
 
     return (

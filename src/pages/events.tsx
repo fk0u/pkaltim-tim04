@@ -1,14 +1,17 @@
 import Layout from '@/components/Layout';
 import { EVENTS } from '@/data/mockData';
-import { Calendar, MapPin, Search, Ticket, Share2 } from 'lucide-react';
+import { Calendar, MapPin, Search, Ticket, Share2, ArrowRight } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '@/components/ui';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 
 export default function EventsPage() {
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
   const { addToast } = useToast();
+  const router = useRouter();
 
   const categories = ['All', 'Culture', 'Nature', 'Sustainability', 'Culinary'];
 
@@ -21,7 +24,8 @@ export default function EventsPage() {
 
   const featuredEvent = EVENTS[0]; // Assume first event is featured
 
-  const handleRemindMe = (eventTitle: string) => {
+  const handleRemindMe = (e: React.MouseEvent, eventTitle: string) => {
+    e.stopPropagation();
     addToast(`Pengingat diset untuk ${eventTitle}! Kami akan mengirim notifikasi.`, 'success');
   };
 
@@ -54,9 +58,9 @@ export default function EventsPage() {
               {featuredEvent.description}
             </p>
             <div className="flex gap-4">
-              <button className="bg-green-600 hover:bg-green-500 text-white px-8 py-4 rounded-full font-bold text-lg transition transform hover:scale-105 shadow-lg shadow-green-900/50 flex items-center gap-2" onClick={() => handleRemindMe(featuredEvent.title)}>
-                <Ticket className="w-5 h-5" /> Dapatkan Tiket
-              </button>
+               <Link href={`/events/${featuredEvent.id}`} className="bg-green-600 hover:bg-green-500 text-white px-8 py-4 rounded-full font-bold text-lg transition transform hover:scale-105 shadow-lg shadow-green-900/50 flex items-center gap-2">
+                <Ticket className="w-5 h-5" /> Lihat Detail & Tiket
+              </Link>
               <button className="bg-white/10 hover:bg-white/20 backdrop-blur text-white px-6 py-4 rounded-full font-bold text-lg transition border border-white/20 flex items-center gap-2">
                 <Share2 className="w-5 h-5" /> Share
               </button>
@@ -122,50 +126,50 @@ export default function EventsPage() {
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.9 }}
                     transition={{ delay: idx * 0.1 }}
-                    className="bg-white rounded-[2rem] overflow-hidden shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-gray-100 group flex flex-col h-full cursor-pointer"
                   >
-                    <div className="relative h-64 overflow-hidden">
-                      <img
-                        src={event.imageUrl}
-                        alt={event.title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition duration-700"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80"></div>
-                      <div className="absolute top-4 right-4 bg-white/30 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-white border border-white/20">
-                        {event.category}
-                      </div>
-                      <div className="absolute bottom-4 left-4 right-4 text-white">
-                        <div className="flex items-center gap-2 text-sm font-medium mb-1 text-green-300">
-                          <Calendar className="w-4 h-4" /> {event.date}
+                    <Link href={`/events/${event.id}`} className="bg-white rounded-[2rem] overflow-hidden shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-gray-100 group flex flex-col h-full cursor-pointer relative">
+                      <div className="relative h-64 overflow-hidden">
+                        <img
+                          src={event.imageUrl}
+                          alt={event.title}
+                          className="w-full h-full object-cover group-hover:scale-110 transition duration-700"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80"></div>
+                        <div className="absolute top-4 right-4 bg-white/30 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-white border border-white/20">
+                          {event.category}
                         </div>
-                        <h3 className="text-xl font-bold leading-tight group-hover:text-green-300 transition">{event.title}</h3>
-                      </div>
-                    </div>
-
-                    <div className="p-6 flex-grow flex flex-col justify-between">
-                      <div>
-                        <div className="flex items-start text-gray-500 text-sm mb-4 gap-2">
-                          <MapPin className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" />
-                          <span className="line-clamp-1">{event.location}</span>
+                        <div className="absolute bottom-4 left-4 right-4 text-white">
+                          <div className="flex items-center gap-2 text-sm font-medium mb-1 text-green-300">
+                            <Calendar className="w-4 h-4" /> {event.date}
+                          </div>
+                          <h3 className="text-xl font-bold leading-tight group-hover:text-green-300 transition">{event.title}</h3>
                         </div>
-                        <p className="text-gray-600 text-sm line-clamp-3 mb-6 bg-gray-50 p-3 rounded-xl italic">
-                          "{event.description}"
-                        </p>
                       </div>
 
-                      <div className="flex items-center justify-between mt-auto">
-                        <div className="flex -space-x-2">
-                          {[1, 2, 3].map(i => <div key={i} className="w-8 h-8 rounded-full bg-gray-200 border-2 border-white"></div>)}
-                          <div className="w-8 h-8 rounded-full bg-gray-100 border-2 border-white flex items-center justify-center text-[10px] font-bold text-gray-500">+120</div>
+                      <div className="p-6 flex-grow flex flex-col justify-between">
+                        <div>
+                          <div className="flex items-start text-gray-500 text-sm mb-4 gap-2">
+                            <MapPin className="w-4 h-4 mt-0.5 text-green-600 flex-shrink-0" />
+                            <span className="line-clamp-1">{event.location}</span>
+                          </div>
+                          <p className="text-gray-600 text-sm line-clamp-3 mb-6 bg-gray-50 p-3 rounded-xl italic">
+                            "{event.description}"
+                          </p>
                         </div>
-                        <button
-                          onClick={() => handleRemindMe(event.title)}
-                          className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center text-green-600 hover:bg-green-600 hover:text-white transition-all shadow-md active:scale-90"
-                        >
-                          <Ticket className="w-5 h-5" />
-                        </button>
+
+                        <div className="flex items-center justify-between mt-auto">
+                          <div className="text-sm font-bold text-gray-900 border border-gray-200 px-3 py-1 rounded-lg">
+                             {event.price || 'Free Event'}
+                          </div>
+                          <button
+                            onClick={(e) => handleRemindMe(e, event.title)}
+                            className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center text-green-600 hover:bg-green-600 hover:text-white transition-all shadow-md active:scale-90"
+                          >
+                            <Ticket className="w-4 h-4" />
+                          </button>
+                        </div>
                       </div>
-                    </div>
+                    </Link>
                   </motion.div>
                 ))}
               </AnimatePresence>

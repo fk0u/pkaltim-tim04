@@ -40,7 +40,7 @@ export default function Home() {
                   playsInline
                   className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
                >
-                  <source src="/video/bumper.mp4" type="video/mp4" />
+                  <source src="/video/bumper.webm" type="video/webm" />
                </video>
 
                {/* Dark Overlay for Text Readability */}

@@ -115,25 +115,25 @@ export default function ClientDashboard() {
                                 >
                                     <div className="flex flex-col md:flex-row gap-6 lg:gap-8">
                                         <div className="w-full md:w-2/5 h-64 md:h-auto relative rounded-[2rem] overflow-hidden shadow-lg">
-                                            <img src="https://images.unsplash.com/photo-1596401057633-565652b5d249?auto=format&fit=crop&q=80" className="w-full h-full object-cover group-hover:scale-105 transition duration-1000" alt="Trip" />
+                                            <img src={PACKAGES[0].imageUrl} className="w-full h-full object-cover group-hover:scale-105 transition duration-1000" alt="Trip" />
                                             <div className="absolute top-4 left-4 bg-white/95 backdrop-blur px-3 py-1.5 rounded-full text-xs font-extrabold text-emerald-800 shadow-lg flex items-center gap-1.5 ring-1 ring-emerald-500/10">
-                                                <Clock className="w-3.5 h-3.5" /> 20 Feb • 4 Hari
+                                                <Clock className="w-3.5 h-3.5" /> 20 Feb • {PACKAGES[0].duration}
                                             </div>
                                         </div>
 
                                         <div className="flex-1 flex flex-col justify-center py-2 md:py-4 pr-2">
                                             <div className="flex flex-wrap justify-between items-start mb-4 gap-2">
                                                 <div>
-                                                    <h3 className="text-2xl lg:text-3xl font-black text-slate-900 mb-2 leading-tight">Eksplorasi Derawan</h3>
+                                                    <h3 className="text-2xl lg:text-3xl font-black text-slate-900 mb-2 leading-tight">{PACKAGES[0].title}</h3>
                                                     <div className="flex items-center gap-2 text-sm font-bold text-slate-500">
-                                                        <MapPin className="w-4 h-4 text-emerald-500" /> Berau, East Kalimantan
+                                                        <MapPin className="w-4 h-4 text-emerald-500" /> {PACKAGES[0].location}
                                                     </div>
                                                 </div>
                                                 <span className="bg-emerald-50 text-emerald-700 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide border border-emerald-100 shadow-sm">Confirmed</span>
                                             </div>
 
                                             <p className="text-slate-600 text-sm lg:text-base leading-relaxed mb-8 max-w-lg">
-                                                Paket eksklusif 4 Hari 3 Malam. Termasuk snorkeling dengan Whale Shark dan konservasi penyu hijau.
+                                                {PACKAGES[0].description}
                                             </p>
 
                                             <div className="grid grid-cols-2 gap-4 mt-auto">

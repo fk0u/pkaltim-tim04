@@ -1,3 +1,8 @@
+export interface EventSchedule {
+  time: string;
+  activity: string;
+}
+
 export interface Event {
   id: string;
   title: string;
@@ -7,6 +12,11 @@ export interface Event {
   imageUrl: string;
   category: 'Culture' | 'Nature' | 'Sustainability' | 'Culinary';
   tags: string[];
+  price?: string;
+  organizer?: string;
+  ticketCount?: number;
+  schedule?: EventSchedule[];
+  gallery?: string[];
 }
 
 export interface TourPackage {

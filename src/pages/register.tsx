@@ -18,9 +18,16 @@ export default function RegisterPage() {
 
     return (
         <Layout title="Daftar - BorneoTrip">
-            <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-                {/* Background Decoration */}
-                <div className="absolute top-0 right-0 w-full h-[50vh] bg-emerald-900 rounded-b-[4rem] z-0"></div>
+            <div className="min-h-screen flex flex-col justify-center py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+                {/* Immersive Background */}
+                <div className="absolute inset-0 z-0">
+                    <img
+                        src="https://images.unsplash.com/photo-1596401057633-565652b5d249?auto=format&fit=crop&q=80"
+                        alt="Background"
+                        className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-bl from-emerald-900/90 via-black/50 to-emerald-900/90 backdrop-blur-sm"></div>
+                </div>
 
                 <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}

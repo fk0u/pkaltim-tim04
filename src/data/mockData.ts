@@ -202,6 +202,19 @@ export const EVENTS: Event[] = [
     imageUrl: 'https://images.unsplash.com/photo-1605218427360-3638d1a151e9?auto=format&fit=crop&q=80',
     category: 'Culture',
     tags: ['Royal Tradition', 'Cultural Parade', 'Folk Art'],
+    price: 'Free',
+    organizer: 'Dispar Kukar',
+    ticketCount: 5000,
+    schedule: [
+      { time: '08:00', activity: 'Ritual Mendirikan Ayu' },
+      { time: '10:00', activity: 'Parade Budaya Internasional' },
+      { time: '14:00', activity: 'Lomba Olahraga Tradisional' },
+      { time: '19:00', activity: 'Panggung Hiburan Rakyat' }
+    ],
+    gallery: [
+      'https://images.unsplash.com/photo-1596401057633-565652b5d249?auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1518531933037-91b2f5d2294c?auto=format&fit=crop&q=80'
+    ]
   },
   {
     id: 'e2',
@@ -212,6 +225,15 @@ export const EVENTS: Event[] = [
     imageUrl: 'https://images.unsplash.com/photo-1544550581-5f7ceaf7f992?auto=format&fit=crop&q=80',
     category: 'Sustainability',
     tags: ['Sport Tourism', 'Conservation', 'Beach Clean-up'],
+    price: 'Rp 250.000',
+    organizer: 'Berau Coal & WWF',
+    ticketCount: 500,
+    schedule: [
+      { time: '05:30', activity: 'Start Marathon 10K' },
+      { time: '09:00', activity: 'Beach Clean-up Action' },
+      { time: '11:00', activity: 'Pelepasan Tukik (Bayi Penyu)' },
+      { time: '13:00', activity: 'Makan siang Seafood Bakar' }
+    ]
   },
   {
     id: 'e3',
@@ -222,6 +244,14 @@ export const EVENTS: Event[] = [
     imageUrl: 'https://images.unsplash.com/photo-1514525253440-b393452e8d26?auto=format&fit=crop&q=80',
     category: 'Nature',
     tags: ['Music', 'River View', 'Night Market'],
+    price: 'Rp 150.000',
+    organizer: 'Samarinda Jazz Community',
+    schedule: [
+      { time: '16:00', activity: 'Open Gate & Bazaar Kuliner' },
+      { time: '17:00', activity: 'Local Band Opening' },
+      { time: '19:30', activity: 'Main Guest Star: Indra Lesmana' },
+      { time: '22:00', activity: 'Jamming Session' }
+    ]
   },
   {
     id: 'e4',
@@ -232,6 +262,12 @@ export const EVENTS: Event[] = [
     imageUrl: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&q=80',
     category: 'Culture',
     tags: ['River Festival', 'Traditional Boat', 'Culinary'],
+    price: 'Free',
+    schedule: [
+      { time: '08:00', activity: 'Lomba Perahu Naga' },
+      { time: '13:00', activity: 'Lomba Berenang Menyeberangi Sungai' },
+      { time: '16:00', activity: 'Parade Kapal Hias' }
+    ]
   },
   {
     id: 'e5',
@@ -242,6 +278,12 @@ export const EVENTS: Event[] = [
     imageUrl: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80',
     category: 'Culinary',
     tags: ['Creative Economy', 'Fashion', 'Concert'],
+    price: 'Rp 50.000',
+    schedule: [
+      { time: '10:00', activity: 'Opening Creative Expo' },
+      { time: '15:00', activity: 'Kaltim Fashion Show Runway' },
+      { time: '20:00', activity: 'Music Concert: Tulus' }
+    ]
   },
 ];
 

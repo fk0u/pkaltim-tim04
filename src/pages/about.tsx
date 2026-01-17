@@ -27,7 +27,7 @@ export default function AboutPage() {
                className="max-w-4xl mx-auto px-4 text-center relative z-10"
             >
                <div className="inline-flex items-center gap-2 bg-emerald-800/50 backdrop-blur px-4 py-1.5 rounded-full text-emerald-300 font-bold text-sm mb-6 border border-emerald-700">
-                  <Leaf className="w-4 h-4" /> Sustainbility Mission
+                  <Leaf className="w-4 h-4" /> Sustainability Mission
                </div>
                <h1 className="text-4xl md:text-6xl font-black mb-6 leading-tight">Menjaga Hutan, <br /><span className="text-emerald-400">Memuliakan Budaya</span></h1>
                <p className="text-lg md:text-xl text-emerald-100/90 leading-relaxed max-w-2xl mx-auto">
