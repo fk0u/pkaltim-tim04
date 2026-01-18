@@ -8,6 +8,8 @@
 
 BorneoTrip adalah platform "Sustainable Tourism" yang menghubungkan wisatawan dengan keindahan alam, kekayaan budaya, dan event tahunan di Kalimantan Timur. Kami fokus pada pariwisata yang memberikan dampak positif bagi lingkungan dan masyarakat adat.
 
+> ℹ️ **Assignment Note**: Project ini dikembangkan sebagai penyelesaian tugas / challenge dari repository [fk0u/pkaltim](https://github.com/fk0u/pkaltim).
+
 **[🌐 Live Demo URL](#)** | **[📄 Baca Dokumentasi](docs/)** | **[📊 Project Stats](docs/STATISTICS.md)**
 
 ![Project Banner](public/picture/city/samarinda.jpg)
