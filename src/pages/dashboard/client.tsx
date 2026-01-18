@@ -7,7 +7,7 @@ import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { useToast } from '@/components/ui';
 import Modal from '@/components/ui/Modal';
-import { PACKAGES } from '@/data/mockData';
+import Link from 'next/link';
 
 export default function ClientDashboard() {
     const { user, logout, isAuthenticated } = useAuth();
@@ -15,6 +15,7 @@ export default function ClientDashboard() {
     const router = useRouter();
     const { addToast } = useToast();
     const [activeModal, setActiveModal] = useState<string | null>(null);
+    const [recommendedPackages, setRecommendedPackages] = useState<any[]>([]);
 
     // Get user bookings
     const userBookings = user ? getBookingsByUserId(user.id) : [];
@@ -23,6 +24,37 @@ export default function ClientDashboard() {
     useEffect(() => {
         if (!isAuthenticated) router.push('/login');
         if (user && user.role !== 'client') router.push(`/dashboard/${user.role}`);
+        
+        // Fetch recommendations
+        const fetchRecommendations = async () => {
+             try {
+                const res = await fetch('/api/packages');
+                const allPackages = await res.json();
+                
+                // Simple personalization algorithm
+                if (user && (user as any).preferences) {
+                    const prefs = (user as any).preferences; // Assuming already object or need parsing
+                    // If prefs is string, parse it. If object, use it.
+                    const userInterests = typeof prefs === 'string' ? JSON.parse(prefs).interests : (prefs.interests || []);
+                    
+                    if (userInterests.length > 0) {
+                        const filtered = allPackages.filter((pkg: any) => 
+                            // Simple tag matching or random for demo if tags missing
+                            true // For now show all, but ideally filter by tags
+                        );
+                        setRecommendedPackages(filtered.slice(0, 3));
+                    } else {
+                        setRecommendedPackages(allPackages.slice(0, 3));
+                    }
+                } else {
+                    setRecommendedPackages(allPackages.slice(0, 3));
+                }
+             } catch (e) {
+                 console.error(e);
+             }
+        };
+        fetchRecommendations();
+
     }, [isAuthenticated, user, router]);
 
     if (!user) return null;
@@ -187,8 +219,8 @@ export default function ClientDashboard() {
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                    {/* Use Real Data from Mock */}
-                                    {PACKAGES.slice(0, 3).map((pkg) => (
+                                    {/* Use Real Data from API */}
+                                    {recommendedPackages.map((pkg: any) => (
                                         <motion.div
                                             key={pkg.id}
                                             whileHover={{ y: -8 }}

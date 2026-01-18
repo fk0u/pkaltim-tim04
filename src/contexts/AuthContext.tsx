@@ -9,6 +9,7 @@ interface User {
     email: string;
     role: UserRole;
     avatar?: string;
+    onboardingCompleted?: boolean;
 }
 
 interface AuthContextType {
@@ -17,7 +18,8 @@ interface AuthContextType {
     login: (email: string, password: string) => Promise<boolean>; // Return success/fail
     logout: () => void;
     register: (name: string, email: string, password: string) => Promise<boolean>;
-    loginSocial: (provider: string) => void; 
+    loginSocial: (provider: string) => void;
+    updateUserProfile: (data: Partial<User>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -33,6 +35,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setUser(JSON.parse(storedUser));
         }
     }, []);
+
+    const updateUserProfile = (data: Partial<User>) => {
+        if (user) {
+            const updatedUser = { ...user, ...data };
+            setUser(updatedUser);
+            localStorage.setItem('borneotrip_user', JSON.stringify(updatedUser));
+        }
+    };
+
 
     const login = async (email: string, password: string) => {
         try {
@@ -54,6 +65,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 
                 if (userData.role === 'admin' || userData.role === 'operator') {
                     router.push('/dashboard/admin');
+                } else if (userData.role === 'mitra') {
+                    router.push('/dashboard/partner');
+                } else if (!userData.onboardingCompleted) {
+                    router.push('/onboarding');
                 } else {
                     router.push('/dashboard/client');
                 }
@@ -92,11 +107,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 const data = await res.json();
                 const userData = {
                     ...data,
-                    avatar: `https://i.pravatar.cc/150?u=${data.email}`
+                    avatar: `https://i.pravatar.cc/150?u=${data.email}`,
+                    onboardingCompleted: false
                 };
                 setUser(userData);
                 localStorage.setItem('borneotrip_user', JSON.stringify(userData));
-                router.push('/dashboard/client');
+                router.push('/onboarding');
                 return true;
             }
             return false;
