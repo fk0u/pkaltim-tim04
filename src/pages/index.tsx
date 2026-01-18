@@ -3,66 +3,18 @@ import Layout from '@/components/Layout';
 import SearchWidget from '@/components/SearchWidget';
 import HorizontalScroll from '@/components/HorizontalScroll';
 import Testimonials from '@/components/Testimonials';
+import { EVENTS, PACKAGES } from '@/data/mockData';
 import { ArrowRight, MapPin, Clock } from 'lucide-react';
 import Link from 'next/link';
 import RegionExplorer from '@/components/RegionExplorer';
 import { useLanguage } from '@/contexts/LanguageContext';
 import Image from 'next/image';
-import { GetServerSideProps } from 'next';
-import prisma from '@/lib/prisma';
-import { Event, TourPackage } from '@/types';
 
-interface HomeProps {
-  events: Event[];
-  packages: TourPackage[];
-}
-
-export const getServerSideProps: GetServerSideProps = async () => {
-  try {
-    const eventsData = await prisma.event.findMany({
-      take: 5,
-      orderBy: { date: 'asc' } // Soonest events first
-    });
-
-    const packagesData = await prisma.tourPackage.findMany({
-      take: 4,
-      orderBy: { rating: 'desc' } // Best rated first
-    });
-
-    const events = eventsData.map(e => ({
-      ...e,
-      tags: JSON.parse(e.tags),
-      schedule: e.schedule ? JSON.parse(e.schedule) : [],
-      gallery: e.gallery ? JSON.parse(e.gallery) : [],
-      category: e.category as any, // Cast to union type
-      createdAt: e.createdAt.toISOString(),
-      updatedAt: e.updatedAt.toISOString(),
-    }));
-
-    const packages = packagesData.map(p => ({
-        ...p,
-        ecoRating: p.ecoRating as any,
-    }));
-
-    return {
-      props: {
-        events: JSON.parse(JSON.stringify(events)), // Serialize for Next.js
-        packages: JSON.parse(JSON.stringify(packages)),
-      },
-    };
-  } catch (error) {
-    console.error("Failed to fetch home data:", error);
-    return {
-      props: { events: [], packages: [] }
-    };
-  }
-};
-
-export default function Home({ events, packages }: HomeProps) {
+export default function Home() {
    const { t } = useLanguage();
-   // Fallback if data is empty (e.g. DB error) or loading
-   const displayEvents = events; 
-   const displayPackages = packages;
+   // Use Mock Data directly
+   const displayEvents = EVENTS; 
+   const displayPackages = PACKAGES;
 
    const fadeInUp: MotionProps = {
       initial: { opacity: 0, y: 40 },

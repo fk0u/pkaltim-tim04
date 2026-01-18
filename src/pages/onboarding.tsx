@@ -56,27 +56,12 @@ export default function Onboarding() {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/user/preferences', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: user?.id,
-          preferences
-        }),
-      });
+      // SIMULATE SUCCESS WITHOUT DB
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      updateUserProfile({ onboardingCompleted: true, ...preferences as any }); 
+      router.push('/dashboard/client');
 
-      if (res.ok) {
-        updateUserProfile({ onboardingCompleted: true, ...preferences as any }); // Update local state (ignoring type strictness for prototype)
-        // Fake AI processing delay
-        setTimeout(() => {
-          router.push('/dashboard/client');
-        }, 1500);
-      } else {
-        alert('Gagal menyimpan preferensi. Silakan coba lagi.');
-        setLoading(false);
-      }
     } catch (error) {
       console.error(error);
       setLoading(false);

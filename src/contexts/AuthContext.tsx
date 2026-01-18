@@ -46,35 +46,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 
     const login = async (email: string, password: string) => {
+        // MOCK LOGIN WITHOUT DB
         try {
-            const res = await fetch('/api/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            });
+            // Simulate API delay
+            await new Promise(resolve => setTimeout(resolve, 500));
             
-            if (res.ok) {
-                const data = await res.json();
-                // Ensure avatar is set
-                const userData = {
-                    ...data,
-                    avatar: data.avatar || `https://i.pravatar.cc/150?u=${data.email}`
-                };
-                setUser(userData);
-                localStorage.setItem('borneotrip_user', JSON.stringify(userData));
-                
-                if (userData.role === 'admin' || userData.role === 'operator') {
-                    router.push('/dashboard/admin');
-                } else if (userData.role === 'mitra') {
-                    router.push('/dashboard/partner');
-                } else if (!userData.onboardingCompleted) {
-                    router.push('/onboarding');
-                } else {
-                    router.push('/dashboard/client');
-                }
-                return true;
+            // Allow generic login or specific mock
+            const mockUser: User = {
+                id: 'mock-user-1',
+                name: 'Pengguna Demo',
+                email: email,
+                role: 'client',
+                avatar: `https://i.pravatar.cc/150?u=${email}`,
+                onboardingCompleted: true 
+            };
+            
+            // Special case for admin login
+            if (email.includes('admin')) {
+                mockUser.role = 'admin';
+                mockUser.name = 'Admin Demo';
+            } else if (email.includes('mitra')) {
+                mockUser.role = 'mitra' as any; // Cast temporarily if type issues exist
+                mockUser.name = 'Mitra Demo';
             }
-            return false;
+
+            setUser(mockUser);
+            localStorage.setItem('borneotrip_user', JSON.stringify(mockUser));
+            
+            if (mockUser.role === 'admin' || mockUser.role === 'operator') {
+                router.push('/dashboard/admin');
+            } else if (mockUser.role === 'mitra' as any) {
+                router.push('/dashboard/partner');
+            } else {
+                router.push('/dashboard/client');
+            }
+            return true;
         } catch (e) {
             console.error(e);
             return false;
@@ -88,7 +94,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             name: 'Dian Sastro',
             email: 'dian@example.com',
             role: 'client',
-            avatar: `https://i.pravatar.cc/150?u=dian`
+            avatar: `https://i.pravatar.cc/150?u=dian`,
+            onboardingCompleted: true
         };
         setUser(mockUser);
         localStorage.setItem('borneotrip_user', JSON.stringify(mockUser));
@@ -96,26 +103,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     const register = async (name: string, email: string, password: string) => {
+        // MOCK REGISTER WITHOUT DB
         try {
-            const res = await fetch('/api/auth/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, email, password })
-            });
+            await new Promise(resolve => setTimeout(resolve, 500));
 
-            if (res.ok) {
-                const data = await res.json();
-                const userData = {
-                    ...data,
-                    avatar: `https://i.pravatar.cc/150?u=${data.email}`,
-                    onboardingCompleted: false
-                };
-                setUser(userData);
-                localStorage.setItem('borneotrip_user', JSON.stringify(userData));
-                router.push('/onboarding');
-                return true;
-            }
-            return false;
+            const userData: User = {
+                id: `user-${Date.now()}`,
+                name,
+                email,
+                role: 'client',
+                avatar: `https://i.pravatar.cc/150?u=${email}`,
+                onboardingCompleted: false // New users need onboarding
+            };
+            setUser(userData);
+            localStorage.setItem('borneotrip_user', JSON.stringify(userData));
+            router.push('/onboarding');
+            return true;
         } catch (e) {
             console.error(e);
             return false;

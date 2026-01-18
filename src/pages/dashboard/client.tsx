@@ -25,35 +25,24 @@ export default function ClientDashboard() {
         if (!isAuthenticated) router.push('/login');
         if (user && user.role !== 'client') router.push(`/dashboard/${user.role}`);
         
-        // Fetch recommendations
-        const fetchRecommendations = async () => {
-             try {
-                const res = await fetch('/api/packages');
-                const allPackages = await res.json();
-                
-                // Simple personalization algorithm
-                if (user && (user as any).preferences) {
-                    const prefs = (user as any).preferences; // Assuming already object or need parsing
-                    // If prefs is string, parse it. If object, use it.
-                    const userInterests = typeof prefs === 'string' ? JSON.parse(prefs).interests : (prefs.interests || []);
-                    
-                    if (userInterests.length > 0) {
-                        const filtered = allPackages.filter((pkg: any) => 
-                            // Simple tag matching or random for demo if tags missing
-                            true // For now show all, but ideally filter by tags
-                        );
-                        setRecommendedPackages(filtered.slice(0, 3));
-                    } else {
-                        setRecommendedPackages(allPackages.slice(0, 3));
-                    }
-                } else {
-                    setRecommendedPackages(allPackages.slice(0, 3));
-                }
-             } catch (e) {
-                 console.error(e);
-             }
-        };
-        fetchRecommendations();
+        // Mock Recommendations Logic
+        const allPackages = PACKAGES;
+        
+        // Simple personalization algorithm
+        if (user && (user as any).preferences) {
+            const prefs = (user as any).preferences; // Assuming already object or need parsing
+            // If prefs is string, parse it. If object, use it.
+            const userInterests = typeof prefs === 'string' ? JSON.parse(prefs).interests : (prefs.interests || []);
+            
+            if (userInterests.length > 0) {
+                // setRecommendedPackages(PACKAGES.slice(0, 3)); // Just show static for now
+                setRecommendedPackages(allPackages);
+            } else {
+                setRecommendedPackages(allPackages.slice(0, 3));
+            }
+        } else {
+            setRecommendedPackages(allPackages.slice(0, 3));
+        }
 
     }, [isAuthenticated, user, router]);
 
