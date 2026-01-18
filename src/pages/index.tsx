@@ -12,6 +12,9 @@ import Image from 'next/image';
 
 export default function Home() {
    const { t } = useLanguage();
+   // Use Mock Data directly
+   const displayEvents = EVENTS; 
+   const displayPackages = PACKAGES;
 
    const fadeInUp: MotionProps = {
       initial: { opacity: 0, y: 40 },
@@ -126,7 +129,7 @@ export default function Home() {
             <HorizontalScroll
                title="Event Paling Ditunggu"
                subtitle="Festival budaya dan ekowisata yang hanya terjadi setahun sekali."
-               items={EVENTS}
+               items={displayEvents}
                linkHref="/events"
             />
          </motion.div>
@@ -149,15 +152,17 @@ export default function Home() {
                   </Link>
                </motion.div>
 
+               {/* Add check for empty packages */}
+               {displayPackages.length > 0 ? (
                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                   {/* Featured Large Card */}
                   <motion.div {...fadeInUp} className="md:col-span-2 lg:col-span-2 row-span-2">
-                     <Link href={`/packages/${PACKAGES[0].id}`} className="block h-full group cursor-pointer relative">
+                     <Link href={`/packages/${displayPackages[0].id}`} className="block h-full group cursor-pointer relative">
                         <div className="h-full min-h-100 rounded-3xl overflow-hidden shadow-md transform transition duration-500 hover:-translate-y-1 hover:shadow-2xl relative">
                            <Image 
-                              src={PACKAGES[0].imageUrl} 
+                              src={displayPackages[0].imageUrl} 
                               className="object-cover group-hover:scale-105 transition duration-700" 
-                              alt={PACKAGES[0].title} 
+                              alt={displayPackages[0].title} 
                               fill
                               sizes="(max-width: 768px) 100vw, 50vw"
                            />
@@ -167,12 +172,12 @@ export default function Home() {
                            </div>
                            <div className="absolute bottom-0 p-8 text-white w-full z-10">
                               <div className="flex items-center gap-2 mb-2 text-green-300 font-bold text-sm">
-                                 <span>{PACKAGES[0].duration}</span> • <span>{PACKAGES[0].location}</span>
+                                 <span>{displayPackages[0].duration}</span> • <span>{displayPackages[0].location}</span>
                               </div>
-                              <h3 className="text-3xl font-bold mb-4 leading-tight">{PACKAGES[0].title}</h3>
-                              <p className="text-gray-200 line-clamp-2 mb-6">{PACKAGES[0].description}</p>
+                              <h3 className="text-3xl font-bold mb-4 leading-tight">{displayPackages[0].title}</h3>
+                              <p className="text-gray-200 line-clamp-2 mb-6">{displayPackages[0].description}</p>
                               <div className="flex items-center justify-between">
-                                 <div className="text-lg font-bold text-orange-400">Rp {PACKAGES[0].price.toLocaleString('id-ID')}</div>
+                                 <div className="text-lg font-bold text-orange-400">Rp {displayPackages[0].price.toLocaleString('id-ID')}</div>
                                  <span className="bg-white/20 hover:bg-white/30 backdrop-blur px-4 py-2 rounded-full text-sm font-semibold transition">Lihat Detail</span>
                               </div>
                            </div>
@@ -181,7 +186,7 @@ export default function Home() {
                   </motion.div>
 
                   {/* Standard Cards */}
-                  {PACKAGES.slice(1, 4).map((pkg, idx) => (
+                  {displayPackages.slice(1, 4).map((pkg, idx) => (
                      <motion.div
                         key={pkg.id}
                         initial={{ opacity: 0, y: 40 }}
@@ -216,6 +221,12 @@ export default function Home() {
                      </motion.div>
                   ))}
                </div>
+               ) : (
+                  <div className="text-center py-20 bg-white rounded-xl shadow-sm">
+                      <p className="text-gray-500">Belum ada paket wisata tersedia.</p>
+                  </div>
+               )}
+
 
                <div className="mt-8 text-center md:hidden">
                   <Link href="/packages" className="inline-flex items-center gap-2 text-green-700 font-bold border border-green-200 px-6 py-3 rounded-full hover:bg-green-50 transition">

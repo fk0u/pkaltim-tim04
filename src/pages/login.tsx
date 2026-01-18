@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 export default function LoginPage() {
-    const { login } = useAuth();
+    const { login, loginSocial } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [activeTab, setActiveTab] = useState<'client' | 'staff'>('client');
@@ -21,28 +21,21 @@ export default function LoginPage() {
     const [resetEmail, setResetEmail] = useState('');
     const [isResetSent, setIsResetSent] = useState(false);
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
         
-        // Simulate network request
-        setTimeout(() => {
-            if (activeTab === 'staff') {
-                // Simulate admin logic check
-                if (email.includes('operator')) login('operator');
-                else login('admin');
-            } else {
-                login('client');
-            }
-            setIsLoading(false);
-        }, 1500);
+        const success = await login(email, password);
+        if (!success) {
+            alert('Login failed. Please check your credentials.');
+        }
+        setIsLoading(false);
     };
 
     const handleSocialLogin = (provider: 'google' | 'facebook') => {
         setSocialProvider(provider);
         setView('social_auth');
         setSocialLoading(true);
-        // Simulate initial load of the popup
         setTimeout(() => {
             setSocialLoading(false);
         }, 1000);
@@ -50,10 +43,9 @@ export default function LoginPage() {
 
     const confirmSocialLogin = () => {
         setIsLoading(true);
-        setTimeout(() => {
-            login('client');
-            setIsLoading(false);
-        }, 1500);
+        if (socialProvider) {
+             loginSocial(socialProvider);
+        }
     };
 
     const handleResetPassword = (e: React.FormEvent) => {

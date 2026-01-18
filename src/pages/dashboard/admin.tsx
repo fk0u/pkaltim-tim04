@@ -6,8 +6,6 @@ import { Users, DollarSign, Package, TrendingUp, MoreHorizontal, CheckCircle } f
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
-import { PACKAGES } from '@/data/mockData';
-
 export default function AdminDashboard() {
     const { user, isAuthenticated } = useAuth();
     const { bookings, stats } = useBooking();
@@ -28,9 +26,9 @@ export default function AdminDashboard() {
     ];
 
     const recentBookings = bookings.length > 0 ? bookings.slice(0, 5) : [
-        { id: '#BK-001', userId: 'usr1', userName: 'Budi Santoso', pkgTitle: PACKAGES[0]?.title || 'Derawan Paradise', date: '2026-02-20', status: 'Paid', totalPrice: 5200000 },
-        { id: '#BK-002', userId: 'usr2', userName: 'Sarah Jenkins', pkgTitle: PACKAGES[1]?.title || 'Orangutan Tour', date: '2026-02-22', status: 'Pending', totalPrice: 8500000 },
-        { id: '#BK-003', userId: 'usr3', userName: 'Ahmad Dani', pkgTitle: PACKAGES[2]?.title || 'Mahakam Safari', date: '2026-02-25', status: 'Paid', totalPrice: 4100000 },
+        { id: '#BK-001', userId: 'usr1', userName: 'Budi Santoso', pkgTitle: 'Derawan Paradise', date: '2026-02-20', status: 'Paid', totalPrice: 5200000 },
+        { id: '#BK-002', userId: 'usr2', userName: 'Sarah Jenkins', pkgTitle: 'Orangutan Tour', date: '2026-02-22', status: 'Pending', totalPrice: 8500000 },
+        { id: '#BK-003', userId: 'usr3', userName: 'Ahmad Dani', pkgTitle: 'Mahakam Safari', date: '2026-02-25', status: 'Paid', totalPrice: 4100000 },
     ];
 
     return (

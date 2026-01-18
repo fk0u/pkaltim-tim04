@@ -14,14 +14,16 @@ export default function RegisterPage() {
     const [role, setRole] = useState<'traveler' | 'partner'>('traveler');
     const [isLoading, setIsLoading] = useState(false);
 
-    const handleRegister = (e: React.FormEvent) => {
+    const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
-        // Simulate API Call
-        setTimeout(() => {
-            register(name, email);
-            setIsLoading(false);
-        }, 1500);
+        
+        const success = await register(name, email, password);
+        
+        if (!success) {
+            alert('Registration failed. Email might be already registered.');
+        }
+        setIsLoading(false);
     };
 
     return (
