@@ -57,5 +57,13 @@ Digunakan untuk memberikan kesan "Premium App".
 - `src/components/ui`: "Schadcn-like" reusable components (Modal, Button, Input). Memastikan konsistensi desain.
 - `src/data`: Single source of truth untuk Mock Data. Memudahkan jika nanti ingin diganti dengan API real.
 
+## Future Roadmap: Backend Migration
+
+Meskipun saat ini menggunakan *Mock Architecture*, sistem didesain untuk migrasi mudah ke backend riil:
+
+1. **Context API Wrapper**: `ContentContext` akan diganti dengan React Query hooks yang memanggil API endpoint nyata.
+2. **Types Consistency**: Interface TypeScript di `src/types` sudah disesuaikan dengan schema database target (lihat `docs/ERD.md`).
+3. **API Routes**: Folder `src/pages/api` akan menjadi Proxy ke Backend Service atau langsung terhubung ke Database via Prisma ORM.
+
 ## Deployment Strategy
 Aplikasi ini siap di-deploy ke **Vercel** atau **Netlify** dengan konfigurasi minimal. Karena tidak ada backend database riil (masih mock), aplikasi ini bersifat *stateless* dan sangat cepat.

@@ -1,19 +1,87 @@
 # Entity Relationship Diagram (ERD) - BorneoTrip
 
-Dokumen ini menjelaskan struktur data yang digunakan dalam aplikasi. Karena aplikasi ini menggunakan **Frontend-First Architecture** tanpa database relasional (SQL), skema di bawah ini merepresentasikan struktur Objek JSON yang dikelola di memori/local storage.
+Dokumen ini menjelaskan struktur data yang digunakan dalam aplikasi.
 
-## Entities
+## 1. Current Implementation (Mock Data Strategy)
 
-### 1. User
-Menyimpan data pengguna (Traveler, Admin, Operator).
+Saat ini, karena aplikasi berjalan dalam mode **Frontend-First (Hackathon Demo)**, kami menggunakan struktur data JSON yang disimpan di `localStorage` klien untuk mensimulasikan persistensi database. Struktur ini dirancang agar mudah dimigrasikan ke schema SQL production nantinya.
+
+### JSON Entities (Client-Side Storage)
+
+#### User
+*Key: `bt_users`*
 | Key | Type | Description |
 | :--- | :--- | :--- |
 | `id` | string | Unique identifier (e.g., `'usr1'`) |
 | `name` | string | Nama lengkap user |
 | `email` | string | Email login |
-| `role` | enum | `'client' | 'admin' | 'staff'` |
-| `avatar` | string | URL foto profil |
-| `preferences` | object | Preferensi travel (opsional) |
+| `role` | enum | `'client' | 'admin' | 'mitra'` |
+... (Fields aligned with localStorage implementation)
+
+## 2. Target Production Schema (MySQL)
+
+Untuk fase production, kami telah merancang schema database yang lebih robust menggunakan MySQL/MariaDB. Berikut adalah spesifikasi teknisnya:
+
+### Schema Overview
+
+```mermaid
+erDiagram
+    User ||--o{ Booking : "makes"
+    User {
+        string id PK
+        string email UK
+        json preferences
+    }
+    TourPackage ||--o{ ItineraryDetail : "has"
+    TourPackage ||--o{ Booking : "is_booked_in"
+    TourPackage {
+        string id PK
+        int ecoRating
+        json facilities
+    }
+    Event ||--o{ Booking : "is_booked_in"
+    Event {
+        string id PK
+        string organizer
+        int ticketCount
+    }
+    Booking {
+        string id PK
+        string status
+        datetime date
+    }
+```
+
+### SQL Definition
+
+```sql
+-- User Management
+CREATE TABLE `User` (
+  `id` varchar(191) NOT NULL PRIMARY KEY,
+  `email` varchar(191) NOT NULL UNIQUE,
+  `role` varchar(50) DEFAULT 'client',
+  `preferences` json DEFAULT NULL
+);
+
+-- Core Products
+CREATE TABLE `TourPackage` (
+  `id` varchar(191) NOT NULL PRIMARY KEY,
+  `title` varchar(191) NOT NULL,
+  `price` int NOT NULL,
+  `ecoRating` int NOT NULL DEFAULT 0,
+  `facilities` json DEFAULT NULL
+);
+
+CREATE TABLE `Booking` (
+  `id` varchar(191) NOT NULL PRIMARY KEY,
+  `userId` varchar(191) NOT NULL,
+  `packageId` varchar(191),
+  `status` varchar(50) DEFAULT 'pending',
+  FOREIGN KEY (`userId`) REFERENCES `User`(`id`)
+);
+```
+
+*Note: For full SQL dump, please refer to `/mysql_schema.sql` in the root directory.*
 
 ### 2. TourPackage (Paket Wisata)
 Menyimpan data produk wisata.
