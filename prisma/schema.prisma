@@ -7,7 +7,6 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -85,4 +84,21 @@ model Testimonial {
   avatarUrl String
   rating    Int
   content   String
+}
+
+model Region {
+  id          Int      @id @default(autoincrement())
+  name        String
+  type        String
+  capital     String
+  leader      String
+  area        String
+  population  String
+  density     String
+  districts   Int
+  villages    String
+  latitude    Float
+  longitude   Float
+  imageUrl    String
+  destinations String   // JSON
 }
