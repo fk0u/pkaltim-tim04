@@ -3,7 +3,7 @@ import Layout from '@/components/Layout';
 import SearchWidget from '@/components/SearchWidget';
 import HorizontalScroll from '@/components/HorizontalScroll';
 import Testimonials from '@/components/Testimonials';
-import { EVENTS, PACKAGES } from '@/data/mockData';
+import { useContent } from '@/contexts/ContentContext';
 import { ArrowRight, MapPin, Clock } from 'lucide-react';
 import Link from 'next/link';
 import RegionExplorer from '@/components/RegionExplorer';
@@ -12,9 +12,10 @@ import Image from 'next/image';
 
 export default function Home() {
    const { t } = useLanguage();
-   // Use Mock Data directly
-   const displayEvents = EVENTS; 
-   const displayPackages = PACKAGES;
+   const { packages, events } = useContent();
+   
+   const displayEvents = events; 
+   const displayPackages = packages;
 
    const fadeInUp: MotionProps = {
       initial: { opacity: 0, y: 40 },

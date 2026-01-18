@@ -1,5 +1,6 @@
 import Layout from '@/components/Layout';
-import { ITINERARY_DETAILS, PACKAGES } from '@/data/mockData';
+import { ITINERARY_DETAILS } from '@/data/mockData';
+import { useContent } from '@/contexts/ContentContext';
 import { useRouter } from 'next/router';
 import { Clock, MapPin, ShieldCheck, CheckCircle2, Utensils, Bus, Camera, BedDouble, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -10,6 +11,7 @@ export default function PackageDetail() {
    const router = useRouter();
    const { id } = router.query;
    const { addToast } = useToast();
+   const { packages } = useContent();
 
    const [date, setDate] = useState<Date | undefined>(undefined);
    const [pax, setPax] = useState(1);
@@ -18,7 +20,7 @@ export default function PackageDetail() {
    // For mock, we check if the ID matches our single itinerary detail source or fallback.
    // We'll just look up the package info from PACKAGES and use the single ITINERARY_DETAIL for the timeline.
 
-   const pkg = PACKAGES.find(p => p.id === id);
+   const pkg = packages.find(p => p.id === id);
    // Find specific itinerary for this package, or use the first one as fallback/template
    const itinerary = ITINERARY_DETAILS.find(i => i.packageId === id) || ITINERARY_DETAILS[0];
 
@@ -48,10 +50,13 @@ export default function PackageDetail() {
       router.push({
          pathname: '/checkout',
          query: {
+            id: pkg.id,
             pkg: pkg.title,
-            date: date.toLocaleDateString('id-ID'), // Format date for display
+            date: date.toLocaleDateString('id-ID'),
             pax: pax,
-            price: totalPrice
+            price: totalPrice,
+            location: pkg.location,
+            image: pkg.imageUrl
          }
       });
    };

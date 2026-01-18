@@ -1,6 +1,7 @@
 import Layout from '@/components/Layout';
 import { useAuth } from '@/contexts/AuthContext';
 import { useBooking } from '@/contexts/BookingContext';
+import { useContent } from '@/contexts/ContentContext';
 import { motion } from 'framer-motion';
 import { Calendar, MapPin, Clock, CheckCircle, ArrowRight, Wallet, Bell, Settings, Star, ChevronRight, Share2, Heart, Camera, Trophy, User, LogOut, FileText, CreditCard } from 'lucide-react';
 import { useRouter } from 'next/router';
@@ -12,6 +13,7 @@ import Link from 'next/link';
 export default function ClientDashboard() {
     const { user, logout, isAuthenticated } = useAuth();
     const { getBookingsByUserId } = useBooking();
+    const { packages } = useContent(); // Use Content Context
     const router = useRouter();
     const { addToast } = useToast();
     const [activeModal, setActiveModal] = useState<string | null>(null);
@@ -25,8 +27,7 @@ export default function ClientDashboard() {
         if (!isAuthenticated) router.push('/login');
         if (user && user.role !== 'client') router.push(`/dashboard/${user.role}`);
         
-        // Mock Recommendations Logic
-        const allPackages = PACKAGES;
+        // Mock Recommendations Logic using Context Data
         
         // Simple personalization algorithm
         if (user && (user as any).preferences) {
@@ -35,16 +36,17 @@ export default function ClientDashboard() {
             const userInterests = typeof prefs === 'string' ? JSON.parse(prefs).interests : (prefs.interests || []);
             
             if (userInterests.length > 0) {
-                // setRecommendedPackages(PACKAGES.slice(0, 3)); // Just show static for now
-                setRecommendedPackages(allPackages);
+                 // In a real app, filter packages by category/tags matching interests. 
+                 // For now, we just use the dynamic packages list.
+                setRecommendedPackages(packages);
             } else {
-                setRecommendedPackages(allPackages.slice(0, 3));
+                setRecommendedPackages(packages.slice(0, 3));
             }
         } else {
-            setRecommendedPackages(allPackages.slice(0, 3));
+            setRecommendedPackages(packages.slice(0, 3));
         }
 
-    }, [isAuthenticated, user, router]);
+    }, [isAuthenticated, user, router, packages]);
 
     if (!user) return null;
 

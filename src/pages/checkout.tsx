@@ -58,6 +58,58 @@ export default function CheckoutPage() {
         }, 2000);
     };
 
+    if (step === 3) {
+        return (
+            <Layout title="Checkout Selesai - BorneoTrip">
+                 <div className="min-h-screen bg-emerald-50 flex items-center justify-center pt-20 pb-20 px-4">
+                    <motion.div 
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className="bg-white rounded-3xl p-8 md:p-12 max-w-lg w-full text-center shadow-xl border border-emerald-100"
+                    >
+                        <div className="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <CheckCircle className="w-12 h-12 text-emerald-600" />
+                        </div>
+                        <h1 className="text-3xl font-black text-slate-900 mb-2">Booking Berhasil!</h1>
+                        <p className="text-slate-500 mb-8">
+                            Tiket elektronik telah dikirim ke email <b>{user?.email}</b>. Silakan cek dashboard untuk melihat status pesanan.
+                        </p>
+                        
+                        <div className="bg-slate-50 rounded-2xl p-6 mb-8 text-left border border-slate-100">
+                             <div className="flex justify-between mb-2">
+                                 <span className="text-sm text-slate-500">No. Booking</span>
+                                 <span className="font-mono font-bold text-slate-900">{bookingId}</span>
+                             </div>
+                             <div className="flex justify-between mb-2">
+                                 <span className="text-sm text-slate-500">Paket</span>
+                                 <span className="font-bold text-slate-900 truncate max-w-[200px]">{pkgName}</span>
+                             </div>
+                             <div className="flex justify-between">
+                                 <span className="text-sm text-slate-500">Total Bayar</span>
+                                 <span className="font-bold text-emerald-600">Rp {totalPrice.toLocaleString('id-ID')}</span>
+                             </div>
+                        </div>
+
+                        <div className="flex flex-col gap-3">
+                            <button 
+                                onClick={() => router.push('/dashboard/client')}
+                                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-emerald-200"
+                            >
+                                Lihat Pesanan Saya
+                            </button>
+                            <button 
+                                onClick={() => router.push('/')}
+                                className="w-full bg-white border-2 border-slate-100 hover:border-slate-300 text-slate-600 font-bold py-3.5 rounded-xl transition"
+                            >
+                                Kembali ke Beranda
+                            </button>
+                        </div>
+                    </motion.div>
+                 </div>
+            </Layout>
+        );
+    }
+
     const steps = [
         { num: 1, label: "Data Pemesan" },
         { num: 2, label: "Pembayaran" },

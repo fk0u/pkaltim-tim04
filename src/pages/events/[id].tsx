@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
-import { EVENTS } from '@/data/mockData';
+import { useContent } from '@/contexts/ContentContext';
 import { Calendar, MapPin, Clock, Share2, Ticket, ArrowLeft, User, Heart, Mic2 } from 'lucide-react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useToast } from '@/components/ui';
@@ -10,6 +10,7 @@ export default function EventDetail() {
     const router = useRouter();
     const { id } = router.query;
     const { addToast } = useToast();
+    const { events } = useContent();
     const { scrollY } = useScroll();
 
     // Parallax & Fade effects
@@ -18,7 +19,7 @@ export default function EventDetail() {
 
     if (!router.isReady) return null;
 
-    const event = EVENTS.find(e => e.id === id);
+    const event = events.find(e => e.id === id);
 
     if (!event) {
         return (

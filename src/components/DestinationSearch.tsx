@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { MapPin, Search } from 'lucide-react';
-import { DESTINATIONS } from '@/data/mockData';
+import { useContent } from '@/contexts/ContentContext';
 
 interface DestinationSearchProps {
     label: string;
@@ -12,8 +12,25 @@ export default function DestinationSearch({ label, placeholder, onSelect }: Dest
     const [query, setQuery] = useState('');
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
+    const { packages } = useContent();
 
-    const filteredDestinations = DESTINATIONS.filter(item =>
+    // Extract unique locations from packages + Default ones
+    // This makes the search dynamic based on what's available
+    const packageLocations = packages.map(p => p.location);
+    const defaultDestinations = [
+       "Derawan, Berau",
+       "Maratua, Berau",
+       "Tenggarong, Kutai Kartanegara",
+       "Samarinda, Kalimantan Timur",
+       "Balikpapan, Kalimantan Timur",
+       "Bukit Bangkirai, Samboja",
+       "Kayan Mentarang, Malinau"
+    ];
+    
+    // Merge and Deduplicate
+    const allDestinations = Array.from(new Set([...defaultDestinations, ...packageLocations]));
+
+    const filteredDestinations = allDestinations.filter(item =>
         item.toLowerCase().includes(query.toLowerCase())
     );
 

@@ -1,32 +1,37 @@
 import Layout from '@/components/Layout';
-import { PACKAGES } from '@/data/mockData';
+import { useContent } from '@/contexts/ContentContext';
 import { Search, MapPin, Filter, Star, Clock, ArrowUpRight, Leaf } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 
 export default function PackagesPage() {
+    const { packages } = useContent();
     const [activeFilter, setActiveFilter] = useState('All');
     const [searchTerm, setSearchTerm] = useState('');
 
     const filters = ['All', 'Popular', 'Eco-Friendly', 'Short Trip', 'Long Exploration'];
 
     const getEcoColor = (rating: number) => {
-        if (rating >= 5) return 'text-emerald-500 bg-emerald-50 border-emerald-100';
+        if (rating >= 4.5) return 'text-emerald-500 bg-emerald-50 border-emerald-100';
         if (rating >= 4) return 'text-green-500 bg-green-50 border-green-100';
         return 'text-lime-500 bg-lime-50 border-lime-100';
     };
 
-    const filteredPackages = PACKAGES.filter(pkg => {
+    const filteredPackages = packages.filter(pkg => {
         // Search Logic
         const matchesSearch = pkg.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
             pkg.location.toLowerCase().includes(searchTerm.toLowerCase());
 
-        // Filter Logic (Mock logic for demo)
+        // Filter Logic
         let matchesFilter = true;
-        if (activeFilter === 'Eco-Friendly') matchesFilter = pkg.ecoRating >= 5;
-        if (activeFilter === 'Short Trip') matchesFilter = parseInt(pkg.duration) <= 3;
-        if (activeFilter === 'Long Exploration') matchesFilter = parseInt(pkg.duration) > 3;
+        if (activeFilter === 'Eco-Friendly') matchesFilter = (pkg.rating || 0) >= 4.5;
+        
+        // Parse "3D2N" or "1 Hari" to number
+        const durationNum = parseInt(pkg.duration) || 1;
+
+        if (activeFilter === 'Short Trip') matchesFilter = durationNum <= 3;
+        if (activeFilter === 'Long Exploration') matchesFilter = durationNum > 3;
 
         return matchesSearch && matchesFilter;
     });
@@ -117,8 +122,8 @@ export default function PackagesPage() {
                                             <div className="relative h-64 overflow-hidden">
                                                 <img src={pkg.imageUrl} alt={pkg.title} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
                                                 <div className="absolute top-4 left-4">
-                                                    <span className={`px-3 py-1 rounded-full text-xs font-bold border flex items-center gap-1 shadow-sm ${getEcoColor(pkg.ecoRating)}`}>
-                                                        <Leaf className="w-3 h-3" /> Eco {pkg.ecoRating}/5
+                                                    <span className={`px-3 py-1 rounded-full text-xs font-bold border flex items-center gap-1 shadow-sm ${getEcoColor(pkg.rating)}`}>
+                                                        <Leaf className="w-3 h-3" /> Eco {pkg.rating}/5
                                                     </span>
                                                 </div>
                                                 <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-gray-800 flex items-center gap-1 shadow-md">

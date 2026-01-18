@@ -1,14 +1,16 @@
 import AdminLayout from '@/components/layouts/AdminLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { useBooking } from '@/contexts/BookingContext';
+import { useContent } from '@/contexts/ContentContext';
 import { motion } from 'framer-motion';
-import { Users, DollarSign, Package, TrendingUp, MoreHorizontal, CheckCircle } from 'lucide-react';
+import { Users, DollarSign, Package, TrendingUp, MoreHorizontal, CheckCircle, Clock } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
 export default function AdminDashboard() {
     const { user, isAuthenticated } = useAuth();
     const { bookings, stats } = useBooking();
+    const { packages, events } = useContent();
     const router = useRouter();
 
     useEffect(() => {
@@ -19,23 +21,20 @@ export default function AdminDashboard() {
     if (!user) return null;
 
     const statCards = [
-        { label: 'Total Booking', val: stats.totalBookings.toString(), icon: Package, color: 'blue' },
+        { label: 'Total Booking', val: stats.totalBookings.toString(), icon: Users, color: 'blue' },
         { label: 'Revenue', val: `Rp ${(stats.totalRevenue / 1000000).toFixed(1)}M`, icon: DollarSign, color: 'emerald' },
-        { label: 'Active Travelers', val: stats.activeTravelers.toString(), icon: Users, color: 'orange' },
-        { label: 'Growth', val: '+12.5%', icon: TrendingUp, color: 'purple' },
+        { label: 'Active Packages', val: packages.length.toString(), icon: Package, color: 'orange' },
+        { label: 'Events', val: events.length.toString(), icon: TrendingUp, color: 'purple' },
     ];
 
-    const recentBookings = bookings.length > 0 ? bookings.slice(0, 5) : [
-        { id: '#BK-001', userId: 'usr1', userName: 'Budi Santoso', pkgTitle: 'Derawan Paradise', date: '2026-02-20', status: 'Paid', totalPrice: 5200000 },
-        { id: '#BK-002', userId: 'usr2', userName: 'Sarah Jenkins', pkgTitle: 'Orangutan Tour', date: '2026-02-22', status: 'Pending', totalPrice: 8500000 },
-        { id: '#BK-003', userId: 'usr3', userName: 'Ahmad Dani', pkgTitle: 'Mahakam Safari', date: '2026-02-25', status: 'Paid', totalPrice: 4100000 },
-    ];
+    // Sort bookings by date descending
+    const recentBookings = [...bookings].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 10);
 
     return (
         <AdminLayout title="Overview">
             <div className="max-w-7xl mx-auto">
                 {/* Unique Welcome Banner */}
-                <div className="bg-linear-to-r from-emerald-800 to-teal-900 rounded-3xl p-8 text-white mb-10 shadow-xl relative overflow-hidden">
+                <div className="bg-gradient-to-r from-emerald-800 to-teal-900 rounded-3xl p-8 text-white mb-10 shadow-xl relative overflow-hidden">
                     <div className="absolute top-0 right-0 opacity-10">
                         <svg width="400" height="400" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                             <path fill="#FFFFFF" d="M47.7,-61.4C60.9,-51.1,69.9,-34.7,73.4,-17.8C76.9,-0.8,74.9,16.7,66.3,30.8C57.7,44.9,42.5,55.6,26.5,62.3C10.5,69,-6.4,71.7,-21.8,66.8C-37.2,61.9,-51.1,49.4,-60.8,34.4C-70.5,19.4,-75.9,1.9,-72.6,-13.7C-69.2,-29.3,-57.1,-43,-43.3,-53.1C-29.4,-63.3,-14.7,-69.9,1.3,-71.4C17.3,-73,34.5,-69.5,47.7,-61.4Z" transform="translate(100 100)" />
@@ -43,7 +42,7 @@ export default function AdminDashboard() {
                     </div>
                     <div className="relative z-10">
                         <h2 className="text-3xl font-black mb-2">Selamat Datang, {user.name} 👋</h2>
-                        <p className="text-emerald-100 max-w-xl">Laporan hari ini menunjukkan <span className="font-bold text-white">+12% kenaikan traffic</span>. Cek booking terbaru yang membutuhkan konfirmasi Anda.</p>
+                        <p className="text-emerald-100 max-w-xl">System Overview: <span className="font-bold text-white">{bookings.length} total transaksi</span> telah tercatat. Cek booking terbaru.</p>
                     </div>
                 </div>
 
@@ -61,7 +60,6 @@ export default function AdminDashboard() {
                                 <div className={`w-12 h-12 bg-${stat.color}-50 rounded-xl flex items-center justify-center text-${stat.color}-600`}>
                                     <stat.icon className="w-6 h-6" />
                                 </div>
-                                <span className={`text-xs font-bold px-2 py-1 rounded-lg bg-${stat.color}-50 text-${stat.color}-600`}>+2.5%</span>
                             </div>
                             <div className="text-3xl font-black text-gray-900 mb-1">{stat.val}</div>
                             <div className="text-sm font-bold text-gray-400">{stat.label}</div>
@@ -74,7 +72,7 @@ export default function AdminDashboard() {
                     <div className="p-8 border-b border-gray-100 flex justify-between items-center">
                         <div>
                             <h2 className="text-xl font-bold text-gray-900">Booking Terbaru</h2>
-                            <p className="text-sm text-gray-500 mt-1">5 Transaksi terakhir yang masuk ke sistem.</p>
+                            <p className="text-sm text-gray-500 mt-1">Transaksi terakhir yang masuk ke sistem LocalStorage.</p>
                         </div>
                         <button className="text-sm font-bold text-white bg-gray-900 px-4 py-2 rounded-lg hover:bg-black transition">Export Data</button>
                     </div>
@@ -93,19 +91,19 @@ export default function AdminDashboard() {
                             <tbody className="divide-y divide-gray-100">
                                 {recentBookings.map((booking, idx) => (
                                     <tr key={idx} className="hover:bg-gray-50/80 transition group">
-                                        <td className="px-8 py-5 font-mono text-sm font-medium text-emerald-600">{booking.id}</td>
+                                        <td className="px-8 py-5 font-mono text-sm font-medium text-emerald-600">#{booking.id.substring(0,8)}</td>
                                         <td className="px-8 py-5">
-                                            <div className="font-bold text-gray-900">{booking.userName || (booking as any).guest}</div>
-                                            <div className="text-xs text-gray-400">Verified User</div>
+                                            <div className="font-bold text-gray-900">{booking.userName}</div>
+                                            <div className="text-xs text-gray-400">Guest User</div>
                                         </td>
                                         <td className="px-8 py-5 text-sm text-gray-600">
-                                            <div className="font-medium text-gray-900">{booking.pkgTitle || (booking as any).pkg}</div>
+                                            <div className="font-medium text-gray-900">{booking.pkgTitle}</div>
                                             <div className="text-xs text-gray-400">{new Date(booking.date).toLocaleDateString()}</div>
                                         </td>
-                                        <td className="px-8 py-5 font-bold text-gray-900">Rp {((booking.totalPrice || parseInt((booking as any).amount?.replace(/\D/g, '') || '0')) / 1000000).toFixed(1)}jt</td>
+                                        <td className="px-8 py-5 font-bold text-gray-900">Rp {(booking.totalPrice / 1000000).toFixed(1)}jt</td>
                                         <td className="px-8 py-5">
                                             <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ring-1 ring-inset ${booking.status === 'Paid' ? 'bg-emerald-50 text-emerald-700 ring-emerald-600/20' : 'bg-orange-50 text-orange-700 ring-orange-600/20'}`}>
-                                                {booking.status === 'Paid' ? <CheckCircle className="w-3 h-3" /> : <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></div>}
+                                                {booking.status === 'Paid' ? <CheckCircle className="w-3 h-3" /> : <Clock className="w-3 h-3" />}
                                                 {booking.status}
                                             </span>
                                         </td>
@@ -116,6 +114,13 @@ export default function AdminDashboard() {
                                         </td>
                                     </tr>
                                 ))}
+                                {recentBookings.length === 0 && (
+                                    <tr>
+                                        <td colSpan={6} className="px-8 py-10 text-center text-gray-400">
+                                            Belum ada data booking yang masuk.
+                                        </td>
+                                    </tr>
+                                )}
                             </tbody>
                         </table>
                     </div>

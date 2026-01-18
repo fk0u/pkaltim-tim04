@@ -1,5 +1,5 @@
 import Layout from '@/components/Layout';
-import { EVENTS } from '@/data/mockData';
+import { useContent } from '@/contexts/ContentContext';
 import { Calendar, MapPin, Search, Ticket, Share2 } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -9,6 +9,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 export default function EventsPage() {
+  const { events } = useContent();
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
   const { addToast } = useToast();
@@ -16,14 +17,14 @@ export default function EventsPage() {
 
   const categories = ['All', 'Culture', 'Nature', 'Sustainability', 'Culinary'];
 
-  const filteredEvents = EVENTS.filter(event => {
+  const filteredEvents = events.filter(event => {
     const matchCategory = activeCategory === 'All' || activeCategory === event.category;
     const matchSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       event.location.toLowerCase().includes(searchTerm.toLowerCase());
     return matchCategory && matchSearch;
   });
 
-  const featuredEvent = EVENTS[0]; // Assume first event is featured
+  const featuredEvent = events.length > 0 ? events[0] : null;
 
   const handleRemindMe = (e: React.MouseEvent, eventTitle: string) => {
     e.stopPropagation();
@@ -34,6 +35,7 @@ export default function EventsPage() {
     <Layout title="Event Tahunan - BorneoTrip">
 
       {/* 1. IMMERSIVE HERO WITH FEATURED EVENT */}
+      {featuredEvent && (
       <div className="relative min-h-[70vh] flex items-center bg-black overflow-hidden group">
         <div className="absolute inset-0 z-0">
           <Image 
@@ -76,6 +78,7 @@ export default function EventsPage() {
           </motion.div>
         </div>
       </div>
+      )}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-20">
 
