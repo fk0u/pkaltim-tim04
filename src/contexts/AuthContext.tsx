@@ -14,9 +14,10 @@ interface User {
 interface AuthContextType {
     user: User | null;
     isAuthenticated: boolean;
-    login: (role: UserRole) => void;
+    login: (email: string, password: string) => Promise<boolean>; // Return success/fail
     logout: () => void;
-    register: (name: string, email: string) => void;
+    register: (name: string, email: string, password: string) => Promise<boolean>;
+    loginSocial: (provider: string) => void; 
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -33,35 +34,76 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     }, []);
 
-    const login = (role: UserRole) => {
-        // Mock user data based on role
-        const mockUser: User = {
-            id: `user-${Date.now()}`,
-            name: role === 'client' ? 'Dian Sastro' : role === 'admin' ? 'Admin Super' : 'Operator Agensi',
-            email: role === 'client' ? 'dian@example.com' : `${role}@borneotrip.id`,
-            role: role,
-            avatar: `https://i.pravatar.cc/150?u=${role}`
-        };
-
-        setUser(mockUser);
-        localStorage.setItem('borneotrip_user', JSON.stringify(mockUser));
-
-        // Redirect based on role
-        if (role === 'client') router.push('/dashboard/client');
-        else router.push('/dashboard/admin');
+    const login = async (email: string, password: string) => {
+        try {
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            
+            if (res.ok) {
+                const data = await res.json();
+                // Ensure avatar is set
+                const userData = {
+                    ...data,
+                    avatar: data.avatar || `https://i.pravatar.cc/150?u=${data.email}`
+                };
+                setUser(userData);
+                localStorage.setItem('borneotrip_user', JSON.stringify(userData));
+                
+                if (userData.role === 'admin' || userData.role === 'operator') {
+                    router.push('/dashboard/admin');
+                } else {
+                    router.push('/dashboard/client');
+                }
+                return true;
+            }
+            return false;
+        } catch (e) {
+            console.error(e);
+            return false;
+        }
     };
 
-    const register = (name: string, email: string) => {
-        const newUser: User = {
-            id: `user-${Date.now()}`,
-            name,
-            email,
+    const loginSocial = (provider: string) => {
+         // Mock Social Login - just treat as client
+         const mockUser: User = {
+            id: `social-${Date.now()}`,
+            name: 'Dian Sastro',
+            email: 'dian@example.com',
             role: 'client',
-            avatar: `https://i.pravatar.cc/150?u=${email}`
+            avatar: `https://i.pravatar.cc/150?u=dian`
         };
-        setUser(newUser);
-        localStorage.setItem('borneotrip_user', JSON.stringify(newUser));
+        setUser(mockUser);
+        localStorage.setItem('borneotrip_user', JSON.stringify(mockUser));
         router.push('/dashboard/client');
+    }
+
+    const register = async (name: string, email: string, password: string) => {
+        try {
+            const res = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, password })
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                const userData = {
+                    ...data,
+                    avatar: `https://i.pravatar.cc/150?u=${data.email}`
+                };
+                setUser(userData);
+                localStorage.setItem('borneotrip_user', JSON.stringify(userData));
+                router.push('/dashboard/client');
+                return true;
+            }
+            return false;
+        } catch (e) {
+            console.error(e);
+            return false;
+        }
     };
 
     const logout = () => {
