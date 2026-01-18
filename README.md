@@ -93,24 +93,24 @@ Terima kasih kepada para kontributor yang telah membangun fondasi project ini:
 <table>
   <tr>
     <td align="center">
-      <a href="https://github.com/tim-04">
-        <img src="https://ui-avatars.com/api/?name=Lead+Dev&background=0D9488&color=fff" width="100px;" alt=""/>
+      <a href="https://github.com/fk0u">
+        <img src="https://media.licdn.com/dms/image/v2/D5635AQGUExt_j_D4ag/profile-framedphoto-shrink_100_100/B56Zkz8P46HAAk-/0/1757513077316?e=1769324400&v=beta&t=_436OyInBAF9WYSlBRWBVUjgcCB72dvYKMnpHytH9aY" width="100px;" alt=""/>
         <br />
-        <sub><b>Lead Frontend</b></sub>
+        <sub><b>Lead Dev, Product Designer</b></sub>
       </a>
     </td>
     <td align="center">
-      <a href="https://github.com/design-lead">
-        <img src="https://ui-avatars.com/api/?name=UI+UX&background=EA580C&color=fff" width="100px;" alt=""/>
+      <a href="https://github.com/Aldyy002-ctrl">
+        <img src="https://avatars.githubusercontent.com/u/181296313?s=64&v=4" width="100px;" alt=""/>
         <br />
-        <sub><b>UI/UX Designer</b></sub>
+        <sub><b>Backend Engineer</b></sub>
       </a>
     </td>
      <td align="center">
-      <a href="https://github.com/pm-lead">
-        <img src="https://ui-avatars.com/api/?name=Project+Manager&background=6366f1&color=fff" width="100px;" alt=""/>
+      <a href="https://github.com/zeiitaa">
+        <img src="https://avatars.githubusercontent.com/u/179657731?s=80&v=4" width="100px;" alt=""/>
         <br />
-        <sub><b>Project Manager</b></sub>
+        <sub><b> Project Manager, UI/UX Designer</b></sub>
       </a>
     </td>
   </tr>
