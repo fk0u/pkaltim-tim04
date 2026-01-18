@@ -1,0 +1,88 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(cuid())
+  name      String
+  email     String    @unique
+  password  String
+  role      String    @default("client")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  bookings  Booking[]
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  location    String
+  date        String
+  description String
+  imageUrl    String
+  category    String
+  tags        String   // JSON
+  price       String?
+  organizer   String?
+  ticketCount Int?     @default(0)
+  schedule    String?  // JSON
+  gallery     String?  // JSON
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  bookings    Booking[]
+}
+
+model TourPackage {
+  id          String   @id @default(cuid())
+  title       String
+  duration    String
+  price       Int
+  location    String
+  rating      Float
+  ecoRating   Int
+  description String
+  imageUrl    String
+  facilities  String   // JSON
+  itinerary   ItineraryDetail?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  bookings    Booking[]
+}
+
+model ItineraryDetail {
+  id            String      @id @default(cuid())
+  packageId     String      @unique
+  package       TourPackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  title         String
+  badges        String      // JSON
+  days          String      // JSON
+}
+
+model Booking {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  eventId   String?
+  event     Event?   @relation(fields: [eventId], references: [id])
+  packageId String?
+  package   TourPackage? @relation(fields: [packageId], references: [id])
+  date      DateTime @default(now())
+  status    String   @default("pending")
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  role      String
+  avatarUrl String
+  rating    Int
+  content   String
+}
