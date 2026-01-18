@@ -74,6 +74,17 @@ export default function LoginPage() {
             </Head>
             
             <div className="min-h-screen flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden font-sans">
+                {/* Back Button */}
+                <div className="absolute top-6 left-6 z-20">
+                    <Link 
+                        href="/" 
+                        className="flex items-center gap-2 text-white/80 hover:text-white transition-all group px-4 py-2 rounded-full hover:bg-white/10 backdrop-blur-sm"
+                    >
+                        <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+                        <span className="font-bold text-sm">Kembali</span>
+                    </Link>
+                </div>
+
                 {/* Immersive Background */}
                 <div className="absolute inset-0 z-0">
                     <Image
