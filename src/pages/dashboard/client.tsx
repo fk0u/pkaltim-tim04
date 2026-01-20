@@ -6,18 +6,19 @@ import { motion } from 'framer-motion';
 import { Calendar, MapPin, Clock, CheckCircle, ArrowRight, Wallet, Bell, Settings, Star, ChevronRight, Share2, Heart, Camera, Trophy, User, LogOut, FileText, CreditCard } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
-import { useToast } from '@/components/ui';
+import { useToast, Skeleton } from '@/components/ui';
 import Modal from '@/components/ui/Modal';
 import Link from 'next/link';
 
 export default function ClientDashboard() {
     const { user, logout, isAuthenticated } = useAuth();
-    const { getBookingsByUserId } = useBooking();
+    const { bookings, stats, getBookingsByUserId } = useBooking();
     const { packages } = useContent(); // Use Content Context
     const router = useRouter();
     const { addToast } = useToast();
     const [activeModal, setActiveModal] = useState<string | null>(null);
     const [recommendedPackages, setRecommendedPackages] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     // Get user bookings
     const userBookings = user ? getBookingsByUserId(user.id) : [];
@@ -25,7 +26,7 @@ export default function ClientDashboard() {
 
     useEffect(() => {
         if (!isAuthenticated) router.push('/login');
-        if (user && user.role !== 'client') router.push(`/dashboard/${user.role}`);
+        if (user && user.role !== 'client') router.push(`/ dashboard / ${user.role} `);
 
         // Mock Recommendations Logic using Context Data
 
@@ -216,7 +217,7 @@ export default function ClientDashboard() {
                                             key={pkg.id}
                                             whileHover={{ y: -8 }}
                                             className="bg-slate-50 rounded-3xl p-4 cursor-pointer group hover:bg-white hover:shadow-xl transition-all duration-300 border border-slate-100"
-                                            onClick={() => router.push(`/packages/${pkg.id}`)}
+                                            onClick={() => router.push(`/ packages / ${pkg.id} `)}
                                         >
                                             <div className="h-44 rounded-2xl bg-gray-200 mb-4 overflow-hidden relative">
                                                 <img src={pkg.imageUrl} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" alt={pkg.title} />
@@ -272,7 +273,7 @@ export default function ClientDashboard() {
                                             onClick={() => setActiveModal(item.id)}
                                             className="flex flex-col items-center justify-center gap-3 p-5 rounded-3xl bg-slate-50 border border-slate-100 hover:bg-white hover:shadow-xl transition-all duration-300 cursor-pointer group"
                                         >
-                                            <div className={`p-3 rounded-2xl ${item.color} group-hover:scale-110 transition duration-300`}>
+                                            <div className={`p - 3 rounded - 2xl ${item.color} group - hover: scale - 110 transition duration - 300`}>
                                                 <item.icon className="w-6 h-6" />
                                             </div>
                                             <span className="text-sm font-bold text-slate-700">{item.label}</span>
