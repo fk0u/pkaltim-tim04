@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/router';
 
-type UserRole = 'client' | 'admin' | 'operator';
+type UserRole = 'client' | 'admin' | 'operator' | 'mitra';
 
 interface User {
     id: string;
@@ -50,7 +50,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
             // Simulate API delay
             await new Promise(resolve => setTimeout(resolve, 500));
-            
+
             // Allow generic login or specific mock
             const mockUser: User = {
                 id: 'mock-user-1',
@@ -58,9 +58,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 email: email,
                 role: 'client',
                 avatar: `https://i.pravatar.cc/150?u=${email}`,
-                onboardingCompleted: true 
+                onboardingCompleted: true
             };
-            
+
             // Special case for admin login
             if (email.includes('admin')) {
                 mockUser.role = 'admin';
@@ -72,7 +72,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
             setUser(mockUser);
             localStorage.setItem('borneotrip_user', JSON.stringify(mockUser));
-            
+
             if (mockUser.role === 'admin' || mockUser.role === 'operator') {
                 router.push('/dashboard/admin');
             } else if (mockUser.role === 'mitra' as any) {
@@ -88,8 +88,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     const loginSocial = (provider: string) => {
-         // Mock Social Login - just treat as client
-         const mockUser: User = {
+        // Mock Social Login - just treat as client
+        const mockUser: User = {
             id: `social-${Date.now()}`,
             name: 'Dian Sastro',
             email: 'dian@example.com',
@@ -132,7 +132,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     return (
-        <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, logout, register }}>
+        <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, logout, register, loginSocial, updateUserProfile }}>
             {children}
         </AuthContext.Provider>
     );

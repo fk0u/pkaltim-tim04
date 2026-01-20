@@ -44,7 +44,7 @@ export default function Navbar({ isTransparent = true }: { isTransparent?: boole
 
   return (
     <nav
-      className={`fixed w-full z-100 transition-all duration-300 ${isSolid ? 'bg-white/90 backdrop-blur-md shadow-sm py-3' : 'bg-transparent py-4 md:py-6'
+      className={`fixed w-full z-100 transition-all duration-500 will-change-transform ${isSolid ? 'glass shadow-sm py-3' : 'bg-transparent py-4 md:py-6'
         }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -84,7 +84,7 @@ export default function Navbar({ isTransparent = true }: { isTransparent?: boole
               <span>{locale.toUpperCase()}</span>
             </button>
 
-            <button 
+            <button
               className={`p-2 rounded-full hover:bg-black/5 transition ${isSolid ? 'text-gray-600' : 'text-white'}`}
               aria-label="Search"
             >
@@ -97,9 +97,9 @@ export default function Navbar({ isTransparent = true }: { isTransparent?: boole
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                   className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition ${isSolid ? 'bg-gray-100/80 hover:bg-gray-200' : 'bg-white/20 hover:bg-white/30 backdrop-blur-md text-white'}`}
                 >
-                  <Image 
-                    src={user.avatar || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"} 
-                    alt={user.name} 
+                  <Image
+                    src={user.avatar || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"}
+                    alt={user.name}
                     className="rounded-full border border-white/50"
                     width={28}
                     height={28}

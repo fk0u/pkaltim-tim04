@@ -1,10 +1,11 @@
 import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
 import { REGIONS } from '@/data/mockData';
-import { MapPin, Users, Ruler, Building, ArrowRight, Grid, TreePine, Mountain, Trophy, ChevronRight, Share2, Heart, Camera } from 'lucide-react';
+import { MapPin, Users, Ruler, Building, ArrowRight, Grid, Trophy, Share2, Heart, Camera } from 'lucide-react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 export default function DestinationDetail() {
     const router = useRouter();
@@ -52,10 +53,12 @@ export default function DestinationDetail() {
                 {/* 1. IMMERSIVE PARALLAX HERO SECTION - Increased Height */}
                 <div className="relative h-[95vh] w-full overflow-hidden bg-slate-900">
                     <motion.div style={{ y: yHero }} className="absolute inset-0 w-full h-full">
-                        <img
+                        <Image
                             src={region.imageUrl}
                             alt={region.name}
-                            className="w-full h-full object-cover opacity-80"
+                            fill
+                            className="object-cover opacity-80"
+                            priority
                         />
                         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent"></div>
                         <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent"></div>
@@ -111,7 +114,7 @@ export default function DestinationDetail() {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: 0.2 }}
-                        className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-16"
+                        className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-12"
                     >
                         {[
                             { label: 'Luas Area', value: `${region.area}`, unit: 'km²', icon: Ruler, color: 'text-blue-400', bg: 'from-blue-500/10 to-blue-500/5' },
@@ -135,16 +138,32 @@ export default function DestinationDetail() {
 
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 pb-20">
 
-                        {/* LEFT: MAIN EDITORIAL CONTENT (8 Cols) */}
-                        <div className="lg:col-span-8 space-y-16">
+                        {/* LEFT: MAIN CONTENT (8 Cols) */}
+                        <div className="lg:col-span-8 space-y-12">
 
-                            {/* Introduction */}
-                            <section>
+                            {/* TABS */}
+                            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+                                {['Overview', 'Destinations', 'Packages'].map((tab) => (
+                                    <button
+                                        key={tab}
+                                        onClick={() => {
+                                            const section = document.getElementById(tab.toLowerCase());
+                                            section?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                        }}
+                                        className="px-6 py-3 rounded-full bg-white border border-gray-100 text-gray-600 font-bold text-sm hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-200 transition shadow-sm whitespace-nowrap"
+                                    >
+                                        {tab}
+                                    </button>
+                                ))}
+                            </div>
+
+                            {/* Introduction (Overview) */}
+                            <section id="overview" className="scroll-mt-32">
                                 <motion.div
                                     initial={{ opacity: 0, y: 20 }}
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
-                                    className="prose prose-lg md:prose-xl prose-slate max-w-none"
+                                    className="prose prose-lg md:prose-xl prose-slate max-w-none bg-white p-8 rounded-3xl shadow-sm border border-gray-100"
                                 >
                                     <h3 className="text-emerald-600 font-bold uppercase tracking-widest text-sm mb-2">The Jewel of East Kalimantan</h3>
                                     <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-8 leading-tight">
@@ -153,8 +172,8 @@ export default function DestinationDetail() {
                                     <p className="text-slate-600 leading-loose">
                                         <span className="text-6xl float-left mr-3 mt-[-10px] font-black text-emerald-500 font-serif">"{region.name.charAt(0)}</span>
                                         {region.name.slice(1)} bukan sekadar titik di peta, melainkan sebuah ekosistem kehidupan yang berdenyut.
-                                        Sebagai salah satu koridor utama "Heart of Borneo", wilayah ini menyimpan jutaan cerita dari kanopi hutan hujan purba hingga,
-                                        kedalaman sungai Mahakam yang legendaris."
+                                        Sebagai salah satu koridor utama "Heart of Borneo", wilayah ini menyimpan jutaan cerita dari kanopi hutan hujan purba hingga
+                                        kedalaman sungai Mahakam yang legendaris.
                                     </p>
                                     <p className="text-slate-600 leading-loose mt-6">
                                         Dipimpin oleh <strong>{region.leader}</strong>, {region.name} kini bertransformasi menjadi model pariwisata berkelanjutan kelas dunia.
@@ -163,8 +182,8 @@ export default function DestinationDetail() {
                                 </motion.div>
                             </section>
 
-                            {/* Gallery / Attractions */}
-                            <section>
+                            {/* Gallery / Attractions (Destinations) */}
+                            <section id="destinations" className="scroll-mt-32">
                                 <div className="flex items-end justify-between mb-8">
                                     <div>
                                         <h3 className="text-emerald-600 font-bold uppercase tracking-widest text-sm mb-2">Must Visit Places</h3>
@@ -179,10 +198,12 @@ export default function DestinationDetail() {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     {region.destinations?.map((dest, idx) => (
                                         <div key={idx} className={`group relative rounded-[2rem] overflow-hidden cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-500 ${idx === 0 ? 'md:col-span-2 aspect-[2/1]' : 'aspect-[4/3]'}`}>
-                                            <img
+                                            <Image
                                                 src={`https://source.unsplash.com/random/800x600?nature,landscape,${idx},${region.name}`}
-                                                className="w-full h-full object-cover group-hover:scale-110 transition duration-1000"
+                                                className="object-cover group-hover:scale-110 transition duration-1000"
                                                 alt={dest}
+                                                fill
+                                                sizes="(max-width: 768px) 100vw, 50vw"
                                             />
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
 
@@ -208,6 +229,24 @@ export default function DestinationDetail() {
                                 </div>
                             </section>
 
+                            {/* Packages Section */}
+                            <section id="packages" className="scroll-mt-32">
+                                <h3 className="text-emerald-600 font-bold uppercase tracking-widest text-sm mb-2">Curated Trips</h3>
+                                <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-8">Paket Wisata Terkait</h2>
+                                <div className="space-y-6">
+                                    <div className="p-8 bg-gray-50 rounded-3xl text-center border border-dashed border-gray-300">
+                                        <div className="mx-auto w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mb-4">
+                                            <Trophy className="w-8 h-8 text-gray-400" />
+                                        </div>
+                                        <h4 className="font-bold text-gray-900 mb-2">Belum ada paket khusus</h4>
+                                        <p className="text-sm text-gray-500 mb-6">Kami sedang mengurasi paket perjalanan terbaik untuk {region.name}.</p>
+                                        <Link href="/packages" className="inline-flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-xl font-bold text-sm hover:bg-gray-50 transition shadow-sm">
+                                            Lihat Semua Paket Lainnya <ArrowRight className="w-4 h-4" />
+                                        </Link>
+                                    </div>
+                                </div>
+                            </section>
+
                         </div>
 
                         {/* RIGHT: STICKY BOOKING WIDGET (4 Cols) */}
@@ -222,14 +261,14 @@ export default function DestinationDetail() {
                                     <p className="text-sm text-gray-500 mb-8 relative z-10">Jelajahi paket wisata terbaik yang tersedia di {region.name}.</p>
 
                                     <div className="space-y-3 relative z-10">
-                                        <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-3">
+                                        <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-3 transition hover:bg-white hover:shadow-md">
                                             <MapPin className="w-5 h-5 text-emerald-500" />
                                             <div>
                                                 <div className="text-[10px] font-bold text-gray-400 uppercase">Tujuan</div>
                                                 <div className="font-bold text-gray-900">{region.name}</div>
                                             </div>
                                         </div>
-                                        <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-3">
+                                        <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-3 transition hover:bg-white hover:shadow-md">
                                             <Trophy className="w-5 h-5 text-amber-500" />
                                             <div>
                                                 <div className="text-[10px] font-bold text-gray-400 uppercase">Paket Tersedia</div>

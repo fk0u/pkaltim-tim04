@@ -13,8 +13,8 @@ import Image from 'next/image';
 export default function Home() {
    const { t } = useLanguage();
    const { packages, events } = useContent();
-   
-   const displayEvents = events; 
+
+   const displayEvents = events;
    const displayPackages = packages;
 
    const fadeInUp: MotionProps = {
@@ -31,54 +31,51 @@ export default function Home() {
 
             {/* Video Background */}
             <div className="absolute inset-0 z-0 rounded-b-4xl md:rounded-b-7xl overflow-hidden">
-               {/* Fallback Image */}
-               <div className="absolute inset-0">
-                  <Image
-                     src="https://images.unsplash.com/photo-1596401057633-565652b5d249?auto=format&fit=crop&q=80"
-                     className="object-cover"
-                     alt="Hutan Kalimantan"
-                     fill
-                     priority
-                  />
-               </div>
-               
                {/* Video Layer */}
                <video
                   autoPlay
                   loop
                   muted
                   playsInline
+                  poster="https://images.unsplash.com/photo-1596401057633-565652b5d249?auto=format&fit=crop&q=80"
                   className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 z-10"
                >
                   <source src="/video/bumper.webm" type="video/webm" />
+                  <source src="/video/bumper.mp4" type="video/mp4" />
                </video>
 
                {/* Dark Overlay for Text Readability */}
-               <div className="absolute inset-0 bg-black/40 z-20"></div>
-               <div className="absolute inset-0 bg-linear-to-t from-gray-900 via-transparent to-black/20 z-20"></div>
+               <div className="absolute inset-0 bg-black/30 z-20"></div>
+               <div className="absolute inset-0 bg-linear-to-t from-gray-900 via-transparent to-black/40 z-20"></div>
             </div>
 
             {/* Content Container - Added pt-32 to prevent overlap with Navbar on small screens */}
-            <div className="relative z-30 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-12 pt-32 md:pb-48 md:pt-0 flex flex-col justify-end h-full">
+            <div className="relative z-30 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-12 pt-32 md:pb-32 md:pt-32 flex flex-col justify-end h-full">
                <motion.div
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 3, duration: 1, ease: "easeOut" }}
-                  className="text-center mb-4"
+                  transition={{ delay: 0.5, duration: 1, ease: "easeOut" }}
+                  className="text-center mb-8 mt-20 md:mt-0"
                >
-                  <motion.span
+                  <motion.div
                      initial={{ opacity: 0, scale: 0.9 }}
                      animate={{ opacity: 1, scale: 1 }}
-                     transition={{ delay: 3.5, duration: 0.5 }}
-                     className="inline-block py-1 px-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-emerald-300 text-[10px] md:text-sm font-bold tracking-widest uppercase mb-3 md:mb-8 shadow-lg"
+                     transition={{ delay: 1, duration: 0.5 }}
+                     className="inline-flex items-center gap-2 py-1.5 px-4 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-emerald-300 text-[10px] md:text-sm font-bold tracking-widest uppercase mb-6 md:mb-8 shadow-lg hover:bg-white/20 transition-colors cursor-default"
                   >
-                     {t.hero.badge}
-                  </motion.span>
-                  <h1 className="text-3xl md:text-7xl lg:text-8xl font-black text-white tracking-tight leading-tight mb-3 md:mb-8 drop-shadow-lg">
+                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                     {t.hero.badge || "Wonderful Indonesia"}
+                  </motion.div>
+                  <h1 className="text-4xl md:text-7xl lg:text-9xl font-black text-white tracking-tighter leading-tight mb-4 md:mb-8 drop-shadow-2xl">
                      {t.hero.title1} <br />
-                     <span className="text-transparent bg-clip-text bg-linear-to-r from-emerald-400 to-cyan-300">{t.hero.title2}</span>
+                     <span className="text-transparent bg-clip-text bg-linear-to-r from-emerald-400 to-cyan-300 relative">
+                        {t.hero.title2}
+                        <svg className="absolute w-full h-3 -bottom-1 left-0 text-emerald-500/30 -z-10" viewBox="0 0 100 10" preserveAspectRatio="none">
+                           <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="8" fill="none" />
+                        </svg>
+                     </span>
                   </h1>
-                  <p className="text-xs md:text-xl text-gray-200 max-w-2xl mx-auto leading-relaxed font-light mb-4 md:mb-10 px-4">
+                  <p className="text-sm md:text-xl text-gray-200 max-w-2xl mx-auto leading-relaxed font-light mb-6 md:mb-12 px-4 drop-shadow-md">
                      {t.hero.subtitle}
                   </p>
                </motion.div>
@@ -155,76 +152,76 @@ export default function Home() {
 
                {/* Add check for empty packages */}
                {displayPackages.length > 0 ? (
-               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {/* Featured Large Card */}
-                  <motion.div {...fadeInUp} className="md:col-span-2 lg:col-span-2 row-span-2">
-                     <Link href={`/packages/${displayPackages[0].id}`} className="block h-full group cursor-pointer relative">
-                        <div className="h-full min-h-100 rounded-3xl overflow-hidden shadow-md transform transition duration-500 hover:-translate-y-1 hover:shadow-2xl relative">
-                           <Image 
-                              src={displayPackages[0].imageUrl} 
-                              className="object-cover group-hover:scale-105 transition duration-700" 
-                              alt={displayPackages[0].title} 
-                              fill
-                              sizes="(max-width: 768px) 100vw, 50vw"
-                           />
-                           <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent"></div>
-                           <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-lg text-xs font-bold text-green-800 z-10">
-                              Top Rated
-                           </div>
-                           <div className="absolute bottom-0 p-8 text-white w-full z-10">
-                              <div className="flex items-center gap-2 mb-2 text-green-300 font-bold text-sm">
-                                 <span>{displayPackages[0].duration}</span> • <span>{displayPackages[0].location}</span>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                     {/* Featured Large Card */}
+                     <motion.div {...fadeInUp} className="md:col-span-2 lg:col-span-2 row-span-2">
+                        <Link href={`/packages/${displayPackages[0].id}`} className="block h-full group cursor-pointer relative">
+                           <div className="h-full min-h-100 rounded-3xl overflow-hidden shadow-md transform transition duration-500 hover:-translate-y-1 hover:shadow-2xl relative">
+                              <Image
+                                 src={displayPackages[0].imageUrl}
+                                 className="object-cover group-hover:scale-105 transition duration-700"
+                                 alt={displayPackages[0].title}
+                                 fill
+                                 sizes="(max-width: 768px) 100vw, 50vw"
+                              />
+                              <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent"></div>
+                              <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-lg text-xs font-bold text-green-800 z-10">
+                                 Top Rated
                               </div>
-                              <h3 className="text-3xl font-bold mb-4 leading-tight">{displayPackages[0].title}</h3>
-                              <p className="text-gray-200 line-clamp-2 mb-6">{displayPackages[0].description}</p>
-                              <div className="flex items-center justify-between">
-                                 <div className="text-lg font-bold text-orange-400">Rp {displayPackages[0].price.toLocaleString('id-ID')}</div>
-                                 <span className="bg-white/20 hover:bg-white/30 backdrop-blur px-4 py-2 rounded-full text-sm font-semibold transition">Lihat Detail</span>
-                              </div>
-                           </div>
-                        </div>
-                     </Link>
-                  </motion.div>
-
-                  {/* Standard Cards */}
-                  {displayPackages.slice(1, 4).map((pkg, idx) => (
-                     <motion.div
-                        key={pkg.id}
-                        initial={{ opacity: 0, y: 40 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: idx * 0.1, duration: 0.8 }}
-                     >
-                        <Link href={`/packages/${pkg.id}`} className="group cursor-pointer h-full block">
-                           <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition duration-300 border border-gray-100 h-full flex flex-col transform hover:-translate-y-2">
-                              <div className="relative h-48 overflow-hidden">
-                                 <Image 
-                                    src={pkg.imageUrl} 
-                                    className="object-cover group-hover:scale-110 transition duration-500" 
-                                    alt={pkg.title}
-                                    fill
-                                    sizes="(max-width: 768px) 100vw, 25vw"
-                                 />
-                                 <div className="absolute bottom-2 right-2 bg-black/60 backdrop-blur px-2 py-1 rounded text-[10px] font-bold text-white flex items-center gap-1 z-10">
-                                    <Clock className="w-3 h-3" /> {pkg.duration}
+                              <div className="absolute bottom-0 p-8 text-white w-full z-10">
+                                 <div className="flex items-center gap-2 mb-2 text-green-300 font-bold text-sm">
+                                    <span>{displayPackages[0].duration}</span> • <span>{displayPackages[0].location}</span>
                                  </div>
-                              </div>
-                              <div className="p-5 flex flex-col grow">
-                                 <div className="text-xs text-gray-400 mb-1 flex items-center gap-1"><MapPin className="w-3 h-3" /> {pkg.location}</div>
-                                 <h3 className="font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-green-700 transition">{pkg.title}</h3>
-                                 <div className="mt-auto pt-3 border-t border-gray-50 flex justify-between items-center">
-                                    <span className="text-xs bg-green-50 text-green-700 px-2 py-1 rounded font-bold">🌱 Eco {pkg.ecoRating}/5</span>
-                                    <span className="font-bold text-orange-600 text-sm">Rp {pkg.price.toLocaleString('id-ID')}</span>
+                                 <h3 className="text-3xl font-bold mb-4 leading-tight">{displayPackages[0].title}</h3>
+                                 <p className="text-gray-200 line-clamp-2 mb-6">{displayPackages[0].description}</p>
+                                 <div className="flex items-center justify-between">
+                                    <div className="text-lg font-bold text-orange-400">Rp {displayPackages[0].price.toLocaleString('id-ID')}</div>
+                                    <span className="bg-white/20 hover:bg-white/30 backdrop-blur px-4 py-2 rounded-full text-sm font-semibold transition">Lihat Detail</span>
                                  </div>
                               </div>
                            </div>
                         </Link>
                      </motion.div>
-                  ))}
-               </div>
+
+                     {/* Standard Cards */}
+                     {displayPackages.slice(1, 4).map((pkg, idx) => (
+                        <motion.div
+                           key={pkg.id}
+                           initial={{ opacity: 0, y: 40 }}
+                           whileInView={{ opacity: 1, y: 0 }}
+                           viewport={{ once: true }}
+                           transition={{ delay: idx * 0.1, duration: 0.8 }}
+                        >
+                           <Link href={`/packages/${pkg.id}`} className="group cursor-pointer h-full block">
+                              <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition duration-300 border border-gray-100 h-full flex flex-col transform hover:-translate-y-2">
+                                 <div className="relative h-48 overflow-hidden">
+                                    <Image
+                                       src={pkg.imageUrl}
+                                       className="object-cover group-hover:scale-110 transition duration-500"
+                                       alt={pkg.title}
+                                       fill
+                                       sizes="(max-width: 768px) 100vw, 25vw"
+                                    />
+                                    <div className="absolute bottom-2 right-2 bg-black/60 backdrop-blur px-2 py-1 rounded text-[10px] font-bold text-white flex items-center gap-1 z-10">
+                                       <Clock className="w-3 h-3" /> {pkg.duration}
+                                    </div>
+                                 </div>
+                                 <div className="p-5 flex flex-col grow">
+                                    <div className="text-xs text-gray-400 mb-1 flex items-center gap-1"><MapPin className="w-3 h-3" /> {pkg.location}</div>
+                                    <h3 className="font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-green-700 transition">{pkg.title}</h3>
+                                    <div className="mt-auto pt-3 border-t border-gray-50 flex justify-between items-center">
+                                       <span className="text-xs bg-green-50 text-green-700 px-2 py-1 rounded font-bold">🌱 Eco {pkg.ecoRating}/5</span>
+                                       <span className="font-bold text-orange-600 text-sm">Rp {pkg.price.toLocaleString('id-ID')}</span>
+                                    </div>
+                                 </div>
+                              </div>
+                           </Link>
+                        </motion.div>
+                     ))}
+                  </div>
                ) : (
                   <div className="text-center py-20 bg-white rounded-xl shadow-sm">
-                      <p className="text-gray-500">Belum ada paket wisata tersedia.</p>
+                     <p className="text-gray-500">Belum ada paket wisata tersedia.</p>
                   </div>
                )}
 
@@ -240,12 +237,12 @@ export default function Home() {
          {/* 5. SUSTAINABILITY BANNER (Redesigned) */}
          <section className="py-20 bg-emerald-900 text-white relative overflow-hidden">
             <div className="absolute inset-0 z-0">
-                <Image
-                    src="https://images.unsplash.com/photo-1518531933037-91b2f5d2294c?auto=format&fit=crop&q=80"
-                    alt="Background"
-                    fill
-                    className="object-cover opacity-10 mix-blend-overlay"
-                />
+               <Image
+                  src="https://images.unsplash.com/photo-1518531933037-91b2f5d2294c?auto=format&fit=crop&q=80"
+                  alt="Background"
+                  fill
+                  className="object-cover opacity-10 mix-blend-overlay"
+               />
             </div>
             <motion.div {...fadeInUp} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col md:flex-row items-center gap-12">
                <div className="md:w-1/2">

@@ -1,15 +1,19 @@
 import { useState, useRef, useEffect } from 'react';
-import { MapPin, Search } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 import { useContent } from '@/contexts/ContentContext';
 
 interface DestinationSearchProps {
     label: string;
     placeholder?: string;
     onSelect?: (value: string) => void;
+    onChange?: (value: string) => void;
+    value?: string;
 }
 
-export default function DestinationSearch({ label, placeholder, onSelect }: DestinationSearchProps) {
-    const [query, setQuery] = useState('');
+export default function DestinationSearch({ label, placeholder, onSelect, onChange, value: propValue }: DestinationSearchProps) {
+    const [internalQuery, setInternalQuery] = useState('');
+    const query = propValue !== undefined ? propValue : internalQuery;
+
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
     const { packages } = useContent();
@@ -18,15 +22,15 @@ export default function DestinationSearch({ label, placeholder, onSelect }: Dest
     // This makes the search dynamic based on what's available
     const packageLocations = packages.map(p => p.location);
     const defaultDestinations = [
-       "Derawan, Berau",
-       "Maratua, Berau",
-       "Tenggarong, Kutai Kartanegara",
-       "Samarinda, Kalimantan Timur",
-       "Balikpapan, Kalimantan Timur",
-       "Bukit Bangkirai, Samboja",
-       "Kayan Mentarang, Malinau"
+        "Derawan, Berau",
+        "Maratua, Berau",
+        "Tenggarong, Kutai Kartanegara",
+        "Samarinda, Kalimantan Timur",
+        "Balikpapan, Kalimantan Timur",
+        "Bukit Bangkirai, Samboja",
+        "Kayan Mentarang, Malinau"
     ];
-    
+
     // Merge and Deduplicate
     const allDestinations = Array.from(new Set([...defaultDestinations, ...packageLocations]));
 
@@ -45,13 +49,17 @@ export default function DestinationSearch({ label, placeholder, onSelect }: Dest
     }, []);
 
     const handleSelect = (value: string) => {
-        setQuery(value);
+        if (onChange) onChange(value);
+        else setInternalQuery(value);
+
         setIsOpen(false);
         if (onSelect) onSelect(value);
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setQuery(e.target.value);
+        const val = e.target.value;
+        if (onChange) onChange(val);
+        else setInternalQuery(val);
         setIsOpen(true);
     };
 

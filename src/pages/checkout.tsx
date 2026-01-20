@@ -61,8 +61,8 @@ export default function CheckoutPage() {
     if (step === 3) {
         return (
             <Layout title="Checkout Selesai - BorneoTrip">
-                 <div className="min-h-screen bg-emerald-50 flex items-center justify-center pt-20 pb-20 px-4">
-                    <motion.div 
+                <div className="min-h-screen bg-emerald-50 flex items-center justify-center pt-20 pb-20 px-4">
+                    <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         className="bg-white rounded-3xl p-8 md:p-12 max-w-lg w-full text-center shadow-xl border border-emerald-100"
@@ -74,30 +74,30 @@ export default function CheckoutPage() {
                         <p className="text-slate-500 mb-8">
                             Tiket elektronik telah dikirim ke email <b>{user?.email}</b>. Silakan cek dashboard untuk melihat status pesanan.
                         </p>
-                        
+
                         <div className="bg-slate-50 rounded-2xl p-6 mb-8 text-left border border-slate-100">
-                             <div className="flex justify-between mb-2">
-                                 <span className="text-sm text-slate-500">No. Booking</span>
-                                 <span className="font-mono font-bold text-slate-900">{bookingId}</span>
-                             </div>
-                             <div className="flex justify-between mb-2">
-                                 <span className="text-sm text-slate-500">Paket</span>
-                                 <span className="font-bold text-slate-900 truncate max-w-[200px]">{pkgName}</span>
-                             </div>
-                             <div className="flex justify-between">
-                                 <span className="text-sm text-slate-500">Total Bayar</span>
-                                 <span className="font-bold text-emerald-600">Rp {totalPrice.toLocaleString('id-ID')}</span>
-                             </div>
+                            <div className="flex justify-between mb-2">
+                                <span className="text-sm text-slate-500">No. Booking</span>
+                                <span className="font-mono font-bold text-slate-900">{bookingId}</span>
+                            </div>
+                            <div className="flex justify-between mb-2">
+                                <span className="text-sm text-slate-500">Paket</span>
+                                <span className="font-bold text-slate-900 truncate max-w-[200px]">{pkgName}</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="text-sm text-slate-500">Total Bayar</span>
+                                <span className="font-bold text-emerald-600">Rp {totalPrice.toLocaleString('id-ID')}</span>
+                            </div>
                         </div>
 
                         <div className="flex flex-col gap-3">
-                            <button 
+                            <button
                                 onClick={() => router.push('/dashboard/client')}
                                 className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-emerald-200"
                             >
                                 Lihat Pesanan Saya
                             </button>
-                            <button 
+                            <button
                                 onClick={() => router.push('/')}
                                 className="w-full bg-white border-2 border-slate-100 hover:border-slate-300 text-slate-600 font-bold py-3.5 rounded-xl transition"
                             >
@@ -105,7 +105,7 @@ export default function CheckoutPage() {
                             </button>
                         </div>
                     </motion.div>
-                 </div>
+                </div>
             </Layout>
         );
     }
@@ -126,16 +126,16 @@ export default function CheckoutPage() {
                         <div className="flex justify-center items-center space-x-4 md:space-x-12 relative max-w-3xl mx-auto">
                             {/* Connector Line */}
                             <div className="absolute top-5 left-[10%] right-[10%] h-1 bg-gray-200 -z-10 rounded-full"></div>
-                            <div 
-                                className={`absolute top-5 left-[10%] h-1 bg-emerald-500 -z-10 rounded-full transition-all duration-700 ease-in-out ${step === 1 ? 'w-0' : step === 2 ? 'w-[40%]' : 'w-[80%]'}`} 
+                            <div
+                                className={`absolute top-5 left-[10%] h-1 bg-emerald-500 -z-10 rounded-full transition-all duration-700 ease-in-out ${step === 1 ? 'w-0' : step === 2 ? 'w-[40%]' : 'w-[80%]'}`}
                             ></div>
 
                             {steps.map((s) => (
                                 <div key={s.num} className="flex flex-col items-center gap-2">
-                                    <div 
+                                    <div
                                         className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 ring-4 z-10 
-                                            ${step >= s.num 
-                                                ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-200 ring-emerald-50' 
+                                            ${step >= s.num
+                                                ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-200 ring-emerald-50'
                                                 : 'bg-white text-gray-400 ring-gray-50 border border-gray-200'}`}
                                     >
                                         {step > s.num ? <CheckCircle className="w-5 h-5" /> : s.num}
@@ -179,8 +179,8 @@ export default function CheckoutPage() {
                                                     <div>
                                                         <h3 className="font-bold text-gray-900 mb-1">Anda belum login</h3>
                                                         <p className="text-sm text-gray-600 mb-4">Masuk untuk menyimpan riwayat pesanan dan mendapatkan poin.</p>
-                                                        <button 
-                                                            onClick={() => login('client')} 
+                                                        <button
+                                                            onClick={() => router.push('/login')}
                                                             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl text-sm font-bold transition shadow-lg shadow-blue-200"
                                                         >
                                                             Login Sekarang
@@ -190,12 +190,12 @@ export default function CheckoutPage() {
                                             </div>
                                         ) : (
                                             <div className="mb-8 flex items-center gap-4 bg-emerald-50/50 p-4 rounded-2xl border border-emerald-100/50">
-                                                <Image 
-                                                    src={user.avatar || '/logo/default-avatar.png'} 
-                                                    width={48} 
-                                                    height={48} 
-                                                    className="rounded-full ring-2 ring-white object-cover" 
-                                                    alt={user.name} 
+                                                <Image
+                                                    src={user.avatar || '/logo/default-avatar.png'}
+                                                    width={48}
+                                                    height={48}
+                                                    className="rounded-full ring-2 ring-white object-cover"
+                                                    alt={user.name}
                                                 />
                                                 <div>
                                                     <p className="text-xs font-bold text-emerald-600 uppercase tracking-wide">Logged in as</p>
@@ -219,7 +219,7 @@ export default function CheckoutPage() {
                                                     <input type="text" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none focus:bg-white transition" defaultValue={user?.name.split(' ')[1]} placeholder="Contoh: Santoso" />
                                                 </div>
                                             </div>
-                                            
+
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                                 <div className="space-y-2">
                                                     <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Email (E-Ticket)</label>
@@ -230,7 +230,7 @@ export default function CheckoutPage() {
                                                     <input type="tel" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none focus:bg-white transition" placeholder="+62 812..." />
                                                 </div>
                                             </div>
-                                            
+
                                             <div className="space-y-2">
                                                 <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Permintaan Khusus (Opsional)</label>
                                                 <textarea className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none focus:bg-white transition h-24 resize-none" placeholder="Contoh: Saya alergi seafood, tolong sediakan menu ayam." />
@@ -269,16 +269,16 @@ export default function CheckoutPage() {
                                                 <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 pl-1">Virtual Account</h3>
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                     {[
-                                                        { id: 'bca', label: 'BCA Virtual Account', icon: <Building2 className="w-5 h-5"/> },
-                                                        { id: 'mandiri', label: 'Mandiri VA', icon: <Building2 className="w-5 h-5"/> },
-                                                        { id: 'bni', label: 'BNI Virtual Account', icon: <Building2 className="w-5 h-5"/> }
+                                                        { id: 'bca', label: 'BCA Virtual Account', icon: <Building2 className="w-5 h-5" /> },
+                                                        { id: 'mandiri', label: 'Mandiri VA', icon: <Building2 className="w-5 h-5" /> },
+                                                        { id: 'bni', label: 'BNI Virtual Account', icon: <Building2 className="w-5 h-5" /> }
                                                     ].map((bank) => (
-                                                        <div 
+                                                        <div
                                                             key={bank.id}
                                                             onClick={() => setSelectedBank(bank.id)}
                                                             className={`flex items-center p-4 border rounded-xl cursor-pointer transition-all duration-200 relative overflow-hidden group
-                                                                ${selectedBank === bank.id 
-                                                                    ? 'border-emerald-500 bg-emerald-50/30 ring-1 ring-emerald-500' 
+                                                                ${selectedBank === bank.id
+                                                                    ? 'border-emerald-500 bg-emerald-50/30 ring-1 ring-emerald-500'
                                                                     : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'}`}
                                                         >
                                                             <div className={`p-2 rounded-lg mr-3 ${selectedBank === bank.id ? 'bg-emerald-100 text-emerald-600' : 'bg-gray-100 text-gray-500'}`}>
@@ -300,15 +300,15 @@ export default function CheckoutPage() {
                                                 <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 pl-1">E-Wallet</h3>
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                     {[
-                                                        { id: 'gopay', label: 'GoPay', icon: <Wallet className="w-5 h-5"/> },
-                                                        { id: 'qris', label: 'QRIS', icon: <QrCode className="w-5 h-5"/> }
+                                                        { id: 'gopay', label: 'GoPay', icon: <Wallet className="w-5 h-5" /> },
+                                                        { id: 'qris', label: 'QRIS', icon: <QrCode className="w-5 h-5" /> }
                                                     ].map((wallet) => (
-                                                        <div 
+                                                        <div
                                                             key={wallet.id}
                                                             onClick={() => setSelectedBank(wallet.id)}
                                                             className={`flex items-center p-4 border rounded-xl cursor-pointer transition-all duration-200 relative overflow-hidden group
-                                                                ${selectedBank === wallet.id 
-                                                                    ? 'border-emerald-500 bg-emerald-50/30 ring-1 ring-emerald-500' 
+                                                                ${selectedBank === wallet.id
+                                                                    ? 'border-emerald-500 bg-emerald-50/30 ring-1 ring-emerald-500'
                                                                     : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'}`}
                                                         >
                                                             <div className={`p-2 rounded-lg mr-3 ${selectedBank === wallet.id ? 'bg-emerald-100 text-emerald-600' : 'bg-gray-100 text-gray-500'}`}>
@@ -335,10 +335,10 @@ export default function CheckoutPage() {
                                             <button type="button" onClick={() => setStep(1)} className="w-1/3 bg-gray-100 text-gray-600 font-bold py-4 rounded-xl hover:bg-gray-200 transition">
                                                 Kembali
                                             </button>
-                                            <button 
-                                                type="button" 
-                                                onClick={handlePayment} 
-                                                disabled={isProcessing} 
+                                            <button
+                                                type="button"
+                                                onClick={handlePayment}
+                                                disabled={isProcessing}
                                                 className="w-2/3 bg-emerald-600 text-white font-bold py-4 rounded-xl hover:bg-emerald-700 transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-200 disabled:opacity-70 disabled:cursor-not-allowed"
                                             >
                                                 {isProcessing ? (
@@ -368,14 +368,14 @@ export default function CheckoutPage() {
                                         <div className="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 ring-8 ring-emerald-50">
                                             <CheckCircle className="w-12 h-12 text-emerald-600" />
                                         </div>
-                                        
+
                                         <h2 className="text-3xl font-black text-gray-900 mb-2">Pembayaran Berhasil!</h2>
                                         <p className="text-gray-500 mb-8 max-w-md mx-auto">Selamat! Perjalanan Anda ke <span className="font-bold text-gray-900">{location || 'Kalimantan Timur'}</span> telah terkonfirmasi. E-Ticket telah dikirim ke email Anda.</p>
 
                                         <div className="bg-gray-50 rounded-2xl p-6 mb-8 max-w-md mx-auto border border-dashed border-gray-300 relative">
                                             <div className="absolute -left-3 top-1/2 -mt-3 w-6 h-6 bg-white rounded-full border-r border-gray-300"></div>
                                             <div className="absolute -right-3 top-1/2 -mt-3 w-6 h-6 bg-white rounded-full border-l border-gray-300"></div>
-                                            
+
                                             <p className="text-xs text-gray-400 uppercase font-bold tracking-widest mb-1">BOOKING ID</p>
                                             <p className="text-2xl font-mono font-bold text-gray-900 tracking-wider">{bookingId}</p>
                                         </div>
@@ -405,12 +405,12 @@ export default function CheckoutPage() {
 
                                     {/* Package Card Tiny */}
                                     <div className="flex gap-4 mb-6 pb-6 border-b border-gray-100">
-                                        <Image 
-                                            src={pkgImage} 
-                                            width={80} 
-                                            height={80} 
-                                            className="rounded-xl object-cover shadow-sm bg-gray-200" 
-                                            alt={pkgName} 
+                                        <Image
+                                            src={pkgImage}
+                                            width={80}
+                                            height={80}
+                                            className="rounded-xl object-cover shadow-sm bg-gray-200"
+                                            alt={pkgName}
                                         />
                                         <div>
                                             <p className="text-xs text-gray-500 font-bold mb-1">PAKET WISATA</p>
@@ -438,7 +438,7 @@ export default function CheckoutPage() {
                                         </div>
                                         <div className="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
                                             <p className="text-xs text-gray-500">Durasi</p>
-                                            <p className="font-bold text-gray-900 text-xs text-right">3 Hari 2 Malam<br/><span className="text-emerald-600 font-normal">Termasuk Hotel</span></p>
+                                            <p className="font-bold text-gray-900 text-xs text-right">3 Hari 2 Malam<br /><span className="text-emerald-600 font-normal">Termasuk Hotel</span></p>
                                         </div>
                                     </div>
 
@@ -450,15 +450,15 @@ export default function CheckoutPage() {
                                         <span className="font-black text-gray-900 text-2xl">IDR {(totalPrice / 1000).toLocaleString('id-ID')}<span className="text-base text-gray-500 font-bold">.000</span></span>
                                     </div>
                                 </div>
-                                
+
                                 {/* Trust Badges */}
                                 <div className="grid grid-cols-2 gap-4">
-                                     <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-center gap-2 text-xs font-bold text-gray-500">
+                                    <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-center gap-2 text-xs font-bold text-gray-500">
                                         <ShieldCheck className="w-4 h-4 text-emerald-500" /> Garansi Aman
-                                     </div>
-                                     <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-center gap-2 text-xs font-bold text-gray-500">
+                                    </div>
+                                    <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-center gap-2 text-xs font-bold text-gray-500">
                                         <Users className="w-4 h-4 text-blue-500" /> 24/7 Support
-                                     </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
