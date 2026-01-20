@@ -1,4 +1,5 @@
 import Link from 'next/link';
+// HMR Trigger
 import { Menu, Search, X, ChevronRight, Globe, LogOut, LayoutDashboard } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -90,7 +91,7 @@ export default function Navbar({ isTransparent = true }: { isTransparent?: boole
           <div className="flex justify-between items-center">
             {/* Logo */}
             <Link href="/" className="shrink-0 flex items-center gap-2 group relative z-101 outline-none">
-              <span className={`text-2xl font-extrabold tracking-tight transition-colors ${isSolid || isMenuOpen ? 'text-green-800' : 'text-white'
+              <span className={`text-2xl font-extrabold tracking-tight transition-colors ${isSolid ? 'text-green-800' : 'text-white'
                 }`}>
                 BorneoTrip<span className="text-emerald-500">.</span>
               </span>
@@ -328,100 +329,57 @@ export default function Navbar({ isTransparent = true }: { isTransparent?: boole
           </div>
         </div>
 
-        {/* Full Screen Mobile Menu Overlay */}
+        {/* Floating Pop-up Menu (Stack Style) */}
         <AnimatePresence>
           {isMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="fixed inset-0 z-[100] bg-zinc-900/95 backdrop-blur-xl text-white md:hidden overflow-y-auto"
-            >
-              {/* Close Button (Top Right) */}
-              <button
+            <>
+              {/* Backdrop to close on click outside */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
                 onClick={() => setIsMenuOpen(false)}
-                className="absolute top-6 right-6 p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition"
+                className="fixed inset-0 bg-black/60 z-[95] md:hidden backdrop-blur-sm"
+              />
+
+              {/* Floating Menu Card */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                className="fixed bottom-28 left-6 right-6 z-[100] md:hidden bg-zinc-900 border border-white/10 rounded-3xl p-6 shadow-2xl overflow-hidden"
               >
-                <X className="w-8 h-8" />
-              </button>
-
-              <div className="flex flex-col min-h-screen px-6 pt-24 pb-12">
-                <motion.div
-                  className="flex-1 flex flex-col justify-center space-y-8"
-                  initial="hidden"
-                  animate="visible"
-                  exit="hidden"
-                  variants={{
-                    visible: { transition: { staggerChildren: 0.1, delayChildren: 0.2 } },
-                    hidden: { transition: { staggerChildren: 0.05, staggerDirection: -1 } }
-                  }}
-                >
-                  {menuItems.map((item, idx) => (
-                    <motion.div
+                <div className="flex flex-col space-y-2">
+                  {menuItems.map((item) => (
+                    <Link
                       key={item.href}
-                      variants={{
-                        hidden: { opacity: 0, x: -50 },
-                        visible: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 100 } }
-                      }}
+                      href={item.href}
+                      onClick={() => setIsMenuOpen(false)}
+                      className="block px-4 py-3 text-lg font-bold text-white hover:bg-white/10 rounded-xl transition-colors flex items-center justify-between group"
                     >
-                      <Link
-                        href={item.href}
-                        onClick={() => setIsMenuOpen(false)}
-                        className="block text-5xl font-black tracking-tighter text-white hover:text-emerald-500 transition-colors"
-                      >
-                        {item.title}
-                      </Link>
-                    </motion.div>
+                      {item.title}
+                      <ChevronRight className="w-5 h-5 text-gray-500 group-hover:text-emerald-400 transition" />
+                    </Link>
                   ))}
-                </motion.div>
 
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.8 }}
-                  className="pt-12 border-t border-white/10 mt-auto"
-                >
-                  <div className="grid grid-cols-2 gap-8 mb-8">
+                  {/* Socials / Contact Mini-Footer within the Card */}
+                  <div className="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-4">
                     <div>
-                      <h4 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">{t.common.socials}</h4>
-                      <ul className="space-y-2 text-sm font-medium text-gray-300">
-                        <li><a href="#" className="hover:text-emerald-500">Instagram</a></li>
-                        <li><a href="#" className="hover:text-emerald-500">Twitter (X)</a></li>
-                        <li><a href="#" className="hover:text-emerald-500">LinkedIn</a></li>
-                      </ul>
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Socials</p>
+                      <div className="flex gap-3">
+                        <a href="#" className="text-gray-300 hover:text-emerald-400 transition"><span className="sr-only">IG</span>📸</a>
+                        <a href="#" className="text-gray-300 hover:text-emerald-400 transition"><span className="sr-only">TW</span>🐦</a>
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">{t.common.contact}</h4>
-                      <p className="text-sm font-medium text-gray-300 mb-2">hello@borneotrip.id</p>
-                      <p className="text-sm font-medium text-gray-300">+62 812 3456 7890</p>
+                    <div className="text-right">
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Contact</p>
+                      <p className="text-xs text-gray-300">hello@borneotrip.id</p>
                     </div>
                   </div>
-
-                  {isAuthenticated && user ? (
-                    <Link href={`/dashboard/${user.role === 'client' ? 'client' : 'admin'}`} onClick={() => setIsMenuOpen(false)} className="w-full py-4 bg-emerald-600 text-white rounded-2xl font-bold text-lg flex items-center justify-center gap-2 hover:bg-emerald-700 transition shadow-xl mb-4">
-                      <LayoutDashboard className="w-5 h-5" /> Dashboard
-                    </Link>
-                  ) : (
-                    <Link href="/login" onClick={() => setIsMenuOpen(false)} className="w-full py-4 bg-emerald-600 text-white rounded-2xl font-bold text-lg flex items-center justify-center gap-2 hover:bg-emerald-700 transition shadow-xl">
-                      {t.common.signIn} <ChevronRight className="w-5 h-5" />
-                    </Link>
-                  )}
-
-                  {/* Mobile Language In-Menu */}
-                  <div className="flex items-center justify-center gap-4 mt-8 pt-8 border-t border-white/10">
-                    <span className="text-gray-400 text-sm font-bold uppercase tracking-widest">Language</span>
-                    <button
-                      onClick={() => toggleLanguage()}
-                      className="px-4 py-2 rounded-full bg-white/10 flex items-center gap-2 font-bold text-sm"
-                    >
-                      <Globe className="w-4 h-4" />
-                      {locale === 'id' ? 'Bahasa Indonesia' : 'English'}
-                    </button>
-                  </div>
-                </motion.div>
-              </div>
-            </motion.div>
+                </div>
+              </motion.div>
+            </>
           )}
         </AnimatePresence>
 
@@ -429,57 +387,71 @@ export default function Navbar({ isTransparent = true }: { isTransparent?: boole
 
       {/* Mobile Bottom Dock - Premium Navigation */}
       {/* Moved outside nav to avoid containing block issues with transform/will-change */}
-      <div className="md:hidden fixed bottom-6 left-6 right-6 z-[90]">
-        <div className="bg-black/80 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl flex items-center justify-between px-6 py-4">
-          <Link href="/" className={`flex flex-col items-center gap-1 ${router.pathname === '/' ? 'text-emerald-500' : 'text-gray-400'}`}>
-            <div className="p-2 rounded-xl bg-white/5 active:scale-95 transition">
-              <span className="text-xl font-bold">🏠</span>
-            </div>
-          </Link>
-
-          <button
-            onClick={() => setIsSearchOpen(true)}
-            className="flex flex-col items-center gap-1 text-gray-400 active:text-white transition"
+      {/* Show only when scrolled past Hero (isScrolled is true/solid) */}
+      <AnimatePresence>
+        {isScrolled && (
+          <motion.div
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 200, damping: 20 }}
+            className="md:hidden fixed bottom-6 left-6 right-6 z-[90]"
           >
-            <div className="p-2 rounded-xl bg-white/5 active:scale-95 transition">
-              <Search className="w-5 h-5" />
-            </div>
-          </button>
+            <div className="bg-black/80 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl flex items-center justify-between px-6 py-4">
+              <Link href="/" className={`flex flex-col items-center gap-1 ${router.pathname === '/' ? 'text-emerald-500' : 'text-gray-400'}`}>
+                <div className="p-2 rounded-xl bg-white/5 active:scale-95 transition">
+                  {/* Replaced emoji with Lucide icon */}
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>
+                </div>
+              </Link>
 
-          {/* Center Main Action - "Menu" trigger for full overlay */}
-          <button
-            onClick={() => setIsMenuOpen(true)}
-            className="flex flex-col items-center gap-1 -mt-8"
-          >
-            <div className="p-4 rounded-full bg-emerald-600 text-white shadow-lg active:scale-95 transition ring-4 ring-black/50">
-              <Menu className="w-6 h-6" />
-            </div>
-          </button>
+              <button
+                onClick={() => setIsSearchOpen(true)}
+                className="flex flex-col items-center gap-1 text-gray-400 active:text-white transition"
+              >
+                <div className="p-2 rounded-xl bg-white/5 active:scale-95 transition">
+                  <Search className="w-5 h-5" />
+                </div>
+              </button>
 
-          <button
-            onClick={toggleLanguage}
-            className="flex flex-col items-center gap-1 text-gray-400 active:text-white transition"
-          >
-            <div className="p-2 rounded-xl bg-white/5 active:scale-95 transition">
-              <span className="text-xs font-bold">{locale === 'en' ? 'EN' : 'ID'}</span>
-            </div>
-          </button>
+              {/* Center Main Action - "Menu" trigger for full overlay */}
+              <button
+                onClick={() => setIsMenuOpen(true)}
+                className="flex flex-col items-center gap-1 -mt-8"
+              >
+                <div className="p-4 rounded-full bg-emerald-600 text-white shadow-lg active:scale-95 transition ring-4 ring-black/50">
+                  <Menu className="w-6 h-6" />
+                </div>
+              </button>
 
-          {isAuthenticated ? (
-            <Link href={`/dashboard/${user?.role === 'client' ? 'client' : 'admin'}`} className={`flex flex-col items-center gap-1 ${router.pathname.includes('dashboard') ? 'text-emerald-500' : 'text-gray-400'}`}>
-              <div className="p-2 rounded-xl bg-white/5 active:scale-95 transition">
-                <LayoutDashboard className="w-5 h-5" />
-              </div>
-            </Link>
-          ) : (
-            <Link href="/login" className="flex flex-col items-center gap-1 text-gray-400">
-              <div className="p-2 rounded-xl bg-white/5 active:scale-95 transition">
-                <span className="text-xl font-bold">👤</span>
-              </div>
-            </Link>
-          )}
-        </div>
-      </div>
+              <button
+                onClick={toggleLanguage}
+                className="flex flex-col items-center gap-1 text-gray-400 active:text-white transition"
+              >
+                <div className="p-2 rounded-xl bg-white/5 active:scale-95 transition">
+                  <span className="text-xs font-bold">{locale === 'en' ? 'EN' : 'ID'}</span>
+                </div>
+              </button>
+
+              {isAuthenticated ? (
+                <Link href={`/dashboard/${user?.role === 'client' ? 'client' : 'admin'}`} className={`flex flex-col items-center gap-1 ${router.pathname.includes('dashboard') ? 'text-emerald-500' : 'text-gray-400'}`}>
+                  <div className="p-2 rounded-xl bg-white/5 active:scale-95 transition">
+                    <LayoutDashboard className="w-5 h-5" />
+                  </div>
+                </Link>
+              ) : (
+                <Link href="/login" className="flex flex-col items-center gap-1 text-gray-400">
+                  <div className="p-2 rounded-xl bg-white/5 active:scale-95 transition">
+                    <span className="text-xl font-bold">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+                    </span>
+                  </div>
+                </Link>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

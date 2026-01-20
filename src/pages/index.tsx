@@ -50,12 +50,12 @@ export default function Home() {
             </div>
 
             {/* Content Container - Added pt-32 to prevent overlap with Navbar on small screens */}
-            <div className="relative z-30 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-12 pt-32 md:pb-32 md:pt-32 flex flex-col justify-end h-full">
+            <div className="relative z-30 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pb-20 pt-32 md:pb-32 md:pt-32 flex flex-col justify-end h-full">
                <motion.div
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5, duration: 1, ease: "easeOut" }}
-                  className="text-center mb-8 mt-20 md:mt-0"
+                  className="text-center mb-16 mt-20 md:mt-0"
                >
                   <motion.div
                      initial={{ opacity: 0, scale: 0.9 }}
