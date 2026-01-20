@@ -36,48 +36,48 @@ export default function EventsPage() {
 
       {/* 1. IMMERSIVE HERO WITH FEATURED EVENT */}
       {featuredEvent && (
-      <div className="relative min-h-[70vh] flex items-center bg-black overflow-hidden group">
-        <div className="absolute inset-0 z-0">
-          <Image 
-            src={featuredEvent.imageUrl} 
-            className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition duration-[2s]" 
-            alt={featuredEvent.title} 
-            width={1920}
-            height={1080}
-            priority
-          />
-          <div className="absolute inset-0 bg-linear-to-t from-black via-black/40 to-transparent"></div>
+        <div className="relative h-screen flex items-center bg-black overflow-hidden group">
+          <div className="absolute inset-0 z-0">
+            <Image
+              src={featuredEvent.imageUrl}
+              className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition duration-[2s]"
+              alt={featuredEvent.title}
+              width={1920}
+              height={1080}
+              priority
+            />
+            <div className="absolute inset-0 bg-linear-to-t from-black via-black/40 to-transparent"></div>
+          </div>
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-20">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="max-w-4xl"
+            >
+              <span className="inline-block px-4 py-2 rounded-full bg-orange-500 text-white text-sm font-bold uppercase tracking-widest mb-6 shadow-lg shadow-orange-900/20 backdrop-blur-md">
+                🔥 Event Terpanas Bulan Ini
+              </span>
+              <h1 className="text-5xl md:text-8xl font-black text-white mb-8 leading-tight tracking-tight drop-shadow-xl">
+                {featuredEvent.title}
+              </h1>
+              <div className="flex flex-wrap items-center gap-8 text-white/90 text-xl mb-10 font-bold tracking-wide">
+                <span className="flex items-center gap-2"><Calendar className="w-6 h-6 text-green-400" /> {featuredEvent.date}</span>
+                <span className="flex items-center gap-2"><MapPin className="w-6 h-6 text-green-400" /> {featuredEvent.location}</span>
+              </div>
+              <p className="text-gray-200 text-2xl max-w-3xl mb-12 leading-relaxed font-light drop-shadow-md">
+                {featuredEvent.description}
+              </p>
+              <div className="flex gap-4">
+                <Link href={`/events/${featuredEvent.id}`} className="bg-green-600 hover:bg-green-500 text-white px-8 py-4 rounded-full font-bold text-lg transition transform hover:scale-105 shadow-lg shadow-green-900/50 flex items-center gap-2">
+                  <Ticket className="w-5 h-5" /> Lihat Detail & Tiket
+                </Link>
+                <button className="bg-white/10 hover:bg-white/20 backdrop-blur text-white px-6 py-4 rounded-full font-bold text-lg transition border border-white/20 flex items-center gap-2">
+                  <Share2 className="w-5 h-5" /> Share
+                </button>
+              </div>
+            </motion.div>
+          </div>
         </div>
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-20">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="max-w-3xl"
-          >
-            <span className="inline-block px-3 py-1 rounded-full bg-orange-500 text-white text-xs font-bold uppercase tracking-widest mb-4">
-              🔥 Event Terpanas Bulan Ini
-            </span>
-            <h1 className="text-4xl md:text-7xl font-black text-white mb-6 leading-tight">
-              {featuredEvent.title}
-            </h1>
-            <div className="flex flex-wrap items-center gap-6 text-white/90 text-lg mb-8 font-medium">
-              <span className="flex items-center gap-2"><Calendar className="w-5 h-5 text-green-400" /> {featuredEvent.date}</span>
-              <span className="flex items-center gap-2"><MapPin className="w-5 h-5 text-green-400" /> {featuredEvent.location}</span>
-            </div>
-            <p className="text-gray-300 text-xl max-w-2xl mb-10 leading-relaxed">
-              {featuredEvent.description}
-            </p>
-            <div className="flex gap-4">
-               <Link href={`/events/${featuredEvent.id}`} className="bg-green-600 hover:bg-green-500 text-white px-8 py-4 rounded-full font-bold text-lg transition transform hover:scale-105 shadow-lg shadow-green-900/50 flex items-center gap-2">
-                <Ticket className="w-5 h-5" /> Lihat Detail & Tiket
-              </Link>
-              <button className="bg-white/10 hover:bg-white/20 backdrop-blur text-white px-6 py-4 rounded-full font-bold text-lg transition border border-white/20 flex items-center gap-2">
-                <Share2 className="w-5 h-5" /> Share
-              </button>
-            </div>
-          </motion.div>
-        </div>
-      </div>
       )}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-20">
@@ -172,7 +172,7 @@ export default function EventsPage() {
 
                         <div className="flex items-center justify-between mt-auto">
                           <div className="text-sm font-bold text-gray-900 border border-gray-200 px-3 py-1 rounded-lg">
-                             {event.price || 'Free Event'}
+                            {event.price || 'Free Event'}
                           </div>
                           <button
                             onClick={(e) => handleRemindMe(e, event.title)}

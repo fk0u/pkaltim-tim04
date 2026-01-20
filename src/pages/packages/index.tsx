@@ -26,7 +26,7 @@ export default function PackagesPage() {
         // Filter Logic
         let matchesFilter = true;
         if (activeFilter === 'Eco-Friendly') matchesFilter = (pkg.rating || 0) >= 4.5;
-        
+
         // Parse "3D2N" or "1 Hari" to number
         const durationNum = parseInt(pkg.duration) || 1;
 
@@ -40,7 +40,7 @@ export default function PackagesPage() {
         <Layout title="Paket Wisata - BorneoTrip">
 
             {/* HEADER HERO */}
-            <div className="bg-emerald-950 text-white relative overflow-hidden py-24 rounded-b-[3rem] shadow-2xl mb-12">
+            <div className="bg-emerald-950 text-white relative overflow-hidden pt-48 pb-32 rounded-b-[3rem] shadow-2xl mb-12">
                 <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1596401057633-565652b5d249?auto=format&fit=crop&q=80')] bg-cover bg-center opacity-20"></div>
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent to-emerald-950/90"></div>
 
@@ -92,8 +92,8 @@ export default function PackagesPage() {
                             key={filter}
                             onClick={() => setActiveFilter(filter)}
                             className={`px-5 py-2.5 rounded-full text-sm font-bold border transition-all ${activeFilter === filter
-                                    ? 'bg-emerald-900 text-white border-emerald-900 shadow-lg shadow-emerald-900/20'
-                                    : 'bg-white text-gray-600 border-gray-200 hover:border-emerald-500 hover:text-emerald-600'
+                                ? 'bg-emerald-900 text-white border-emerald-900 shadow-lg shadow-emerald-900/20'
+                                : 'bg-white text-gray-600 border-gray-200 hover:border-emerald-500 hover:text-emerald-600'
                                 }`}
                         >
                             {filter}
