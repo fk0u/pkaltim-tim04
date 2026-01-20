@@ -13,25 +13,29 @@ export default function AboutPage() {
    return (
       <Layout title="Tentang Kami - BorneoTrip">
          {/* HEADER */}
-         <div className="bg-emerald-900 text-white py-24 relative overflow-hidden">
+         <div className="bg-emerald-950/90 text-white relative overflow-hidden h-screen flex items-center justify-center">
             <motion.div
                initial={{ scale: 1.1 }}
                animate={{ scale: 1 }}
-               transition={{ duration: 1.5, ease: "easeOut" }}
-               className="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1518531933037-91b2f5d2294c?auto=format&fit=crop&q=80')] bg-cover bg-center"
+               transition={{ duration: 2, ease: "easeOut" }}
+               className="absolute inset-0 opacity-40 bg-[url('https://images.unsplash.com/photo-1518531933037-91b2f5d2294c?auto=format&fit=crop&q=80')] bg-cover bg-center grayscale mix-blend-multiply"
             />
+            <div className="absolute inset-0 bg-gradient-to-t from-emerald-950 via-transparent to-transparent"></div>
+
             <motion.div
-               initial={{ opacity: 0, y: 30 }}
+               initial={{ opacity: 0, y: 40 }}
                animate={{ opacity: 1, y: 0 }}
-               transition={{ delay: 0.3 }}
-               className="max-w-4xl mx-auto px-4 text-center relative z-10"
+               transition={{ delay: 0.5, duration: 1 }}
+               className="max-w-5xl mx-auto px-4 text-center relative z-10"
             >
-               <div className="inline-flex items-center gap-2 bg-emerald-800/50 backdrop-blur px-4 py-1.5 rounded-full text-emerald-300 font-bold text-sm mb-6 border border-emerald-700">
+               <div className="inline-flex items-center gap-2 bg-emerald-500/20 backdrop-blur-md px-6 py-2 rounded-full text-emerald-300 font-bold text-sm mb-8 border border-emerald-500/30 uppercase tracking-widest shadow-lg">
                   <Leaf className="w-4 h-4" /> Sustainability Mission
                </div>
-               <h1 className="text-4xl md:text-6xl font-black mb-6 leading-tight">Menjaga Hutan, <br /><span className="text-emerald-400">Memuliakan Budaya</span></h1>
-               <p className="text-lg md:text-xl text-emerald-100/90 leading-relaxed max-w-2xl mx-auto">
-                  BorneoTrip bukan sekadar platform wisata. Kami adalah gerakan untuk memastikan keindahan Kalimantan Timur tetap lestari untuk generasi mendatang.
+               <h1 className="text-6xl md:text-8xl font-black mb-8 leading-tight tracking-tight drop-shadow-2xl">
+                  Menjaga Alam, <br /><span className="text-emerald-400">Memuliakan Budaya</span>
+               </h1>
+               <p className="text-xl md:text-2xl text-emerald-100/90 leading-relaxed max-w-3xl mx-auto font-light">
+                  BorneoTrip bukan sekadar platform wisata. Kami adalah gerakan kolektif untuk memastikan keindahan hutan hujan Kalimantan tetap lestari bagi generasi mendatang.
                </p>
             </motion.div>
          </div>

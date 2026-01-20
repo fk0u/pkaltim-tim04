@@ -8,18 +8,36 @@ export default function Sustainability() {
             <div className="bg-gray-50 min-h-screen pb-20">
 
                 {/* Hero Section */}
-                <section className="relative min-h-[60vh] flex items-center justify-center bg-emerald-900 text-white rounded-b-[3.5rem] overflow-hidden mb-20">
+                <section className="relative h-screen flex items-center justify-center bg-emerald-950 text-white rounded-b-[4rem] overflow-hidden mb-24 shadow-2xl">
                     <div className="absolute inset-0 z-0">
-                        <img src="https://images.unsplash.com/photo-1542385317-0d367c3b95a8?auto=format&fit=crop&q=80" className="w-full h-full object-cover opacity-30 select-none" alt="Borneo Rainforest" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-emerald-900 via-transparent to-transparent"></div>
+                        <img src="https://images.unsplash.com/photo-1542385317-0d367c3b95a8?auto=format&fit=crop&q=80" className="w-full h-full object-cover opacity-40 select-none scale-105" alt="Borneo Rainforest" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-emerald-950 via-emerald-950/20 to-transparent"></div>
                     </div>
 
-                    <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
-                        <span className="inline-block py-1 px-4 rounded-full bg-emerald-500/20 backdrop-blur border border-emerald-400/30 text-emerald-300 font-bold mb-6 tracking-widest uppercase">Our Mission</span>
-                        <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">Preserving <br /><span className="text-emerald-400">Paradise</span></h1>
-                        <p className="text-xl text-emerald-100/80 max-w-2xl mx-auto">
-                            Kami percaya bahwa pariwisata harus menjadi kekuatan untuk kebaikan. Setiap perjalanan Anda membantu melestarikan paru-paru dunia.
-                        </p>
+                    <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
+                        <motion.span
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="inline-block py-2 px-6 rounded-full bg-emerald-500/20 backdrop-blur border border-emerald-400/30 text-emerald-300 font-bold mb-8 tracking-[0.2em] uppercase text-sm shadow-xl"
+                        >
+                            Our Core Mission
+                        </motion.span>
+                        <motion.h1
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2 }}
+                            className="text-6xl md:text-9xl font-black mb-8 leading-none tracking-tight"
+                        >
+                            Preserving <br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">Paradise.</span>
+                        </motion.h1>
+                        <motion.p
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.4 }}
+                            className="text-2xl text-emerald-100/80 max-w-3xl mx-auto font-light leading-relaxed"
+                        >
+                            Kami percaya pariwisata adalah garda terdepan konservasi. Setiap jejak langkah Anda di Borneo berkontribusi langsung pada nafas hutan dunia.
+                        </motion.p>
                     </div>
                 </section>
 
