@@ -20,6 +20,7 @@ interface BookingContextType {
     addBooking: (bookingData: Omit<Booking, 'id' | 'createdAt' | 'status'>) => void;
     updateBookingStatus: (id: string, status: Booking['status']) => void;
     getBookingsByUserId: (userId: string) => Booking[];
+    getBookingById: (id: string) => Booking | undefined;
     stats: {
         totalRevenue: number;
         totalBookings: number;
@@ -66,6 +67,10 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
         return bookings.filter(b => b.userId === userId);
     };
 
+    const getBookingById = (id: string) => {
+        return bookings.find(b => b.id === id);
+    };
+
     const stats = {
         totalRevenue: bookings.reduce((acc, curr) => acc + curr.totalPrice, 0),
         totalBookings: bookings.length,
@@ -73,7 +78,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     };
 
     return (
-        <BookingContext.Provider value={{ bookings, addBooking, updateBookingStatus, getBookingsByUserId, stats }}>
+        <BookingContext.Provider value={{ bookings, addBooking, updateBookingStatus, getBookingsByUserId, getBookingById, stats }}>
             {children}
         </BookingContext.Provider>
     );

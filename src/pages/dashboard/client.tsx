@@ -26,18 +26,18 @@ export default function ClientDashboard() {
     useEffect(() => {
         if (!isAuthenticated) router.push('/login');
         if (user && user.role !== 'client') router.push(`/dashboard/${user.role}`);
-        
+
         // Mock Recommendations Logic using Context Data
-        
+
         // Simple personalization algorithm
         if (user && (user as any).preferences) {
             const prefs = (user as any).preferences; // Assuming already object or need parsing
             // If prefs is string, parse it. If object, use it.
             const userInterests = typeof prefs === 'string' ? JSON.parse(prefs).interests : (prefs.interests || []);
-            
+
             if (userInterests.length > 0) {
-                 // In a real app, filter packages by category/tags matching interests. 
-                 // For now, we just use the dynamic packages list.
+                // In a real app, filter packages by category/tags matching interests. 
+                // For now, we just use the dynamic packages list.
                 setRecommendedPackages(packages);
             } else {
                 setRecommendedPackages(packages.slice(0, 3));
@@ -331,7 +331,7 @@ export default function ClientDashboard() {
                     <button className="w-full flex items-center gap-3 p-4 rounded-xl bg-slate-50 hover:bg-slate-100 font-bold text-slate-700 text-sm transition">
                         <CreditCard className="w-5 h-5" /> Metode Pembayaran
                     </button>
-                    <button className="w-full flex items-center gap-3 p-4 rounded-xl bg-slate-50 hover:bg-slate-100 font-bold text-slate-700 text-sm transition">
+                    <button onClick={() => router.push('/history')} className="w-full flex items-center gap-3 p-4 rounded-xl bg-slate-50 hover:bg-slate-100 font-bold text-slate-700 text-sm transition">
                         <FileText className="w-5 h-5" /> Riwayat Transaksi
                     </button>
                     <button onClick={handleLogout} className="w-full flex items-center gap-3 p-4 rounded-xl bg-red-50 hover:bg-red-100 font-bold text-red-600 text-sm transition mt-4">
