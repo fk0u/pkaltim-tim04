@@ -4,14 +4,51 @@ import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useContent } from '@/contexts/ContentContext';
+import { useRouter } from 'next/router';
 import Image from 'next/image';
 
 export default function Navbar({ isTransparent = true }: { isTransparent?: boolean }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
   const { t, locale, toggleLanguage } = useLanguage();
   const { user, isAuthenticated, logout } = useAuth();
+  const { packages, events } = useContent();
+  const router = useRouter();
+
+  // Search Logic
+  const getSearchResults = () => {
+    if (!searchQuery) return [];
+
+    const query = searchQuery.toLowerCase();
+    const allItems = [
+      ...packages.map(p => ({ ...p, type: 'package', url: `/packages/${p.id}` })),
+      ...events.map(e => ({ ...e, type: 'event', url: `/events/${e.id}` }))
+    ];
+
+    return allItems.filter(item => {
+      const titleMatch = item.title.toLowerCase().includes(query);
+      const locationMatch = item.location.toLowerCase().includes(query);
+      const categoryMatch = ((item as any).category || '').toLowerCase().includes(query);
+      return titleMatch || locationMatch || categoryMatch;
+    }).slice(0, 5); // Limit to 5 results
+  };
+
+  const searchResults = getSearchResults();
+  const recommendations = [
+    ...packages.slice(0, 2).map(p => ({ ...p, type: 'package', url: `/packages/${p.id}` })),
+    ...events.slice(0, 1).map(e => ({ ...e, type: 'event', url: `/events/${e.id}` }))
+  ];
+
+  const handleNavigate = (url: string) => {
+    router.push(url);
+    setIsSearchOpen(false);
+    setSearchQuery('');
+  };
 
   // Combine scroll state with prop (if not transparent, always behave as scrolled/solid)
   const isSolid = isScrolled || !isTransparent;
@@ -57,18 +94,115 @@ export default function Navbar({ isTransparent = true }: { isTransparent?: boole
             </span>
           </Link>
 
-          {/* Desktop Menu */}
-          <div className="hidden md:flex space-x-8 items-center">
-            {menuItems.slice(0, 5).map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`text-sm font-bold tracking-wide hover:text-emerald-500 transition-colors ${isSolid ? 'text-gray-600' : 'text-white/90'
-                  }`}
-              >
-                {item.title}
-              </Link>
-            ))}
+          {/* Desktop Menu - Conditional Rendering */}
+          <div className="hidden md:block flex-1 mx-8 relative h-10 flex items-center justify-center pt-3">
+            <AnimatePresence mode="wait">
+              {!isSearchOpen ? (
+                <motion.div
+                  key="menu"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className="flex space-x-8 items-center justify-center"
+                >
+                  {menuItems.slice(0, 5).map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={`text-sm font-bold tracking-wide hover:text-emerald-500 transition-colors ${isSolid ? 'text-gray-600' : 'text-white/90'}`}
+                    >
+                      {item.title}
+                    </Link>
+                  ))}
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="search"
+                  initial={{ width: 40, opacity: 0 }}
+                  animate={{ width: "100%", opacity: 1 }}
+                  exit={{ width: 40, opacity: 0 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  className="absolute inset-0 flex items-center justify-center"
+                >
+                  <div className="w-full max-w-lg relative group">
+                    {/* Search Input Container */}
+                    <div className="relative z-20">
+                      <div className="absolute inset-0 bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/50"></div>
+                      <Search className="absolute left-4 top-3.5 w-5 h-5 text-gray-500 z-30" />
+                      <input
+                        type="text"
+                        autoFocus
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Cari destinasi, event, atau paket..."
+                        className="w-full pl-12 pr-12 py-3 rounded-2xl bg-transparent text-gray-900 placeholder-gray-500 focus:outline-none font-medium relative z-30"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => { setIsSearchOpen(false); setSearchQuery(''); }}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-full hover:bg-gray-100 text-gray-500 transition z-30"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    {/* Results Dropdown */}
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 }}
+                      className="absolute top-full left-0 right-0 mt-2 bg-white/90 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-20 p-2"
+                    >
+                      {searchQuery ? (
+                        searchResults.length > 0 ? (
+                          <div className="py-2">
+                            <h4 className="px-4 text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Hasil Pencarian</h4>
+                            {searchResults.map((result: any) => (
+                              <button
+                                key={result.id}
+                                onClick={() => handleNavigate(result.url)}
+                                className="w-full text-left px-4 py-3 hover:bg-emerald-50 rounded-xl flex items-center gap-3 transition group/item"
+                              >
+                                <div className="w-10 h-10 rounded-lg bg-gray-100 overflow-hidden shrink-0">
+                                  <img src={result.imageUrl} alt={result.title} className="w-full h-full object-cover" />
+                                </div>
+                                <div>
+                                  <p className="text-sm font-bold text-gray-900 group-hover/item:text-emerald-700 clamp-1">{result.title}</p>
+                                  <p className="text-xs text-gray-500 capitalize">{result.type} • {result.location}</p>
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="p-8 text-center text-gray-500">
+                            <p className="text-sm">Tidak ditemukan hasil untuk "{searchQuery}"</p>
+                          </div>
+                        )
+                      ) : (
+                        <div className="py-2">
+                          <h4 className="px-4 text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Rekomendasi</h4>
+                          {recommendations.map((rec: any) => (
+                            <button
+                              key={rec.id}
+                              onClick={() => handleNavigate(rec.url)}
+                              className="w-full text-left px-4 py-3 hover:bg-blue-50 rounded-xl flex items-center gap-3 transition group/item"
+                            >
+                              <div className="w-10 h-10 rounded-lg bg-gray-100 overflow-hidden shrink-0">
+                                <img src={rec.imageUrl} alt={rec.title} className="w-full h-full object-cover" />
+                              </div>
+                              <div>
+                                <p className="text-sm font-bold text-gray-900 group-hover/item:text-blue-700 clamp-1">{rec.title}</p>
+                                <p className="text-xs text-gray-500 capitalize">{rec.type}</p>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </motion.div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           {/* Right Actions */}
@@ -76,20 +210,31 @@ export default function Navbar({ isTransparent = true }: { isTransparent?: boole
             {/* Language Toggle */}
             <button
               onClick={toggleLanguage}
-              className={`p-2 rounded-full flex items-center gap-1 font-bold text-xs transition ${isSolid ? 'bg-gray-100 text-gray-700 hover:bg-gray-200' : 'bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm'
-                }`}
+              className={`p-2 rounded-full flex items-center gap-1 font-bold text-xs transition ${isSolid ? 'bg-gray-100 text-gray-700 hover:bg-gray-200' : 'bg-white/10 text-white hover:bg-white/20 backdrop-blur-sm'}`}
               aria-label="Toggle language"
             >
               <Globe className="w-4 h-4" />
               <span>{locale.toUpperCase()}</span>
             </button>
 
-            <button
-              className={`p-2 rounded-full hover:bg-black/5 transition ${isSolid ? 'text-gray-600' : 'text-white'}`}
+            <motion.button
+              onClick={() => setIsSearchOpen(!isSearchOpen)}
+              className={`p-2 rounded-full hover:bg-black/5 transition relative overflow-hidden ${isSolid ? 'text-gray-600' : 'text-white'}`}
               aria-label="Search"
+              whileTap={{ scale: 0.9 }}
             >
-              <Search className="w-5 h-5" />
-            </button>
+              <AnimatePresence mode="wait">
+                {isSearchOpen ? (
+                  <motion.div key="close" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }}>
+                    <X className="w-5 h-5" />
+                  </motion.div>
+                ) : (
+                  <motion.div key="search" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
+                    <Search className="w-5 h-5" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.button>
 
             {isAuthenticated && user ? (
               <div className="relative">
