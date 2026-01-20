@@ -5,6 +5,7 @@ import { Calendar, MapPin, Clock, Share2, Ticket, ArrowLeft, User, Heart, Mic2 }
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useToast } from '@/components/ui';
 import Link from 'next/link';
+import { useState } from 'react';
 
 export default function EventDetail() {
     const router = useRouter();
@@ -12,6 +13,7 @@ export default function EventDetail() {
     const { addToast } = useToast();
     const { events } = useContent();
     const { scrollY } = useScroll();
+    const [pax, setPax] = useState(1);
 
     // Parallax & Fade effects
     const yHero = useTransform(scrollY, [0, 500], [0, 200]);
@@ -34,8 +36,71 @@ export default function EventDetail() {
         );
     }
 
+    const parsePrice = (priceStr: string) => {
+        if (priceStr === 'Free') return 0;
+        return parseInt(priceStr.replace(/[^0-9]/g, '')) || 0;
+    };
+
+    const parseDate = (dateStr: string) => {
+        try {
+            // Handle ranges: "15 - 22 Juli 2026" -> "15 Juli 2026"
+            const singleDate = dateStr.split(' - ')[0];
+            // If range was just "15", we need to append month/year from second part? 
+            // Actually "15 - 22 Juli 2026" splits to "15". 
+            // Better regex: match the first number and the month/year info.
+
+            // Simple mapping for Indonesian months
+            const monthMap: { [key: string]: string } = {
+                'Januari': 'January', 'Februari': 'February', 'Maret': 'March', 'April': 'April',
+                'Mei': 'May', 'Juni': 'June', 'Juli': 'July', 'Agustus': 'August',
+                'September': 'September', 'Oktober': 'October', 'November': 'November', 'Desember': 'December'
+            };
+
+            let englishDateStr = singleDate;
+            Object.keys(monthMap).forEach(indo => {
+                if (dateStr.includes(indo)) {
+                    // If range "15 - 22 Juli 2026", and we took "15", we are missing "Juli 2026".
+                    // Let's just blindly replace the indo month in the full string and let Date.parse try its best?
+                    // "15 - 22 July 2026" -> Invalid.
+
+                    // Strategy: Extract Day, Month, Year.
+                    // Regex look for: (\d+) [-\s\d]* ([A-Za-z]+) (\d{4})
+                    const match = dateStr.match(/(\d+).*?([A-Za-z]+)\s+(\d{4})/);
+                    if (match) {
+                        const day = match[1];
+                        const monthIndo = match[2];
+                        const year = match[3];
+                        const monthEng = monthMap[monthIndo] || monthIndo;
+                        englishDateStr = `${day} ${monthEng} ${year}`;
+                    }
+                }
+            });
+
+            const dateObj = new Date(englishDateStr);
+            if (isNaN(dateObj.getTime())) return new Date().toISOString(); // Fallback
+            return dateObj.toISOString();
+        } catch (e) {
+            return new Date().toISOString();
+        }
+    };
+
     const handleTicket = () => {
-        addToast("Fitur pembelian tiket akan segera tersedia!", "info");
+        const price = parsePrice(event.price || 'Free');
+        const parsedDate = parseDate(event.date); // Use existing date if valid or parser
+
+        router.push({
+            pathname: '/checkout',
+            query: {
+                id: event.id,
+                pkg: event.title,
+                price: price * pax,
+                image: event.imageUrl,
+                location: event.location,
+                date: parsedDate,
+                pax: pax,
+                type: 'event' // Indicator for checkout page
+            }
+        });
     };
 
     const handleShare = () => {
@@ -122,11 +187,11 @@ export default function EventDetail() {
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 -mt-10 relative z-20">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-                    
+
                     {/* LEFT CONTENT: Description & Schedule */}
                     <div className="lg:col-span-2 space-y-12">
                         {/* Description Card */}
-                        <motion.div 
+                        <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
@@ -150,7 +215,7 @@ export default function EventDetail() {
 
                         {/* Schedule Timeline */}
                         {event.schedule && (
-                             <motion.div 
+                            <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
@@ -176,7 +241,7 @@ export default function EventDetail() {
 
                         {/* Gallery Grid */}
                         {event.gallery && (
-                             <motion.div 
+                            <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
@@ -196,7 +261,7 @@ export default function EventDetail() {
                     {/* RIGHT SIDEBAR: Action Card */}
                     <div className="lg:col-span-1">
                         <div className="sticky top-24 space-y-6">
-                            <motion.div 
+                            <motion.div
                                 initial={{ opacity: 0, x: 20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: 0.5 }}
@@ -214,15 +279,24 @@ export default function EventDetail() {
                                     )}
                                 </div>
 
-                                <button 
+                                <div className="flex items-center justify-between bg-gray-50 rounded-xl p-2 mb-4 border border-gray-200">
+                                    <span className="text-xs font-bold text-gray-500 uppercase px-2">Jumlah</span>
+                                    <div className="flex items-center gap-3">
+                                        <button onClick={() => setPax(Math.max(1, pax - 1))} className="w-8 h-8 bg-white rounded-lg shadow-sm font-bold text-gray-600 hover:bg-gray-100 flex items-center justify-center transition">-</button>
+                                        <span className="font-bold text-gray-900 w-4 text-center">{pax}</span>
+                                        <button onClick={() => setPax(pax + 1)} className="w-8 h-8 bg-emerald-500 rounded-lg shadow-emerald-200 shadow-sm font-bold text-white hover:bg-emerald-600 flex items-center justify-center transition">+</button>
+                                    </div>
+                                </div>
+
+                                <button
                                     onClick={handleTicket}
                                     className="w-full bg-gray-900 text-white font-bold py-4 rounded-xl hover:bg-emerald-600 transition-all shadow-lg hover:shadow-emerald-900/30 flex items-center justify-center gap-2 mb-4 group"
                                 >
                                     <Ticket className="w-5 h-5 group-hover:-rotate-12 transition" />
                                     {event.price === 'Free' ? 'Registrasi Gratis' : 'Beli Tiket Sekarang'}
                                 </button>
-                                
-                                <button 
+
+                                <button
                                     onClick={handleShare}
                                     className="w-full bg-gray-100 text-gray-700 font-bold py-3 rounded-xl hover:bg-gray-200 transition flex items-center justify-center gap-2"
                                 >

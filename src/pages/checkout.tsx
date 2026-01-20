@@ -18,9 +18,10 @@ export default function CheckoutPage() {
     const [isProcessing, setIsProcessing] = useState(false);
     const [selectedBank, setSelectedBank] = useState('bca');
 
-    const { pkg, date, pax, price, id, location, image } = router.query;
+    const { pkg, date, pax, price, id, location, image, type } = router.query;
 
-    const pkgName = pkg ? (pkg as string) : "Paket Wisata";
+    const isEvent = type === 'event';
+    const pkgName = pkg ? (pkg as string) : (isEvent ? "Event Ticket" : "Paket Wisata");
     const totalPrice = price ? parseInt(price as string) : 0;
     const pkgImage = image ? (image as string) : "https://images.unsplash.com/photo-1596401057633-565652b5d249?auto=format&fit=crop&q=80";
     // const bookingId = `BK-${Math.floor(Math.random() * 1000000)}`; // Moved to state to avoid hydration error
@@ -413,7 +414,7 @@ export default function CheckoutPage() {
                                             alt={pkgName}
                                         />
                                         <div>
-                                            <p className="text-xs text-gray-500 font-bold mb-1">PAKET WISATA</p>
+                                            <p className="text-xs text-gray-500 font-bold mb-1">{isEvent ? "EVENT TICKET" : "PAKET WISATA"}</p>
                                             <h4 className="font-bold text-gray-900 text-sm leading-tight line-clamp-2">{pkgName}</h4>
                                             <div className="flex items-center gap-1 mt-2 text-xs text-gray-500">
                                                 <MapPin className="w-3 h-3" /> {location || 'East Kalimantan'}
