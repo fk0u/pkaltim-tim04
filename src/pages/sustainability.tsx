@@ -1,10 +1,13 @@
 import Layout from '@/components/Layout';
 import { TreePine, Sprout, Heart, Users, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function Sustainability() {
+    const { t } = useLanguage();
+
     return (
-        <Layout title="Sustainability - BorneoTrip">
+        <Layout title={`${t.nav.sustainability} - BorneoTrip`}>
             <div className="bg-gray-50 min-h-screen pb-20">
 
                 {/* Hero Section */}
@@ -18,9 +21,9 @@ export default function Sustainability() {
                         <motion.span
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="inline-block py-2 px-6 rounded-full bg-emerald-500/20 backdrop-blur border border-emerald-400/30 text-emerald-300 font-bold mb-8 tracking-[0.2em] uppercase text-sm shadow-xl"
+                            className="inline-block py-2 px-6 rounded-full glass border border-emerald-400/30 text-emerald-300 font-bold mb-8 tracking-[0.2em] uppercase text-sm shadow-xl"
                         >
-                            Our Core Mission
+                            {t.sustainability.missionBadge}
                         </motion.span>
                         <motion.h1
                             initial={{ opacity: 0, y: 20 }}
@@ -28,7 +31,7 @@ export default function Sustainability() {
                             transition={{ delay: 0.2 }}
                             className="text-6xl md:text-9xl font-black mb-8 leading-none tracking-tight"
                         >
-                            Preserving <br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">Paradise.</span>
+                            {t.sustainability.heroTitle} <br /><span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">{t.sustainability.heroTitleHighlight}</span>
                         </motion.h1>
                         <motion.p
                             initial={{ opacity: 0, y: 20 }}
@@ -36,7 +39,7 @@ export default function Sustainability() {
                             transition={{ delay: 0.4 }}
                             className="text-2xl text-emerald-100/80 max-w-3xl mx-auto font-light leading-relaxed"
                         >
-                            Kami percaya pariwisata adalah garda terdepan konservasi. Setiap jejak langkah Anda di Borneo berkontribusi langsung pada nafas hutan dunia.
+                            {t.sustainability.heroSubtitle}
                         </motion.p>
                     </div>
                 </section>
@@ -44,28 +47,28 @@ export default function Sustainability() {
                 {/* Impact Metrics */}
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-32 relative z-20 mb-24">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <motion.div whileHover={{ y: -10 }} className="bg-white p-8 rounded-3xl shadow-xl border border-gray-100 text-center">
+                        <motion.div whileHover={{ y: -10 }} className="glass-panel p-8 rounded-3xl shadow-xl border border-gray-100 text-center bg-white/95">
                             <div className="w-16 h-16 mx-auto bg-green-100 rounded-2xl flex items-center justify-center text-green-600 mb-6">
                                 <TreePine className="w-8 h-8" />
                             </div>
                             <div className="text-5xl font-black text-gray-900 mb-2">1,542</div>
-                            <div className="text-gray-500 uppercase tracking-widest font-bold text-sm">Pohon Ditanam</div>
+                            <div className="text-gray-500 uppercase tracking-widest font-bold text-sm">{t.sustainability.metrics.trees}</div>
                         </motion.div>
 
-                        <motion.div whileHover={{ y: -10 }} className="bg-white p-8 rounded-3xl shadow-xl border border-gray-100 text-center">
+                        <motion.div whileHover={{ y: -10 }} className="glass-panel p-8 rounded-3xl shadow-xl border border-gray-100 text-center bg-white/95">
                             <div className="w-16 h-16 mx-auto bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600 mb-6">
                                 <Heart className="w-8 h-8" />
                             </div>
                             <div className="text-5xl font-black text-gray-900 mb-2">2.1 M</div>
-                            <div className="text-gray-500 uppercase tracking-widest font-bold text-sm">Rupiah Donasi</div>
+                            <div className="text-gray-500 uppercase tracking-widest font-bold text-sm">{t.sustainability.metrics.donation}</div>
                         </motion.div>
 
-                        <motion.div whileHover={{ y: -10 }} className="bg-white p-8 rounded-3xl shadow-xl border border-gray-100 text-center">
+                        <motion.div whileHover={{ y: -10 }} className="glass-panel p-8 rounded-3xl shadow-xl border border-gray-100 text-center bg-white/95">
                             <div className="w-16 h-16 mx-auto bg-orange-100 rounded-2xl flex items-center justify-center text-orange-600 mb-6">
                                 <Users className="w-8 h-8" />
                             </div>
                             <div className="text-5xl font-black text-gray-900 mb-2">350+</div>
-                            <div className="text-gray-500 uppercase tracking-widest font-bold text-sm">Warga Diberdayakan</div>
+                            <div className="text-gray-500 uppercase tracking-widest font-bold text-sm">{t.sustainability.metrics.people}</div>
                         </motion.div>
                     </div>
                 </div>
@@ -82,11 +85,11 @@ export default function Sustainability() {
                         </div>
                         <div className="md:w-1/2 space-y-6">
                             <div className="inline-flex items-center gap-2 text-orange-600 font-bold uppercase tracking-wider text-sm">
-                                <Sprout className="w-5 h-5" /> Konservasi Orangutan
+                                <Sprout className="w-5 h-5" /> {t.sustainability.section1.badge}
                             </div>
-                            <h2 className="text-4xl font-bold text-gray-900">Habitat yang Terlindungi</h2>
+                            <h2 className="text-4xl font-bold text-gray-900">{t.sustainability.section1.title}</h2>
                             <p className="text-gray-600 text-lg leading-relaxed">
-                                BorneoTrip bekerja sama langsung dengan pusat rehabilitasi Orangutan di Samboja Lestari. 5% dari setiap pemesanan tiket Anda didonasikan langsung untuk program reforestasi dan perlindungan habitat asli mereka.
+                                {t.sustainability.section1.desc}
                             </p>
                         </div>
                     </div>
@@ -100,11 +103,11 @@ export default function Sustainability() {
                         </div>
                         <div className="md:w-1/2 space-y-6">
                             <div className="inline-flex items-center gap-2 text-blue-600 font-bold uppercase tracking-wider text-sm">
-                                <Users className="w-5 h-5" /> Pemberdayaan Lokal
+                                <Users className="w-5 h-5" /> {t.sustainability.section2.badge}
                             </div>
-                            <h2 className="text-4xl font-bold text-gray-900">Mendukung Ekonomi Desa</h2>
+                            <h2 className="text-4xl font-bold text-gray-900">{t.sustainability.section2.title}</h2>
                             <p className="text-gray-600 text-lg leading-relaxed">
-                                Kami memprioritaskan homestay lokal, pemandu wisata asli daerah, dan kuliner tradisional. Ini memastikan bahwa uang yang Anda habiskan berputar di dalam komunitas lokal, bukan hanya di perusahaan besar.
+                                {t.sustainability.section2.desc}
                             </p>
                         </div>
                     </div>

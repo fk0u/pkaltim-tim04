@@ -231,5 +231,221 @@ export const id = {
         startFrom: "Mulai dari",
         event: "Event",
         package: "Paket"
+    },
+    about: {
+        missionBadge: "Misi Keberlanjutan",
+        title: "Menjaga Alam,",
+        titleHighlight: "Memuliakan Budaya",
+        subtitle: "BorneoTrip bukan sekadar platform wisata. Kami adalah gerakan kolektif untuk memastikan keindahan hutan hujan Kalimantan tetap lestari bagi generasi mendatang.",
+        stats: {
+            profit: "Profit untuk Konservasi",
+            communities: "Komunitas Adat",
+            trees: "Pohon Ulin Ditanam",
+            plastic: "Single-use Plastic"
+        },
+        pillars: {
+            title: "3 Pilar Utama Kami",
+            subtitle: "Masa depan pariwisata adalah pariwisata yang bertanggung jawab.",
+            envTitle: "Perlindungan Lingkungan",
+            envDesc: "Setiap paket wisata kami dirancang untuk meminimalkan jejak karbon dan berkontribusi langsung pada pelestarian habitat satwa endemik.",
+            comTitle: "Pemberdayaan Komunitas",
+            comDesc: "Kami bekerja langsung dengan masyarakat lokal sebagai pemandu, tuan rumah homestay, dan penyedia logistik untuk memastikan ekonomi berputar di daerah.",
+            cultTitle: "Pelestarian Budaya",
+            cultDesc: "Wisatawan diajak untuk mempelajari, menghormati, dan turut serta menjaga tradisi leluhur agar tetap hidup di tengah modernisasi."
+        },
+        why: {
+            title: "Mengapa",
+            titleHighlight: "Kalimantan Timur?",
+            reason1Title: "Paru-paru Dunia",
+            reason1Desc: "Rumah bagi jutaan hektar hutan hujan tropis yang vital bagi iklim global dan habitat satwa langka.",
+            reason2Title: "Sungai Mahakam",
+            reason2Desc: "Urat nadi kehidupan yang menyimpan sejarah peradaban kerajaan tertua dan budaya sungai yang unik."
+        }
+    },
+    contact: {
+        title: "Hubungi Kami",
+        headerTitle: "Mulai Perjalanan Anda",
+        headerSubtitle: "Punya pertanyaan tentang paket wisata atau ingin kustomisasi itinerary? Tim kami siap membantu Anda 24/7.",
+        info: {
+            phoneTitle: "Telepon & WhatsApp",
+            phoneDesc: "Senin - Minggu, 08:00 - 20:00 WITA",
+            emailTitle: "Email Support",
+            emailDesc: "Kami akan membalas maksimal dalam 24 jam.",
+            visitTitle: "Kunjungi Kami",
+            visitDesc: "Jl. Jenderal Sudirman No. 45\nBalikpapan Kota, Kalimantan Timur"
+        },
+        form: {
+            title: "Kirim Pesan",
+            nameLabel: "Nama Lengkap",
+            emailLabel: "Email",
+            subjectLabel: "Subjek",
+            messageLabel: "Pesan",
+            namePlaceholder: "John Doe",
+            emailPlaceholder: "john@example.com",
+            subjectPlaceholder: "Saya ingin bertanya tentang...",
+            messagePlaceholder: "Tulis pesan Anda di sini...",
+            btn: "Kirim Pesan",
+            success: "Pesan Anda telah terkirim! Tim kami akan segera menghubungi Anda."
+        }
+    },
+    sustainability: {
+        title: "Keberlanjutan",
+        missionBadge: "Misi Inti Kami",
+        heroTitle: "Menjaga",
+        heroTitleHighlight: "Surga.",
+        heroSubtitle: "Kami percaya pariwisata adalah garda terdepan konservasi. Setiap jejak langkah Anda di Borneo berkontribusi langsung pada nafas hutan dunia.",
+        metrics: {
+            trees: "Pohon Ditanam",
+            donation: "Rupiah Donasi",
+            people: "Warga Diberdayakan"
+        },
+        section1: {
+            badge: "Konservasi Orangutan",
+            title: "Habitat yang Terlindungi",
+            desc: "BorneoTrip bekerja sama langsung dengan pusat rehabilitasi Orangutan di Samboja Lestari. 5% dari setiap pemesanan tiket Anda didonasikan langsung untuk program reforestasi dan perlindungan habitat asli mereka."
+        },
+        section2: {
+            badge: "Pemberdayaan Lokal",
+            title: "Mendukung Ekonomi Desa",
+            desc: "Kami memprioritaskan homestay lokal, pemandu wisata asli daerah, dan kuliner tradisional. Ini memastikan bahwa uang yang Anda habiskan berputar di dalam komunitas lokal, bukan hanya di perusahaan besar."
+        }
+    },
+    history: {
+        title: "Riwayat Pemesanan",
+        subtitle: "Kelola semua perjalanan dan transaksi Anda.",
+        filter: {
+            all: "Semua",
+            paid: "Paid",
+            pending: "Pending",
+            completed: "Completed",
+            cancelled: "Cancelled"
+        },
+        empty: {
+            title: "Belum ada riwayat",
+            subtitle: "Mulai petualangan Anda sekarang!",
+            btn: "Cari Destinasi"
+        },
+        card: {
+            id: "ID",
+            totalScale: "Total Pembayaran",
+            invoiceBtn: "Lihat Invoice"
+        }
+    },
+    privacy: {
+        title: "Kebijakan Privasi",
+        subtitle: "Kami berkomitmen untuk melindungi data pribadi Anda saat menjelajahi keindahan Kalimantan. Transparansi adalah prioritas kami.",
+        lastUpdated: "Terakhir Diperbarui",
+        section1: {
+            title: "1. Informasi yang Kami Kumpulkan",
+            desc: "Untuk memberikan layanan terbaik dalam merancanakan perjalanan Anda, kami mengumpulkan beberapa jenis informasi:",
+            list1: "Identitas Pribadi: Nama lengkap, alamat email, nomor telepon, dan identitas resmi (KTP/Paspor) untuk keperluan pemesanan tiket.",
+            list2: "Data Transaksi: Detail pembayaran dan riwayat pemesanan paket wisata Anda.",
+            list3: "Data Teknis: Alamat IP, jenis perangkat, dan data penggunaan website untuk peningkatan performa."
+        },
+        section2: {
+            title: "2. Penggunaan Informasi",
+            desc: "Data Anda digunakan semata-mata untuk:",
+            list1: "Memproses dan mengonfirmasi reservasi perjalanan Anda.",
+            list2: "Mengirimkan notifikasi penting terkait perubahan jadwal atau status pembayaran.",
+            list3: "Meningkatkan kualitas layanan dan rekomendasi personalisasi.",
+            list4: "Mematuhi kewajiban hukum yang berlaku di Indonesia."
+        },
+        section3: {
+            title: "3. Keamanan Data",
+            desc: "Kami menerapkan standar keamanan industri (enkripsi SSL/TLS) untuk melindungi data Anda selama transmisi dan penyimpanan. Kami tidak akan pernah menjual data pribadi Anda kepada pihak ketiga untuk tujuan pemasaran tanpa persetujuan eksplisit Anda."
+        },
+        section4: {
+            title: "4. Penyimpanan Data",
+            desc: "Data Anda disimpan di server yang aman dan hanya disimpan selama diperlukan untuk memenuhi tujuan yang disebutkan dalam kebijakan ini, atau sebagaimana diwajibkan oleh hukum. Anda berhak meminta penghapusan data akun Anda kapan saja melalui layanan pelanggan.",
+        },
+        contact: "Jika Anda memiliki pertanyaan tentang kebijakan privasi ini, silakan hubungi kami di"
+    },
+    terms: {
+        title: "Syarat & Ketentuan",
+        subtitle: "Harap membaca ketentuan penggunaan layanan BorneoTrip dengan seksama untuk memastikan pengalaman perjalanan yang lancar.",
+        section1: {
+            title: "1. Persetujuan Layanan",
+            desc: "Dengan mengakses dan menggunakan situs web serta layanan pemesanan BorneoTrip, Anda dianggap telah membaca, memahami, dan menyetujui seluruh syarat dan ketentuan yang tertulis di sini."
+        },
+        section2: {
+            title: "2. Pembayaran & Pembatalan",
+            desc: "Ketentuan mengenai transaksi finansial:",
+            list1: "Pembayaran penuh wajib dilakukan maksimal 2x24 jam setelah konfirmasi pemesanan.",
+            list2: "Pembatalan H-30 keberangkatan akan dikenakan biaya administrasi 10%.",
+            list3: "Pembatalan H-7 tidak dapat dilakukan refund (pengembalian dana).",
+            list4: "Semua harga yang tertera dalam mata uang Rupiah (IDR) dan sudah termasuk pajak."
+        },
+        section3: {
+            title: "3. Tanggung Jawab Peserta",
+            desc: "Peserta wajib mematuhi norma dan adat istiadat setempat selama perjalanan, khususnya saat mengunjungi desa adat Dayak dan area konservasi. BorneoTrip berhak memberhentikan keikutsertaan peserta yang melanggar hukum atau mengganggu ketertiban tanpa pengembalian dana."
+        },
+        section4: {
+            title: "4. Perubahan Itinerary",
+            desc: "Jadwal perjalanan dapat berubah sewaktu-waktu tergantung pada kondisi cuaca, lalu lintas, dan situasi di lapangan demi keselamatan peserta. BorneoTrip akan berusaha memberikan alternatif terbaik jika terjadi perubahan."
+        },
+        effectiveDate: "Dokumen ini efektif berlaku mulai 1 Januari 2026."
+    },
+    packages: {
+        title: "Paket Wisata",
+        heroTitle: "Jelajahi",
+        heroTitleHighlight: "Kalimantan",
+        heroSubtitle: "Pilih paket wisata yang telah dikurasi untuk pengalaman terbaik, berdampak positif bagi lingkungan, dan mendukung ekonomi lokal.",
+        searchPlaceholder: "Mau petualangan ke mana?",
+        searchBtn: "Cari",
+        filters: {
+            all: "Semua",
+            popular: "Populer",
+            eco: "Ramah Lingkungan",
+            short: "Perjalanan Singkat",
+            long: "Eksplorasi Panjang"
+        },
+        card: {
+            startFrom: "Mulai dari",
+            eco: "Eco",
+            notFoundTitle: "Paket tidak ditemukan",
+            notFoundDesc: "Coba ubah kata kunci pencarian Anda."
+        }
+    },
+    events: {
+        title: "Event Tahunan",
+        heroTag: "Event Terpanas Bulan Ini",
+        btnDetail: "Lihat Detail & Tiket",
+        btnShare: "Share",
+        upcomingTitle: "Agenda Mendatang",
+        searchPlaceholder: "Cari festival, konser, atau lokasi...",
+        filters: {
+            all: "Semua",
+            culture: "Budaya",
+            nature: "Alam",
+            sustainability: "Keberlanjutan",
+            culinary: "Kuliner"
+        },
+        card: {
+            free: "Gratis",
+            remindBtn: "Ingatkan saya",
+            notFoundTitle: "Event tidak ditemukan",
+            notFoundDesc: "Coba kata kunci lain atau reset filter kategori.",
+            resetBtn: "Reset Filter"
+        },
+        detail: {
+            back: "Kembali",
+            date: "Tanggal",
+            location: "Lokasi",
+            organizer: "Penyelenggara",
+            aboutTitle: "Tentang Event",
+            rundownTitle: "Rundown Acara",
+            highlightsTitle: "Highlights Tahun Lalu",
+            startFrom: "Harga Tiket Mulai",
+            ticketsAvailable: "Tiket Tersedia",
+            quantity: "Jumlah",
+            registerFree: "Registrasi Gratis",
+            buyTicket: "Beli Tiket Sekarang",
+            shareBtn: "Bagikan Event",
+            sponsorTitle: "Tertarik menjadi Sponsor?",
+            sponsorDesc: "Dukung event lokal dan ekspos brand Anda ke ribuan pengunjung.",
+            contactBtn: "Hubungi Kami",
+            toastRemind: "Pengingat diset untuk {title}! Kami akan mengirim notifikasi.",
+            toastLink: "Link event berhasil disalin!"
+        }
     }
 };

@@ -4,13 +4,27 @@ import { Search, MapPin, Filter, Star, Clock, ArrowUpRight, Leaf } from 'lucide-
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function PackagesPage() {
     const { packages } = useContent();
     const [activeFilter, setActiveFilter] = useState('All');
     const [searchTerm, setSearchTerm] = useState('');
+    const { t } = useLanguage();
 
     const filters = ['All', 'Popular', 'Eco-Friendly', 'Short Trip', 'Long Exploration'];
+
+    // Helper to translate filter keys to display text
+    const getFilterLabel = (filterKey: string) => {
+        const keyMap: { [key: string]: string } = {
+            'All': t.packages.filters.all,
+            'Popular': t.packages.filters.popular,
+            'Eco-Friendly': t.packages.filters.eco,
+            'Short Trip': t.packages.filters.short,
+            'Long Exploration': t.packages.filters.long
+        };
+        return keyMap[filterKey] || filterKey;
+    };
 
     const getEcoColor = (rating: number) => {
         if (rating >= 4.5) return 'text-emerald-500 bg-emerald-50 border-emerald-100';
@@ -37,7 +51,7 @@ export default function PackagesPage() {
     });
 
     return (
-        <Layout title="Paket Wisata - BorneoTrip">
+        <Layout title={`${t.packages.title} - BorneoTrip`}>
 
             {/* HEADER HERO */}
             <div className="bg-emerald-950 text-white relative overflow-hidden pt-48 pb-32 rounded-b-[3rem] shadow-2xl mb-12">
@@ -50,7 +64,7 @@ export default function PackagesPage() {
                         animate={{ opacity: 1, y: 0 }}
                         className="text-4xl md:text-6xl font-black mb-6 tracking-tight"
                     >
-                        Jelajahi <span className="text-emerald-400">Kalimantan</span>
+                        {t.packages.heroTitle} <span className="text-emerald-400">{t.packages.heroTitleHighlight}</span>
                     </motion.h1>
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}
@@ -58,7 +72,7 @@ export default function PackagesPage() {
                         transition={{ delay: 0.2 }}
                         className="text-lg text-emerald-100/80 max-w-2xl mx-auto mb-10 leading-relaxed"
                     >
-                        Pilih paket wisata yang telah dikurasi untuk pengalaman terbaik, berdampak positif bagi lingkungan, dan mendukung ekonomi lokal.
+                        {t.packages.heroSubtitle}
                     </motion.p>
 
                     {/* SEARCH BAR IN HERO */}
@@ -71,13 +85,13 @@ export default function PackagesPage() {
                         <Search className="w-5 h-5 text-gray-400" />
                         <input
                             type="text"
-                            placeholder="Mau petualangan ke mana?"
+                            placeholder={t.packages.searchPlaceholder}
                             className="flex-grow bg-transparent text-gray-800 placeholder-gray-400 font-medium focus:outline-none"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
                         <button className="bg-emerald-600 hover:bg-emerald-500 text-white px-8 py-3 rounded-full font-bold transition">
-                            Cari
+                            {t.packages.searchBtn}
                         </button>
                     </motion.div>
                 </div>
@@ -92,11 +106,11 @@ export default function PackagesPage() {
                             key={filter}
                             onClick={() => setActiveFilter(filter)}
                             className={`px-5 py-2.5 rounded-full text-sm font-bold border transition-all ${activeFilter === filter
-                                ? 'bg-emerald-900 text-white border-emerald-900 shadow-lg shadow-emerald-900/20'
+                                ? 'glass-dark text-white shadow-lg shadow-emerald-900/20'
                                 : 'bg-white text-gray-600 border-gray-200 hover:border-emerald-500 hover:text-emerald-600'
                                 }`}
                         >
-                            {filter}
+                            {getFilterLabel(filter)}
                         </button>
                     ))}
                 </div>
@@ -118,12 +132,12 @@ export default function PackagesPage() {
                                     transition={{ delay: idx * 0.1 }}
                                 >
                                     <Link href={`/packages/${pkg.id}`} className="group block h-full">
-                                        <article className="bg-white rounded-[2rem] overflow-hidden shadow-lg border border-gray-100 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 h-full flex flex-col">
+                                        <article className="glass-panel bg-white/40 rounded-[2rem] overflow-hidden shadow-lg border border-white/50 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 h-full flex flex-col backdrop-blur-md">
                                             <div className="relative h-64 overflow-hidden">
                                                 <img src={pkg.imageUrl} alt={pkg.title} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
                                                 <div className="absolute top-4 left-4">
                                                     <span className={`px-3 py-1 rounded-full text-xs font-bold border flex items-center gap-1 shadow-sm ${getEcoColor(pkg.rating)}`}>
-                                                        <Leaf className="w-3 h-3" /> Eco {pkg.rating}/5
+                                                        <Leaf className="w-3 h-3" /> {t.packages.card.eco} {pkg.rating}/5
                                                     </span>
                                                 </div>
                                                 <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-gray-800 flex items-center gap-1 shadow-md">
@@ -144,7 +158,7 @@ export default function PackagesPage() {
 
                                                 <div className="pt-5 border-t border-gray-100 flex items-center justify-between">
                                                     <div>
-                                                        <span className="text-xs text-gray-400 block mb-1">Mulai dari</span>
+                                                        <span className="text-xs text-gray-400 block mb-1">{t.packages.card.startFrom}</span>
                                                         <span className="text-lg font-black text-orange-600">Rp {pkg.price.toLocaleString('id-ID')}</span>
                                                     </div>
                                                     <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-emerald-600 group-hover:text-white transition">
@@ -161,8 +175,8 @@ export default function PackagesPage() {
                 ) : (
                     <div className="text-center py-20 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
                         <Search className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                        <h3 className="text-xl font-bold text-gray-900">Paket tidak ditemukan</h3>
-                        <p className="text-gray-500">Coba ubah kata kunci pencarian Anda.</p>
+                        <h3 className="text-xl font-bold text-gray-900">{t.packages.card.notFoundTitle}</h3>
+                        <p className="text-gray-500">{t.packages.card.notFoundDesc}</p>
                     </div>
                 )}
 

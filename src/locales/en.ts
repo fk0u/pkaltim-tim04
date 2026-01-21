@@ -231,5 +231,221 @@ export const en = {
         startFrom: "Starts from",
         event: "Event",
         package: "Package"
+    },
+    about: {
+        missionBadge: "Sustainability Mission",
+        title: "Preserving Nature,",
+        titleHighlight: "Honoring Culture",
+        subtitle: "BorneoTrip is not just a travel platform. We are a collective movement to ensure the beauty of Borneo's rainforests remains sustainable for future generations.",
+        stats: {
+            profit: "Profit for Conservation",
+            communities: "Indigenous Communities",
+            trees: "Ironwood Trees Planted",
+            plastic: "Single-use Plastic"
+        },
+        pillars: {
+            title: "Our 3 Main Pillars",
+            subtitle: "The future of tourism is responsible tourism.",
+            envTitle: "Environmental Protection",
+            envDesc: "Each of our tour packages is designed to minimize carbon footprint and contribute directly to the preservation of endemic wildlife habitats.",
+            comTitle: "Community Empowerment",
+            comDesc: "We work directly with local communities as guides, homestay hosts, and logistics providers to ensure the economy circulates regionally.",
+            cultTitle: "Cultural Preservation",
+            cultDesc: "Travelers are invited to learn, respect, and participate in keeping ancestral traditions alive amidst modernization."
+        },
+        why: {
+            title: "Why",
+            titleHighlight: "East Kalimantan?",
+            reason1Title: "Lungs of the World",
+            reason1Desc: "Home to millions of hectares of tropical rainforests vital for global climate and rare wildlife habitats.",
+            reason2Title: "Mahakam River",
+            reason2Desc: "The lifeblood vein holding the history of the oldest kingdom civilization and unique river culture."
+        }
+    },
+    contact: {
+        title: "Contact Us",
+        headerTitle: "Let's Start Your Journey",
+        headerSubtitle: "Have questions about tour packages or want to customize an itinerary? Our team is ready to help you 24/7.",
+        info: {
+            phoneTitle: "Phone & WhatsApp",
+            phoneDesc: "Mon - Sun, 08:00 - 20:00 WITA",
+            emailTitle: "Email Support",
+            emailDesc: "We will reply within a maximum of 24 hours.",
+            visitTitle: "Visit Us",
+            visitDesc: "Jl. Jenderal Sudirman No. 45\nBalikpapan City, East Kalimantan"
+        },
+        form: {
+            title: "Send Message",
+            nameLabel: "Full Name",
+            emailLabel: "Email",
+            subjectLabel: "Subject",
+            messageLabel: "Message",
+            namePlaceholder: "John Doe",
+            emailPlaceholder: "john@example.com",
+            subjectPlaceholder: "I want to ask about...",
+            messagePlaceholder: "Write your message here...",
+            btn: "Send Message",
+            success: "Your message has been sent! Our team will contact you shortly."
+        }
+    },
+    sustainability: {
+        title: "Sustainability",
+        missionBadge: "Our Core Mission",
+        heroTitle: "Preserving",
+        heroTitleHighlight: "Paradise.",
+        heroSubtitle: "We believe tourism is the forefront of conservation. Every step you take in Borneo contributes directly to the breath of the world's forests.",
+        metrics: {
+            trees: "Trees Planted",
+            donation: "Donations Raised",
+            people: "People Empowered"
+        },
+        section1: {
+            badge: "Orangutan Conservation",
+            title: "Protected Habitat",
+            desc: "BorneoTrip works directly with the Orangutan rehabilitation center in Samboja Lestari. 5% of every ticket booking is donated directly to reforestation programs and protection of their native habitats."
+        },
+        section2: {
+            badge: "Local Empowerment",
+            title: "Supporting Village Economy",
+            desc: "We prioritize local homestays, native tour guides, and traditional culinary. This ensures that the money you spend circulates within the local community, not just big corporations."
+        }
+    },
+    history: {
+        title: "Booking History",
+        subtitle: "Manage all your trips and transactions.",
+        filter: {
+            all: "All",
+            paid: "Paid",
+            pending: "Pending",
+            completed: "Completed",
+            cancelled: "Cancelled"
+        },
+        empty: {
+            title: "No history yet",
+            subtitle: "Start your adventure now!",
+            btn: "Find Destinations"
+        },
+        card: {
+            id: "ID",
+            totalScale: "Total Payment",
+            invoiceBtn: "View Invoice"
+        }
+    },
+    privacy: {
+        title: "Privacy Policy",
+        subtitle: "We are committed to protecting your personal data while exploring the beauty of Borneo. Transparency is our priority.",
+        lastUpdated: "Last Updated",
+        section1: {
+            title: "1. Information We Collect",
+            desc: "To provide the best service in planning your trip, we collect several types of information:",
+            list1: "Personal Identity: Full name, email address, phone number, and official identity (ID Card/Passport) for ticket booking purposes.",
+            list2: "Transaction Data: Payment details and tour package booking history.",
+            list3: "Technical Data: IP address, device type, and website usage data for performance improvement."
+        },
+        section2: {
+            title: "2. Usage of Information",
+            desc: "Your data is used solely for:",
+            list1: "Processing and confirming your travel reservations.",
+            list2: "Sending important notifications regarding schedule changes or payment status.",
+            list3: "Improving service quality and personalized recommendations.",
+            list4: "Complying with applicable legal obligations in Indonesia."
+        },
+        section3: {
+            title: "3. Data Security",
+            desc: "We implement industry security standards (SSL/TLS encryption) to protect your data during transmission and storage. We will never sell your personal data to third parties for marketing purposes without your explicit consent."
+        },
+        section4: {
+            title: "4. Data Retention",
+            desc: "Your data is stored on secure servers and only kept as long as necessary to fulfill the purposes mentioned in this policy, or as required by law. You have the right to request deletion of your account data at any time via customer service."
+        },
+        contact: "If you have any questions about this privacy policy, please contact us at"
+    },
+    terms: {
+        title: "Terms & Conditions",
+        subtitle: "Please read the terms of service of BorneoTrip carefully to ensure a smooth travel experience.",
+        section1: {
+            title: "1. Service Agreement",
+            desc: "By accessing and using the BorneoTrip website and booking services, you are deemed to have read, understood, and agreed to all terms and conditions written herein."
+        },
+        section2: {
+            title: "2. Payment & Cancellation",
+            desc: "Provisions regarding financial transactions:",
+            list1: "Full payment must be made within a maximum of 2x24 hours after booking confirmation.",
+            list2: "Cancellation 30 days prior to departure will be subject to a 10% administration fee.",
+            list3: "Cancellation 7 days prior cannot be refunded.",
+            list4: "All prices listed are in Indonesian Rupiah (IDR) and include tax."
+        },
+        section3: {
+            title: "3. Participant Responsibility",
+            desc: "Participants are required to comply with local norms and customs during the trip, especially when visiting Dayak traditional villages and conservation areas. BorneoTrip reserves the right to terminate the participation of participants who violate the law or disrupt order without refund."
+        },
+        section4: {
+            title: "4. Itinerary Changes",
+            desc: "Travel schedules may change at any time depending on weather conditions, traffic, and field situations for participant safety. BorneoTrip will strive to provide the best alternative if changes occur."
+        },
+        effectiveDate: "This document is effective from January 1, 2026."
+    },
+    packages: {
+        title: "Tour Packages",
+        heroTitle: "Explore",
+        heroTitleHighlight: "Borneo",
+        heroSubtitle: "Choose curated tour packages for the best experience, positive environmental impact, and supporting the local economy.",
+        searchPlaceholder: "Where do you want to go?",
+        searchBtn: "Search",
+        filters: {
+            all: "All",
+            popular: "Popular",
+            eco: "Eco-Friendly",
+            short: "Short Trip",
+            long: "Long Exploration"
+        },
+        card: {
+            startFrom: "Starts from",
+            eco: "Eco",
+            notFoundTitle: "Package not found",
+            notFoundDesc: "Try changing your search keywords."
+        }
+    },
+    events: {
+        title: "Annual Events",
+        heroTag: "Hottest Event of the Month",
+        btnDetail: "View Details & Tickets",
+        btnShare: "Share",
+        upcomingTitle: "Upcoming Agenda",
+        searchPlaceholder: "Search festival, concert, or location...",
+        filters: {
+            all: "All",
+            culture: "Culture",
+            nature: "Nature",
+            sustainability: "Sustainability",
+            culinary: "Culinary"
+        },
+        card: {
+            free: "Free",
+            remindBtn: "Remind me",
+            notFoundTitle: "Event not found",
+            notFoundDesc: "Try other keywords or reset category filters.",
+            resetBtn: "Reset Filter"
+        },
+        detail: {
+            back: "Back",
+            date: "Date",
+            location: "Location",
+            organizer: "Organizer",
+            aboutTitle: "About Event",
+            rundownTitle: "Event Rundown",
+            highlightsTitle: "Previous Year Highlights",
+            startFrom: "Ticket Price Starts",
+            ticketsAvailable: "Tickets Available",
+            quantity: "Quantity",
+            registerFree: "Free Registration",
+            buyTicket: "Buy Ticket Now",
+            shareBtn: "Share Event",
+            sponsorTitle: "Interested in being a Sponsor?",
+            sponsorDesc: "Support local events and expose your brand to thousands of visitors.",
+            contactBtn: "Contact Us",
+            toastRemind: "Reminder set for {title}! We will send a notification.",
+            toastLink: "Event link copied successfully!"
+        }
     }
 };
