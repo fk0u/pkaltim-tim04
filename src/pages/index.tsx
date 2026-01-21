@@ -64,7 +64,7 @@ export default function Home() {
                      className="inline-flex items-center gap-2 py-1.5 px-4 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-emerald-300 text-[10px] md:text-sm font-bold tracking-widest uppercase mb-6 md:mb-8 shadow-lg hover:bg-white/20 transition-colors cursor-default"
                   >
                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                     {t.hero.badge || "Wonderful Indonesia"}
+                     {t.hero.badge}
                   </motion.div>
                   <h1 className="text-4xl md:text-7xl lg:text-9xl font-black text-white tracking-tighter leading-tight mb-4 md:mb-8 drop-shadow-2xl">
                      {t.hero.title1} <br />
@@ -97,7 +97,7 @@ export default function Home() {
          {/* PARTNER LOGOS MARQUEE */}
          <div className="py-12 bg-white pt-32 overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-8">
-               <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">Didukung Oleh</p>
+               <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">{t.homepage.supportedBy}</p>
             </div>
 
             <div className="relative w-full flex overflow-hidden">
@@ -125,8 +125,8 @@ export default function Home() {
          {/* 3. EVENT HORIZONTAL SCROLL */}
          <motion.div {...fadeInUp}>
             <HorizontalScroll
-               title="Event Paling Ditunggu"
-               subtitle="Festival budaya dan ekowisata yang hanya terjadi setahun sekali."
+               title={t.homepage.eventTitle}
+               subtitle={t.homepage.eventSubtitle}
                items={displayEvents}
                linkHref="/events"
             />
@@ -142,11 +142,11 @@ export default function Home() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                <motion.div {...fadeInUp} className="flex justify-between items-end mb-12">
                   <div>
-                     <h2 className="text-3xl font-bold text-gray-900">Rekomendasi Paket Wisata</h2>
-                     <p className="text-gray-500 mt-2">Kurasi perjalanan terbaik dengan dampak lingkungan positif.</p>
+                     <h2 className="text-3xl font-bold text-gray-900">{t.homepage.packagesTitle}</h2>
+                     <p className="text-gray-500 mt-2">{t.homepage.packagesSubtitle}</p>
                   </div>
                   <Link href="/packages" className="hidden md:flex text-green-600 font-semibold hover:underline items-center gap-1 group">
-                     Lihat Semua Paket <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
+                     {t.homepage.viewAllPackages} <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
                   </Link>
                </motion.div>
 
@@ -176,7 +176,7 @@ export default function Home() {
                                  <p className="text-gray-200 line-clamp-2 mb-6">{displayPackages[0].description}</p>
                                  <div className="flex items-center justify-between">
                                     <div className="text-lg font-bold text-orange-400">Rp {displayPackages[0].price.toLocaleString('id-ID')}</div>
-                                    <span className="bg-white/20 hover:bg-white/30 backdrop-blur px-4 py-2 rounded-full text-sm font-semibold transition">Lihat Detail</span>
+                                    <span className="bg-white/20 hover:bg-white/30 backdrop-blur px-4 py-2 rounded-full text-sm font-semibold transition">{t.common.bookBtn}</span>
                                  </div>
                               </div>
                            </div>
@@ -221,14 +221,14 @@ export default function Home() {
                   </div>
                ) : (
                   <div className="text-center py-20 bg-white rounded-xl shadow-sm">
-                     <p className="text-gray-500">Belum ada paket wisata tersedia.</p>
+                     <p className="text-gray-500">{t.homepage.noPackages}</p>
                   </div>
                )}
 
 
                <div className="mt-8 text-center md:hidden">
                   <Link href="/packages" className="inline-flex items-center gap-2 text-green-700 font-bold border border-green-200 px-6 py-3 rounded-full hover:bg-green-50 transition">
-                     Lihat Semua Paket <ArrowRight className="w-4 h-4" />
+                     {t.homepage.viewAllPackages} <ArrowRight className="w-4 h-4" />
                   </Link>
                </div>
             </div>
@@ -246,24 +246,24 @@ export default function Home() {
             </div>
             <motion.div {...fadeInUp} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col md:flex-row items-center gap-12">
                <div className="md:w-1/2">
-                  <h2 className="text-4xl font-bold mb-6 leading-tight">Berwisata Sambil <span className="text-emerald-400">Menjaga Bumi</span></h2>
+                  <h2 className="text-4xl font-bold mb-6 leading-tight">{t.homepage.sustainabilityTitle} <span className="text-emerald-400">{t.homepage.sustainabilityTitleHighlight}</span></h2>
                   <p className="text-emerald-100/80 text-lg mb-8 leading-relaxed">
-                     Setiap pemesanan di BorneoTrip menyisihkan 5% profit untuk konservasi Orangutan dan pemberdayaan masyarakat adat Dayak.
+                     {t.homepage.sustainabilityDesc}
                   </p>
                   <div className="flex gap-4">
                      <div className="text-center px-6 py-4 bg-white/5 rounded-2xl border border-white/10 backdrop-blur">
                         <div className="text-3xl font-bold text-emerald-400 mb-1">1.5k+</div>
-                        <div className="text-xs text-emerald-200">Pohon Ditanam</div>
+                        <div className="text-xs text-emerald-200">{t.homepage.treesPlanted}</div>
                      </div>
                      <div className="text-center px-6 py-4 bg-white/5 rounded-2xl border border-white/10 backdrop-blur">
                         <div className="text-3xl font-bold text-emerald-400 mb-1">Rp 2M</div>
-                        <div className="text-xs text-emerald-200">Donasi Tersalur</div>
+                        <div className="text-xs text-emerald-200">{t.homepage.donationDistributed}</div>
                      </div>
                   </div>
                </div>
                <div className="md:w-1/2 flex justify-center">
                   <Link href="/about" className="group relative inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-emerald-900 transition-all duration-200 bg-white font-pj rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-600 hover:bg-emerald-50">
-                     Pelajari Impact Kami
+                     {t.homepage.learnImpact}
                      <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition" />
                   </Link>
                </div>

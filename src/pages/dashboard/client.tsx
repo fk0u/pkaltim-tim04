@@ -2,6 +2,7 @@ import Layout from '@/components/Layout';
 import { useAuth } from '@/contexts/AuthContext';
 import { useBooking } from '@/contexts/BookingContext';
 import { useContent } from '@/contexts/ContentContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { motion } from 'framer-motion';
 import { Calendar, MapPin, Clock, CheckCircle, ArrowRight, Wallet, Bell, Settings, Star, ChevronRight, Share2, Heart, Camera, Trophy, User, LogOut, FileText, CreditCard } from 'lucide-react';
 import { useRouter } from 'next/router';
@@ -13,7 +14,8 @@ import Link from 'next/link';
 export default function ClientDashboard() {
     const { user, logout, isAuthenticated } = useAuth();
     const { bookings, stats, getBookingsByUserId } = useBooking();
-    const { packages } = useContent(); // Use Content Context
+    const { packages } = useContent();
+    const { t } = useLanguage();
     const router = useRouter();
     const { addToast } = useToast();
     const [activeModal, setActiveModal] = useState<string | null>(null);
@@ -26,19 +28,14 @@ export default function ClientDashboard() {
 
     useEffect(() => {
         if (!isAuthenticated) router.push('/login');
-        if (user && user.role !== 'client') router.push(`/ dashboard / ${user.role} `);
-
-        // Mock Recommendations Logic using Context Data
+        if (user && user.role !== 'client') router.push(`/dashboard/${user.role}`);
 
         // Simple personalization algorithm
         if (user && (user as any).preferences) {
-            const prefs = (user as any).preferences; // Assuming already object or need parsing
-            // If prefs is string, parse it. If object, use it.
+            const prefs = (user as any).preferences;
             const userInterests = typeof prefs === 'string' ? JSON.parse(prefs).interests : (prefs.interests || []);
 
             if (userInterests.length > 0) {
-                // In a real app, filter packages by category/tags matching interests. 
-                // For now, we just use the dynamic packages list.
                 setRecommendedPackages(packages);
             } else {
                 setRecommendedPackages(packages.slice(0, 3));
@@ -54,7 +51,7 @@ export default function ClientDashboard() {
     const handleLogout = () => {
         logout();
         router.push('/login');
-        addToast('Berhasil logout!', 'success');
+        addToast(t.common.loading, 'success'); // Using generic for now or specific
     };
 
     return (
@@ -77,19 +74,19 @@ export default function ClientDashboard() {
                         >
                             <div className="flex flex-wrap items-center gap-3 mb-4">
                                 <span className="px-4 py-1.5 rounded-full bg-emerald-500/20 backdrop-blur-md border border-emerald-400/30 text-xs font-bold uppercase tracking-widest text-emerald-300 shadow-lg">
-                                    Traveler Member
+                                    {t.dashboard.travelerMember}
                                 </span>
                                 <div className="flex items-center gap-2 text-amber-300 bg-black/30 px-3 py-1.5 rounded-full backdrop-blur border border-white/10">
                                     <Trophy className="w-3.5 h-3.5 fill-amber-300" />
-                                    <span className="text-xs font-bold">Top 5% Explorer</span>
+                                    <span className="text-xs font-bold">{t.dashboard.topExplorer}</span>
                                 </div>
                             </div>
                             <h1 className="text-4xl md:text-5xl lg:text-7xl font-black mb-4 leading-tight tracking-tight drop-shadow-xl">
-                                Halo, <span className="text-transparent bg-clip-text bg-linear-to-r from-emerald-400 to-cyan-300">{user.name.split(' ')[0]}</span>
+                                {t.dashboard.welcome} <span className="text-transparent bg-clip-text bg-linear-to-r from-emerald-400 to-cyan-300">{user.name.split(' ')[0]}</span>
                                 <span className="inline-block ml-3 animate-wave origin-bottom-right">👋</span>
                             </h1>
                             <p className="text-lg md:text-xl text-emerald-100/90 max-w-2xl font-medium leading-relaxed drop-shadow-md">
-                                Hutan Kalimantan memanggilmu kembali. <br className="hidden md:block" />Siap untuk petualangan konservasi berikutnya?
+                                {t.dashboard.ready} <br className="hidden md:block" />{t.dashboard.readySub}
                             </p>
                         </motion.div>
 
@@ -99,7 +96,7 @@ export default function ClientDashboard() {
                             className="flex items-center gap-6 self-start md:self-end mt-4 md:mt-0"
                         >
                             <div className="text-left md:text-right hidden sm:block">
-                                <div className="text-sm text-emerald-300 font-bold uppercase tracking-wider mb-1">Total XP</div>
+                                <div className="text-sm text-emerald-300 font-bold uppercase tracking-wider mb-1">{t.dashboard.totalXp}</div>
                                 <div className="text-3xl lg:text-4xl font-black font-mono tracking-tight text-white drop-shadow-lg">2,450</div>
                             </div>
                             <motion.div
@@ -131,7 +128,7 @@ export default function ClientDashboard() {
                                 <div className="flex items-center justify-between mb-6">
                                     <h2 className="text-2xl font-bold text-white flex items-center gap-3">
                                         <Calendar className="w-6 h-6 text-emerald-400" />
-                                        <span className="drop-shadow-md">Perjalanan Aktif</span>
+                                        <span className="drop-shadow-md">{t.dashboard.activeTrip}</span>
                                     </h2>
                                 </div>
 
@@ -164,7 +161,7 @@ export default function ClientDashboard() {
                                                 </div>
 
                                                 <p className="text-slate-600 text-sm lg:text-base leading-relaxed mb-8 max-w-lg">
-                                                    Booking ID: #{activeTrip.id}. {activeTrip.pax} Pax. Bersiaplah untuk petualangan seru!
+                                                    {t.dashboard.bookingId} #{activeTrip.id}. {activeTrip.pax} {t.dashboard.pax}. {t.dashboard.adventureReady}
                                                 </p>
 
                                                 <div className="grid grid-cols-2 gap-4 mt-auto">
@@ -173,14 +170,14 @@ export default function ClientDashboard() {
                                                         className="bg-emerald-900 text-white font-bold py-4 px-6 rounded-2xl hover:bg-emerald-800 transition flex items-center justify-center gap-2 text-sm shadow-xl shadow-emerald-900/20"
                                                         onClick={() => setActiveModal('voucher')}
                                                     >
-                                                        <Wallet className="w-4 h-4" /> Buka E-Voucher
+                                                        <Wallet className="w-4 h-4" /> {t.dashboard.openVoucher}
                                                     </motion.button>
                                                     <motion.button
                                                         whileTap={{ scale: 0.95 }}
                                                         className="bg-slate-50 text-slate-700 font-bold py-4 px-6 rounded-2xl hover:bg-slate-100 transition text-sm border border-slate-200 flex items-center justify-center gap-2"
                                                         onClick={() => setActiveModal('itinerary')}
                                                     >
-                                                        <Share2 className="w-4 h-4" /> Sharing
+                                                        <Share2 className="w-4 h-4" /> {t.dashboard.sharing}
                                                     </motion.button>
                                                 </div>
                                             </div>
@@ -188,15 +185,15 @@ export default function ClientDashboard() {
                                     </div>
                                 ) : (
                                     <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-[2.5rem] p-8 text-center text-white">
-                                        <h3 className="text-xl font-bold mb-2">Belum ada perjalanan aktif</h3>
-                                        <p className="opacity-80 mb-6">Jelajahi paket wisata kami dan mulai petualanganmu!</p>
+                                        <h3 className="text-xl font-bold mb-2">{t.dashboard.noActiveTrip}</h3>
+                                        <p className="opacity-80 mb-6">{t.dashboard.noActiveTripDesc}</p>
                                         <motion.button
                                             whileHover={{ scale: 1.05 }}
                                             whileTap={{ scale: 0.95 }}
                                             onClick={() => router.push('/packages')}
                                             className="bg-emerald-400 text-emerald-900 px-6 py-3 rounded-xl font-bold"
                                         >
-                                            Cari Paket Wisata
+                                            {t.dashboard.findPackage}
                                         </motion.button>
                                     </div>
                                 )}
@@ -206,7 +203,7 @@ export default function ClientDashboard() {
                             <div className="bg-white rounded-4xl p-8 shadow-xl border border-gray-100">
                                 <div className="flex items-center justify-between mb-8">
                                     <h3 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                                        <Heart className="w-6 h-6 text-pink-500 fill-pink-500" /> Rekomendasi 2026
+                                        <Heart className="w-6 h-6 text-pink-500 fill-pink-500" /> {t.dashboard.recommendations}
                                     </h3>
                                 </div>
 
@@ -217,7 +214,7 @@ export default function ClientDashboard() {
                                             key={pkg.id}
                                             whileHover={{ y: -8 }}
                                             className="bg-slate-50 rounded-3xl p-4 cursor-pointer group hover:bg-white hover:shadow-xl transition-all duration-300 border border-slate-100"
-                                            onClick={() => router.push(`/ packages / ${pkg.id} `)}
+                                            onClick={() => router.push(`/packages/${pkg.id}`)}
                                         >
                                             <div className="h-44 rounded-2xl bg-gray-200 mb-4 overflow-hidden relative">
                                                 <img src={pkg.imageUrl} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" alt={pkg.title} />
@@ -248,9 +245,9 @@ export default function ClientDashboard() {
                                 className="bg-linear-to-br from-emerald-500 to-teal-600 rounded-4xl p-8 text-white text-center relative overflow-hidden shadow-2xl shadow-emerald-500/20"
                             >
                                 <div className="relative z-10">
-                                    <h4 className="text-xs font-bold uppercase tracking-widest opacity-80 mb-3 text-emerald-100">Level Kamu</h4>
+                                    <h4 className="text-xs font-bold uppercase tracking-widest opacity-80 mb-3 text-emerald-100">{t.dashboard.yourLevel}</h4>
                                     <div className="text-5xl font-black mb-2 tracking-tight">Explorer</div>
-                                    <p className="text-sm font-medium text-emerald-50 mb-8">Hanya 50 XP lagi untuk naik ke Elite Member!</p>
+                                    <p className="text-sm font-medium text-emerald-50 mb-8">{t.dashboard.xpToNext}</p>
                                     <div className="w-full bg-black/20 rounded-full h-4 mb-3 p-1 backdrop-blur-sm">
                                         <div className="bg-linear-to-r from-emerald-200 to-white h-2 rounded-full shadow-lg w-[85%]"></div>
                                     </div>
@@ -259,13 +256,13 @@ export default function ClientDashboard() {
 
                             {/* Menu Grid */}
                             <div className="bg-white rounded-4xl p-8 shadow-xl border border-gray-100/80">
-                                <h3 className="font-bold text-slate-900 mb-6 flex items-center gap-2">Menu Cepat</h3>
+                                <h3 className="font-bold text-slate-900 mb-6 flex items-center gap-2">{t.dashboard.quickMenu}</h3>
                                 <div className="grid grid-cols-2 gap-4">
                                     {[
-                                        { icon: Wallet, label: 'Voucher', id: 'voucher', color: 'text-blue-600 bg-blue-50' },
-                                        { icon: Bell, label: 'Notifikasi', id: 'notification', color: 'text-orange-600 bg-orange-50' },
-                                        { icon: Settings, label: 'Settings', id: 'profile', color: 'text-slate-600 bg-slate-50' },
-                                        { icon: Share2, label: 'Support', id: 'support', color: 'text-purple-600 bg-purple-50' }
+                                        { icon: Wallet, label: t.dashboard.voucher, id: 'voucher', color: 'text-blue-600 bg-blue-50' },
+                                        { icon: Bell, label: t.dashboard.notification, id: 'notification', color: 'text-orange-600 bg-orange-50' },
+                                        { icon: Settings, label: t.dashboard.settings, id: 'profile', color: 'text-slate-600 bg-slate-50' },
+                                        { icon: Share2, label: t.dashboard.support, id: 'support', color: 'text-purple-600 bg-purple-50' }
                                     ].map((item: any, idx) => (
                                         <motion.div
                                             key={idx}
@@ -273,7 +270,7 @@ export default function ClientDashboard() {
                                             onClick={() => setActiveModal(item.id)}
                                             className="flex flex-col items-center justify-center gap-3 p-5 rounded-3xl bg-slate-50 border border-slate-100 hover:bg-white hover:shadow-xl transition-all duration-300 cursor-pointer group"
                                         >
-                                            <div className={`p - 3 rounded - 2xl ${item.color} group - hover: scale - 110 transition duration - 300`}>
+                                            <div className={`p-3 rounded-2xl ${item.color} group-hover:scale-110 transition duration-300`}>
                                                 <item.icon className="w-6 h-6" />
                                             </div>
                                             <span className="text-sm font-bold text-slate-700">{item.label}</span>
@@ -289,28 +286,28 @@ export default function ClientDashboard() {
 
             {/* MODALS */}
             {/* 1. Voucher Modal */}
-            <Modal isOpen={activeModal === 'voucher'} onClose={() => setActiveModal(null)} title="E-Voucher Anda">
+            <Modal isOpen={activeModal === 'voucher'} onClose={() => setActiveModal(null)} title={t.dashboard.voucher + " Anda"}>
                 <div className="text-center">
                     <div className="bg-slate-50 p-6 rounded-2xl mb-6 border border-slate-100">
                         <div className="w-48 h-48 bg-white mx-auto rounded-xl p-2 border border-slate-200">
                             <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=BorneoTrip-Booking-123" className="w-full h-full" alt="QR Code" />
                         </div>
                         <p className="mt-4 font-mono text-lg font-bold text-slate-900 tracking-widest">BK-8829-DIAN</p>
-                        <p className="text-sm text-slate-500">Tunjukkan QR ini kepada guide saat penjemputan.</p>
+                        <p className="text-sm text-slate-500">{t.dashboard.showQr}</p>
                     </div>
-                    <button onClick={() => { addToast('Voucher diunduh', 'success'); setActiveModal(null); }} className="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl">Unduh PDF</button>
+                    <button onClick={() => { addToast('Voucher diunduh', 'success'); setActiveModal(null); }} className="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl">{t.dashboard.downloadPdf}</button>
                 </div>
             </Modal>
 
             {/* 2. Notification Modal */}
-            <Modal isOpen={activeModal === 'notification'} onClose={() => setActiveModal(null)} title="Notifikasi">
+            <Modal isOpen={activeModal === 'notification'} onClose={() => setActiveModal(null)} title={t.dashboard.notification}>
                 <div className="space-y-4">
                     {[1, 2, 3].map((i) => (
                         <div key={i} className="flex gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-100">
                             <div className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0"><Bell className="w-5 h-5" /></div>
                             <div>
-                                <h4 className="font-bold text-slate-900 text-sm">Pembayaran Berhasil</h4>
-                                <p className="text-xs text-slate-500 mt-1">Pembayaran untuk trip Derawan telah dikonfirmasi. Selamat berlibur!</p>
+                                <h4 className="font-bold text-slate-900 text-sm">{t.dashboard.paymentSuccess}</h4>
+                                <p className="text-xs text-slate-500 mt-1">{t.dashboard.paymentDesc}</p>
                                 <p className="text-[10px] text-slate-400 mt-2">2 Jam yang lalu</p>
                             </div>
                         </div>
@@ -319,7 +316,7 @@ export default function ClientDashboard() {
             </Modal>
 
             {/* 3. Profile/Settings Modal */}
-            <Modal isOpen={activeModal === 'profile'} onClose={() => setActiveModal(null)} title="Pengaturan Profil">
+            <Modal isOpen={activeModal === 'profile'} onClose={() => setActiveModal(null)} title={t.dashboard.settingsTitle}>
                 <div className="flex flex-col items-center mb-6">
                     <img src={user.avatar} className="w-24 h-24 rounded-full mb-4 border-4 border-slate-100" alt={user.name} />
                     <h3 className="text-xl font-bold text-slate-900">{user.name}</h3>
@@ -327,29 +324,29 @@ export default function ClientDashboard() {
                 </div>
                 <div className="space-y-3">
                     <button className="w-full flex items-center gap-3 p-4 rounded-xl bg-slate-50 hover:bg-slate-100 font-bold text-slate-700 text-sm transition">
-                        <User className="w-5 h-5" /> Edit Profil
+                        <User className="w-5 h-5" /> {t.dashboard.editProfile}
                     </button>
                     <button className="w-full flex items-center gap-3 p-4 rounded-xl bg-slate-50 hover:bg-slate-100 font-bold text-slate-700 text-sm transition">
-                        <CreditCard className="w-5 h-5" /> Metode Pembayaran
+                        <CreditCard className="w-5 h-5" /> {t.dashboard.paymentMethod}
                     </button>
                     <button onClick={() => router.push('/history')} className="w-full flex items-center gap-3 p-4 rounded-xl bg-slate-50 hover:bg-slate-100 font-bold text-slate-700 text-sm transition">
-                        <FileText className="w-5 h-5" /> Riwayat Transaksi
+                        <FileText className="w-5 h-5" /> {t.dashboard.history}
                     </button>
                     <button onClick={handleLogout} className="w-full flex items-center gap-3 p-4 rounded-xl bg-red-50 hover:bg-red-100 font-bold text-red-600 text-sm transition mt-4">
-                        <LogOut className="w-5 h-5" /> Keluar Akun
+                        <LogOut className="w-5 h-5" /> {t.dashboard.logout}
                     </button>
                 </div>
             </Modal>
 
             {/* 4. Support Modal */}
-            <Modal isOpen={activeModal === 'support'} onClose={() => setActiveModal(null)} title="Bantuan CS">
+            <Modal isOpen={activeModal === 'support'} onClose={() => setActiveModal(null)} title={t.dashboard.csTitle}>
                 <div className="text-center p-8">
-                    <p className="mb-6 text-slate-600">Butuh bantuan mendesak untuk perjalananmu?</p>
+                    <p className="mb-6 text-slate-600">{t.dashboard.needHelp}</p>
                     <button className="w-full bg-green-500 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 mb-3">
-                        Chat WhatsApp
+                        {t.dashboard.chatWhatsapp}
                     </button>
                     <button className="w-full bg-slate-100 text-slate-900 font-bold py-4 rounded-xl">
-                        Email Support
+                        {t.dashboard.emailSupport}
                     </button>
                 </div>
             </Modal>
