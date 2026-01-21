@@ -57,9 +57,9 @@ export default function Footer() {
             <h4 className="font-bold text-lg mb-6 text-white">{t.footer.company}</h4>
             <ul className="space-y-4 text-gray-400">
               <li><Link href="/about" className="hover:text-emerald-400 transition-colors">{t.nav.about}</Link></li>
-              <li><Link href="/careers" className="hover:text-emerald-400 transition-colors">{t.footer.careers}</Link></li>
+              {/* <li><Link href="/careers" className="hover:text-emerald-400 transition-colors">{t.footer.careers}</Link></li>
               <li><Link href="/partners" className="hover:text-emerald-400 transition-colors">{t.footer.partners}</Link></li>
-              <li><Link href="/blog" className="hover:text-emerald-400 transition-colors">{t.footer.blog}</Link></li>
+              <li><Link href="/blog" className="hover:text-emerald-400 transition-colors">{t.footer.blog}</Link></li> */}
             </ul>
           </div>
 
@@ -68,7 +68,7 @@ export default function Footer() {
             <h4 className="font-bold text-lg mb-6 text-white">{t.footer.support}</h4>
             <ul className="space-y-4 text-gray-400">
               <li><Link href="/contact" className="hover:text-emerald-400 transition-colors">{t.nav.contact}</Link></li>
-              <li><Link href="/faq" className="hover:text-emerald-400 transition-colors">{t.footer.faq}</Link></li>
+              {/* <li><Link href="/faq" className="hover:text-emerald-400 transition-colors">{t.footer.faq}</Link></li> */}
               <li><Link href="/privacy" className="hover:text-emerald-400 transition-colors">{t.footer.privacy}</Link></li>
               <li><Link href="/terms" className="hover:text-emerald-400 transition-colors">{t.footer.terms}</Link></li>
             </ul>

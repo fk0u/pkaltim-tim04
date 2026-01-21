@@ -44,7 +44,7 @@ export default function EventsPage() {
   };
 
   return (
-    <Layout title={`${t.events.title} - BorneoTrip`}>
+    <Layout title={`${t.events.title} - BorneoTrip`} description={t.events.heroTag}>
 
       {/* 1. IMMERSIVE HERO WITH FEATURED EVENT */}
       {featuredEvent && (

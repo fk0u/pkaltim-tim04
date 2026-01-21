@@ -51,7 +51,7 @@ export default function PackagesPage() {
     });
 
     return (
-        <Layout title={`${t.packages.title} - BorneoTrip`}>
+        <Layout title={`${t.packages.title} - BorneoTrip`} description={t.packages.heroSubtitle}>
 
             {/* HEADER HERO */}
             <div className="bg-emerald-950 text-white relative overflow-hidden pt-48 pb-32 rounded-b-[3rem] shadow-2xl mb-12">

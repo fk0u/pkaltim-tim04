@@ -25,7 +25,7 @@ export default function Home() {
    };
 
    return (
-      <Layout transparentNavbar={true}>
+      <Layout transparentNavbar={true} description={t.hero.subtitle}>
          {/* 1. DYNAMIC HERO SECTION WITH VIDEO */}
          <section className="relative min-h-[95vh] flex flex-col justify-end bg-black overflow-visible z-10 rounded-b-5xl md:rounded-b-7xl shadow-2xl mb-12 md:mb-20 group">
 

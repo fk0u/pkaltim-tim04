@@ -155,9 +155,9 @@ export default function InvoicePage() {
                             <p className="mb-2">Terima kasih telah mempercayakan perjalanan Anda kepada BorneoTrip.</p>
                             <p>Invoice ini sah dan diproses oleh komputer. Silakan simpan untuk bukti transaksi.</p>
                             <div className="mt-6 flex justify-center gap-4 print:hidden">
-                                <Link href="#" className="font-bold text-emerald-600 hover:underline">Syarat & Ketentuan</Link>
+                                <Link href="/terms" className="font-bold text-emerald-600 hover:underline">Syarat & Ketentuan</Link>
                                 <span className="text-gray-300">|</span>
-                                <Link href="#" className="font-bold text-emerald-600 hover:underline">Pusat Bantuan</Link>
+                                <Link href="/contact" className="font-bold text-emerald-600 hover:underline">Pusat Bantuan</Link>
                             </div>
                         </div>
 

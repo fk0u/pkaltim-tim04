@@ -368,8 +368,8 @@ export default function Navbar({ isTransparent = true }: { isTransparent?: boole
                     <div>
                       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Socials</p>
                       <div className="flex gap-3">
-                        <a href="#" className="text-gray-300 hover:text-emerald-400 transition"><span className="sr-only">IG</span>📸</a>
-                        <a href="#" className="text-gray-300 hover:text-emerald-400 transition"><span className="sr-only">TW</span>🐦</a>
+                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-emerald-400 transition"><span className="sr-only">IG</span>📸</a>
+                        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-emerald-400 transition"><span className="sr-only">TW</span>🐦</a>
                       </div>
                     </div>
                     <div className="text-right">
