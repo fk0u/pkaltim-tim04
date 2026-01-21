@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Users } from 'lucide-react';
 import { Counter } from '@/components/ui';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface TravelersInputProps {
     label: string;
@@ -12,6 +13,7 @@ export default function TravelersInput({ label, onChange }: TravelersInputProps)
     const [adults, setAdults] = useState(1);
     const [children, setChildren] = useState(0);
     const containerRef = useRef<HTMLDivElement>(null);
+    const { t } = useLanguage();
 
     // Close popover when clicking outside
     useEffect(() => {
@@ -25,9 +27,9 @@ export default function TravelersInput({ label, onChange }: TravelersInputProps)
     }, []);
 
     useEffect(() => {
-        const summary = `${adults} Dewasa${children > 0 ? `, ${children} Anak` : ''}`;
+        const summary = `${adults} ${t.search.adults}${children > 0 ? `, ${children} ${t.search.children}` : ''}`;
         if (onChange) onChange(summary);
-    }, [adults, children, onChange]);
+    }, [adults, children, onChange, t]);
 
     return (
         <div className="relative group" ref={containerRef}>
@@ -39,7 +41,7 @@ export default function TravelersInput({ label, onChange }: TravelersInputProps)
                 <Users className={`absolute left-0 top-3 transition w-4 h-4 md:w-5 md:h-5 ${isOpen ? 'text-green-500' : 'text-gray-400'}`} style={{ top: '50%', transform: 'translateY(-50%)' }} />
                 <div className="w-full pl-6 md:pl-8 pr-4 py-2 bg-transparent">
                     <span className={`font-bold text-sm md:text-base ${isOpen ? 'text-gray-900' : 'text-gray-700'}`}>
-                        {adults} Dewasa{children > 0 ? `, ${children} Anak` : ''}
+                        {adults} {t.search.adults}{children > 0 ? `, ${children} ${t.search.children}` : ''}
                     </span>
                 </div>
             </div>
@@ -52,8 +54,8 @@ export default function TravelersInput({ label, onChange }: TravelersInputProps)
                             min={1}
                             max={10}
                             onChange={setAdults}
-                            label="Dewasa"
-                            sublabel="Usia 12+"
+                            label={t.search.adults}
+                            sublabel={t.search.adultsAge}
                         />
                         <div className="border-b border-gray-50"></div>
                         <Counter
@@ -61,8 +63,8 @@ export default function TravelersInput({ label, onChange }: TravelersInputProps)
                             min={0}
                             max={5}
                             onChange={setChildren}
-                            label="Anak"
-                            sublabel="Usia 2-11"
+                            label={t.search.children}
+                            sublabel={t.search.childrenAge}
                         />
                     </div>
                 </div>
@@ -70,3 +72,4 @@ export default function TravelersInput({ label, onChange }: TravelersInputProps)
         </div>
     );
 }
+

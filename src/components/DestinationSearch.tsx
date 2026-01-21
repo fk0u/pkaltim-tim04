@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { MapPin } from 'lucide-react';
 import { useContent } from '@/contexts/ContentContext';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface DestinationSearchProps {
     label: string;
@@ -13,6 +14,7 @@ interface DestinationSearchProps {
 export default function DestinationSearch({ label, placeholder, onSelect, onChange, value: propValue }: DestinationSearchProps) {
     const [internalQuery, setInternalQuery] = useState('');
     const query = propValue !== undefined ? propValue : internalQuery;
+    const { t } = useLanguage();
 
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -100,9 +102,10 @@ export default function DestinationSearch({ label, placeholder, onSelect, onChan
 
             {isOpen && query.length > 0 && filteredDestinations.length === 0 && (
                 <div className="absolute top-full left-0 w-full bg-white mt-2 py-4 rounded-xl shadow-xl border border-gray-100 z-50 text-center text-gray-500 text-sm animate-fade-in-up">
-                    Tidak ditemukan destinasi "{query}"
+                    {t.search.noDestination} "{query}"
                 </div>
             )}
         </div>
     );
 }
+

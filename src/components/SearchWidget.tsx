@@ -4,6 +4,7 @@ import { Search, Ticket, Palmtree } from 'lucide-react';
 import DestinationSearch from './DestinationSearch';
 import TravelersInput from './TravelersInput';
 import { DatePicker, useToast } from '@/components/ui';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function SearchWidget() {
   const [activeTab, setActiveTab] = useState<'Event' | 'Package'>('Event');
@@ -11,6 +12,7 @@ export default function SearchWidget() {
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [travelers, setTravelers] = useState("1 Dewasa");
   const { addToast } = useToast();
+  const { t } = useLanguage();
 
   const router = useRouter();
 
@@ -22,23 +24,10 @@ export default function SearchWidget() {
       type: activeTab.toLowerCase(),
     };
 
-    // Get input value from DestinationSearch (using a ref or local storage would be better, 
-    // but for now we might need to rely on the user typing. 
-    // However, DestinationSearch is a controlled component inside, but we don't have access to its state here directly easily without lifting state up.
-    // Let's assume we can pass a value prop to DestinationSearch or better yet, make SearchWidget control the state.
-    // Wait, let's verify if DestinationSearch accepts props.
-    // Looking at previous view_file of SearchWidget, it seems to just render DestinationSearch.
-    // I need to check DestinationSearch again to see how to get the value.
-    // For now, I'll update this tool call after checking DestinationSearch. 
-    // Actually, I can just update the code to pass state down if needed.
-    // Let's defer this precise edit until I check DestinationSearch.tsx or make SearchWidget control the input.
-
-    // Simulating redirection for now as per plan
     router.push({
       pathname: '/search',
       query: {
         type: activeTab,
-        // location: '...', // We need to capture this
         date: date ? date.toISOString() : undefined,
         travelers
       }
@@ -60,7 +49,7 @@ export default function SearchWidget() {
               : 'text-white hover:bg-white/10'
               }`}
           >
-            <Ticket className="w-3 h-3 md:w-4 md:h-4" /> Cari Event
+            <Ticket className="w-3 h-3 md:w-4 md:h-4" /> {t.hero.searchEvent}
           </button>
           <button
             onClick={() => setActiveTab('Package')}
@@ -69,7 +58,7 @@ export default function SearchWidget() {
               : 'text-white hover:bg-white/10'
               }`}
           >
-            <Palmtree className="w-3 h-3 md:w-4 md:h-4" /> Cari Paket
+            <Palmtree className="w-3 h-3 md:w-4 md:h-4" /> {t.hero.searchPackage}
           </button>
         </div>
       </div>
@@ -81,24 +70,24 @@ export default function SearchWidget() {
           {/* 1. Destination */}
           <div className="flex-grow relative border-b md:border-b-0 md:border-r border-gray-100 pb-2 md:pb-0 md:pr-4 px-2 group transition-colors hover:bg-gray-50/50 rounded-2xl md:rounded-none md:rounded-l-2xl">
             <DestinationSearch
-              label={activeTab === 'Event' ? "Lokasi Event" : "Destinasi Tujuan"}
-              placeholder={activeTab === 'Event' ? "Tenggarong, Samarinda..." : "Pulau Derawan..."}
+              label={activeTab === 'Event' ? t.search.eventLocation : t.search.destination}
+              placeholder={activeTab === 'Event' ? t.hero.searchPlaceholderEvent : t.hero.searchPlaceholderPackage}
             />
           </div>
 
           {/* 2. Date */}
           <div className="flex-initial md:w-[240px] relative border-b md:border-b-0 md:border-r border-gray-100 pb-2 md:pb-0 md:px-4 px-2 z-20 group transition-colors hover:bg-gray-50/50 rounded-2xl md:rounded-none">
             <DatePicker
-              label="Tanggal"
+              label={t.hero.dateLabel}
               selected={date}
               onChange={setDate}
-              placeholder="Pilih Tanggal"
+              placeholder={t.search.selectDate}
             />
           </div>
 
           {/* 3. Travelers */}
           <div className="flex-initial md:w-[260px] relative pb-3 md:pb-0 md:px-4 px-2 border-b md:border-b-0 border-gray-100 md:border-none z-10">
-            <TravelersInput label="Peserta" onChange={setTravelers} />
+            <TravelersInput label={t.hero.travelersLabel} onChange={setTravelers} />
           </div>
 
           {/* 4. Button */}
@@ -109,7 +98,7 @@ export default function SearchWidget() {
               className="w-full md:w-auto h-11 md:h-16 px-8 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl md:rounded-[1.5rem] shadow-lg shadow-green-200 transition transform hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed text-base md:text-lg"
             >
               {isSearching ? <div className="animate-spin w-4 h-4 md:w-5 md:h-5 border-2 border-white rounded-full border-t-transparent"></div> : <Search className="w-5 h-5 md:w-6 md:h-6" />}
-              <span className="md:hidden">Cari Sekarang</span>
+              <span className="md:hidden">{t.hero.searchBtn}</span>
             </button>
           </div>
         </div>
@@ -118,4 +107,3 @@ export default function SearchWidget() {
     </div>
   );
 }
-

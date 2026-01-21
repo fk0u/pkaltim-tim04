@@ -8,11 +8,13 @@ import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function CheckoutPage() {
     const { user, login } = useAuth();
     const { addBooking } = useBooking();
     const { addToast } = useToast();
+    const { t } = useLanguage();
     const router = useRouter();
     const [step, setStep] = useState(1);
     const [isProcessing, setIsProcessing] = useState(false);
@@ -21,7 +23,7 @@ export default function CheckoutPage() {
     const { pkg, date, pax, price, id, location, image, type } = router.query;
 
     const isEvent = type === 'event';
-    const pkgName = pkg ? (pkg as string) : (isEvent ? "Event Ticket" : "Paket Wisata");
+    const pkgName = pkg ? (pkg as string) : (isEvent ? t.checkout.eventTicket : t.checkout.tourPackage);
     const totalPrice = price ? parseInt(price as string) : 0;
     const pkgImage = image ? (image as string) : "https://images.unsplash.com/photo-1596401057633-565652b5d249?auto=format&fit=crop&q=80";
     // const bookingId = `BK-${Math.floor(Math.random() * 1000000)}`; // Moved to state to avoid hydration error
@@ -55,13 +57,13 @@ export default function CheckoutPage() {
 
             setIsProcessing(false);
             setStep(3);
-            addToast("Pembayaran Berhasil! Booking terkonfirmasi.", "success");
+            addToast(t.checkout.paymentSuccess, "success");
         }, 2000);
     };
 
     if (step === 3) {
         return (
-            <Layout title="Checkout Selesai - BorneoTrip">
+            <Layout title={`${t.checkout.title} - BorneoTrip`}>
                 <div className="min-h-screen bg-emerald-50 flex items-center justify-center pt-20 pb-20 px-4">
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
@@ -71,22 +73,22 @@ export default function CheckoutPage() {
                         <div className="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
                             <CheckCircle className="w-12 h-12 text-emerald-600" />
                         </div>
-                        <h1 className="text-3xl font-black text-slate-900 mb-2">Booking Berhasil!</h1>
+                        <h1 className="text-3xl font-black text-slate-900 mb-2">{t.checkout.paymentSuccess}</h1>
                         <p className="text-slate-500 mb-8">
-                            Tiket elektronik telah dikirim ke email <b>{user?.email}</b>. Silakan cek dashboard untuk melihat status pesanan.
+                            {t.checkout.successEmail} <b>{user?.email}</b>. {t.checkout.checkDashboard}
                         </p>
 
                         <div className="bg-slate-50 rounded-2xl p-6 mb-8 text-left border border-slate-100">
                             <div className="flex justify-between mb-2">
-                                <span className="text-sm text-slate-500">No. Booking</span>
+                                <span className="text-sm text-slate-500">{t.checkout.bookingNo}</span>
                                 <span className="font-mono font-bold text-slate-900">{bookingId}</span>
                             </div>
                             <div className="flex justify-between mb-2">
-                                <span className="text-sm text-slate-500">Paket</span>
+                                <span className="text-sm text-slate-500">{t.checkout.package}</span>
                                 <span className="font-bold text-slate-900 truncate max-w-[200px]">{pkgName}</span>
                             </div>
                             <div className="flex justify-between">
-                                <span className="text-sm text-slate-500">Total Bayar</span>
+                                <span className="text-sm text-slate-500">{t.checkout.totalPaid}</span>
                                 <span className="font-bold text-emerald-600">Rp {totalPrice.toLocaleString('id-ID')}</span>
                             </div>
                         </div>
@@ -96,13 +98,13 @@ export default function CheckoutPage() {
                                 onClick={() => router.push('/dashboard/client')}
                                 className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-emerald-200"
                             >
-                                Lihat Pesanan Saya
+                                {t.checkout.viewOrder}
                             </button>
                             <button
                                 onClick={() => router.push('/')}
                                 className="w-full bg-white border-2 border-slate-100 hover:border-slate-300 text-slate-600 font-bold py-3.5 rounded-xl transition"
                             >
-                                Kembali ke Beranda
+                                {t.checkout.backHome}
                             </button>
                         </div>
                     </motion.div>
@@ -112,13 +114,13 @@ export default function CheckoutPage() {
     }
 
     const steps = [
-        { num: 1, label: "Data Pemesan" },
-        { num: 2, label: "Pembayaran" },
-        { num: 3, label: "Selesai" }
+        { num: 1, label: t.checkout.step1 },
+        { num: 2, label: t.checkout.step2 },
+        { num: 3, label: t.checkout.step3 }
     ];
 
     return (
-        <Layout title="Checkout - BorneoTrip">
+        <Layout title={`${t.checkout.title} - BorneoTrip`}>
             <div className="min-h-screen bg-gray-50 pt-32 pb-20">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -166,8 +168,8 @@ export default function CheckoutPage() {
                                                 <User className="w-6 h-6" />
                                             </div>
                                             <div>
-                                                <h2 className="text-xl font-bold text-gray-900">Siapa yang berangkat?</h2>
-                                                <p className="text-sm text-gray-500">Isi data diri untuk E-Ticket.</p>
+                                                <h2 className="text-xl font-bold text-gray-900">{t.checkout.whoIsGoing}</h2>
+                                                <p className="text-sm text-gray-500">{t.checkout.fillDetails}</p>
                                             </div>
                                         </div>
 
@@ -178,13 +180,13 @@ export default function CheckoutPage() {
                                                         <User className="w-5 h-5 text-blue-600" />
                                                     </div>
                                                     <div>
-                                                        <h3 className="font-bold text-gray-900 mb-1">Anda belum login</h3>
-                                                        <p className="text-sm text-gray-600 mb-4">Masuk untuk menyimpan riwayat pesanan dan mendapatkan poin.</p>
+                                                        <h3 className="font-bold text-gray-900 mb-1">{t.checkout.notLoggedIn}</h3>
+                                                        <p className="text-sm text-gray-600 mb-4">{t.checkout.loginDesc}</p>
                                                         <button
                                                             onClick={() => router.push('/login')}
                                                             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl text-sm font-bold transition shadow-lg shadow-blue-200"
                                                         >
-                                                            Login Sekarang
+                                                            {t.checkout.loginNow}
                                                         </button>
                                                     </div>
                                                 </div>
@@ -199,7 +201,7 @@ export default function CheckoutPage() {
                                                     alt={user.name}
                                                 />
                                                 <div>
-                                                    <p className="text-xs font-bold text-emerald-600 uppercase tracking-wide">Logged in as</p>
+                                                    <p className="text-xs font-bold text-emerald-600 uppercase tracking-wide">{t.checkout.loggedInAs}</p>
                                                     <p className="font-bold text-gray-900">{user.name}</p>
                                                     <p className="text-xs text-gray-500">{user.email}</p>
                                                 </div>
@@ -212,34 +214,34 @@ export default function CheckoutPage() {
                                         <form className="space-y-6">
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                                 <div className="space-y-2">
-                                                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Nama Depan</label>
+                                                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t.checkout.firstName}</label>
                                                     <input type="text" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none focus:bg-white transition" defaultValue={user?.name.split(' ')[0]} placeholder="Contoh: Budi" />
                                                 </div>
                                                 <div className="space-y-2">
-                                                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Nama Belakang</label>
+                                                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t.checkout.lastName}</label>
                                                     <input type="text" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none focus:bg-white transition" defaultValue={user?.name.split(' ')[1]} placeholder="Contoh: Santoso" />
                                                 </div>
                                             </div>
 
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                                 <div className="space-y-2">
-                                                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Email (E-Ticket)</label>
+                                                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t.checkout.emailLabel}</label>
                                                     <input type="email" readOnly={!!user} className="w-full bg-gray-100 border border-gray-200 rounded-xl px-4 py-3.5 font-medium text-gray-500 cursor-not-allowed" defaultValue={user?.email || ''} placeholder="email@contoh.com" />
                                                 </div>
                                                 <div className="space-y-2">
-                                                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">No. WhatsApp</label>
+                                                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t.checkout.phoneLabel}</label>
                                                     <input type="tel" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none focus:bg-white transition" placeholder="+62 812..." />
                                                 </div>
                                             </div>
 
                                             <div className="space-y-2">
-                                                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Permintaan Khusus (Opsional)</label>
-                                                <textarea className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none focus:bg-white transition h-24 resize-none" placeholder="Contoh: Saya alergi seafood, tolong sediakan menu ayam." />
+                                                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t.checkout.specialRequest}</label>
+                                                <textarea className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none focus:bg-white transition h-24 resize-none" placeholder={t.checkout.specialRequestPlaceholder} />
                                             </div>
 
                                             <div className="pt-6">
                                                 <button type="button" onClick={() => setStep(2)} className="w-full bg-gray-900 text-white font-bold py-4 rounded-xl hover:bg-black transition flex items-center justify-center gap-3 shadow-lg shadow-gray-200 hover:shadow-xl hover:scale-[1.01]">
-                                                    Lanjut ke Pembayaran <ArrowLeft className="w-4 h-4 rotate-180" />
+                                                    {t.checkout.continuePayment} <ArrowLeft className="w-4 h-4 rotate-180" />
                                                 </button>
                                             </div>
                                         </form>
@@ -259,15 +261,15 @@ export default function CheckoutPage() {
                                                 <Wallet className="w-6 h-6" />
                                             </div>
                                             <div>
-                                                <h2 className="text-xl font-bold text-gray-900">Metode Pembayaran</h2>
-                                                <p className="text-sm text-gray-500">Pilih metode yang paling nyaman untuk Anda.</p>
+                                                <h2 className="text-xl font-bold text-gray-900">{t.checkout.paymentMethod}</h2>
+                                                <p className="text-sm text-gray-500">{t.checkout.chooseMathod}</p>
                                             </div>
                                         </div>
 
                                         <div className="space-y-6 mb-8">
                                             {/* Virtual Account Group */}
                                             <div>
-                                                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 pl-1">Virtual Account</h3>
+                                                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 pl-1">{t.checkout.virtualAccount}</h3>
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                     {[
                                                         { id: 'bca', label: 'BCA Virtual Account', icon: <Building2 className="w-5 h-5" /> },
@@ -298,7 +300,7 @@ export default function CheckoutPage() {
 
                                             {/* E-Wallet Group */}
                                             <div>
-                                                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 pl-1">E-Wallet</h3>
+                                                <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 pl-1">{t.checkout.ewallet}</h3>
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                     {[
                                                         { id: 'gopay', label: 'GoPay', icon: <Wallet className="w-5 h-5" /> },
@@ -329,12 +331,12 @@ export default function CheckoutPage() {
 
                                         <div className="flex items-center gap-3 text-xs text-gray-500 bg-gray-50 p-4 rounded-xl mb-8 border border-gray-100">
                                             <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0" />
-                                            <p>Data Anda diamankan dengan enkripsi SSL 256-bit. Kami tidak menyimpan informasi kartu kredit Anda.</p>
+                                            <p>{t.checkout.secureText}</p>
                                         </div>
 
                                         <div className="flex gap-4">
                                             <button type="button" onClick={() => setStep(1)} className="w-1/3 bg-gray-100 text-gray-600 font-bold py-4 rounded-xl hover:bg-gray-200 transition">
-                                                Kembali
+                                                {t.auth.back}
                                             </button>
                                             <button
                                                 type="button"
@@ -348,7 +350,7 @@ export default function CheckoutPage() {
                                                 ) : (
                                                     <>
                                                         <Banknote className="w-5 h-5" />
-                                                        Bayar IDR {totalPrice.toLocaleString('id-ID')}
+                                                        {t.checkout.pay} IDR {totalPrice.toLocaleString('id-ID')}
                                                     </>
                                                 )}
                                             </button>
@@ -370,8 +372,8 @@ export default function CheckoutPage() {
                                             <CheckCircle className="w-12 h-12 text-emerald-600" />
                                         </div>
 
-                                        <h2 className="text-3xl font-black text-gray-900 mb-2">Pembayaran Berhasil!</h2>
-                                        <p className="text-gray-500 mb-8 max-w-md mx-auto">Selamat! Perjalanan Anda ke <span className="font-bold text-gray-900">{location || 'Kalimantan Timur'}</span> telah terkonfirmasi. E-Ticket telah dikirim ke email Anda.</p>
+                                        <h2 className="text-3xl font-black text-gray-900 mb-2">{t.checkout.paymentSuccess}</h2>
+                                        <p className="text-gray-500 mb-8 max-w-md mx-auto">{t.checkout.successDesc.replace('{location}', location as string || 'Kalimantan Timur')}</p>
 
                                         <div className="bg-gray-50 rounded-2xl p-6 mb-8 max-w-md mx-auto border border-dashed border-gray-300 relative">
                                             <div className="absolute -left-3 top-1/2 -mt-3 w-6 h-6 bg-white rounded-full border-r border-gray-300"></div>
@@ -383,10 +385,10 @@ export default function CheckoutPage() {
 
                                         <div className="flex flex-col sm:flex-row justify-center gap-4">
                                             <Link href="/dashboard/client" className="px-8 py-3 bg-gray-100 text-gray-900 font-bold rounded-xl hover:bg-gray-200 transition flex items-center justify-center gap-2">
-                                                <User className="w-4 h-4" /> Ke Dashboard
+                                                <User className="w-4 h-4" /> {t.checkout.viewOrder}
                                             </Link>
                                             <Link href="/" className="px-8 py-3 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-200">
-                                                Kembali ke Home <ArrowLeft className="w-4 h-4 rotate-180" />
+                                                {t.checkout.backHome} <ArrowLeft className="w-4 h-4 rotate-180" />
                                             </Link>
                                         </div>
                                     </motion.div>
@@ -401,7 +403,7 @@ export default function CheckoutPage() {
                                     <div className="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-orange-400 to-pink-500"></div>
                                     <h3 className="font-bold text-gray-900 mb-6 flex items-center gap-2">
                                         <BadgeCheck className="w-5 h-5 text-orange-500" />
-                                        Ringkasan Pesanan
+                                        {t.checkout.orderSummary}
                                     </h3>
 
                                     {/* Package Card Tiny */}
@@ -414,7 +416,7 @@ export default function CheckoutPage() {
                                             alt={pkgName}
                                         />
                                         <div>
-                                            <p className="text-xs text-gray-500 font-bold mb-1">{isEvent ? "EVENT TICKET" : "PAKET WISATA"}</p>
+                                            <p className="text-xs text-gray-500 font-bold mb-1">{isEvent ? t.checkout.eventTicket : t.checkout.tourPackage}</p>
                                             <h4 className="font-bold text-gray-900 text-sm leading-tight line-clamp-2">{pkgName}</h4>
                                             <div className="flex items-center gap-1 mt-2 text-xs text-gray-500">
                                                 <MapPin className="w-3 h-3" /> {location || 'East Kalimantan'}
@@ -426,27 +428,27 @@ export default function CheckoutPage() {
                                         <div className="flex justify-between items-center">
                                             <div className="flex items-center gap-2">
                                                 <Calendar className="w-4 h-4 text-gray-400" />
-                                                <p className="text-sm text-gray-600">Tanggal</p>
+                                                <p className="text-sm text-gray-600">{t.hero.dateLabel}</p>
                                             </div>
                                             <p className="font-bold text-gray-900 text-sm">{date ? new Date(date as string).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '-'}</p>
                                         </div>
                                         <div className="flex justify-between items-center">
                                             <div className="flex items-center gap-2">
                                                 <Users className="w-4 h-4 text-gray-400" />
-                                                <p className="text-sm text-gray-600">Peserta</p>
+                                                <p className="text-sm text-gray-600">{t.hero.travelersLabel}</p>
                                             </div>
-                                            <p className="font-bold text-gray-900 text-sm">{pax || 1} Orang</p>
+                                            <p className="font-bold text-gray-900 text-sm">{pax || 1} {t.packageDetail.person}</p>
                                         </div>
                                         <div className="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
-                                            <p className="text-xs text-gray-500">Durasi</p>
-                                            <p className="font-bold text-gray-900 text-xs text-right">3 Hari 2 Malam<br /><span className="text-emerald-600 font-normal">Termasuk Hotel</span></p>
+                                            <p className="text-xs text-gray-500">{t.checkout.duration}</p>
+                                            <p className="font-bold text-gray-900 text-xs text-right">{t.checkout.durationDesc}<br /><span className="text-emerald-600 font-normal">{t.checkout.hotelIncluded}</span></p>
                                         </div>
                                     </div>
 
                                     <div className="flex justify-between items-end pt-4 border-t-2 border-dashed border-gray-100">
                                         <div>
-                                            <p className="text-xs text-gray-500 mb-1">Total Pembayaran</p>
-                                            <p className="text-xs text-emerald-600 font-bold">Termasuk Pajak</p>
+                                            <p className="text-xs text-gray-500 mb-1">{t.checkout.totalPayment}</p>
+                                            <p className="text-xs text-emerald-600 font-bold">{t.checkout.taxIncludedShort}</p>
                                         </div>
                                         <span className="font-black text-gray-900 text-2xl">IDR {(totalPrice / 1000).toLocaleString('id-ID')}<span className="text-base text-gray-500 font-bold">.000</span></span>
                                     </div>
@@ -455,10 +457,10 @@ export default function CheckoutPage() {
                                 {/* Trust Badges */}
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-center gap-2 text-xs font-bold text-gray-500">
-                                        <ShieldCheck className="w-4 h-4 text-emerald-500" /> Garansi Aman
+                                        <ShieldCheck className="w-4 h-4 text-emerald-500" /> {t.checkout.safeGuarantee}
                                     </div>
                                     <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-center gap-2 text-xs font-bold text-gray-500">
-                                        <Users className="w-4 h-4 text-blue-500" /> 24/7 Support
+                                        <Users className="w-4 h-4 text-blue-500" /> {t.checkout.support247}
                                     </div>
                                 </div>
                             </div>

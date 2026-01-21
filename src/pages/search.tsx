@@ -6,11 +6,13 @@ import { Search, MapPin, Filter, Calendar, Clock, DollarSign, Star, Ticket, Pack
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function SearchPage() {
     const router = useRouter();
     const { type = 'event', location = '', date, travelers } = router.query;
     const { packages, events } = useContent();
+    const { t } = useLanguage();
 
     // Tab State (mirrors query param or defaults)
     const activeTab = (type as string)?.toLowerCase() === 'package' ? 'Package' : 'Event';
@@ -41,18 +43,18 @@ export default function SearchPage() {
     }, [activeTab, location, packages, events, priceRange, ratingFilter]);
 
     return (
-        <Layout title={`Pencarian ${activeTab} - BorneoTrip`}>
+        <Layout title={`${t.searchPage.title} - BorneoTrip`}>
             <div className="bg-slate-50 min-h-screen pt-24 pb-12">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                     {/* Header */}
                     <div className="mb-8">
-                        <h1 className="text-3xl font-bold text-gray-900 mb-2">Hasil Pencarian</h1>
+                        <h1 className="text-3xl font-bold text-gray-900 mb-2">{t.searchPage.title}</h1>
                         <div className="flex items-center gap-2 text-gray-500">
                             <Search className="w-4 h-4" />
                             <span>
-                                Menampilkan hasil untuk <strong>{activeTab}</strong>
-                                {location && <span> di <strong>"{location}"</strong></span>}
+                                {t.searchPage.showingResultsFor} <strong>{activeTab === 'Event' ? t.searchPage.event : t.searchPage.package}</strong>
+                                {location && <span> {t.searchPage.in} <strong>"{location}"</strong></span>}
                             </span>
                         </div>
                     </div>
@@ -63,24 +65,24 @@ export default function SearchPage() {
                         <div className="lg:w-1/4 space-y-6">
                             <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 sticky top-24">
                                 <div className="flex items-center gap-2 mb-6 text-gray-900 font-bold">
-                                    <Filter className="w-5 h-5" /> Filter
+                                    <Filter className="w-5 h-5" /> {t.searchPage.filter}
                                 </div>
 
                                 {/* Type Toggle */}
                                 <div className="mb-6">
-                                    <label className="text-sm font-semibold text-gray-700 block mb-3">Tipe Pencarian</label>
+                                    <label className="text-sm font-semibold text-gray-700 block mb-3">{t.searchPage.searchType}</label>
                                     <div className="flex gap-2 p-1 bg-slate-100 rounded-xl">
                                         <button
                                             onClick={() => router.push({ query: { ...router.query, type: 'event' } })}
                                             className={`flex-1 py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-2 transition ${activeTab === 'Event' ? 'bg-white shadow-sm text-emerald-600' : 'text-gray-500 hover:bg-slate-200'}`}
                                         >
-                                            <Ticket className="w-4 h-4" /> Event
+                                            <Ticket className="w-4 h-4" /> {t.searchPage.event}
                                         </button>
                                         <button
                                             onClick={() => router.push({ query: { ...router.query, type: 'package' } })}
                                             className={`flex-1 py-2 rounded-lg text-sm font-bold flex items-center justify-center gap-2 transition ${activeTab === 'Package' ? 'bg-white shadow-sm text-emerald-600' : 'text-gray-500 hover:bg-slate-200'}`}
                                         >
-                                            <PackageIcon className="w-4 h-4" /> Paket
+                                            <PackageIcon className="w-4 h-4" /> {t.searchPage.package}
                                         </button>
                                     </div>
                                 </div>
@@ -89,7 +91,7 @@ export default function SearchPage() {
                                 {activeTab === 'Package' && (
                                     <div className="mb-6">
                                         <label className="text-sm font-semibold text-gray-700 block mb-3">
-                                            Maksimal Harga: <span className="text-emerald-600">Rp {(priceRange / 1000000).toFixed(1)}jt</span>
+                                            {t.searchPage.maxPrice}: <span className="text-emerald-600">Rp {(priceRange / 1000000).toFixed(1)}jt</span>
                                         </label>
                                         <input
                                             type="range"
@@ -110,7 +112,7 @@ export default function SearchPage() {
                                 {/* Rating Filter */}
                                 {activeTab === 'Package' && (
                                     <div>
-                                        <label className="text-sm font-semibold text-gray-700 block mb-3">Rating Minimal</label>
+                                        <label className="text-sm font-semibold text-gray-700 block mb-3">{t.searchPage.minRating}</label>
                                         <div className="flex gap-2">
                                             {[4, 3, 2].map(star => (
                                                 <button
@@ -134,10 +136,10 @@ export default function SearchPage() {
                                     <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                         <Search className="w-6 h-6 text-slate-400" />
                                     </div>
-                                    <h3 className="text-lg font-bold text-slate-900 mb-2">Tidak ditemukan hasil</h3>
-                                    <p className="text-slate-500">Coba ubah kata kunci lokasi atau filter Anda.</p>
+                                    <h3 className="text-lg font-bold text-slate-900 mb-2">{t.searchPage.noResults}</h3>
+                                    <p className="text-slate-500">{t.searchPage.noResultsDesc}</p>
                                     <button onClick={() => { setPriceRange(10000000); setRatingFilter(0); router.push({ query: { ...router.query, location: '' } }) }} className="mt-6 text-emerald-600 font-bold hover:underline">
-                                        Reset Filter
+                                        {t.searchPage.resetFilter}
                                     </button>
                                 </div>
                             ) : (
@@ -158,7 +160,7 @@ export default function SearchPage() {
                                                     <h3 className="text-xl font-bold text-slate-900 mb-2 leading-tight group-hover:text-emerald-600 transition">{pkg.title}</h3>
                                                     <div className="mt-auto pt-4 flex items-end justify-between border-t border-slate-50">
                                                         <div>
-                                                            <div className="text-xs text-slate-400 font-medium">Mulai dari</div>
+                                                            <div className="text-xs text-slate-400 font-medium">{t.searchPage.startFrom}</div>
                                                             <div className="text-lg font-black text-emerald-600">Rp {pkg.price.toLocaleString('id-ID')}</div>
                                                         </div>
                                                         <span className="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-lg font-bold">{pkg.duration}</span>
