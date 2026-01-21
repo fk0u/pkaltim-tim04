@@ -107,7 +107,7 @@ export default function LoginPage() {
                         <p className="text-emerald-100/80 text-lg font-medium">{t.auth.subtitle}</p>
                     </div>
 
-                    <div className="bg-white/95 backdrop-blur-xl py-10 px-8 shadow-2xl shadow-black/20 rounded-[2.5rem] border border-white/20 relative overflow-hidden">
+                    <div className="glass-panel py-10 px-8 rounded-[2.5rem] relative overflow-hidden">
                         {/* Decorative Top Line */}
                         <div className="absolute top-0 left-0 w-full h-1.5 bg-linear-to-r from-emerald-400 via-teal-500 to-cyan-500"></div>
 

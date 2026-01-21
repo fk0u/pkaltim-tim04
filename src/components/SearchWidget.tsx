@@ -40,31 +40,31 @@ export default function SearchWidget() {
     <div className="max-w-5xl mx-auto relative z-30">
 
       {/* Floating Tabs */}
-      <div className="flex justify-center mb-3 md:mb-6">
-        <div className="bg-white/20 backdrop-blur-md p-1 md:p-1.5 rounded-full flex gap-1 border border-white/30 shadow-lg inline-flex">
+      <div className="flex justify-center mb-4 md:mb-8">
+        <div className="glass p-1.5 md:p-2 rounded-full flex gap-1 shadow-2xl shadow-green-900/10 inline-flex ring-1 ring-white/40">
           <button
             onClick={() => setActiveTab('Event')}
-            className={`px-4 md:px-6 py-2 md:py-2.5 rounded-full text-xs md:text-sm font-bold flex items-center gap-2 transition-all ${activeTab === 'Event'
-              ? 'bg-white text-green-800 shadow-md transform scale-105'
-              : 'text-white hover:bg-white/10'
+            className={`px-5 md:px-7 py-2.5 md:py-3 rounded-full text-xs md:text-sm font-bold flex items-center gap-2 transition-all duration-300 ${activeTab === 'Event'
+              ? 'bg-white text-green-800 shadow-lg shadow-black/5 transform scale-100'
+              : 'text-gray-600 hover:bg-white/40 hover:text-green-700'
               }`}
           >
-            <Ticket className="w-3 h-3 md:w-4 md:h-4" /> {t.hero.searchEvent}
+            <Ticket className="w-3.5 h-3.5 md:w-4 md:h-4" /> {t.hero.searchEvent}
           </button>
           <button
             onClick={() => setActiveTab('Package')}
-            className={`px-4 md:px-6 py-2 md:py-2.5 rounded-full text-xs md:text-sm font-bold flex items-center gap-2 transition-all ${activeTab === 'Package'
-              ? 'bg-white text-green-800 shadow-md transform scale-105'
-              : 'text-white hover:bg-white/10'
+            className={`px-5 md:px-7 py-2.5 md:py-3 rounded-full text-xs md:text-sm font-bold flex items-center gap-2 transition-all duration-300 ${activeTab === 'Package'
+              ? 'bg-white text-green-800 shadow-lg shadow-black/5 transform scale-100'
+              : 'text-gray-600 hover:bg-white/40 hover:text-green-700'
               }`}
           >
-            <Palmtree className="w-3 h-3 md:w-4 md:h-4" /> {t.hero.searchPackage}
+            <Palmtree className="w-3.5 h-3.5 md:w-4 md:h-4" /> {t.hero.searchPackage}
           </button>
         </div>
       </div>
 
       {/* Main Bar */}
-      <div className="bg-white rounded-[1.5rem] md:rounded-[2.5rem] shadow-2xl shadow-black/10 p-2 md:p-3 relative z-20 mx-3 md:mx-0 ring-1 ring-black/5 transition-transform duration-300 hover:shadow-3xl hover:-translate-y-1">
+      <div className="glass-panel rounded-[2rem] md:rounded-[3rem] p-3 md:p-4 relative z-20 mx-3 md:mx-0 transition-all duration-500 hover:shadow-[0_20px_40px_-10px_rgba(0,0,0,0.1)] hover:-translate-y-1 group">
         <div className="flex flex-col md:flex-row gap-2 md:gap-0 md:items-center">
 
           {/* 1. Destination */}

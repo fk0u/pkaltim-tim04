@@ -348,7 +348,7 @@ export default function Navbar({ isTransparent = true }: { isTransparent?: boole
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
                 transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                className="fixed bottom-28 left-6 right-6 z-[100] md:hidden bg-zinc-900 border border-white/10 rounded-3xl p-6 shadow-2xl overflow-hidden"
+                className="fixed bottom-28 left-6 right-6 z-[100] md:hidden glass-dark rounded-3xl p-6 shadow-2xl overflow-hidden ring-1 ring-white/10"
               >
                 <div className="flex flex-col space-y-2">
                   {menuItems.map((item) => (
@@ -397,7 +397,7 @@ export default function Navbar({ isTransparent = true }: { isTransparent?: boole
             transition={{ type: "spring", stiffness: 200, damping: 20 }}
             className="md:hidden fixed bottom-6 left-6 right-6 z-[90]"
           >
-            <div className="bg-black/80 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl flex items-center justify-between px-6 py-4">
+            <div className="glass-dark rounded-2xl flex items-center justify-between px-6 py-4 shadow-2xl shadow-black/40 ring-1 ring-white/10">
               <Link href="/" className={`flex flex-col items-center gap-1 ${router.pathname === '/' ? 'text-emerald-500' : 'text-gray-400'}`}>
                 <div className="p-2 rounded-xl bg-white/5 active:scale-95 transition">
                   {/* Replaced emoji with Lucide icon */}
