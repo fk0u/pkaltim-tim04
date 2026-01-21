@@ -1,6 +1,6 @@
 import Link from 'next/link';
 // HMR Trigger
-import { Menu, Search, X, ChevronRight, Globe, LogOut, LayoutDashboard } from 'lucide-react';
+import { Search, X, ChevronRight, Globe, LogOut, LayoutDashboard } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -329,129 +329,7 @@ export default function Navbar({ isTransparent = true }: { isTransparent?: boole
           </div>
         </div>
 
-        {/* Floating Pop-up Menu (Stack Style) */}
-        <AnimatePresence>
-          {isMenuOpen && (
-            <>
-              {/* Backdrop to close on click outside */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setIsMenuOpen(false)}
-                className="fixed inset-0 bg-black/60 z-[95] md:hidden backdrop-blur-sm"
-              />
-
-              {/* Floating Menu Card */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                className="fixed bottom-28 left-6 right-6 z-[100] md:hidden glass-dark rounded-3xl p-6 shadow-2xl overflow-hidden ring-1 ring-white/10"
-              >
-                <div className="flex flex-col space-y-2">
-                  {menuItems.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={() => setIsMenuOpen(false)}
-                      className="block px-4 py-3 text-lg font-bold text-white hover:bg-white/10 rounded-xl transition-colors flex items-center justify-between group"
-                    >
-                      {item.title}
-                      <ChevronRight className="w-5 h-5 text-gray-500 group-hover:text-emerald-400 transition" />
-                    </Link>
-                  ))}
-
-                  {/* Socials / Contact Mini-Footer within the Card */}
-                  <div className="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Socials</p>
-                      <div className="flex gap-3">
-                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-emerald-400 transition"><span className="sr-only">IG</span>📸</a>
-                        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-emerald-400 transition"><span className="sr-only">TW</span>🐦</a>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Contact</p>
-                      <p className="text-xs text-gray-300">hello@borneotrip.id</p>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            </>
-          )}
-        </AnimatePresence>
-
       </nav>
-
-      {/* Mobile Bottom Dock - Premium Navigation */}
-      {/* Moved outside nav to avoid containing block issues with transform/will-change */}
-      {/* Show only when scrolled past Hero (isScrolled is true/solid) */}
-      <AnimatePresence>
-        {isScrolled && (
-          <motion.div
-            initial={{ y: 100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 100, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 200, damping: 20 }}
-            className="md:hidden fixed bottom-6 left-6 right-6 z-[90]"
-          >
-            <div className="glass-dark rounded-2xl flex items-center justify-between px-6 py-4 shadow-2xl shadow-black/40 ring-1 ring-white/10">
-              <Link href="/" className={`flex flex-col items-center gap-1 ${router.pathname === '/' ? 'text-emerald-500' : 'text-gray-400'}`}>
-                <div className="p-2 rounded-xl bg-white/5 active:scale-95 transition">
-                  {/* Replaced emoji with Lucide icon */}
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>
-                </div>
-              </Link>
-
-              <button
-                onClick={() => setIsSearchOpen(true)}
-                className="flex flex-col items-center gap-1 text-gray-400 active:text-white transition"
-              >
-                <div className="p-2 rounded-xl bg-white/5 active:scale-95 transition">
-                  <Search className="w-5 h-5" />
-                </div>
-              </button>
-
-              {/* Center Main Action - "Menu" trigger for full overlay */}
-              <button
-                onClick={() => setIsMenuOpen(true)}
-                className="flex flex-col items-center gap-1 -mt-8"
-              >
-                <div className="p-4 rounded-full bg-emerald-600 text-white shadow-lg active:scale-95 transition ring-4 ring-black/50">
-                  <Menu className="w-6 h-6" />
-                </div>
-              </button>
-
-              <button
-                onClick={toggleLanguage}
-                className="flex flex-col items-center gap-1 text-gray-400 active:text-white transition"
-              >
-                <div className="p-2 rounded-xl bg-white/5 active:scale-95 transition">
-                  <span className="text-xs font-bold">{locale === 'en' ? 'EN' : 'ID'}</span>
-                </div>
-              </button>
-
-              {isAuthenticated ? (
-                <Link href={`/dashboard/${user?.role === 'client' ? 'client' : 'admin'}`} className={`flex flex-col items-center gap-1 ${router.pathname.includes('dashboard') ? 'text-emerald-500' : 'text-gray-400'}`}>
-                  <div className="p-2 rounded-xl bg-white/5 active:scale-95 transition">
-                    <LayoutDashboard className="w-5 h-5" />
-                  </div>
-                </Link>
-              ) : (
-                <Link href="/login" className="flex flex-col items-center gap-1 text-gray-400">
-                  <div className="p-2 rounded-xl bg-white/5 active:scale-95 transition">
-                    <span className="text-xl font-bold">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
-                    </span>
-                  </div>
-                </Link>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </>
   );
 }

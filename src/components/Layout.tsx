@@ -1,6 +1,7 @@
 import Head from 'next/head';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import BottomNav from './BottomNav';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -20,17 +21,18 @@ export default function Layout({
       <Head>
         <title>{title}</title>
         <meta name="description" content={description} />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <Navbar isTransparent={transparentNavbar} />
 
-      <main className="flex-grow">
+      <main className="flex-grow pb-20 md:pb-0">
         {children}
       </main>
 
       <Footer />
+      <BottomNav />
     </div>
   );
 }
