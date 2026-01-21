@@ -39,6 +39,23 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
         if (stored) {
             // eslint-disable-next-line react-hooks/set-state-in-effect
             setBookings(JSON.parse(stored));
+        } else {
+            // SEED DEMO DATA FOR "WOW" OPENER
+            const demoBooking: Booking = {
+                id: 'BK-DEMO-01',
+                userId: 'mock-user-1', // Matches AuthContext default user
+                userName: 'Pengguna Demo',
+                packageId: 'p1',
+                pkgTitle: 'Eksplorasi Hutan Wehea & Dayak Culture',
+                pkgImage: 'https://hutanlindungwehea.id/wp-content/uploads/2021/11/2.-sejarah-lansakp-hutan-scaled.jpg?auto=format&fit=crop&q=80',
+                location: 'Muara Wahau, Kutai Timur',
+                date: new Date().toISOString(),
+                pax: 2,
+                totalPrice: 7000000,
+                status: 'Paid',
+                createdAt: new Date().toISOString()
+            };
+            setBookings([demoBooking]);
         }
     }, []);
 
