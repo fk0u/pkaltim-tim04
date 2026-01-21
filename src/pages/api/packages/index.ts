@@ -1,5 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
+import { verifyToken } from '@/lib/auth';
+import { sendSuccess, sendError } from '@/lib/api-response';
 
 export default async function handler(
   req: NextApiRequest,
@@ -7,7 +9,18 @@ export default async function handler(
 ) {
   if (req.method === 'GET') {
     try {
+      const { minPrice, maxPrice, ecoRating } = req.query;
+      
+      const where: any = {};
+      if (minPrice || maxPrice) {
+          where.price = {};
+          if (minPrice) where.price.gte = Number(minPrice);
+          if (maxPrice) where.price.lte = Number(maxPrice);
+      }
+      if (ecoRating) where.ecoRating = { gte: Number(ecoRating) };
+
       const packages = await prisma.tourPackage.findMany({
+        where,
         include: {
           itinerary: true
         }
@@ -23,12 +36,37 @@ export default async function handler(
         } : null
       }));
 
-      res.status(200).json(packagesWithJson);
+      return sendSuccess(res, packagesWithJson);
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: 'Error fetching packages' });
+      return sendError(res, 500, 'Error fetching packages');
     }
+  } else if (req.method === 'POST') {
+     // Validate Mitra/Admin
+     const authHeader = req.headers.authorization;
+     if (!authHeader || !authHeader.startsWith('Bearer ')) {
+       return sendError(res, 401, 'Unauthorized');
+     }
+     const token = authHeader.split(' ')[1];
+     const decoded = verifyToken(token);
+     if (!decoded || (decoded as any).role === 'client') {
+       return sendError(res, 403, 'Forbidden');
+     }
+
+     try {
+         const { title, duration, price, location, rating, ecoRating, description, imageUrl, facilities } = req.body;
+         
+         const pkg = await prisma.tourPackage.create({
+             data: {
+                 title, duration, price: Number(price), location, rating: Number(rating), ecoRating: Number(ecoRating), description, imageUrl,
+                 facilities: JSON.stringify(facilities || [])
+             }
+         });
+         return sendSuccess(res, pkg, 'Package created');
+     } catch (error) {
+         return sendError(res, 500, 'Error creating package');
+     }
   } else {
-    res.status(405).json({ message: 'Method not allowed' });
+    return sendError(res, 405, 'Method not allowed');
   }
 }

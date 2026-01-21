@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
+import { sendSuccess, sendError } from '@/lib/api-response';
 
 export default async function handler(
   req: NextApiRequest,
@@ -8,17 +9,18 @@ export default async function handler(
   if (req.method === 'GET') {
     try {
       const regions = await prisma.region.findMany();
+      
       const regionsWithJson = regions.map(r => ({
           ...r,
-          coordinates: { lat: r.latitude, lng: r.longitude },
           destinations: JSON.parse(r.destinations)
       }));
-      res.status(200).json(regionsWithJson);
+
+      return sendSuccess(res, regionsWithJson);
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: 'Error fetching regions' });
+      return sendError(res, 500, 'Error fetching regions');
     }
   } else {
-    res.status(405).json({ message: 'Method not allowed' });
+    return sendError(res, 405, 'Method not allowed');
   }
 }

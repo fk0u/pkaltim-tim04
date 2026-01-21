@@ -1,36 +1,56 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
+import { hashPassword, generateToken } from '@/lib/auth';
+import { sendSuccess, sendError } from '@/lib/api-response';
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method === 'POST') {
-    const { name, email, password, role } = req.body;
-    
-    if (!email || !password || !name) {
-        return res.status(400).json({ message: 'Missing fields' });
+  if (req.method !== 'POST') {
+    return sendError(res, 405, 'Method not allowed');
+  }
+
+  const { name, email, password } = req.body;
+
+  if (!name || !email || !password) {
+    return sendError(res, 400, 'All fields are required');
+  }
+
+  try {
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (existingUser) {
+      return sendError(res, 400, 'Email already registered');
     }
 
-    try {
-      const existing = await prisma.user.findUnique({ where: { email } });
-      if (existing) return res.status(400).json({ message: 'User already exists' });
-      
-      const user = await prisma.user.create({
-        data: { 
-            name, 
-            email, 
-            password, // NOTE: Hash this in production
-            role: role || 'client' 
-        }
-      });
-      
-      return res.status(200).json(user);
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: 'Internal Server Error' });
-    }
-  } else {
-    res.status(405).json({ message: 'Method not allowed' });
+    const hashedPassword = await hashPassword(password);
+
+    const user = await prisma.user.create({
+      data: {
+        name,
+        email,
+        password: hashedPassword,
+        onboardingCompleted: false, // Default
+      },
+    });
+
+    // Generate token for immediate login
+    const token = generateToken({ userId: user.id, email: user.email, role: user.role });
+
+    return sendSuccess(res, {
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+      token
+    }, 'Registration successful');
+  } catch (error) {
+    console.error('Register error:', error);
+    return sendError(res, 500, 'Internal server error');
   }
 }

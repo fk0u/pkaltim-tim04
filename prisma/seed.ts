@@ -1,11 +1,63 @@
 import 'dotenv/config'
 import { PrismaClient } from '@prisma/client'
+import bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient({
   datasourceUrl: process.env.DATABASE_URL
 })
 
 async function main() {
+  // Passwords
+  const start = Date.now();
+  console.log('Start seeding ...')
+
+  const adminPassword = await bcrypt.hash('admin123', 10)
+  const mitraPassword = await bcrypt.hash('mitra123', 10)
+  const userPassword = await bcrypt.hash('user123', 10)
+  
+  // 1. Users
+  console.log('Seeding Users...')
+  await prisma.user.upsert({
+    where: { email: 'admin@borneotrip.id' },
+    update: {},
+    create: {
+      email: 'admin@borneotrip.id',
+      name: 'Super Admin',
+      password: adminPassword,
+      role: 'admin',
+      onboardingCompleted: true,
+      preferences: JSON.stringify({ interests: ['all'], budget: 'unlimited', travelStyle: 'luxury' })
+    }
+  })
+
+  await prisma.user.upsert({
+    where: { email: 'mitra@borneotrip.id' },
+    update: {},
+    create: {
+      email: 'mitra@borneotrip.id',
+      name: 'Mitra Borneo',
+      password: mitraPassword,
+      role: 'mitra',
+      onboardingCompleted: true,
+      preferences: JSON.stringify({ interests: ['nature'], budget: 'medium', travelStyle: 'backpacker' })
+    }
+  })
+
+  await prisma.user.upsert({
+    where: { email: 'user@borneotrip.id' },
+    update: {},
+    create: {
+      email: 'user@borneotrip.id',
+      name: 'John Traveler',
+      password: userPassword,
+      role: 'client',
+      onboardingCompleted: true,
+      preferences: JSON.stringify({ interests: ['culture', 'food'], budget: 'medium', travelStyle: 'family' })
+    }
+  })
+
+  // 2. Regions
+  console.log('Seeding Regions...')
   const REGIONS = [
     {
       id: 1,
@@ -81,17 +133,116 @@ async function main() {
       coordinates: { lat: 0.9997, lng: 114.4994 },
       destinations: ["Batu Dinding", "Air Terjun Kohong", "Riam Udang", "Desa Wisata Long Apari"],
       imageUrl: "https://infobenua.com/wp-content/uploads/2024/12/IMG-20241204-WA0054.jpg?auto=format&fit=crop&q=80"
+    },
+    {
+        id: 6,
+        name: "Paser",
+        type: "Kabupaten",
+        capital: "Tana Paser",
+        leader: "dr. Fahmi Fadli",
+        area: "11.603",
+        population: "275.452",
+        density: "23,7",
+        districts: 10,
+        villages: "5/139",
+        coordinates: { lat: -1.9167, lng: 116.2000 },
+        destinations: ["Museum Sadurengas", "Pantai Pasir Mayang", "Air Terjun Doyam Seriam"],
+        imageUrl: "https://kaltimtoday.co/wp-content/uploads/2021/08/Museum-Sadurengas-Paser.jpg"
+    },
+    {
+        id: 7,
+        name: "Penajam Paser Utara",
+        type: "Kabupaten",
+        capital: "Penajam",
+        leader: "Makmur Marbun",
+        area: "3.333",
+        population: "183.187",
+        density: "54,9",
+        districts: 4,
+        villages: "24/30",
+        coordinates: { lat: -1.3000, lng: 116.7167 },
+        destinations: ["Titik Nol IKN", "Pantai Tanjung Jumlai", "Ekowisata Mangrove Penajam"],
+        imageUrl: "https://assets.promediateknologi.id/crop/0x0:0x0/x/photo/2022/02/16/2261775765.jpg"
+    },
+    {
+        id: 8,
+        name: "Balikpapan",
+        type: "Kota",
+        capital: "-",
+        leader: "Rahmad Mas'ud",
+        area: "527",
+        population: "738.532",
+        density: "1.401,3",
+        districts: 6,
+        villages: "34/0",
+        coordinates: { lat: -1.2379, lng: 116.8529 },
+        destinations: ["Pantai Lamaru", "Kebun Raya Balikpapan", "Hutan Lindung Sungai Wain"],
+        imageUrl: "https://upload.wikimedia.org/wikipedia/commons/e/e0/Balikpapan_Skyline.jpg"
+    },
+    {
+        id: 9,
+        name: "Bontang",
+        type: "Kota",
+        capital: "-",
+        leader: "Basri Rase",
+        area: "158",
+        population: "187.956",
+        density: "1.189,6",
+        districts: 3,
+        villages: "15/0",
+        coordinates: { lat: 0.1333, lng: 117.5000 },
+        destinations: ["Bontang Kuala", "Pulau Beras Basah", "Taman Nasional Kutai"],
+        imageUrl: "https://upload.wikimedia.org/wikipedia/commons/4/4a/Bontang_Kuala_Village.jpg"
+    },
+    {
+        id: 10,
+        name: "Samarinda",
+        type: "Kota",
+        capital: "-",
+        leader: "Andi Harun",
+        area: "783",
+        population: "834.824",
+        density: "1.066,2",
+        districts: 10,
+        villages: "59/0",
+        coordinates: { lat: -0.5022, lng: 117.1536 },
+        destinations: ["Islamic Center Samarinda", "Desa Budaya Pampang", "Sungai Mahakam"],
+        imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Islamic_Center_Samarinda_Mosque.jpg/1200px-Islamic_Center_Samarinda_Mosque.jpg"
     }
-    // Truncated for brevity, but enough for prototype
   ];
 
+  for (const r of REGIONS) {
+      await prisma.region.upsert({
+          where: { id: r.id },
+          update: {},
+          create: {
+              id: r.id,
+              name: r.name,
+              type: r.type,
+              capital: r.capital,
+              leader: r.leader,
+              area: r.area,
+              population: r.population,
+              density: r.density,
+              districts: r.districts,
+              villages: r.villages,
+              latitude: r.coordinates.lat,
+              longitude: r.coordinates.lng,
+              imageUrl: r.imageUrl,
+              destinations: JSON.stringify(r.destinations)
+          }
+      })
+  }
+
+  // 3. Events
+  console.log('Seeding Events...')
   const EVENTS = [
     {
       id: 'e1',
       title: 'Festival Erau Adat Kutai Kartanegara',
       location: 'Tenggarong, Kutai Kartanegara',
       date: '15 - 22 Juli 2026',
-      description: 'Perayaan budaya terbesar Kesultanan Kutai Kartanegara Ing Martadipura. Saksikan ritual sakral mendirikan Ayu hingga Belimbur.',
+      description: 'Perayaan budaya terbesar Kesultanan Kutai Kartanegara Ing Martadipura.',
       imageUrl: 'https://images.unsplash.com/photo-1605218427360-3638d1a151e9?auto=format&fit=crop&q=80',
       category: 'Culture',
       tags: ['Royal Tradition', 'Cultural Parade', 'Folk Art'],
@@ -101,7 +252,6 @@ async function main() {
       schedule: [
         { time: '08:00', activity: 'Ritual Mendirikan Ayu' },
         { time: '10:00', activity: 'Parade Budaya Internasional' },
-        { time: '14:00', activity: 'Lomba Olahraga Tradisional' },
         { time: '19:00', activity: 'Panggung Hiburan Rakyat' }
       ],
       gallery: [
@@ -114,7 +264,7 @@ async function main() {
       title: 'Derawan Eco-Marathon & Cleaning Day',
       location: 'Kepulauan Derawan, Berau',
       date: '10 Agustus 2026',
-      description: 'Lari maraton di pinggir pantai sambil berpartisipasi dalam aksi bersih pantai dan pelepasan tukik bersama komunitas lokal.',
+      description: 'Lari maraton di pinggir pantai sambil berpartisipasi dalam aksi bersih pantai.',
       imageUrl: 'https://images.unsplash.com/photo-1544550581-5f7ceaf7f992?auto=format&fit=crop&q=80',
       category: 'Sustainability',
       tags: ['Sport Tourism', 'Conservation', 'Beach Clean-up'],
@@ -123,13 +273,53 @@ async function main() {
       ticketCount: 500,
       schedule: [
         { time: '05:30', activity: 'Start Marathon 10K' },
-        { time: '09:00', activity: 'Beach Clean-up Action' },
-        { time: '11:00', activity: 'Pelepasan Tukik (Bayi Penyu)' },
-        { time: '13:00', activity: 'Makan siang Seafood Bakar' }
+        { time: '09:00', activity: 'Beach Clean-up Action' }
       ]
+    },
+    {
+        id: 'e3',
+        title: 'Balikpapan Jazz Festival',
+        location: 'Pantai Kilang Mandiri, Balikpapan',
+        date: '5 September 2026',
+        description: 'Festival musik jazz tahunan dengan latar belakang sunset pantai Balikpapan.',
+        imageUrl: 'https://images.unsplash.com/photo-1514525253440-b393452e2729?auto=format&fit=crop&q=80',
+        category: 'Entertainment',
+        tags: ['Music', 'Jazz', 'Sunset'],
+        price: 'Rp 150.000',
+        organizer: 'Bekraf & Pemkot Balikpapan',
+        ticketCount: 3000,
+        schedule: [
+            { time: '16:00', activity: 'Open Gate' },
+            { time: '17:00', activity: 'Opening Act' },
+            { time: '20:00', activity: 'Main Performance' }
+        ]
     }
   ];
 
+  for (const e of EVENTS) {
+      await prisma.event.upsert({
+          where: { id: e.id },
+          update: {},
+          create: {
+              id: e.id,
+              title: e.title,
+              location: e.location,
+              date: e.date,
+              description: e.description,
+              imageUrl: e.imageUrl,
+              category: e.category,
+              tags: JSON.stringify(e.tags),
+              price: e.price,
+              organizer: e.organizer,
+              ticketCount: e.ticketCount,
+              schedule: JSON.stringify(e.schedule),
+              gallery: JSON.stringify(e.gallery)
+          }
+      })
+  }
+
+  // 4. Packages & Itineraries
+  console.log('Seeding Packages...')
   const PACKAGES = [
     {
       id: 'p1',
@@ -154,154 +344,21 @@ async function main() {
       description: 'Berenang di danau dua rasa Labuan Cermin dan berinteraksi ramah dengan Hiu Paus di Talisayan.',
       imageUrl: 'https://images.unsplash.com/photo-1582967788606-a171f1080ca8?auto=format&fit=crop&q=80',
       facilities: ['Speedboat', 'Alat Snorkeling', 'Dokumentasi Underwater', 'Meals'],
-    }
-  ];
-
-  const ITINERARY_DETAILS = [
-    {
-      id: 'i1',
-      packageId: 'p1',
-      title: 'Eksplorasi Hutan Wehea & Dayak Culture - 4D3N',
-      badges: ['Eco-Friendly', 'Support Local', 'Nature'],
-      days: [
-        {
-          day: 1,
-          title: 'Kedatangan & Sambutan Adat',
-          activities: [
-            { time: '09:00', title: 'Penjemputan Bandara', description: 'Tiba di Bandara Berau/Samarinda, perjalanan darat menuju Muara Wahau.', type: 'Transport' },
-            { time: '15:00', title: 'Tiba di Desa Nehas Liah Bing', description: 'Disambut upacara adat Dayak Wehea dan check-in di Homestay warga.', type: 'Activity' },
-            { time: '19:00', title: 'Makan Malam Tradisional', description: 'Menikmati hidangan khas Dayak seperti Lemang dan Ikan Bakar.', type: 'Meal' },
-          ]
-        },
-        {
-          day: 2,
-          title: 'Trekking Hutan Lindung Wehea',
-          activities: [
-            { time: '05:00', title: 'Sunrise & Bird Watching', description: 'Melihat aktivitas burung Enggang di pagi hari.', type: 'Activity' },
-            { time: '08:00', title: 'Jungle Trekking', description: 'Menjelajahi hutan primer, identifikasi tanaman obat, dan mencari jejak satwa liar.', type: 'Activity' },
-            { time: '12:00', title: 'Makan Siang di Sungai', description: 'Piknik ramah lingkungan di pinggir sungai Wehea.', type: 'Meal' },
-          ]
-        },
-        {
-            day: 3,
-            title: 'Konservasi & Interaksi Budaya',
-            activities: [
-                { time: '09:00', title: 'Workshop Anyaman', description: 'Belajar menganyam rotan bersama ibu-ibu pengrajin lokal.', type: 'Activity' },
-                { time: '14:00', title: 'Penanaman Pohon', description: 'Program adopsi pohon ulin sebagai jejak positif wisatawan.', type: 'Activity' },
-            ]
-        },
-        {
-            day: 4,
-            title: 'Perpisahan',
-            activities: [
-                { time: '08:00', title: 'Sarapan & Check Out', description: 'Persiapan kembali ke bandara.', type: 'Meal' },
-                { time: '13:00', title: 'Drop Bandara', description: 'Tiba di bandara untuk penerbangan pulang.', type: 'Transport' },
-            ]
-        }
-      ]
     },
     {
-      id: 'i2',
-      packageId: 'p2',
-      title: 'Labuan Cermin & Whale Shark Ecotourism - 3D2N',
-      badges: ['Marine Life', 'Adventure', 'Snorkeling'],
-      days: [
-        {
-          day: 1,
-          title: 'Perjalanan ke Biduk-Biduk',
-          activities: [
-            { time: '10:00', title: 'Arrival Berau', description: 'Penjemputan di Bandara Kalimarau.', type: 'Transport' },
-            { time: '11:00', title: 'Road Trip to Biduk-Biduk', description: 'Perjalanan darat 6 jam dengan pemandangan hutan tropis.', type: 'Transport' },
-            { time: '18:00', title: 'Check-in Homestay', description: 'Istirahat di penginapan tepi pantai.', type: 'Activity' },
-          ]
-        },
-        {
-          day: 2,
-          title: 'Labuan Cermin & Kaniungan',
-          activities: [
-            { time: '08:00', title: 'Labuan Cermin', description: 'Berenang di danau dua rasa yang kristal.', type: 'Activity' },
-            { time: '13:00', title: 'Pulau Kaniungan', description: 'Snorkeling dan melihat penyu.', type: 'Activity' },
-          ]
-        },
-        {
-          day: 3,
-          title: 'Whale Shark Talisayan',
-          activities: [
-            { time: '05:00', title: 'Talisayan', description: 'Melihat Hiu Paus di bagan nelayan.', type: 'Activity' },
-            { time: '10:00', title: 'Return', description: 'Perjalanan kembali ke Berau.', type: 'Transport' },
-          ]
-        }
-      ]
+        id: 'p3',
+        title: 'Susur Sungai Mahakam & Pesut Spotting',
+        duration: '2D1N',
+        price: 1200000,
+        location: 'Kutai Kartanegara',
+        rating: 4.5,
+        ecoRating: 4,
+        description: 'Menyusuri sungai legendaris Mahakam dengan kapal wisata, melihat kehidupan tepian sungai dan mencari Pesut Mahakam.',
+        imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/e/e4/Mahakam_River_Samarinda.jpg',
+        facilities: ['Kapal Wisata', 'Makan Siang', 'Guide'],
     }
   ];
 
-  const TESTIMONIALS = [
-    {
-      id: 't1',
-      name: 'Sarah Wijaya',
-      role: 'Travel Blogger',
-      avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80',
-      rating: 5,
-      content: 'Pengalaman hutan Wehea sungguh magis. Guide lokal sangat berpengetahuan dan kita benar-benar belajar tentang konservasi.',
-    },
-    {
-      id: 't2',
-      name: 'Budi Santoso',
-      role: 'Eco-Enthusiast',
-      avatarUrl: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&q=80',
-      rating: 5,
-      content: 'Trip Derawan terbersih yang pernah saya ikuti. Salut dengan komitmen BorneoTrip untuk zero waste.',
-    }
-  ];
-
-  console.log('Seeding Regions...')
-  for (const r of REGIONS) {
-      await prisma.region.upsert({
-          where: { id: r.id },
-          update: {},
-          create: {
-              id: r.id,
-              name: r.name,
-              type: r.type,
-              capital: r.capital,
-              leader: r.leader,
-              area: r.area,
-              population: r.population,
-              density: r.density,
-              districts: r.districts,
-              villages: r.villages,
-              latitude: r.coordinates.lat,
-              longitude: r.coordinates.lng,
-              imageUrl: r.imageUrl,
-              destinations: JSON.stringify(r.destinations)
-          }
-      })
-  }
-
-  console.log('Seeding Events...')
-  for (const e of EVENTS) {
-      await prisma.event.upsert({
-          where: { id: e.id },
-          update: {},
-          create: {
-              id: e.id,
-              title: e.title,
-              location: e.location,
-              date: e.date,
-              description: e.description,
-              imageUrl: e.imageUrl,
-              category: e.category,
-              tags: JSON.stringify(e.tags),
-              price: e.price,
-              organizer: e.organizer,
-              ticketCount: e.ticketCount,
-              schedule: JSON.stringify(e.schedule),
-              gallery: JSON.stringify(e.gallery)
-          }
-      })
-  }
-
-  console.log('Seeding Packages...')
   for (const p of PACKAGES) {
       await prisma.tourPackage.upsert({
           where: { id: p.id },
@@ -321,9 +378,62 @@ async function main() {
       })
   }
 
-  console.log('Seeding Itineraries...')
+  const ITINERARY_DETAILS = [
+    {
+      id: 'i1',
+      packageId: 'p1',
+      title: 'Eksplorasi Hutan Wehea & Dayak Culture - 4D3N',
+      badges: ['Eco-Friendly', 'Support Local', 'Nature'],
+      days: [
+        {
+          day: 1,
+          title: 'Kedatangan & Sambutan Adat',
+          activities: [
+            { time: '15:00', title: 'Tiba di Desa Nehas Liah Bing', description: 'Disambut upacara adat Dayak Wehea.', type: 'Activity' },
+          ]
+        },
+        {
+          day: 2,
+          title: 'Trekking Hutan Lindung Wehea',
+          activities: [
+            { time: '08:00', title: 'Jungle Trekking', description: 'Menjelajahi hutan primer.', type: 'Activity' },
+          ]
+        }
+      ]
+    },
+    {
+      id: 'i2',
+      packageId: 'p2',
+      title: 'Labuan Cermin & Whale Shark Ecotourism - 3D2N',
+      badges: ['Marine Life', 'Adventure', 'Snorkeling'],
+      days: [
+        {
+          day: 1,
+          title: 'Perjalanan ke Biduk-Biduk',
+          activities: [
+            { time: '11:00', title: 'Road Trip', description: 'Perjalanan darat 6 jam.', type: 'Transport' },
+          ]
+        }
+      ]
+    },
+    {
+        id: 'i3',
+        packageId: 'p3',
+        title: 'Susur Sungai Mahakam - 2D1N',
+        badges: ['River Cruise', 'Relaxing', 'Wildlife'],
+        days: [
+            {
+                day: 1,
+                title: 'River Cruise',
+                activities: [
+                    { time: '16:00', title: 'Start Cruise', description: 'Berangkat dari pelabuhan kapal wisata.', type: 'Transport' }
+                ]
+            }
+        ]
+    }
+  ];
+
   for (const i of ITINERARY_DETAILS) {
-      // Check if package exists first to avoid foreign key errors (though we seeded them)
       await prisma.itineraryDetail.upsert({
           where: { packageId: i.packageId },
           update: {},
@@ -337,7 +447,18 @@ async function main() {
       })
   }
 
-  console.log('Seeding Testimonials...')
+  // 5. Testimonials
+  const TESTIMONIALS = [
+    {
+      id: 't1',
+      name: 'Sarah Wijaya',
+      role: 'Travel Blogger',
+      avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80',
+      rating: 5,
+      content: 'Pengalaman hutan Wehea sungguh magis. Guide lokal sangat berpengetahuan.',
+    }
+  ];
+
   for (const t of TESTIMONIALS) {
       await prisma.testimonial.upsert({
           where: { id: t.id },
@@ -353,7 +474,7 @@ async function main() {
       })
   }
 
-  console.log('Seeding Completed.')
+  console.log(`Seeding finished in ${Date.now() - start}ms`)
 }
 
 main()

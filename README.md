@@ -61,32 +61,37 @@ Project ini dibangun dengan **Next.js** dan teknologi modern lainnya untuk perfo
 
 ## 🚀 Cara Menjalankan Project
 
-Ikuti langkah ini untuk menjalankan BorneoTrip di lokal komputer Anda.
-
 ### Prasyarat
-- Node.js (v18 atau lebih baru)
-- npm / yarn / pnpm
+- Node.js (v18+)
+- MySQL (via Laragon atau standalone)
 
-### Instalasi
-
-1. **Clone Repository**
+### Konfigurasi Database
+1. Pastikan MySQL berjalan di port `3306`.
+2. Buat file `.env` di root folder:
+   ```env
+   DATABASE_URL="mysql://root:@localhost:3306/borneotrip_db"
+   JWT_SECRET="your-secret-key"
+   ```
+3. Run migrations & seeding:
    ```bash
-   git clone https://github.com/username/borneotrip.git
-   cd borneotrip
+   npx prisma migrate dev --name init
+   npx tsx prisma/seed.ts
    ```
 
-2. **Install Dependencies**
+### Instalasi & Run
+1. **Install Dependencies**
    ```bash
    npm install
    ```
 
-3. **Jalankan Development Server**
+2. **Jalankan Server**
    ```bash
    npm run dev
    ```
 
-4. **Buka di Browser**
-   Buka [http://localhost:3000](http://localhost:3000) untuk melihat aplikasi.
+3. **Akses**
+   - Web: [http://localhost:3000](http://localhost:3000)
+   - API Docs: [docs/API.md](docs/API.md)
 
 ## 👥 Top Contributors
 

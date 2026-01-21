@@ -1,37 +1,51 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
+import { comparePassword, generateToken } from '@/lib/auth';
+import { sendSuccess, sendError } from '@/lib/api-response';
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method === 'POST') {
-    const { email, password } = req.body;
+  if (req.method !== 'POST') {
+    return sendError(res, 405, 'Method not allowed');
+  }
 
-    // Backdoor for demo/mock accounts (if needed, otherwise rely on DB)
-    if (email === 'admin@borneotrip.id' && password === 'admin123') {
-        return res.status(200).json({
-            id: 'mock-admin',
-            name: 'Super Admin',
-            email,
-            role: 'admin',
-        });
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return sendError(res, 400, 'Email and password are required');
+  }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      return sendError(res, 401, 'Invalid credentials');
     }
 
-    try {
-      const user = await prisma.user.findUnique({ where: { email } });
-      
-      // Simple plain text comparison for prototype as requested
-      if (!user || user.password !== password) {
-          return res.status(401).json({ message: 'Invalid credentials' });
-      }
-      
-      return res.status(200).json(user);
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: 'Internal Server Error' });
+    const isMatch = await comparePassword(password, user.password);
+
+    if (!isMatch) {
+      return sendError(res, 401, 'Invalid credentials');
     }
-  } else {
-    res.status(405).json({ message: 'Method not allowed' });
+
+    const token = generateToken({ userId: user.id, email: user.email, role: user.role });
+
+    return sendSuccess(res, {
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        onboardingCompleted: user.onboardingCompleted,
+      },
+      token
+    }, 'Login successful');
+  } catch (error) {
+    console.error('Login error:', error);
+    return sendError(res, 500, 'Internal server error');
   }
 }

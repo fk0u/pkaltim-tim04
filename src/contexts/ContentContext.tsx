@@ -1,14 +1,13 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { EVENTS, PACKAGES, TESTIMONIALS } from '@/data/mockData';
-import { TourPackage, Event } from '@/types';
+import { TourPackage, Event } from '@/types'; // Ensure types match or adapt
+import { useAuth } from './AuthContext';
 
-// Extend types slightly for internal management if needed
 interface ContentContextType {
     packages: TourPackage[];
     events: Event[];
-    addPackage: (pkg: TourPackage) => void;
-    deletePackage: (id: string) => void;
-    addEvent: (evt: Event) => void;
+    addPackage: (pkg: Partial<TourPackage>) => Promise<boolean>;
+    deletePackage: (id: string) => Promise<boolean>;
+    addEvent: (evt: Partial<Event>) => Promise<boolean>;
     refreshData: () => void;
 }
 
@@ -17,64 +16,102 @@ const ContentContext = createContext<ContentContextType | undefined>(undefined);
 export function ContentProvider({ children }: { children: React.ReactNode }) {
     const [packages, setPackages] = useState<TourPackage[]>([]);
     const [events, setEvents] = useState<Event[]>([]);
+    const { token } = useAuth();
+
+    const fetchPackages = async () => {
+        try {
+            const res = await fetch('/api/packages');
+            const data = await res.json();
+            if (data.success) setPackages(data.data);
+        } catch (e) {
+            console.error(e);
+        }
+    };
+
+    const fetchEvents = async () => {
+        try {
+            const res = await fetch('/api/events');
+            const data = await res.json();
+            if (data.success) setEvents(data.data);
+        } catch (e) {
+            console.error(e);
+        }
+    };
 
     useEffect(() => {
-        // Initialize from LocalStorage or Mock Data
-        const storedPackages = localStorage.getItem('bt_packages');
-        const storedEvents = localStorage.getItem('bt_events');
-
-        if (storedPackages) {
-            setPackages(JSON.parse(storedPackages));
-        } else {
-            setPackages(PACKAGES);
-            localStorage.setItem('bt_packages', JSON.stringify(PACKAGES));
-        }
-
-        if (storedEvents) {
-            setEvents(JSON.parse(storedEvents));
-        } else {
-            // events needs type casting or mapping if structure matches
-            // Assuming EVENTS from mockData matches Event type roughly or we adapt
-            // For now, let's just assume valid match or empty
-            const validEvents = EVENTS.map((e: any) => ({
-                ...e,
-                category: e.category || 'Nature', // Fallback
-                tags: e.tags || [],
-                schedule: e.schedule || [],
-                gallery: e.gallery || []
-            })) as Event[];
-            
-            setEvents(validEvents);
-            localStorage.setItem('bt_events', JSON.stringify(validEvents));
-        }
+        fetchPackages();
+        fetchEvents();
     }, []);
 
-    // Sync to LocalStorage on updates
-    useEffect(() => {
-        if (packages.length > 0) localStorage.setItem('bt_packages', JSON.stringify(packages));
-    }, [packages]);
-
-    useEffect(() => {
-        if (events.length > 0) localStorage.setItem('bt_events', JSON.stringify(events));
-    }, [events]);
-
-    const addPackage = (pkg: TourPackage) => {
-        setPackages(prev => [pkg, ...prev]);
+    const addPackage = async (pkg: Partial<TourPackage>) => {
+        if (!token) return false;
+        try {
+            const res = await fetch('/api/packages', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(pkg)
+            });
+            const data = await res.json();
+            if (data.success) {
+                fetchPackages();
+                return true;
+            }
+            return false;
+        } catch (e) {
+            console.error(e);
+            return false;
+        }
     };
 
-    const deletePackage = (id: string) => {
-        setPackages(prev => prev.filter(p => p.id !== id));
+    const deletePackage = async (id: string) => {
+         if (!token) return false;
+         // Note: Delete API not fully exposed in packages/index.ts, might need [id].ts implementation
+         // Using packages/[id] delete call
+         try {
+            const res = await fetch(`/api/packages/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const data = await res.json();
+            if (data.success) {
+                fetchPackages();
+                return true;
+            }
+            return false;
+         } catch (e) {
+             return false;
+         }
     };
 
-    const addEvent = (evt: Event) => {
-        setEvents(prev => [evt, ...prev]);
+    const addEvent = async (evt: Partial<Event>) => {
+        if (!token) return false;
+        try {
+            const res = await fetch('/api/events', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(evt)
+            });
+            const data = await res.json();
+            if (data.success) {
+                fetchEvents();
+                return true;
+            }
+            return false;
+        } catch (e) {
+            return false;
+        }
     };
 
     const refreshData = () => {
-         // Force reload if needed
-         const storedPackages = localStorage.getItem('bt_packages');
-         if (storedPackages) setPackages(JSON.parse(storedPackages));
-    }
+        fetchPackages();
+        fetchEvents();
+    };
 
     return (
         <ContentContext.Provider value={{ packages, events, addPackage, deletePackage, addEvent, refreshData }}>
@@ -85,6 +122,6 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
 
 export const useContent = () => {
     const context = useContext(ContentContext);
-    if (!context) throw new Error('useContent must be used within CoverageProvider');
+    if (!context) throw new Error('useContent must be used within ContentProvider');
     return context;
 };
