@@ -31,10 +31,8 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
     return (
         <div className="min-h-screen bg-gray-50 flex font-sans text-gray-900">
             {/* SIDEBAR */}
-            <motion.aside
-                initial={{ width: 280 }}
-                animate={{ width: isSidebarOpen ? 280 : 80 }}
-                className="bg-emerald-900 text-white fixed h-full z-30 hidden md:flex flex-col shadow-2xl transition-all duration-300"
+            <aside
+                className={`bg-emerald-900 text-white fixed h-full z-30 hidden md:flex flex-col shadow-2xl transition-all duration-300 ${isSidebarOpen ? 'w-[280px]' : 'w-[80px]'}`}
             >
                 <div className="h-20 flex items-center px-8 border-b border-emerald-800">
                     <AnimatePresence mode='wait'>
@@ -70,13 +68,11 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                             >
                                 <item.icon className={`w-6 h-6 ${isActive ? 'text-white' : 'text-emerald-400 group-hover:text-white'}`} />
                                 {isSidebarOpen && (
-                                    <motion.span
-                                        initial={{ opacity: 0, x: -10 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        className="font-bold text-sm tracking-wide"
+                                    <span
+                                        className="font-bold text-sm tracking-wide animate-in fade-in slide-in-from-left-2 duration-300"
                                     >
                                         {item.label}
-                                    </motion.span>
+                                    </span>
                                 )}
                             </Link>
                         )
@@ -92,7 +88,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                         {isSidebarOpen && <span className="font-bold text-sm">Sign Out</span>}
                     </button>
                 </div>
-            </motion.aside>
+            </aside>
 
             {/* MAIN CONTENT WRAPPER */}
             <div className={`flex-1 flex flex-col min-h-screen transition-all duration-300 ${isSidebarOpen ? 'md:ml-[280px]' : 'md:ml-[80px]'}`}>

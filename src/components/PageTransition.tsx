@@ -27,17 +27,18 @@ const Overlay = () => {
         <motion.div
             className="fixed inset-0 z-[60] flex pointer-events-none"
             initial={{ opacity: 1 }}
-            animate={{ opacity: 0, transition: { delay: 0.5, duration: 0.1 } }} // Hide container after animation
+            animate={{ opacity: 0, transition: { delay: 0.5, duration: 0.1 } }}
         >
             {[...Array(5)].map((_, i) => (
                 <motion.div
                     key={i}
                     initial={{ scaleY: 1 }}
                     animate={{ scaleY: 0 }}
+                    exit={{ scaleY: 1 }}
                     transition={{
                         duration: 0.5,
                         ease: [0.22, 1, 0.36, 1],
-                        delay: i * 0.05 // Stagger delay for enter (reveal)
+                        delay: i * 0.05
                     }}
                     className="h-full bg-emerald-950 origin-bottom border-r border-emerald-900/20 last:border-r-0"
                     style={{ width: "20%" }}
@@ -63,7 +64,9 @@ export default function PageTransition({ children }: { children: ReactNode }) {
                 {/* Exit Overlay (Covers old page) */}
                 <motion.div
                     className="fixed inset-0 z-[60] flex pointer-events-none"
-                    initial={{ opacity: 1 }} // Always visible for exit
+                    initial={{ opacity: 1 }}
+                    exit={{ opacity: 1 }} // Ensure it stays visible during exit
+                    animate={{ opacity: 0, transition: { delay: 0.5 } }} // Optional cleanup
                 >
                     {[...Array(5)].map((_, i) => (
                         <Column key={i} index={i} total={5} />

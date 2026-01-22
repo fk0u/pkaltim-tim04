@@ -1,17 +1,24 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { EVENTS, PACKAGES, TESTIMONIALS } from '@/data/mockData';
-import { TourPackage, Event } from '@/types';
+import { EVENTS, PACKAGES, TESTIMONIALS, MOCK_USERS, MOCK_BOOKINGS } from '@/data/mockData';
+import { TourPackage, Event, User, Booking } from '@/types';
 
 // Extend types slightly for internal management if needed
 interface ContentContextType {
     packages: TourPackage[];
     events: Event[];
+    bookings: Booking[];
+    customers: User[];
     addPackage: (pkg: TourPackage) => void;
     deletePackage: (id: string) => void;
     updatePackage: (pkg: TourPackage) => void;
     addEvent: (evt: Event) => void;
     deleteEvent: (id: string) => void;
     updateEvent: (evt: Event) => void;
+
+    // New Methods
+    updateBookingStatus: (id: string, status: Booking['status']) => void;
+    deleteBooking: (id: string) => void;
+
     refreshData: () => void;
 }
 
@@ -20,12 +27,15 @@ const ContentContext = createContext<ContentContextType | undefined>(undefined);
 export function ContentProvider({ children }: { children: React.ReactNode }) {
     const [packages, setPackages] = useState<TourPackage[]>([]);
     const [events, setEvents] = useState<Event[]>([]);
+    const [bookings, setBookings] = useState<Booking[]>([]);
+    const [customers, setCustomers] = useState<User[]>([]);
 
     useEffect(() => {
         // Initialize from LocalStorage or Mock Data
-        // V2 keys to force refresh on schema change (String -> LocalizedString)
         const storedPackages = localStorage.getItem('bt_packages_v2');
         const storedEvents = localStorage.getItem('bt_events_v2');
+        const storedBookings = localStorage.getItem('bt_bookings_v1');
+        const storedCustomers = localStorage.getItem('bt_customers_v1');
 
         if (storedPackages) {
             setPackages(JSON.parse(storedPackages));
@@ -38,8 +48,6 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
             setEvents(JSON.parse(storedEvents));
         } else {
             // events needs type casting or mapping if structure matches
-            // Assuming EVENTS from mockData matches Event type roughly or we adapt
-            // For now, let's just assume valid match or empty
             const validEvents = EVENTS.map((e: any) => ({
                 ...e,
                 category: e.category || 'Nature', // Fallback
@@ -50,6 +58,20 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
 
             setEvents(validEvents);
             localStorage.setItem('bt_events_v2', JSON.stringify(validEvents));
+        }
+
+        if (storedBookings) {
+            setBookings(JSON.parse(storedBookings));
+        } else {
+            setBookings(MOCK_BOOKINGS as Booking[]);
+            localStorage.setItem('bt_bookings_v1', JSON.stringify(MOCK_BOOKINGS));
+        }
+
+        if (storedCustomers) {
+            setCustomers(JSON.parse(storedCustomers));
+        } else {
+            setCustomers(MOCK_USERS as User[]);
+            localStorage.setItem('bt_customers_v1', JSON.stringify(MOCK_USERS));
         }
     }, []);
 
@@ -62,6 +84,11 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         if (events.length > 0) localStorage.setItem('bt_events_v2', JSON.stringify(events));
     }, [events]);
 
+    useEffect(() => {
+        if (bookings.length > 0) localStorage.setItem('bt_bookings_v1', JSON.stringify(bookings));
+    }, [bookings]);
+
+    // Packages & Events Methods
     const addPackage = (pkg: TourPackage) => {
         setPackages(prev => [pkg, ...prev]);
     };
@@ -73,14 +100,6 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     const addEvent = (evt: Event) => {
         setEvents(prev => [evt, ...prev]);
     };
-
-    const refreshData = () => {
-        // Force reload if needed
-        const storedPackages = localStorage.getItem('bt_packages_v2');
-        const storedEvents = localStorage.getItem('bt_events_v2');
-        if (storedPackages) setPackages(JSON.parse(storedPackages));
-        if (storedEvents) setEvents(JSON.parse(storedEvents));
-    }
 
     const deleteEvent = (id: string) => {
         setEvents(prev => prev.filter(e => e.id !== id));
@@ -94,16 +113,36 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         setEvents(prev => prev.map(e => e.id === updatedEvt.id ? updatedEvt : e));
     };
 
+    // Booking Methods
+    const updateBookingStatus = (id: string, status: Booking['status']) => {
+        setBookings(prev => prev.map(b => b.id === id ? { ...b, status } : b));
+    };
+
+    const deleteBooking = (id: string) => {
+        setBookings(prev => prev.filter(b => b.id !== id));
+    };
+
+    const refreshData = () => {
+        const storedPackages = localStorage.getItem('bt_packages_v2');
+        const storedEvents = localStorage.getItem('bt_events_v2');
+        if (storedPackages) setPackages(JSON.parse(storedPackages));
+        if (storedEvents) setEvents(JSON.parse(storedEvents));
+    }
+
     return (
         <ContentContext.Provider value={{
             packages,
             events,
+            bookings,
+            customers,
             addPackage,
             deletePackage,
             updatePackage,
             addEvent,
             deleteEvent,
             updateEvent,
+            updateBookingStatus,
+            deleteBooking,
             refreshData
         }}>
             {children}

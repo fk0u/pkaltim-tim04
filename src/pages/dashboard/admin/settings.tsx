@@ -3,7 +3,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { User, Bell, Lock, Globe, Save, Upload, Shield } from 'lucide-react';
+import { User, Bell, Lock, Globe, Save, Upload, Shield, Download, FileText, Activity } from 'lucide-react';
 import { useToast } from '@/components/ui';
 
 export default function SettingsPage() {
@@ -42,7 +42,9 @@ export default function SettingsPage() {
         { id: 'profile', label: 'Profil Admin', icon: User },
         { id: 'general', label: 'Umum & Platform', icon: Globe },
         { id: 'security', label: 'Keamanan', icon: Shield },
+        { id: 'security', label: 'Keamanan', icon: Shield },
         { id: 'notifications', label: 'Notifikasi', icon: Bell },
+        { id: 'export', label: 'Ekspor Data', icon: Download },
     ];
 
     return (
@@ -60,8 +62,8 @@ export default function SettingsPage() {
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
                                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium text-sm ${isActive
-                                            ? 'bg-emerald-50 text-emerald-700 shadow-sm'
-                                            : 'text-gray-600 hover:bg-gray-50'
+                                        ? 'bg-emerald-50 text-emerald-700 shadow-sm'
+                                        : 'text-gray-600 hover:bg-gray-50'
                                         }`}
                                 >
                                     <Icon className={`w-5 h-5 ${isActive ? 'text-emerald-600' : 'text-gray-400'}`} />
@@ -174,17 +176,27 @@ export default function SettingsPage() {
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center justify-between py-4 border-b border-gray-100">
-                                        <div>
-                                            <h4 className="font-bold text-gray-900">Autentikasi 2 Faktor (2FA)</h4>
-                                            <p className="text-sm text-gray-500">Tambahan keamanan saat login admin.</p>
-                                        </div>
-                                        <div
-                                            onClick={() => setFormData({ ...formData, '2fa': !formData['2fa'] })}
-                                            className={`w-14 h-8 rounded-full p-1 cursor-pointer transition-colors duration-300 ${formData['2fa'] ? 'bg-emerald-500' : 'bg-gray-300'}`}
-                                        >
-                                            <div className={`w-6 h-6 rounded-full bg-white shadow-md transform transition-transform duration-300 ${formData['2fa'] ? 'translate-x-6' : ''}`} />
-                                        </div>
+                                </div>
+
+                                {/* Audit Logs */}
+                                <div className="pt-6 border-t border-gray-100">
+                                    <h4 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                        <Activity className="w-5 h-5 text-gray-400" /> Audit Logs (Aktivitas Terakhir)
+                                    </h4>
+                                    <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+                                        {[
+                                            { action: 'Login Berhasil', user: 'Admin', time: 'Baru saja', ip: '192.168.1.1' },
+                                            { action: 'Update Status Booking #BK001', user: 'Admin', time: '2 jam lalu', ip: '192.168.1.1' },
+                                            { action: 'Ganti Password', user: 'Admin', time: '3 hari lalu', ip: '192.168.1.1' },
+                                        ].map((log, i) => (
+                                            <div key={i} className="flex justify-between items-center text-sm border-b border-gray-200 last:border-0 pb-2 last:pb-0">
+                                                <div>
+                                                    <p className="font-bold text-gray-800">{log.action}</p>
+                                                    <p className="text-xs text-gray-500">{log.user} • {log.ip}</p>
+                                                </div>
+                                                <span className="text-xs font-mono text-gray-400">{log.time}</span>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
                             </div>

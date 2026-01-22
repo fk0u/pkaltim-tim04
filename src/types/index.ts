@@ -5,7 +5,7 @@ export interface LocalizedString {
 
 export interface EventSchedule {
   time: string;
-  activity: string; // Keep simple or localized? Let's keep simple for schedule
+  activity: string;
 }
 
 export interface Event {
@@ -34,7 +34,7 @@ export interface TourPackage {
   ecoRating: 1 | 2 | 3 | 4 | 5;
   description: LocalizedString;
   imageUrl: string;
-  facilities: string[]; // Could be localized, but array of strings is tricky. Let's assume ID for now or string[]
+  facilities: string[];
 }
 
 export interface Activity {
@@ -65,4 +65,28 @@ export interface Testimonial {
   avatarUrl: string;
   rating: 1 | 2 | 3 | 4 | 5;
   content: string;
+}
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: 'Admin' | 'Customer';
+  joinDate: string;
+  avatar: string;
+  totalSpent: number;
+  status: 'Active' | 'Inactive';
+}
+
+export interface Booking {
+  id: string;
+  userId: string;
+  productId: string;
+  productType: 'Package' | 'Event';
+  productName: string; // Denormalized for ease
+  date: string;
+  amount: number;
+  status: 'Pending' | 'Paid' | 'Cancelled' | 'Completed';
+  paymentMethod: 'Credit Card' | 'Bank Transfer' | 'E-Wallet';
+  customerName: string; // Denormalized
 }

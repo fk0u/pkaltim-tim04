@@ -575,3 +575,143 @@ export const ITINERARY_DETAILS: ItineraryDetail[] = [
     ]
   }
 ];
+
+export const MOCK_USERS: any[] = [
+  {
+    id: 'u1',
+    name: 'Admin User',
+    email: 'admin@borneotrip.com',
+    role: 'Admin',
+    joinDate: '2023-01-01',
+    avatar: 'https://i.pravatar.cc/150?u=admin',
+    totalSpent: 0,
+    status: 'Active'
+  },
+  {
+    id: 'u2',
+    name: 'Budi Santoso',
+    email: 'budi.santoso@gmail.com',
+    role: 'Customer',
+    joinDate: '2023-05-15',
+    avatar: 'https://i.pravatar.cc/150?u=budi',
+    totalSpent: 4500000,
+    status: 'Active'
+  },
+  {
+    id: 'u3',
+    name: 'John Smith',
+    email: 'john.smith@example.com',
+    role: 'Customer',
+    joinDate: '2023-06-20',
+    avatar: 'https://i.pravatar.cc/150?u=john',
+    totalSpent: 8900000,
+    status: 'Active'
+  },
+  {
+    id: 'u4',
+    name: 'Siti Aminah',
+    email: 'siti.aminah@yahoo.com',
+    role: 'Customer',
+    joinDate: '2023-08-10',
+    avatar: 'https://i.pravatar.cc/150?u=siti',
+    totalSpent: 1200000,
+    status: 'Inactive'
+  },
+  {
+    id: 'u5',
+    name: 'David Wilson',
+    email: 'david.w@corp.net',
+    role: 'Customer',
+    joinDate: '2023-11-05',
+    avatar: 'https://i.pravatar.cc/150?u=david',
+    totalSpent: 5500000,
+    status: 'Active'
+  }
+];
+
+export const MOCK_BOOKINGS: any[] = [
+  {
+    id: 'b101',
+    userId: 'u2',
+    productId: 'p1',
+    productType: 'Package',
+    productName: 'Eksplorasi Hutan Wehea',
+    date: '2023-08-15',
+    amount: 3500000,
+    status: 'Completed',
+    paymentMethod: 'Bank Transfer',
+    customerName: 'Budi Santoso'
+  },
+  {
+    id: 'b102',
+    userId: 'u3',
+    productId: 'i5', // Linking to Maratua
+    productType: 'Package',
+    productName: 'Maratua Paradise Luxury',
+    date: '2023-09-01',
+    amount: 5500000,
+    status: 'Paid',
+    paymentMethod: 'Credit Card',
+    customerName: 'John Smith'
+  },
+  {
+    id: 'b103',
+    userId: 'u4',
+    productId: 'p3',
+    productType: 'Package',
+    productName: 'Samarinda City Tour',
+    date: '2023-09-10',
+    amount: 1200000,
+    status: 'Completed',
+    paymentMethod: 'E-Wallet',
+    customerName: 'Siti Aminah'
+  },
+  {
+    id: 'b104',
+    userId: 'u2',
+    productId: 'e2',
+    productType: 'Event',
+    productName: 'Derawan Eco-Marathon',
+    date: '2023-09-25',
+    amount: 1000000, // 4 tickets
+    status: 'Pending',
+    paymentMethod: 'Bank Transfer',
+    customerName: 'Budi Santoso'
+  },
+  {
+    id: 'b105',
+    userId: 'u5',
+    productId: 'p5',
+    productType: 'Package',
+    productName: 'Maratua Paradise Luxury',
+    date: '2023-10-05',
+    amount: 5500000,
+    status: 'Paid',
+    paymentMethod: 'Credit Card',
+    customerName: 'David Wilson'
+  },
+  {
+    id: 'b106',
+    userId: 'u3',
+    productId: 'p2',
+    productType: 'Package',
+    productName: 'Labuan Cermin & Whale Shark',
+    date: '2023-10-20',
+    amount: 2800000,
+    status: 'Cancelled',
+    paymentMethod: 'Credit Card',
+    customerName: 'John Smith'
+  },
+  {
+    id: 'b107',
+    userId: 'u5',
+    productId: 'e3',
+    productType: 'Event',
+    productName: 'Mahakam Jazz Fiesta',
+    date: '2024-01-15',
+    amount: 600000, // 4 tickets
+    status: 'Pending', // Newest
+    paymentMethod: 'E-Wallet',
+    customerName: 'David Wilson'
+  }
+];
