@@ -69,7 +69,8 @@ export const en = {
         taxIncluded: "Includes tax & service fees",
         bestPrice: "Best Price Guarantee",
         person: "Person",
-        perPerson: "/ person"
+        perPerson: "/ person",
+        quotaLeft: "seats left"
     },
     checkout: {
         title: "Checkout",
@@ -113,7 +114,10 @@ export const en = {
         totalPayment: "Total Payment",
         taxIncludedShort: "Tax Included",
         safeGuarantee: "Secure Guarantee",
-        support247: "24/7 Support"
+        support247: "24/7 Support",
+        quotaExceeded: "Quota exceeded for selected pax.",
+        fillAllDetails: "Please fill all traveler details.",
+        oops: "Oops, something went wrong!"
     },
     footer: {
         ctaTitle: "Ready to Explore",

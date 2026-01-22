@@ -1,38 +1,94 @@
 import Layout from '@/components/Layout';
 import { useAuth } from '@/contexts/AuthContext';
 import { useBooking } from '@/contexts/BookingContext';
+import { useContent } from '@/contexts/ContentContext';
 import { useToast } from '@/components/ui';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { TravelerDetail } from '@/types';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, CheckCircle, ShieldCheck, User, Calendar, Users, MapPin, BadgeCheck, Banknote, Wallet, Building2, QrCode } from 'lucide-react';
+import { ArrowLeft, CheckCircle, ShieldCheck, User, Calendar, Users, MapPin, BadgeCheck, Banknote, Wallet, Building2, QrCode, AlertCircle, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function CheckoutPage() {
     const { user, login } = useAuth();
     const { addBooking } = useBooking();
+    const { packages, events } = useContent();
     const { addToast } = useToast();
     const { t } = useLanguage();
     const router = useRouter();
-    const [step, setStep] = useState(1);
-    const [isProcessing, setIsProcessing] = useState(false);
-    const [selectedBank, setSelectedBank] = useState('bca');
 
     const { pkg, date, pax, price, id, location, image, type } = router.query;
 
+    // Derived State
     const isEvent = type === 'event';
     const pkgName = pkg ? (pkg as string) : (isEvent ? t.checkout.eventTicket : t.checkout.tourPackage);
     const totalPrice = price ? parseInt(price as string) : 0;
     const pkgImage = image ? (image as string) : "https://images.unsplash.com/photo-1596401057633-565652b5d249?auto=format&fit=crop&q=80";
-    // const bookingId = `BK-${Math.floor(Math.random() * 1000000)}`; // Moved to state to avoid hydration error
-    const [bookingId, setBookingId] = useState('');
+    const paxCount = Number(pax) || 1;
 
+    // Component State
+    const [step, setStep] = useState(1);
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [selectedBank, setSelectedBank] = useState('bca');
+    const [bookingId, setBookingId] = useState('');
+    const [travelers, setTravelers] = useState<TravelerDetail[]>([]);
+    const [quotaError, setQuotaError] = useState<string | null>(null);
+
+    // Initialize Booking ID
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
         setBookingId(`BK-${Math.floor(Math.random() * 1000000)}`);
     }, []);
+
+    // Initialize Travelers & Quota Check
+    useEffect(() => {
+        if (!router.isReady) return;
+
+        // 1. Quota Check
+        const product = isEvent ? events.find(e => e.id === id) : packages.find(p => p.id === id);
+        if (product && product.quota && product.bookedCount !== undefined) {
+            const potentialTotal = product.bookedCount + paxCount;
+            if (potentialTotal > product.quota) {
+                setQuotaError(`${t.checkout.quotaExceeded} (${product.quota - product.bookedCount} ${t.packageDetail.quotaLeft})`);
+                addToast(t.checkout.quotaExceeded, 'error');
+            } else {
+                setQuotaError(null);
+            }
+        }
+
+        // 2. Initialize Travelers Form
+        setTravelers(prev => {
+            if (prev.length === paxCount) return prev; // Avoid reset if already set matching pax
+
+            const newTravelers: TravelerDetail[] = Array(paxCount).fill({
+                title: 'Mr',
+                fullName: '',
+                idType: 'KTP',
+                idNumber: '',
+                nationality: 'Indonesia'
+            });
+
+            // Auto-fill lead traveler if user is logged in
+            if (user && newTravelers.length > 0) {
+                newTravelers[0] = {
+                    ...newTravelers[0],
+                    fullName: user.name,
+                    title: 'Mr' // Default, user can change
+                };
+            }
+            return newTravelers;
+        });
+
+    }, [router.isReady, paxCount, id, type, user, packages, events, isEvent, t, addToast]);
+
+
+    const updateTraveler = (index: number, field: keyof TravelerDetail, value: string) => {
+        const newTravelers = [...travelers];
+        newTravelers[index] = { ...newTravelers[index], [field]: value };
+        setTravelers(newTravelers);
+    };
 
     const handlePayment = () => {
         if (!user) {
@@ -41,18 +97,28 @@ export default function CheckoutPage() {
             return;
         }
 
+        // Validate all travelers
+        const isValid = travelers.every(t => t.fullName && t.idNumber);
+        if (!isValid) {
+            addToast(t.checkout.fillAllDetails, "error");
+            return;
+        }
+
         setIsProcessing(true);
         setTimeout(() => {
             addBooking({
                 userId: user.id || 'guest',
-                userName: user.name,
-                packageId: (id as string) || 'PKG-CUSTOM',
-                pkgTitle: pkgName,
-                pkgImage: pkgImage,
+                customerName: user.name,
+                productId: (id as string) || 'PKG-CUSTOM',
+                productType: isEvent ? 'Event' : 'Package',
+                productName: pkgName,
+                productImage: pkgImage,
                 location: (location as string) || 'East Kalimantan',
                 date: (date as string) || new Date().toISOString(),
-                pax: Number(pax) || 1,
-                totalPrice: totalPrice || 0,
+                pax: paxCount,
+                amount: totalPrice || 0,
+                travelers: travelers,
+                paymentMethod: 'Credit Card', // Mocked based on selectedBank
             });
 
             setIsProcessing(false);
@@ -60,6 +126,23 @@ export default function CheckoutPage() {
             addToast(t.checkout.paymentSuccess, "success");
         }, 2000);
     };
+
+    if (quotaError) {
+        return (
+            <Layout title={`Error - BorneoTrip`}>
+                <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+                    <div className="bg-white p-8 rounded-3xl shadow-xl text-center max-w-md">
+                        <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+                        <h2 className="text-2xl font-bold text-gray-900 mb-2">{t.checkout.oops}</h2>
+                        <p className="text-gray-600 mb-6">{quotaError}</p>
+                        <button onClick={() => router.back()} className="bg-gray-900 text-white px-6 py-3 rounded-xl font-bold">
+                            {t.common.back}
+                        </button>
+                    </div>
+                </div>
+            </Layout>
+        );
+    }
 
     if (step === 3) {
         return (
@@ -165,15 +248,15 @@ export default function CheckoutPage() {
                                     >
                                         <div className="flex items-center gap-4 mb-8">
                                             <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
-                                                <User className="w-6 h-6" />
+                                                <Users className="w-6 h-6" />
                                             </div>
                                             <div>
                                                 <h2 className="text-xl font-bold text-gray-900">{t.checkout.whoIsGoing}</h2>
-                                                <p className="text-sm text-gray-500">{t.checkout.fillDetails}</p>
+                                                <p className="text-sm text-gray-500">{t.checkout.fillDetails} ({paxCount} Travelers)</p>
                                             </div>
                                         </div>
 
-                                        {!user ? (
+                                        {!user && (
                                             <div className="bg-linear-to-r from-blue-50 to-indigo-50 p-6 rounded-2xl mb-8 border border-blue-100">
                                                 <div className="flex gap-4">
                                                     <div className="bg-white p-2 rounded-lg shadow-sm h-fit">
@@ -191,56 +274,73 @@ export default function CheckoutPage() {
                                                     </div>
                                                 </div>
                                             </div>
-                                        ) : (
-                                            <div className="mb-8 flex items-center gap-4 bg-emerald-50/50 p-4 rounded-2xl border border-emerald-100/50">
-                                                <Image
-                                                    src={user.avatar || '/logo/default-avatar.png'}
-                                                    width={48}
-                                                    height={48}
-                                                    className="rounded-full ring-2 ring-white object-cover"
-                                                    alt={user.name}
-                                                />
-                                                <div>
-                                                    <p className="text-xs font-bold text-emerald-600 uppercase tracking-wide">{t.checkout.loggedInAs}</p>
-                                                    <p className="font-bold text-gray-900">{user.name}</p>
-                                                    <p className="text-xs text-gray-500">{user.email}</p>
-                                                </div>
-                                                <div className="ml-auto">
-                                                    <BadgeCheck className="w-6 h-6 text-emerald-500" />
-                                                </div>
-                                            </div>
                                         )}
 
-                                        <form className="space-y-6">
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                                <div className="space-y-2">
-                                                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t.checkout.firstName}</label>
-                                                    <input type="text" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none focus:bg-white transition" defaultValue={user?.name.split(' ')[0]} placeholder="Contoh: Budi" />
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t.checkout.lastName}</label>
-                                                    <input type="text" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none focus:bg-white transition" defaultValue={user?.name.split(' ')[1]} placeholder="Contoh: Santoso" />
-                                                </div>
-                                            </div>
+                                        <form className="space-y-8">
+                                            {travelers.map((traveler, idx) => (
+                                                <div key={idx} className="border-b border-gray-100 pb-8 last:border-0 last:pb-0">
+                                                    <h3 className="text-sm font-black text-slate-800 uppercase tracking-wider mb-4 flex items-center gap-2">
+                                                        <span className="w-6 h-6 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center text-[10px]">{idx + 1}</span>
+                                                        Traveler {idx + 1} {idx === 0 && <span className="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full text-[10px] ml-2">Lead</span>}
+                                                    </h3>
 
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                                <div className="space-y-2">
-                                                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t.checkout.emailLabel}</label>
-                                                    <input type="email" readOnly={!!user} className="w-full bg-gray-100 border border-gray-200 rounded-xl px-4 py-3.5 font-medium text-gray-500 cursor-not-allowed" defaultValue={user?.email || ''} placeholder="email@contoh.com" />
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t.checkout.phoneLabel}</label>
-                                                    <input type="tel" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none focus:bg-white transition" placeholder="+62 812..." />
-                                                </div>
-                                            </div>
+                                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                                        <div className="md:col-span-1 space-y-2">
+                                                            <label className="text-xs font-bold text-gray-500 uppercase">Title</label>
+                                                            <select
+                                                                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 font-medium focus:ring-2 focus:ring-emerald-500 transition"
+                                                                value={traveler.title}
+                                                                onChange={(e) => updateTraveler(idx, 'title', e.target.value)}
+                                                            >
+                                                                <option value="Mr">Mr</option>
+                                                                <option value="Mrs">Mrs</option>
+                                                                <option value="Ms">Ms</option>
+                                                                <option value="Dr">Dr</option>
+                                                            </select>
+                                                        </div>
+                                                        <div className="md:col-span-3 space-y-2">
+                                                            <label className="text-xs font-bold text-gray-500 uppercase">Full Name</label>
+                                                            <input
+                                                                type="text"
+                                                                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 font-medium focus:ring-2 focus:ring-emerald-500 transition"
+                                                                value={traveler.fullName}
+                                                                onChange={(e) => updateTraveler(idx, 'fullName', e.target.value)}
+                                                                placeholder="As on ID Card"
+                                                            />
+                                                        </div>
+                                                    </div>
 
-                                            <div className="space-y-2">
-                                                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">{t.checkout.specialRequest}</label>
-                                                <textarea className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none focus:bg-white transition h-24 resize-none" placeholder={t.checkout.specialRequestPlaceholder} />
-                                            </div>
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                                        <div className="space-y-2">
+                                                            <label className="text-xs font-bold text-gray-500 uppercase">Nationality</label>
+                                                            <input
+                                                                type="text"
+                                                                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 font-medium focus:ring-2 focus:ring-emerald-500 transition"
+                                                                value={traveler.nationality}
+                                                                onChange={(e) => updateTraveler(idx, 'nationality', e.target.value)}
+                                                                placeholder="e.g Indonesia"
+                                                            />
+                                                        </div>
+                                                        <div className="space-y-2">
+                                                            <label className="text-xs font-bold text-gray-500 uppercase">ID Number (KTP/Passport)</label>
+                                                            <input
+                                                                type="text"
+                                                                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 font-medium focus:ring-2 focus:ring-emerald-500 transition"
+                                                                value={traveler.idNumber}
+                                                                onChange={(e) => updateTraveler(idx, 'idNumber', e.target.value)}
+                                                                placeholder="e.g 6472xxxxxxx"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
 
-                                            <div className="pt-6">
-                                                <button type="button" onClick={() => setStep(2)} className="w-full bg-gray-900 text-white font-bold py-4 rounded-xl hover:bg-black transition flex items-center justify-center gap-3 shadow-lg shadow-gray-200 hover:shadow-xl hover:scale-[1.01]">
+                                            <div className="pt-4">
+                                                <button type="button" onClick={() => {
+                                                    const isValid = travelers.every(t => t.fullName && t.idNumber);
+                                                    if (!isValid) addToast("Please fill all traveler details", "error");
+                                                    else setStep(2);
+                                                }} className="w-full bg-gray-900 text-white font-bold py-4 rounded-xl hover:bg-black transition flex items-center justify-center gap-3 shadow-lg shadow-gray-200 hover:shadow-xl hover:scale-[1.01]">
                                                     {t.checkout.continuePayment} <ArrowLeft className="w-4 h-4 rotate-180" />
                                                 </button>
                                             </div>
@@ -357,42 +457,6 @@ export default function CheckoutPage() {
                                         </div>
                                     </motion.div>
                                 )}
-
-                                {step === 3 && (
-                                    <motion.div
-                                        key="step3"
-                                        initial={{ opacity: 0, scale: 0.9 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        className="bg-white p-8 md:p-14 rounded-3xl shadow-xl border border-gray-100 text-center relative overflow-hidden"
-                                    >
-                                        {/* Background decoration */}
-                                        <div className="absolute top-0 left-0 w-full h-2 bg-linear-to-r from-emerald-400 to-teal-500"></div>
-
-                                        <div className="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 ring-8 ring-emerald-50">
-                                            <CheckCircle className="w-12 h-12 text-emerald-600" />
-                                        </div>
-
-                                        <h2 className="text-3xl font-black text-gray-900 mb-2">{t.checkout.paymentSuccess}</h2>
-                                        <p className="text-gray-500 mb-8 max-w-md mx-auto">{t.checkout.successDesc.replace('{location}', location as string || 'Kalimantan Timur')}</p>
-
-                                        <div className="bg-gray-50 rounded-2xl p-6 mb-8 max-w-md mx-auto border border-dashed border-gray-300 relative">
-                                            <div className="absolute -left-3 top-1/2 -mt-3 w-6 h-6 bg-white rounded-full border-r border-gray-300"></div>
-                                            <div className="absolute -right-3 top-1/2 -mt-3 w-6 h-6 bg-white rounded-full border-l border-gray-300"></div>
-
-                                            <p className="text-xs text-gray-400 uppercase font-bold tracking-widest mb-1">BOOKING ID</p>
-                                            <p className="text-2xl font-mono font-bold text-gray-900 tracking-wider">{bookingId}</p>
-                                        </div>
-
-                                        <div className="flex flex-col sm:flex-row justify-center gap-4">
-                                            <Link href="/dashboard/client" className="px-8 py-3 bg-gray-100 text-gray-900 font-bold rounded-xl hover:bg-gray-200 transition flex items-center justify-center gap-2">
-                                                <User className="w-4 h-4" /> {t.checkout.viewOrder}
-                                            </Link>
-                                            <Link href="/" className="px-8 py-3 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-200">
-                                                {t.checkout.backHome} <ArrowLeft className="w-4 h-4 rotate-180" />
-                                            </Link>
-                                        </div>
-                                    </motion.div>
-                                )}
                             </AnimatePresence>
                         </div>
 
@@ -437,11 +501,28 @@ export default function CheckoutPage() {
                                                 <Users className="w-4 h-4 text-gray-400" />
                                                 <p className="text-sm text-gray-600">{t.hero.travelersLabel}</p>
                                             </div>
-                                            <p className="font-bold text-gray-900 text-sm">{pax || 1} {t.packageDetail.person}</p>
+                                            <p className="font-bold text-gray-900 text-sm">{paxCount} {t.packageDetail.person}</p>
                                         </div>
                                         <div className="flex justify-between items-center bg-gray-50 p-3 rounded-lg">
                                             <p className="text-xs text-gray-500">{t.checkout.duration}</p>
                                             <p className="font-bold text-gray-900 text-xs text-right">{t.checkout.durationDesc}<br /><span className="text-emerald-600 font-normal">{t.checkout.hotelIncluded}</span></p>
+                                        </div>
+
+                                        {/* Travelers Preview */}
+                                        <div className="pt-2">
+                                            <p className="text-xs font-bold text-gray-400 uppercase mb-2">Travelers</p>
+                                            <div className="flex -space-x-2 overflow-hidden">
+                                                {travelers.slice(0, 5).map((_, i) => (
+                                                    <div key={i} className="inline-block h-6 w-6 rounded-full ring-2 ring-white bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-500">
+                                                        {i + 1}
+                                                    </div>
+                                                ))}
+                                                {travelers.length > 5 && (
+                                                    <div className="inline-block h-6 w-6 rounded-full ring-2 ring-white bg-slate-100 flex items-center justify-center text-[8px] font-bold text-slate-500">
+                                                        +{travelers.length - 5}
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
 

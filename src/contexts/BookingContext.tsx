@@ -1,19 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-
-export interface Booking {
-    id: string;
-    userId: string;
-    userName: string;
-    packageId: string;
-    pkgTitle: string;
-    pkgImage: string;
-    location: string;
-    date: string;
-    pax: number;
-    totalPrice: number;
-    status: 'Pending' | 'Paid' | 'Confirmed' | 'Completed';
-    createdAt: string;
-}
+import { Booking } from '@/types';
 
 interface BookingContextType {
     bookings: Booking[];
@@ -37,23 +23,32 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         const stored = localStorage.getItem('bt_bookings');
         if (stored) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
-            setBookings(JSON.parse(stored));
+            try {
+                // eslint-disable-next-line react-hooks/set-state-in-effect
+                setBookings(JSON.parse(stored));
+            } catch (e) {
+                console.error("Failed to parse bookings", e);
+            }
         } else {
             // SEED DEMO DATA FOR "WOW" OPENER
             const demoBooking: Booking = {
                 id: 'BK-DEMO-01',
                 userId: 'mock-user-1', // Matches AuthContext default user
-                userName: 'Pengguna Demo',
-                packageId: 'p1',
-                pkgTitle: 'Eksplorasi Hutan Wehea & Dayak Culture',
-                pkgImage: 'https://hutanlindungwehea.id/wp-content/uploads/2021/11/2.-sejarah-lansakp-hutan-scaled.jpg?auto=format&fit=crop&q=80',
+                customerName: 'Pengguna Demo',
+                productId: 'p1',
+                productType: 'Package',
+                productName: 'Eksplorasi Hutan Wehea & Dayak Culture',
+                productImage: 'https://hutanlindungwehea.id/wp-content/uploads/2021/11/2.-sejarah-lansakp-hutan-scaled.jpg?auto=format&fit=crop&q=80',
                 location: 'Muara Wahau, Kutai Timur',
                 date: new Date().toISOString(),
                 pax: 2,
-                totalPrice: 7000000,
+                amount: 7000000,
+                travelers: [
+                    { title: 'Mr', fullName: 'Pengguna Demo' },
+                    { title: 'Mrs', fullName: 'Partner Demo' }
+                ],
                 status: 'Paid',
-                createdAt: new Date().toISOString()
+                paymentMethod: 'Credit Card',
             };
             setBookings([demoBooking]);
         }
@@ -66,12 +61,11 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
         }
     }, [bookings]);
 
-    const addBooking = (data: Omit<Booking, 'id' | 'createdAt' | 'status'>) => {
+    const addBooking = (data: Omit<Booking, 'id' | 'status'>) => {
         const newBooking: Booking = {
             ...data,
             id: `BK-${Date.now().toString().slice(-6)}`,
             status: 'Paid', // Auto paid for demo
-            createdAt: new Date().toISOString(),
         };
         setBookings(prev => [newBooking, ...prev]);
     };
@@ -89,9 +83,9 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     };
 
     const stats = {
-        totalRevenue: bookings.reduce((acc, curr) => acc + curr.totalPrice, 0),
+        totalRevenue: bookings.reduce((acc, curr) => acc + (curr.amount || 0), 0),
         totalBookings: bookings.length,
-        activeTravelers: bookings.filter(b => b.status === 'Confirmed' || b.status === 'Paid').reduce((acc, curr) => acc + curr.pax, 0)
+        activeTravelers: bookings.filter(b => b.status === 'Completed' || b.status === 'Paid').reduce((acc, curr) => acc + curr.pax, 0)
     };
 
     return (

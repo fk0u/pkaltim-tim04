@@ -69,7 +69,8 @@ export const id = {
         taxIncluded: "Termasuk pajak & biaya layanan",
         bestPrice: "Jaminan Harga Terbaik",
         person: "Orang",
-        perPerson: "/ orang"
+        perPerson: "/ orang",
+        quotaLeft: "kursi tersisa"
     },
     checkout: {
         title: "Checkout",
@@ -113,7 +114,10 @@ export const id = {
         totalPayment: "Total Pembayaran",
         taxIncludedShort: "Termasuk Pajak",
         safeGuarantee: "Garansi Aman",
-        support247: "24/7 Support"
+        support247: "24/7 Support",
+        quotaExceeded: "Kuota tiket tidak mencukupi untuk jumlah pax yang dipilih.",
+        fillAllDetails: "Mohon lengkapi data semua traveler.",
+        oops: "Ups, terjadi kesalahan!"
     },
     footer: {
         ctaTitle: "Siap Menjelajahi",

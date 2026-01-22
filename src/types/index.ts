@@ -20,6 +20,8 @@ export interface Event {
   price?: string;
   organizer?: string;
   ticketCount?: number;
+  quota?: number; // Total available slots
+  bookedCount?: number; // Currently booked slots
   schedule?: EventSchedule[];
   gallery?: string[];
 }
@@ -35,6 +37,8 @@ export interface TourPackage {
   description: LocalizedString;
   imageUrl: string;
   facilities: string[];
+  quota?: number; // Total available slots
+  bookedCount?: number; // Currently booked slots
 }
 
 export interface Activity {
@@ -78,6 +82,14 @@ export interface User {
   status: 'Active' | 'Inactive';
 }
 
+export interface TravelerDetail {
+  title: 'Mr' | 'Mrs' | 'Ms' | 'Dr';
+  fullName: string;
+  idType?: 'KTP' | 'Passport';
+  idNumber?: string;
+  nationality?: string;
+}
+
 export interface Booking {
   id: string;
   userId: string;
@@ -86,7 +98,11 @@ export interface Booking {
   productName: string; // Denormalized for ease
   date: string;
   amount: number;
+  pax: number;
+  travelers: TravelerDetail[]; // Detailed info for each pax
   status: 'Pending' | 'Paid' | 'Cancelled' | 'Completed';
   paymentMethod: 'Credit Card' | 'Bank Transfer' | 'E-Wallet';
   customerName: string; // Denormalized
+  productImage?: string; // Denormalized
+  location?: string; // Denormalized
 }

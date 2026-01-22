@@ -143,7 +143,7 @@ export default function ClientDashboard() {
                                     >
                                         <div className="flex flex-col md:flex-row gap-6 lg:gap-8">
                                             <div className="w-full md:w-2/5 h-64 md:h-auto relative rounded-4xl overflow-hidden shadow-lg">
-                                                <img src={activeTrip.pkgImage} className="w-full h-full object-cover group-hover:scale-105 transition duration-1000" alt="Trip" />
+                                                <img src={activeTrip.productImage} className="w-full h-full object-cover group-hover:scale-105 transition duration-1000" alt="Trip" />
                                                 <div className="absolute top-4 left-4 bg-white/95 backdrop-blur px-3 py-1.5 rounded-full text-xs font-extrabold text-emerald-800 shadow-lg flex items-center gap-1.5 ring-1 ring-emerald-500/10">
                                                     <Clock className="w-3.5 h-3.5" /> {new Date(activeTrip.date).toLocaleDateString()}
                                                 </div>
@@ -152,7 +152,7 @@ export default function ClientDashboard() {
                                             <div className="flex-1 flex flex-col justify-center py-2 md:py-4 pr-2">
                                                 <div className="flex flex-wrap justify-between items-start mb-4 gap-2">
                                                     <div>
-                                                        <h3 className="text-2xl lg:text-3xl font-black text-slate-900 mb-2 leading-tight">{activeTrip.pkgTitle}</h3>
+                                                        <h3 className="text-2xl lg:text-3xl font-black text-slate-900 mb-2 leading-tight">{activeTrip.productName}</h3>
                                                         <div className="flex items-center gap-2 text-sm font-bold text-slate-500">
                                                             <MapPin className="w-4 h-4 text-emerald-500" /> {activeTrip.location}
                                                         </div>
