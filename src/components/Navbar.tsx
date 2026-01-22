@@ -33,7 +33,8 @@ export default function Navbar({ isTransparent = true }: { isTransparent?: boole
     ];
 
     return allItems.filter(item => {
-      const titleMatch = item.title.toLowerCase().includes(query);
+      const currentTitle = typeof item.title === 'string' ? item.title : item.title[locale === 'en' ? 'en' : 'id'];
+      const titleMatch = currentTitle.toLowerCase().includes(query);
       const locationMatch = item.location.toLowerCase().includes(query);
       const categoryMatch = ((item as any).category || '').toLowerCase().includes(query);
       return titleMatch || locationMatch || categoryMatch;
@@ -167,10 +168,16 @@ export default function Navbar({ isTransparent = true }: { isTransparent?: boole
                                   className="w-full text-left px-4 py-3 hover:bg-emerald-50 rounded-xl flex items-center gap-3 transition group/item"
                                 >
                                   <div className="w-10 h-10 rounded-lg bg-gray-100 overflow-hidden shrink-0">
-                                    <img src={result.imageUrl} alt={result.title} className="w-full h-full object-cover" />
+                                    <img
+                                      src={result.imageUrl}
+                                      alt={typeof result.title === 'string' ? result.title : result.title[locale === 'en' ? 'en' : 'id']}
+                                      className="w-full h-full object-cover"
+                                    />
                                   </div>
                                   <div>
-                                    <p className="text-sm font-bold text-gray-900 group-hover/item:text-emerald-700 clamp-1">{result.title}</p>
+                                    <p className="text-sm font-bold text-gray-900 group-hover/item:text-emerald-700 clamp-1">
+                                      {typeof result.title === 'string' ? result.title : result.title[locale === 'en' ? 'en' : 'id']}
+                                    </p>
                                     <p className="text-xs text-gray-500 capitalize">{result.type} • {result.location}</p>
                                   </div>
                                 </button>
@@ -191,10 +198,16 @@ export default function Navbar({ isTransparent = true }: { isTransparent?: boole
                                 className="w-full text-left px-4 py-3 hover:bg-blue-50 rounded-xl flex items-center gap-3 transition group/item"
                               >
                                 <div className="w-10 h-10 rounded-lg bg-gray-100 overflow-hidden shrink-0">
-                                  <img src={rec.imageUrl} alt={rec.title} className="w-full h-full object-cover" />
+                                  <img
+                                    src={rec.imageUrl}
+                                    alt={typeof rec.title === 'string' ? rec.title : rec.title[locale === 'en' ? 'en' : 'id']}
+                                    className="w-full h-full object-cover"
+                                  />
                                 </div>
                                 <div>
-                                  <p className="text-sm font-bold text-gray-900 group-hover/item:text-blue-700 clamp-1">{rec.title}</p>
+                                  <p className="text-sm font-bold text-gray-900 group-hover/item:text-blue-700 clamp-1">
+                                    {typeof rec.title === 'string' ? rec.title : rec.title[locale === 'en' ? 'en' : 'id']}
+                                  </p>
                                   <p className="text-xs text-gray-500 capitalize">{rec.type}</p>
                                 </div>
                               </button>

@@ -15,7 +15,7 @@ export default function EventDetail() {
     const { events } = useContent();
     const { scrollY } = useScroll();
     const [pax, setPax] = useState(1);
-    const { t } = useLanguage();
+    const { t, locale } = useLanguage();
 
     // Parallax & Fade effects
     const yHero = useTransform(scrollY, [0, 500], [0, 200]);
@@ -80,7 +80,7 @@ export default function EventDetail() {
             pathname: '/checkout',
             query: {
                 id: event.id,
-                pkg: event.title,
+                pkg: event.title[locale === 'en' ? 'en' : 'id'],
                 price: price * pax,
                 image: event.imageUrl,
                 location: event.location,
@@ -103,7 +103,7 @@ export default function EventDetail() {
                 <motion.div style={{ y: yHero, opacity: opacityHero }} className="absolute inset-0 w-full h-full">
                     <img
                         src={event.imageUrl}
-                        alt={event.title}
+                        alt={event.title[locale === 'en' ? 'en' : 'id']}
                         className="w-full h-full object-cover opacity-70"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
@@ -135,7 +135,7 @@ export default function EventDetail() {
                         </div>
 
                         <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-8 tracking-tight leading-tight drop-shadow-2xl">
-                            {event.title}
+                            {event.title[locale === 'en' ? 'en' : 'id']}
                         </h1>
 
                         <div className="flex flex-col md:flex-row md:items-center gap-6 md:gap-12 text-lg text-gray-200">
@@ -187,7 +187,7 @@ export default function EventDetail() {
                         >
                             <h2 className="text-2xl font-bold text-gray-900 mb-6">{t.events.detail.aboutTitle}</h2>
                             <p className="text-gray-600 text-lg leading-relaxed whitespace-pre-line">
-                                {event.description}
+                                {event.description[locale === 'en' ? 'en' : 'id']}
                                 {"\n\n"}
                                 Event ini merupakan kesempatan emas untuk merasakan atmosfer budaya yang kental, berinteraksi dengan komunitas lokal, dan menikmati hiburan berkualitas. Jangan lewatkan momen spesial ini bersama teman dan keluarga Anda.
                             </p>

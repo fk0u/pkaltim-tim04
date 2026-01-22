@@ -195,10 +195,16 @@ export const TESTIMONIALS: Testimonial[] = [
 export const EVENTS: Event[] = [
   {
     id: 'e1',
-    title: 'Festival Erau Adat Kutai Kartanegara',
+    title: {
+      id: 'Festival Erau Adat Kutai Kartanegara',
+      en: 'Erau Kutai Kartanegara Cultural Festival'
+    },
     location: 'Tenggarong, Kutai Kartanegara',
     date: '15 - 22 Juli 2026',
-    description: 'Perayaan budaya terbesar Kesultanan Kutai Kartanegara Ing Martadipura. Saksikan ritual sakral mendirikan Ayu hingga Belimbur.',
+    description: {
+      id: 'Perayaan budaya terbesar Kesultanan Kutai Kartanegara Ing Martadipura. Saksikan ritual sakral mendirikan Ayu hingga Belimbur.',
+      en: 'The largest cultural celebration of the Kutai Kartanegara Ing Martadipura Sultanate. Witness sacred rituals from erecting Ayu to Belimbur.'
+    },
     imageUrl: 'https://images.unsplash.com/photo-1605218427360-3638d1a151e9?auto=format&fit=crop&q=80',
     category: 'Culture',
     tags: ['Royal Tradition', 'Cultural Parade', 'Folk Art'],
@@ -218,10 +224,16 @@ export const EVENTS: Event[] = [
   },
   {
     id: 'e2',
-    title: 'Derawan Eco-Marathon & Cleaning Day',
+    title: {
+      id: 'Derawan Eco-Marathon & Cleaning Day',
+      en: 'Derawan Eco-Marathon & Cleaning Day'
+    },
     location: 'Kepulauan Derawan, Berau',
     date: '10 Agustus 2026',
-    description: 'Lari maraton di pinggir pantai sambil berpartisipasi dalam aksi bersih pantai dan pelepasan tukik bersama komunitas lokal.',
+    description: {
+      id: 'Lari maraton di pinggir pantai sambil berpartisipasi dalam aksi bersih pantai dan pelepasan tukik bersama komunitas lokal.',
+      en: 'A beachside marathon while participating in beach cleanup actions and hatchling release with the local community.'
+    },
     imageUrl: 'https://images.unsplash.com/photo-1544550581-5f7ceaf7f992?auto=format&fit=crop&q=80',
     category: 'Sustainability',
     tags: ['Sport Tourism', 'Conservation', 'Beach Clean-up'],
@@ -237,10 +249,16 @@ export const EVENTS: Event[] = [
   },
   {
     id: 'e3',
-    title: 'Mahakam Jazz Fiesta',
+    title: {
+      id: 'Mahakam Jazz Fiesta',
+      en: 'Mahakam Jazz Fiesta'
+    },
     location: 'Tepian Sungai Mahakam, Samarinda',
     date: '5 September 2026',
-    description: 'Menikmati musik jazz internasional dengan latar belakang keindahan Sungai Mahakam saat senja.',
+    description: {
+      id: 'Menikmati musik jazz internasional dengan latar belakang keindahan Sungai Mahakam saat senja.',
+      en: 'Enjoy international jazz music against the backdrop of the beautiful Mahakam River at twilight.'
+    },
     imageUrl: 'https://images.unsplash.com/photo-1514525253440-b393452e8d26?auto=format&fit=crop&q=80',
     category: 'Nature',
     tags: ['Music', 'River View', 'Night Market'],
@@ -255,10 +273,16 @@ export const EVENTS: Event[] = [
   },
   {
     id: 'e4',
-    title: 'Festival Mahakam',
+    title: {
+      id: 'Festival Mahakam',
+      en: 'Mahakam River Festival'
+    },
     location: 'Sungai Mahakam, Samarinda',
     date: '1 - 3 November 2026',
-    description: 'Festival sungai terbesar dengan berbagai lomba perahu naga, berenang menyeberangi sungai, dan kuliner khas.',
+    description: {
+      id: 'Festival sungai terbesar dengan berbagai lomba perahu naga, berenang menyeberangi sungai, dan kuliner khas.',
+      en: 'The largest river festival featuring dragon boat races, river swimming competitions, and local culinary delights.'
+    },
     imageUrl: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&q=80',
     category: 'Culture',
     tags: ['River Festival', 'Traditional Boat', 'Culinary'],
@@ -271,10 +295,16 @@ export const EVENTS: Event[] = [
   },
   {
     id: 'e5',
-    title: 'Balikpapan Fest',
+    title: {
+      id: 'Balikpapan Fest',
+      en: 'Balikpapan Fest'
+    },
     location: 'BSCC Dome, Balikpapan',
     date: '20 Oktober 2026',
-    description: 'Pameran ekonomi kreatif, fashion show batik Kaltim, dan konser musik dalam rangka HUT Kota Balikpapan.',
+    description: {
+      id: 'Pameran ekonomi kreatif, fashion show batik Kaltim, dan konser musik dalam rangka HUT Kota Balikpapan.',
+      en: 'Creative economy exhibition, Kaltim batik fashion show, and music concert celebrating Balikpapan City Anniversary.'
+    },
     imageUrl: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80',
     category: 'Culinary',
     tags: ['Creative Economy', 'Fashion', 'Concert'],
@@ -290,61 +320,91 @@ export const EVENTS: Event[] = [
 export const PACKAGES: TourPackage[] = [
   {
     id: 'p1',
-    title: 'Eksplorasi Hutan Wehea & Dayak Culture',
+    title: {
+      id: 'Eksplorasi Hutan Wehea & Dayak Culture',
+      en: 'Wehea Forest Exploration & Dayak Culture'
+    },
     duration: '4D3N',
     price: 3500000,
     location: 'Muara Wahau, Kutai Timur',
     rating: 4.8,
     ecoRating: 5,
-    description: 'Petualangan masuk ke jantung hutan hujan tropis tertua, bertemu Orangutan liar, dan tinggal bersama suku Dayak Wehea.',
+    description: {
+      id: 'Petualangan masuk ke jantung hutan hujan tropis tertua, bertemu Orangutan liar, dan tinggal bersama suku Dayak Wehea.',
+      en: 'Adventure deep into the oldest rainforest hearth, observe wild Orangutans, and stay with the Dayak Wehea tribe.'
+    },
     imageUrl: 'https://hutanlindungwehea.id/wp-content/uploads/2021/11/2.-sejarah-lansakp-hutan-scaled.jpg?auto=format&fit=crop&q=80',
     facilities: ['Homestay Lokal', 'Guide Dayak', 'Makan Tradisional', 'Donasi Konservasi'],
   },
   {
     id: 'p2',
-    title: 'Labuan Cermin & Whale Shark Ecotourism',
+    title: {
+      id: 'Labuan Cermin & Whale Shark Ecotourism',
+      en: 'Labuan Cermin & Whale Shark Ecotourism'
+    },
     duration: '3D2N',
     price: 2800000,
     location: 'Biduk-Biduk, Berau',
     rating: 4.9,
     ecoRating: 4,
-    description: 'Berenang di danau dua rasa Labuan Cermin dan berinteraksi ramah dengan Hiu Paus di Talisayan.',
+    description: {
+      id: 'Berenang di danau dua rasa Labuan Cermin dan berinteraksi ramah dengan Hiu Paus di Talisayan.',
+      en: 'Swim in the dual-flavored Lake Labuan Cermin and interact sustainably with Whale Sharks in Talisayan.'
+    },
     imageUrl: 'https://images.unsplash.com/photo-1582967788606-a171f1080ca8?auto=format&fit=crop&q=80',
     facilities: ['Speedboat', 'Alat Snorkeling', 'Dokumentasi Underwater', 'Meals'],
   },
   {
     id: 'p3',
-    title: 'Samarinda City & Mahakam River Cruise',
+    title: {
+      id: 'Samarinda City & Mahakam River Cruise',
+      en: 'Samarinda City & Mahakam River Cruise'
+    },
     duration: '2D1N',
     price: 1200000,
     location: 'Samarinda',
     rating: 4.5,
     ecoRating: 3,
-    description: 'Wisata sejarah di Samarinda dan menyusuri sungai Mahakam dengan kapal wisata tradisional Pesut Etam.',
+    description: {
+      id: 'Wisata sejarah di Samarinda dan menyusuri sungai Mahakam dengan kapal wisata tradisional Pesut Etam.',
+      en: 'Historical tour of Samarinda and cruise along the Mahakam River on the traditional Pesut Etam scenic boat.'
+    },
     imageUrl: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&q=80',
     facilities: ['Hotel Bintang 3', 'River Cruise Ticket', 'Pemandu Wisata', 'Dinner'],
   },
   {
     id: 'p4',
-    title: 'Samboja Lodge Orangutan Experience',
+    title: {
+      id: 'Samboja Lodge Orangutan Experience',
+      en: 'Samboja Lodge Orangutan Experience'
+    },
     duration: '2D1N',
     price: 1800000,
     location: 'Samboja, Kutai Kartanegara',
     rating: 4.7,
     ecoRating: 5,
-    description: 'Menginap di lodge eksklusif di tengah hutan rehabilitasi Orangutan BOS Foundation.',
+    description: {
+      id: 'Menginap di lodge eksklusif di tengah hutan rehabilitasi Orangutan BOS Foundation.',
+      en: 'Stay at an exclusive lodge in the middle of the BOS Foundation Orangutan rehabilitation forest.'
+    },
     imageUrl: 'https://images.unsplash.com/photo-1599540209228-468ae39e2468?auto=format&fit=crop&q=80',
     facilities: ['Ecolodge Stay', 'Orangutan Feeding', 'Forest School', 'Vegetarian Meals'],
   },
   {
     id: 'p5',
-    title: 'Maratua Paradise Luxury Escape',
+    title: {
+      id: 'Maratua Paradise Luxury Escape',
+      en: 'Maratua Paradise Luxury Escape'
+    },
     duration: '4D3N',
     price: 5500000,
     location: 'Maratua, Berau',
     rating: 5.0,
     ecoRating: 4,
-    description: 'Liburan mewah di resort atas air Maratua dengan akses langsung ke spot diving kelas dunia.',
+    description: {
+      id: 'Liburan mewah di resort atas air Maratua dengan akses langsung ke spot diving kelas dunia.',
+      en: 'Luxury vacation at Maratua overwater resort with direct access to world-class diving spots.'
+    },
     imageUrl: 'https://images.unsplash.com/photo-1577717903315-1691ae25ab3f?auto=format&fit=crop&q=80',
     facilities: ['Water Villa', 'Diving Gear', 'Speedboat Transfer', 'Full Board Meals'],
   },

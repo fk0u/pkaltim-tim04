@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import {
     LayoutDashboard, Users, ShoppingBag, Settings, LogOut,
-    Search, Bell, Menu, X, ChevronRight, Globe
+    Search, Bell, Menu, X, ChevronRight, Globe, Package
 } from 'lucide-react';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -22,6 +22,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
 
     const menuItems = [
         { icon: LayoutDashboard, label: 'Overview', href: '/dashboard/admin' },
+        { icon: Package, label: 'Products', href: '/dashboard/admin/products' },
         { icon: ShoppingBag, label: 'Bookings', href: '/dashboard/admin/bookings' },
         { icon: Users, label: 'Customers', href: '/dashboard/admin/customers' },
         { icon: Settings, label: 'Settings', href: '/dashboard/admin/settings' },

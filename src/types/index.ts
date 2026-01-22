@@ -1,14 +1,19 @@
+export interface LocalizedString {
+  id: string;
+  en: string;
+}
+
 export interface EventSchedule {
   time: string;
-  activity: string;
+  activity: string; // Keep simple or localized? Let's keep simple for schedule
 }
 
 export interface Event {
   id: string;
-  title: string;
+  title: LocalizedString;
   location: string;
   date: string;
-  description: string;
+  description: LocalizedString;
   imageUrl: string;
   category: 'Culture' | 'Nature' | 'Sustainability' | 'Culinary';
   tags: string[];
@@ -21,15 +26,15 @@ export interface Event {
 
 export interface TourPackage {
   id: string;
-  title: string;
-  duration: string; // e.g., "3D2N"
+  title: LocalizedString;
+  duration: string;
   price: number;
   location: string;
-  rating: number; // General user rating 1-5
-  ecoRating: 1 | 2 | 3 | 4 | 5; // 5 is highest
-  description: string;
+  rating: number;
+  ecoRating: 1 | 2 | 3 | 4 | 5;
+  description: LocalizedString;
   imageUrl: string;
-  facilities: string[];
+  facilities: string[]; // Could be localized, but array of strings is tricky. Let's assume ID for now or string[]
 }
 
 export interface Activity {
@@ -56,7 +61,7 @@ export interface ItineraryDetail {
 export interface Testimonial {
   id: string;
   name: string;
-  role: string; // e.g., "Traveler from Jakarta"
+  role: string;
   avatarUrl: string;
   rating: 1 | 2 | 3 | 4 | 5;
   content: string;

@@ -15,7 +15,7 @@ export default function PackageDetail() {
    const router = useRouter();
    const { id } = router.query;
    const { packages } = useContent();
-   const { t } = useLanguage();
+   const { t, locale } = useLanguage();
    const [pkg, setPkg] = useState<TourPackage | null>(null);
    const [itinerary, setItinerary] = useState<ItineraryDetail | null>(null);
    const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
@@ -38,7 +38,7 @@ export default function PackageDetail() {
          pathname: '/checkout',
          query: {
             id: pkg.id,
-            pkg: pkg.title,
+            pkg: pkg.title[locale === 'en' ? 'en' : 'id'],
             price: pkg.price * pax,
             image: pkg.imageUrl,
             location: pkg.location,
@@ -49,13 +49,13 @@ export default function PackageDetail() {
    };
 
    return (
-      <Layout title={`${pkg.title} - BorneoTrip`}>
+      <Layout title={`${pkg.title[locale === 'en' ? 'en' : 'id']} - BorneoTrip`}>
          <div className="bg-white pb-24">
             {/* Hero */}
             <div className="relative h-[60vh] lg:h-[70vh] w-full">
                <Image
                   src={pkg.imageUrl}
-                  alt={pkg.title}
+                  alt={pkg.title[locale === 'en' ? 'en' : 'id']}
                   fill
                   className="object-cover"
                   priority
@@ -71,7 +71,7 @@ export default function PackageDetail() {
                         <span className="inline-block px-4 py-1.5 rounded-full bg-emerald-500 text-white text-xs font-bold uppercase tracking-widest mb-4 shadow-lg">
                            {t.packageDetail.premium}
                         </span>
-                        <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white mb-4 leading-tight max-w-4xl drop-shadow-xl">{pkg.title}</h1>
+                        <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white mb-4 leading-tight max-w-4xl drop-shadow-xl">{pkg.title[locale === 'en' ? 'en' : 'id']}</h1>
                         <div className="flex flex-wrap items-center gap-4 md:gap-8 text-white/90 text-sm md:text-lg font-medium">
                            <div className="flex items-center gap-2">
                               <MapPin className="w-5 h-5 text-emerald-400" /> {pkg.location}
@@ -96,7 +96,7 @@ export default function PackageDetail() {
                      {/* Overview */}
                      <div className="bg-white rounded-3xl p-8 shadow-xl border border-gray-100">
                         <h2 className="text-2xl font-bold text-gray-900 mb-4">{t.packageDetail.about}</h2>
-                        <p className="text-gray-600 leading-relaxed text-lg mb-6">{pkg.description}</p>
+                        <p className="text-gray-600 leading-relaxed text-lg mb-6">{pkg.description[locale === 'en' ? 'en' : 'id']}</p>
 
                         <div className="grid grid-cols-2 gap-4">
                            {pkg.facilities.map((fac, idx) => (

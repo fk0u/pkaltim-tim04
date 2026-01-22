@@ -12,7 +12,7 @@ export default function SearchPage() {
     const router = useRouter();
     const { type = 'event', location = '', date, travelers } = router.query;
     const { packages, events } = useContent();
-    const { t } = useLanguage();
+    const { t, locale } = useLanguage();
 
     // Tab State (mirrors query param or defaults)
     const activeTab = (type as string)?.toLowerCase() === 'package' ? 'Package' : 'Event';
@@ -27,14 +27,16 @@ export default function SearchPage() {
 
         if (activeTab === 'Package') {
             return packages.filter(pkg => {
-                const matchLocation = pkg.location.toLowerCase().includes(queryLocation) || pkg.title.toLowerCase().includes(queryLocation);
+                const title = pkg.title[locale === 'en' ? 'en' : 'id'];
+                const matchLocation = pkg.location.toLowerCase().includes(queryLocation) || title.toLowerCase().includes(queryLocation);
                 const matchPrice = pkg.price <= priceRange;
                 const matchRating = (pkg.rating || 0) >= ratingFilter;
                 return matchLocation && matchPrice && matchRating;
             });
         } else {
             return events.filter(evt => {
-                const matchLocation = evt.location.toLowerCase().includes(queryLocation) || evt.title.toLowerCase().includes(queryLocation);
+                const title = evt.title[locale === 'en' ? 'en' : 'id'];
+                const matchLocation = evt.location.toLowerCase().includes(queryLocation) || title.toLowerCase().includes(queryLocation);
                 // Events usually free or low cost, but let's assume we filter if price is numeric. 
                 // Currently event price is string 'Free' or 'Rp ...'
                 return matchLocation;
@@ -148,7 +150,7 @@ export default function SearchPage() {
                                         (filteredResults as any[]).map((pkg) => (
                                             <Link href={`/packages/${pkg.id}`} key={pkg.id} className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition duration-300 border border-slate-100 flex flex-col">
                                                 <div className="relative h-48 overflow-hidden">
-                                                    <Image src={pkg.imageUrl} alt={pkg.title} fill className="object-cover group-hover:scale-110 transition duration-700" />
+                                                    <Image src={pkg.imageUrl} alt={pkg.title[locale === 'en' ? 'en' : 'id']} fill className="object-cover group-hover:scale-110 transition duration-700" />
                                                     <div className="absolute top-4 right-4 bg-white/90 backdrop-blur text-slate-900 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-sm">
                                                         <Star className="w-3 h-3 text-amber-500 fill-amber-500" /> {pkg.rating}
                                                     </div>
@@ -157,7 +159,7 @@ export default function SearchPage() {
                                                     <div className="flex items-center gap-2 text-xs text-slate-500 mb-3 uppercase tracking-wider font-semibold">
                                                         <MapPin className="w-3 h-3" /> {pkg.location}
                                                     </div>
-                                                    <h3 className="text-xl font-bold text-slate-900 mb-2 leading-tight group-hover:text-emerald-600 transition">{pkg.title}</h3>
+                                                    <h3 className="text-xl font-bold text-slate-900 mb-2 leading-tight group-hover:text-emerald-600 transition">{pkg.title[locale === 'en' ? 'en' : 'id']}</h3>
                                                     <div className="mt-auto pt-4 flex items-end justify-between border-t border-slate-50">
                                                         <div>
                                                             <div className="text-xs text-slate-400 font-medium">{t.searchPage.startFrom}</div>
@@ -172,7 +174,7 @@ export default function SearchPage() {
                                         (filteredResults as any[]).map((evt) => (
                                             <Link href={`/events/${evt.id}`} key={evt.id} className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition duration-300 border border-slate-100 flex flex-col">
                                                 <div className="relative h-48 overflow-hidden">
-                                                    <Image src={evt.imageUrl} alt={evt.title} fill className="object-cover group-hover:scale-110 transition duration-700" />
+                                                    <Image src={evt.imageUrl} alt={evt.title[locale === 'en' ? 'en' : 'id']} fill className="object-cover group-hover:scale-110 transition duration-700" />
                                                     <div className="absolute top-4 left-4 bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
                                                         {evt.category}
                                                     </div>
@@ -181,7 +183,7 @@ export default function SearchPage() {
                                                     <div className="flex items-center gap-2 text-xs text-slate-500 mb-1 font-medium">
                                                         <Calendar className="w-3 h-3" /> {evt.date}
                                                     </div>
-                                                    <h3 className="text-xl font-bold text-slate-900 mb-2 leading-tight group-hover:text-emerald-600 transition">{evt.title}</h3>
+                                                    <h3 className="text-xl font-bold text-slate-900 mb-2 leading-tight group-hover:text-emerald-600 transition">{evt.title[locale === 'en' ? 'en' : 'id']}</h3>
                                                     <div className="flex items-center gap-1 text-sm text-slate-500 mb-4">
                                                         <MapPin className="w-4 h-4 text-slate-400" /> {evt.location}
                                                     </div>

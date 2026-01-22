@@ -15,7 +15,7 @@ export default function ClientDashboard() {
     const { user, logout, isAuthenticated } = useAuth();
     const { bookings, stats, getBookingsByUserId } = useBooking();
     const { packages } = useContent();
-    const { t } = useLanguage();
+    const { t, locale } = useLanguage();
     const router = useRouter();
     const { addToast } = useToast();
     const [activeModal, setActiveModal] = useState<string | null>(null);
@@ -217,12 +217,18 @@ export default function ClientDashboard() {
                                             onClick={() => router.push(`/packages/${pkg.id}`)}
                                         >
                                             <div className="h-44 rounded-2xl bg-gray-200 mb-4 overflow-hidden relative">
-                                                <img src={pkg.imageUrl} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" alt={pkg.title} />
+                                                <img
+                                                    src={pkg.imageUrl}
+                                                    className="w-full h-full object-cover group-hover:scale-110 transition duration-700"
+                                                    alt={typeof pkg.title === 'string' ? pkg.title : pkg.title[locale === 'en' ? 'en' : 'id']}
+                                                />
                                                 <div className="absolute top-3 right-3 bg-black/60 backdrop-blur px-2.5 py-1 rounded-lg text-[10px] font-bold text-white flex items-center gap-1">
                                                     <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" /> {pkg.rating}
                                                 </div>
                                             </div>
-                                            <h4 className="font-bold text-slate-900 text-lg mb-1 leading-tight group-hover:text-emerald-700 transition line-clamp-1">{pkg.title}</h4>
+                                            <h4 className="font-bold text-slate-900 text-lg mb-1 leading-tight group-hover:text-emerald-700 transition line-clamp-1">
+                                                {typeof pkg.title === 'string' ? pkg.title : pkg.title[locale === 'en' ? 'en' : 'id']}
+                                            </h4>
                                             <p className="text-xs text-slate-500 mb-4 flex items-center gap-1 font-medium"><MapPin className="w-3 h-3" /> {pkg.location}</p>
                                             <div className="flex items-center justify-between border-t border-gray-100 pt-4">
                                                 <span className="text-emerald-700 font-black text-lg">Rp {(pkg.price / 1000000).toFixed(1)}jt</span>

@@ -13,7 +13,7 @@ export default function EventsPage() {
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
   const { addToast } = useToast();
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
 
   const categories = ['All', 'Culture', 'Nature', 'Sustainability', 'Culinary'];
 
@@ -31,16 +31,18 @@ export default function EventsPage() {
 
   const filteredEvents = events.filter(event => {
     const matchCategory = activeCategory === 'All' || activeCategory === event.category;
-    const matchSearch = event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    const currentTitle = typeof event.title === 'string' ? event.title : event.title[locale === 'en' ? 'en' : 'id'];
+    const matchSearch = currentTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
       event.location.toLowerCase().includes(searchTerm.toLowerCase());
     return matchCategory && matchSearch;
   });
 
   const featuredEvent = events.length > 0 ? events[0] : null;
 
-  const handleRemindMe = (e: React.MouseEvent, eventTitle: string) => {
+  const handleRemindMe = (e: React.MouseEvent, eventTitle: any) => {
     e.stopPropagation();
-    addToast(t.events.detail.toastRemind.replace('{title}', eventTitle), 'success');
+    const titleStr = typeof eventTitle === 'string' ? eventTitle : eventTitle[locale === 'en' ? 'en' : 'id'];
+    addToast(t.events.detail.toastRemind.replace('{title}', titleStr), 'success');
   };
 
   return (
@@ -53,7 +55,7 @@ export default function EventsPage() {
             <Image
               src={featuredEvent.imageUrl}
               className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition duration-[2s]"
-              alt={featuredEvent.title}
+              alt={featuredEvent.title[locale === 'en' ? 'en' : 'id']}
               width={1920}
               height={1080}
               priority
@@ -70,14 +72,14 @@ export default function EventsPage() {
                 🔥 {t.events.heroTag}
               </span>
               <h1 className="text-5xl md:text-8xl font-black text-white mb-8 leading-tight tracking-tight drop-shadow-xl">
-                {featuredEvent.title}
+                {featuredEvent.title[locale === 'en' ? 'en' : 'id']}
               </h1>
               <div className="flex flex-wrap items-center gap-8 text-white/90 text-xl mb-10 font-bold tracking-wide">
                 <span className="flex items-center gap-2"><Calendar className="w-6 h-6 text-green-400" /> {featuredEvent.date}</span>
                 <span className="flex items-center gap-2"><MapPin className="w-6 h-6 text-green-400" /> {featuredEvent.location}</span>
               </div>
               <p className="text-gray-200 text-2xl max-w-3xl mb-12 leading-relaxed font-light drop-shadow-md">
-                {featuredEvent.description}
+                {featuredEvent.description[locale === 'en' ? 'en' : 'id']}
               </p>
               <div className="flex gap-4">
                 <Link href={`/events/${featuredEvent.id}`} className="bg-green-600 hover:bg-green-500 text-white px-8 py-4 rounded-full font-bold text-lg transition transform hover:scale-105 shadow-lg shadow-green-900/50 flex items-center gap-2">
@@ -154,7 +156,7 @@ export default function EventsPage() {
                       <div className="relative h-64 overflow-hidden">
                         <Image
                           src={event.imageUrl}
-                          alt={event.title}
+                          alt={event.title[locale === 'en' ? 'en' : 'id']}
                           className="w-full h-full object-cover group-hover:scale-110 transition duration-700"
                           width={400}
                           height={300}
@@ -167,7 +169,7 @@ export default function EventsPage() {
                           <div className="flex items-center gap-2 text-sm font-medium mb-1 text-green-300">
                             <Calendar className="w-4 h-4" /> {event.date}
                           </div>
-                          <h3 className="text-xl font-bold leading-tight group-hover:text-green-300 transition">{event.title}</h3>
+                          <h3 className="text-xl font-bold leading-tight group-hover:text-green-300 transition">{event.title[locale === 'en' ? 'en' : 'id']}</h3>
                         </div>
                       </div>
 
@@ -178,7 +180,7 @@ export default function EventsPage() {
                             <span className="line-clamp-1">{event.location}</span>
                           </div>
                           <p className="text-gray-600 text-sm line-clamp-3 mb-6 bg-white/40 p-3 rounded-xl italic">
-                            &quot;{event.description}&quot;
+                            &quot;{event.description[locale === 'en' ? 'en' : 'id']}&quot;
                           </p>
                         </div>
 

@@ -10,8 +10,11 @@ interface HorizontalScrollProps {
    linkHref: string;
 }
 
+import { useLanguage } from '@/contexts/LanguageContext';
+
 export default function HorizontalScroll({ title, subtitle, items, linkHref }: HorizontalScrollProps) {
    const scrollRef = useRef<HTMLDivElement>(null);
+   const { locale } = useLanguage();
 
    return (
       <section className="py-16 bg-white overflow-hidden">
@@ -39,7 +42,7 @@ export default function HorizontalScroll({ title, subtitle, items, linkHref }: H
                               <div className="relative h-56 overflow-hidden">
                                  <img
                                     src={event.imageUrl}
-                                    alt={event.title}
+                                    alt={event.title[locale === 'en' ? 'en' : 'id']}
                                     className="w-full h-full object-cover group-hover:scale-110 transition duration-700"
                                  />
                                  <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-green-800 shadow-sm border border-green-100">
@@ -52,7 +55,7 @@ export default function HorizontalScroll({ title, subtitle, items, linkHref }: H
                                     <Calendar className="w-3 h-3 mr-1.5" /> {event.date}
                                  </div>
                                  <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2 leading-tight group-hover:text-green-700 transition">
-                                    {event.title}
+                                    {event.title[locale === 'en' ? 'en' : 'id']}
                                  </h3>
                                  <div className="flex items-center text-gray-500 text-sm mb-4">
                                     <MapPin className="w-4 h-4 mr-1 text-gray-400" /> {event.location}

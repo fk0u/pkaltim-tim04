@@ -8,7 +8,10 @@ interface ContentContextType {
     events: Event[];
     addPackage: (pkg: TourPackage) => void;
     deletePackage: (id: string) => void;
+    updatePackage: (pkg: TourPackage) => void;
     addEvent: (evt: Event) => void;
+    deleteEvent: (id: string) => void;
+    updateEvent: (evt: Event) => void;
     refreshData: () => void;
 }
 
@@ -20,14 +23,15 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         // Initialize from LocalStorage or Mock Data
-        const storedPackages = localStorage.getItem('bt_packages');
-        const storedEvents = localStorage.getItem('bt_events');
+        // V2 keys to force refresh on schema change (String -> LocalizedString)
+        const storedPackages = localStorage.getItem('bt_packages_v2');
+        const storedEvents = localStorage.getItem('bt_events_v2');
 
         if (storedPackages) {
             setPackages(JSON.parse(storedPackages));
         } else {
             setPackages(PACKAGES);
-            localStorage.setItem('bt_packages', JSON.stringify(PACKAGES));
+            localStorage.setItem('bt_packages_v2', JSON.stringify(PACKAGES));
         }
 
         if (storedEvents) {
@@ -43,19 +47,19 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
                 schedule: e.schedule || [],
                 gallery: e.gallery || []
             })) as Event[];
-            
+
             setEvents(validEvents);
-            localStorage.setItem('bt_events', JSON.stringify(validEvents));
+            localStorage.setItem('bt_events_v2', JSON.stringify(validEvents));
         }
     }, []);
 
     // Sync to LocalStorage on updates
     useEffect(() => {
-        if (packages.length > 0) localStorage.setItem('bt_packages', JSON.stringify(packages));
+        if (packages.length > 0) localStorage.setItem('bt_packages_v2', JSON.stringify(packages));
     }, [packages]);
 
     useEffect(() => {
-        if (events.length > 0) localStorage.setItem('bt_events', JSON.stringify(events));
+        if (events.length > 0) localStorage.setItem('bt_events_v2', JSON.stringify(events));
     }, [events]);
 
     const addPackage = (pkg: TourPackage) => {
@@ -71,13 +75,37 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     };
 
     const refreshData = () => {
-         // Force reload if needed
-         const storedPackages = localStorage.getItem('bt_packages');
-         if (storedPackages) setPackages(JSON.parse(storedPackages));
+        // Force reload if needed
+        const storedPackages = localStorage.getItem('bt_packages_v2');
+        const storedEvents = localStorage.getItem('bt_events_v2');
+        if (storedPackages) setPackages(JSON.parse(storedPackages));
+        if (storedEvents) setEvents(JSON.parse(storedEvents));
     }
 
+    const deleteEvent = (id: string) => {
+        setEvents(prev => prev.filter(e => e.id !== id));
+    };
+
+    const updatePackage = (updatedPkg: TourPackage) => {
+        setPackages(prev => prev.map(p => p.id === updatedPkg.id ? updatedPkg : p));
+    };
+
+    const updateEvent = (updatedEvt: Event) => {
+        setEvents(prev => prev.map(e => e.id === updatedEvt.id ? updatedEvt : e));
+    };
+
     return (
-        <ContentContext.Provider value={{ packages, events, addPackage, deletePackage, addEvent, refreshData }}>
+        <ContentContext.Provider value={{
+            packages,
+            events,
+            addPackage,
+            deletePackage,
+            updatePackage,
+            addEvent,
+            deleteEvent,
+            updateEvent,
+            refreshData
+        }}>
             {children}
         </ContentContext.Provider>
     );
