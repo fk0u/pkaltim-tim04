@@ -27,7 +27,7 @@ export default function Layout({
   const siteTitle = title.includes('BorneoTrip') ? title : `${title} | BorneoTrip`;
 
   return (
-    <div className="min-h-screen flex flex-col font-sans text-slate-900 bg-slate-50">
+    <div className="min-h-screen min-h-[100dvh] flex flex-col font-sans text-slate-900 bg-slate-50">
       <Head>
         <title>{siteTitle}</title>
         <meta name="description" content={description} />

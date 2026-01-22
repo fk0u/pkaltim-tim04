@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Home, Search, Compass, User, LayoutDashboard } from 'lucide-react';
+import { Home, Search, Compass, User, LayoutDashboard, Calendar } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { motion } from 'framer-motion';
@@ -17,14 +17,14 @@ export default function BottomNav() {
             icon: Home,
         },
         {
-            label: 'Explore', // Search/Packages
-            href: '/search',
+            label: 'Explore',
+            href: '/packages',
             icon: Compass,
         },
         {
             label: 'Events',
             href: '/events',
-            icon: Search, // Using Search icon for "Events" or "Discovery" context broadly
+            icon: Calendar,
         },
         {
             label: user ? 'Profile' : 'Login',

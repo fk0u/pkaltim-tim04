@@ -36,7 +36,7 @@ export default function Navbar({ isTransparent = true }: { isTransparent?: boole
       const currentTitle = typeof item.title === 'string' ? item.title : item.title[locale === 'en' ? 'en' : 'id'];
       const titleMatch = currentTitle.toLowerCase().includes(query);
       const locationMatch = item.location.toLowerCase().includes(query);
-      const categoryMatch = ((item as any).category || '').toLowerCase().includes(query);
+      const categoryMatch = ('category' in item && typeof (item as { category: string }).category === 'string' ? (item as { category: string }).category : '').toLowerCase().includes(query);
       return titleMatch || locationMatch || categoryMatch;
     }).slice(0, 5); // Limit to 5 results
   };
@@ -161,7 +161,7 @@ export default function Navbar({ isTransparent = true }: { isTransparent?: boole
                           searchResults.length > 0 ? (
                             <div className="py-2">
                               <h4 className="px-4 text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Hasil Pencarian</h4>
-                              {searchResults.map((result: any) => (
+                              {searchResults.map((result) => (
                                 <button
                                   key={result.id}
                                   onClick={() => handleNavigate(result.url)}
@@ -191,7 +191,7 @@ export default function Navbar({ isTransparent = true }: { isTransparent?: boole
                         ) : (
                           <div className="py-2">
                             <h4 className="px-4 text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Rekomendasi</h4>
-                            {recommendations.map((rec: any) => (
+                            {recommendations.map((rec) => (
                               <button
                                 key={rec.id}
                                 onClick={() => handleNavigate(rec.url)}
@@ -221,8 +221,8 @@ export default function Navbar({ isTransparent = true }: { isTransparent?: boole
               </AnimatePresence>
             </div>
 
-            {/* Right Actions */}
-            <div className="hidden md:flex items-center space-x-3">
+            {/* Right Actions - Visible on All Screens (Responsive) */}
+            <div className="flex items-center space-x-2 md:space-x-3">
               {/* Language Toggle */}
               {/* Language Dropdown */}
               <div className="relative">
@@ -286,7 +286,7 @@ export default function Navbar({ isTransparent = true }: { isTransparent?: boole
               </motion.button>
 
               {isAuthenticated && user ? (
-                <div className="relative">
+                <div className="relative hidden md:block">
                   <button
                     onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                     className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition ${isSolid ? 'bg-gray-100/80 hover:bg-gray-200' : 'bg-white/20 hover:bg-white/30 backdrop-blur-md text-white'}`}
