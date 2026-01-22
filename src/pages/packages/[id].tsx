@@ -3,11 +3,9 @@ import Layout from '@/components/Layout';
 import { useContent } from '@/contexts/ContentContext';
 import { DatePicker } from '@/components/ui';
 import { motion } from 'framer-motion';
-import { MapPin, Clock, Star, CheckCircle, Calendar, Users, ArrowRight, ShieldCheck, Share2, Heart } from 'lucide-react';
+import { MapPin, Clock, Star, CheckCircle, ArrowRight, ShieldCheck, Share2, Heart } from 'lucide-react';
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { TourPackage, ItineraryDetail } from '@/types';
+import { useState } from 'react';
 import { ITINERARY_DETAILS } from '@/data/mockData';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -16,20 +14,11 @@ export default function PackageDetail() {
    const { id } = router.query;
    const { packages } = useContent();
    const { t, locale } = useLanguage();
-   const [pkg, setPkg] = useState<TourPackage | null>(null);
-   const [itinerary, setItinerary] = useState<ItineraryDetail | null>(null);
    const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
    const [pax, setPax] = useState(1);
 
-   useEffect(() => {
-      if (id && packages.length > 0) {
-         const foundPkg = packages.find(p => p.id === id);
-         setPkg(foundPkg || null);
-
-         const foundItinerary = ITINERARY_DETAILS.find(i => i.packageId === id);
-         setItinerary(foundItinerary || null);
-      }
-   }, [id, packages]);
+   const pkg = id ? packages.find(p => p.id === id) || null : null;
+   const itinerary = id ? ITINERARY_DETAILS.find(i => i.packageId === id) || null : null;
 
    if (!pkg) return null;
 
@@ -48,8 +37,16 @@ export default function PackageDetail() {
       });
    };
 
+   const title = pkg.title[locale === 'en' ? 'en' : 'id'];
+   const description = typeof pkg.description === 'string' ? pkg.description : pkg.description[locale === 'en' ? 'en' : 'id'];
+
    return (
-      <Layout title={`${pkg.title[locale === 'en' ? 'en' : 'id']} - BorneoTrip`}>
+      <Layout
+         title={`${title} - BorneoTrip`}
+         description={description.substring(0, 160) + '...'}
+         ogImage={pkg.imageUrl}
+         type="article"
+      >
          <div className="bg-white pb-24">
             {/* Hero */}
             <div className="relative h-[60vh] lg:h-[70vh] w-full">

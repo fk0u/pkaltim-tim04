@@ -67,7 +67,7 @@ export default function EventDetail() {
             const dateObj = new Date(englishDateStr);
             if (isNaN(dateObj.getTime())) return new Date().toISOString(); // Fallback
             return dateObj.toISOString();
-        } catch (e) {
+        } catch {
             return new Date().toISOString();
         }
     };
@@ -96,16 +96,28 @@ export default function EventDetail() {
         addToast(t.events.detail.toastLink, "success");
     };
 
+    const title = event.title[locale === 'en' ? 'en' : 'id'];
+    const description = typeof event.description === 'string' ? event.description : event.description[locale === 'en' ? 'en' : 'id'];
+
     return (
-        <Layout title={`${event.title} - BorneoTrip Events`}>
+        <Layout
+            title={`${title} - BorneoTrip Events`}
+            description={description.substring(0, 160) + '...'}
+            ogImage={event.imageUrl}
+            type="article"
+        >
             {/* 1. IMMERSIVE HERO SECTION */}
             <div className="relative h-[85vh] w-full overflow-hidden bg-black">
                 <motion.div style={{ y: yHero, opacity: opacityHero }} className="absolute inset-0 w-full h-full">
-                    <img
-                        src={event.imageUrl}
-                        alt={event.title[locale === 'en' ? 'en' : 'id']}
-                        className="w-full h-full object-cover opacity-70"
-                    />
+                    {event.imageUrl && (
+                        <div className="relative w-full h-full opacity-70">
+                            <img
+                                src={event.imageUrl}
+                                alt={event.title[locale === 'en' ? 'en' : 'id']}
+                                className="w-full h-full object-cover"
+                            />
+                        </div>
+                    )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
                     <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-transparent"></div>
                 </motion.div>

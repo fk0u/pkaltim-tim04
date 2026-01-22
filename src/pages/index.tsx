@@ -25,7 +25,13 @@ export default function Home() {
    };
 
    return (
-      <Layout transparentNavbar={true} description={t.hero.subtitle}>
+      <Layout
+         transparentNavbar={true}
+         description={t.hero.subtitle}
+         title={t.hero.title1 + ' ' + t.hero.title2}
+         ogImage="/images/hero-bg.jpg" // Using local path which Next.js will resolve basically
+         type="website"
+      >
          {/* 1. DYNAMIC HERO SECTION WITH VIDEO */}
          <section className="relative min-h-[95vh] flex flex-col justify-end bg-black overflow-visible z-10 rounded-b-5xl md:rounded-b-7xl shadow-2xl mb-12 md:mb-20 group">
 
