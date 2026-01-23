@@ -43,7 +43,9 @@ export const en = {
         donationDistributed: "Donations Distributed",
         learnImpact: "Learn Our Impact",
         eventTitle: "Most Awaited Events",
-        eventSubtitle: "Cultural and ecotourism festivals that happen only once a year."
+        eventSubtitle: "Cultural and ecotourism festivals that happen only once a year.",
+        testimonialsTitle: "What They Say",
+        testimonialsDesc: "Real stories from adventurers who have joined the BorneoTrip sustainable tourism movement."
     },
     search: {
         eventLocation: "Event Location",
@@ -118,6 +120,12 @@ export const en = {
         quotaExceeded: "Quota exceeded for selected pax.",
         fillAllDetails: "Please fill all traveler details.",
         oops: "Oops, something went wrong!",
+        formTitle: "Title",
+        formFullName: "Full Name",
+        formIdNumber: "ID Number (KTP/Passport)",
+        formPhoneNumber: "Phone Number",
+        formNationality: "Nationality",
+        formAge: "Age",
         adults: "Adults",
         children: "Children",
         age: "Age",
@@ -197,44 +205,7 @@ export const en = {
         noAccount: "Don't have an account?",
         registerLink: "Register Free"
     },
-    dashboard: {
-        welcome: "Hello,",
-        ready: "The Borneo forest is calling you back.",
-        readySub: "Ready for your next conservation adventure?",
-        totalXp: "Total XP",
-        activeTrip: "Active Trip",
-        noActiveTrip: "No active trip",
-        noActiveTripDesc: "Explore our tour packages and start your adventure!",
-        findPackage: "Find Tour Packages",
-        openVoucher: "Open E-Voucher",
-        sharing: "Sharing",
-        recommendations: "Recommendations 2026",
-        yourLevel: "Your Level",
-        xpToNext: "Only 50 XP more to reach Elite Member!",
-        quickMenu: "Quick Menu",
-        voucher: "Voucher",
-        notification: "Notifications",
-        settings: "Settings",
-        support: "Support",
-        downloadPdf: "Download PDF",
-        paymentSuccess: "Payment Successful",
-        paymentDesc: "Payment for Derawan trip has been confirmed. Happy holiday!",
-        settingsTitle: "Profile Settings",
-        editProfile: "Edit Profile",
-        paymentMethod: "Payment Methods",
-        history: "Transaction History",
-        logout: "Log Out",
-        csTitle: "CS Support",
-        travelerMember: "Traveler Member",
-        topExplorer: "Top 5% Explorer",
-        bookingId: "Booking ID:",
-        pax: "Pax",
-        adventureReady: "Get ready for an adventure!",
-        showQr: "Show this QR to the guide at pickup.",
-        needHelp: "Need urgent help for your trip?",
-        chatWhatsapp: "Chat WhatsApp",
-        emailSupport: "Email Support"
-    },
+
     searchPage: {
         title: "Search Results",
         showingResultsFor: "Showing results for",
@@ -525,5 +496,31 @@ export const en = {
         emailSupport: "Send Email",
         showQr: "Show this QR Code to our staff",
         downloadPdf: "Download PDF"
-    }
+    },
+    testimonials: [
+        {
+            id: 1,
+            name: "Sarah Jenkins",
+            role: "Eco Traveler, UK",
+            content: "The Wehea Forest experience was life-changing. Seeing wild orangutans in their natural habitat and living with the Dayak tribe was invaluable.",
+            rating: 5,
+            avatarUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80"
+        },
+        {
+            id: 2,
+            name: "Budi Santoso",
+            role: "Nature Photocrapher, Jakarta",
+            content: "I've traveled all over Indonesia, but Derawan has the best underwater beauty. The guide from BorneoTrip was also very professional and cared about the environment.",
+            rating: 5,
+            avatarUrl: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&q=80"
+        },
+        {
+            id: 3,
+            name: "Michael Chen",
+            role: "Adventure Seeker, Singapore",
+            content: "The Samboja Lodge was amazing. It brings together luxury and conservation. Highly recommended for families who want to educate their children about nature.",
+            rating: 5,
+            avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80"
+        }
+    ]
 };

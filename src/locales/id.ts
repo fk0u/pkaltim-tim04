@@ -43,7 +43,9 @@ export const id = {
         donationDistributed: "Donasi Tersalur",
         learnImpact: "Pelajari Impact Kami",
         eventTitle: "Event Paling Ditunggu",
-        eventSubtitle: "Festival budaya dan ekowisata yang hanya terjadi setahun sekali."
+        eventSubtitle: "Festival budaya dan ekowisata yang hanya terjadi setahun sekali.",
+        testimonialsTitle: "Kata Mereka",
+        testimonialsDesc: "Cerita asli dari para petualang yang telah menjadi bagian dari gerakan pariwisata berkelanjutan BorneoTrip."
     },
     search: {
         eventLocation: "Lokasi Event",
@@ -118,6 +120,12 @@ export const id = {
         quotaExceeded: "Kuota tiket tidak mencukupi untuk jumlah pax yang dipilih.",
         fillAllDetails: "Mohon lengkapi data semua traveler.",
         oops: "Ups, terjadi kesalahan!",
+        formTitle: "Gelar",
+        formFullName: "Nama Lengkap",
+        formIdNumber: "Nomor Identitas (KTP/Paspor)",
+        formPhoneNumber: "Nomor Telepon",
+        formNationality: "Kewarganegaraan",
+        formAge: "Usia",
         adults: "Dewasa",
         children: "Anak-anak",
         age: "Usia",
@@ -197,44 +205,7 @@ export const id = {
         noAccount: "Belum punya akun?",
         registerLink: "Daftar Gratis"
     },
-    dashboard: {
-        welcome: "Halo,",
-        ready: "Hutan Kalimantan memanggilmu kembali.",
-        readySub: "Siap untuk petualangan konservasi berikutnya?",
-        totalXp: "Total XP",
-        activeTrip: "Perjalanan Aktif",
-        noActiveTrip: "Belum ada perjalanan aktif",
-        noActiveTripDesc: "Jelajahi paket wisata kami dan mulai petualanganmu!",
-        findPackage: "Cari Paket Wisata",
-        openVoucher: "Buka E-Voucher",
-        sharing: "Sharing",
-        recommendations: "Rekomendasi 2026",
-        yourLevel: "Level Kamu",
-        xpToNext: "Hanya 50 XP lagi untuk naik ke Elite Member!",
-        quickMenu: "Menu Cepat",
-        voucher: "Voucher",
-        notification: "Notifikasi",
-        settings: "Pengaturan",
-        support: "Bantuan",
-        downloadPdf: "Unduh PDF",
-        paymentSuccess: "Pembayaran Berhasil",
-        paymentDesc: "Pembayaran untuk trip Derawan telah dikonfirmasi. Selamat berlibur!",
-        settingsTitle: "Pengaturan Profil",
-        editProfile: "Edit Profil",
-        paymentMethod: "Metode Pembayaran",
-        history: "Riwayat Transaksi",
-        logout: "Keluar Akun",
-        csTitle: "Bantuan CS",
-        travelerMember: "Anggota Traveler",
-        topExplorer: "Eksplorer Top 5%",
-        bookingId: "ID Pemesanan:",
-        pax: "Orang",
-        adventureReady: "Bersiaplah untuk petualangan seru!",
-        showQr: "Tunjukkan QR ini kepada guide saat penjemputan.",
-        needHelp: "Butuh bantuan mendesak untuk perjalananmu?",
-        chatWhatsapp: "Chat WhatsApp",
-        emailSupport: "Email Support"
-    },
+
     searchPage: {
         title: "Hasil Pencarian",
         showingResultsFor: "Menampilkan hasil untuk",
@@ -525,5 +496,31 @@ export const id = {
         emailSupport: "Kirim Email",
         showQr: "Tunjukkan QR Code ini kepada petugas",
         downloadPdf: "Unduh PDF"
-    }
+    },
+    testimonials: [
+        {
+            id: 1,
+            name: "Sarah Jenkins",
+            role: "Eco Traveler, UK",
+            content: "Pengalaman di Hutan Wehea sangat mengubah hidup. Melihat orangutan liar dan tinggal bersama suku Dayak sungguh tak ternilai.",
+            rating: 5,
+            avatarUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80"
+        },
+        {
+            id: 2,
+            name: "Budi Santoso",
+            role: "Fotografer Alam, Jakarta",
+            content: "Saya sudah keliling Indonesia, tapi Derawan punya keindahan bawah laut terbaik. Guide dari BorneoTrip juga sangat profesional dan peduli lingkungan.",
+            rating: 5,
+            avatarUrl: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&q=80"
+        },
+        {
+            id: 3,
+            name: "Michael Chen",
+            role: "Adventure Seeker, Singapura",
+            content: "Samboja Lodge sangat luar biasa. Menggabungkan kemewahan dengan konservasi. Sangat direkomendasikan untuk keluarga yang ingin edukasi alam ke anak-anak.",
+            rating: 5,
+            avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80"
+        }
+    ]
 };

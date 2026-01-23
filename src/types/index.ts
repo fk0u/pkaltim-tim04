@@ -90,6 +90,7 @@ export interface TravelerDetail {
   fullName: string;
   idType?: 'KTP' | 'Passport';
   idNumber?: string;
+  phoneNumber?: string;
   nationality?: string;
   age?: number;
 }
