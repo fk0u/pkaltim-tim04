@@ -338,7 +338,7 @@ export default function Navbar({ isTransparent = true }: { isTransparent?: boole
             </div>
 
             {/* Mobile Menu Button - Removed in favor of FAB */}
-            {/* <div className="md:hidden"></div> */}
+
           </div>
         </div>
 

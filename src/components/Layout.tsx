@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import Navbar from './Navbar';
 import Footer from './Footer';
-import BottomNav from './BottomNav';
+import MobileBottomNav from './MobileBottomNav';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -62,7 +62,7 @@ export default function Layout({
       </main>
 
       {!hideFooter && <Footer />}
-      {!hideBottomNav && <BottomNav />}
+      {!hideBottomNav && <MobileBottomNav />}
     </div>
   );
 }

@@ -4,7 +4,7 @@ import { useBooking } from '@/contexts/BookingContext';
 import { useContent } from '@/contexts/ContentContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, MapPin, Clock, CheckCircle, ArrowRight, Wallet, Bell, Settings, Star, ChevronRight, Share2, Heart, Camera, Trophy, User, LogOut, FileText, CreditCard, LayoutDashboard, MessageSquare, History, Menu, X } from 'lucide-react';
+import { Calendar, MapPin, Clock, CheckCircle, ArrowRight, Wallet, Bell, Settings, Star, ChevronRight, Share2, Heart, Camera, Trophy, User, LogOut, FileText, CreditCard, LayoutDashboard, MessageSquare, History, Menu, X, Phone } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useState, useEffect, FormEvent } from 'react';
 import { useToast, Skeleton } from '@/components/ui';
@@ -36,6 +36,11 @@ export default function ClientDashboard() {
         if (user && (user.role as string) !== 'Customer' && (user.role as string) !== 'client') {
             // Fallback for case mismatch in mock data vs types
             router.push(`/dashboard/${user.role}`);
+        }
+
+        // Sync tab from URL
+        if (router.query.tab) {
+            setActiveTab(router.query.tab as string);
         }
     }, [isAuthenticated, user, router]);
 
@@ -102,7 +107,6 @@ export default function ClientDashboard() {
         <Layout
             title={`Dashboard - ${user.name}`}
             hideFooter={true}
-            hideBottomNav={true}
         >
             <div className="min-h-screen bg-gray-50 flex flex-col lg:flex-row lg:pt-16">
 
@@ -208,50 +212,7 @@ export default function ClientDashboard() {
                     </div>
                 </main>
 
-                {/* BOTTOM NAVIGATION - MOBILE ONLY */}
-                <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-6 py-2 lg:hidden z-50 flex justify-between items-end pb-5 pt-3 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
-                    {[
-                        { id: 'overview', icon: LayoutDashboard, label: 'Home' },
-                        { id: 'bookings', icon: Calendar, label: 'Trips' },
-                    ].map((item) => (
-                        <button
-                            key={item.id}
-                            onClick={() => setActiveTab(item.id)}
-                            className={`flex flex-col items-center gap-1 transition-all duration-300 w-16 ${activeTab === item.id ? 'text-emerald-600 -translate-y-2' : 'text-gray-400'}`}
-                        >
-                            <div className={`p-2 rounded-2xl transition-all ${activeTab === item.id ? 'bg-emerald-50' : 'bg-transparent'}`}>
-                                <item.icon className={`w-6 h-6 ${activeTab === item.id ? 'fill-emerald-600/20' : ''}`} />
-                            </div>
-                            <span className={`text-[10px] font-bold ${activeTab === item.id ? 'opacity-100' : 'opacity-0 h-0 overflow-hidden'}`}>{item.label}</span>
-                        </button>
-                    ))}
 
-                    {/* Center FAB */}
-                    <div className="relative -top-6">
-                        <button
-                            onClick={() => setActiveModal('voucher')}
-                            className="w-14 h-14 bg-emerald-600 rounded-full text-white shadow-xl shadow-emerald-300 flex items-center justify-center hover:scale-105 active:scale-95 transition-all border-4 border-gray-50"
-                        >
-                            <Camera className="w-6 h-6" />
-                        </button>
-                    </div>
-
-                    {[
-                        { id: 'history', icon: History, label: 'History' },
-                        { id: 'profile', icon: User, label: 'Profile' },
-                    ].map((item) => (
-                        <button
-                            key={item.id}
-                            onClick={() => setActiveTab(item.id)}
-                            className={`flex flex-col items-center gap-1 transition-all duration-300 w-16 ${activeTab === item.id ? 'text-emerald-600 -translate-y-2' : 'text-gray-400'}`}
-                        >
-                            <div className={`p-2 rounded-2xl transition-all ${activeTab === item.id ? 'bg-emerald-50' : 'bg-transparent'}`}>
-                                <item.icon className={`w-6 h-6 ${activeTab === item.id ? 'fill-emerald-600/20' : ''}`} />
-                            </div>
-                            <span className={`text-[10px] font-bold ${activeTab === item.id ? 'opacity-100' : 'opacity-0 h-0 overflow-hidden'}`}>{item.label}</span>
-                        </button>
-                    ))}
-                </div>
 
             </div>
 
@@ -466,43 +427,101 @@ function HistoryView({ bookings, t }: HistoryProps) {
 }
 
 function ProfileView({ user, t, addToast }: ProfileProps) {
+    const [isEditing, setIsEditing] = useState(false);
+
     return (
         <div className="space-y-6 max-w-2xl">
-            <h2 className="text-2xl font-bold text-slate-900">{t.dashboard.editProfile}</h2>
-            <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-                <div className="flex items-center gap-6 mb-8">
-                    <img src={user.avatar} className="w-20 h-20 rounded-full border-4 border-gray-50" alt="Avatar" />
-                    <button className="text-emerald-600 font-bold text-sm bg-emerald-50 px-4 py-2 rounded-xl">{t.dashboard.editProfile}</button>
-                </div>
-                <form className="space-y-6" onSubmit={(e: FormEvent) => { e.preventDefault(); addToast('Profile updated (Mock)', 'success'); }}>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label className="block text-xs font-bold text-gray-500 uppercase mb-2">{t.dashboard.fullName}</label>
-                            <input type="text" defaultValue={user.name} className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium" />
-                        </div>
-                        <div>
-                            <label className="block text-xs font-bold text-gray-500 uppercase mb-2">{t.dashboard.email}</label>
-                            <input type="email" defaultValue={user.email} className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium text-gray-500" disabled />
-                        </div>
-                        <div>
-                            <label className="block text-xs font-bold text-gray-500 uppercase mb-2">{t.dashboard.phone}</label>
-                            <input type="tel" placeholder="+62..." className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium" />
-                        </div>
-                        <div>
-                            <label className="block text-xs font-bold text-gray-500 uppercase mb-2">{t.dashboard.idNumber}</label>
-                            <input type="text" placeholder="16 digit NIK" className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium" />
-                        </div>
-                    </div>
-                    <div>
-                        <label className="block text-xs font-bold text-gray-500 uppercase mb-2">{t.dashboard.bio}</label>
-                        <textarea className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium h-24" placeholder="Tell us about yourself..."></textarea>
-                    </div>
-                    <div className="flex justify-end gap-4 pt-4">
-                        <button type="button" className="text-gray-500 font-bold hover:text-gray-900 transition">{t.dashboard.cancel}</button>
-                        <button type="submit" className="bg-emerald-600 text-white font-bold px-8 py-3 rounded-xl shadow-lg shadow-emerald-200">{t.dashboard.saveChanges}</button>
-                    </div>
-                </form>
+            <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold text-slate-900">{isEditing ? t.dashboard.editProfile : t.dashboard.myProfile}</h2>
+                {!isEditing && (
+                    <button onClick={() => setIsEditing(true)} className="text-emerald-600 font-bold text-sm bg-emerald-50 px-4 py-2 rounded-xl hover:bg-emerald-100 transition">
+                        {t.dashboard.editProfile}
+                    </button>
+                )}
             </div>
+
+            {isEditing ? (
+                <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
+                    <div className="flex items-center gap-6 mb-8">
+                        <img src={user.avatar} className="w-20 h-20 rounded-full border-4 border-gray-50" alt="Avatar" />
+                        <button className="text-emerald-600 font-bold text-sm bg-emerald-50 px-4 py-2 rounded-xl">Change Photo</button>
+                    </div>
+                    <form className="space-y-6" onSubmit={(e: FormEvent) => { e.preventDefault(); addToast('Profile updated (Mock)', 'success'); setIsEditing(false); }}>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label className="block text-xs font-bold text-gray-500 uppercase mb-2">{t.dashboard.fullName}</label>
+                                <input type="text" defaultValue={user.name} className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium" />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-gray-500 uppercase mb-2">{t.dashboard.email}</label>
+                                <input type="email" defaultValue={user.email} className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium text-gray-500" disabled />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-gray-500 uppercase mb-2">{t.dashboard.phone}</label>
+                                <input type="tel" placeholder="+62..." className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium" />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-bold text-gray-500 uppercase mb-2">{t.dashboard.idNumber}</label>
+                                <input type="text" placeholder="16 digit NIK" className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium" />
+                            </div>
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold text-gray-500 uppercase mb-2">{t.dashboard.bio}</label>
+                            <textarea className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium h-24" placeholder="Tell us about yourself..."></textarea>
+                        </div>
+                        <div className="flex justify-end gap-4 pt-4">
+                            <button type="button" onClick={() => setIsEditing(false)} className="text-gray-500 font-bold hover:text-gray-900 transition">{t.dashboard.cancel}</button>
+                            <button type="submit" className="bg-emerald-600 text-white font-bold px-8 py-3 rounded-xl shadow-lg shadow-emerald-200">{t.dashboard.saveChanges}</button>
+                        </div>
+                    </form>
+                </div>
+            ) : (
+                <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 p-6 opacity-5 pointer-events-none"><User className="w-64 h-64" /></div>
+
+                    <div className="flex flex-col items-center text-center mb-8 relative z-10">
+                        <div className="p-1 bg-white/50 backdrop-blur-sm rounded-full mb-4">
+                            <img src={user.avatar} className="w-28 h-28 rounded-full border-4 border-emerald-50 shadow-lg object-cover" alt="Profile" />
+                        </div>
+                        <h3 className="text-2xl font-black text-slate-900 mb-1">{user.name}</h3>
+                        <p className="text-slate-500 font-medium mb-3">{user.email}</p>
+                        <div className="flex gap-2">
+                            <span className="bg-emerald-100 text-emerald-700 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1">
+                                <CheckCircle className="w-3 h-3" /> Verified Traveler
+                            </span>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
+                        <div className="p-5 bg-gray-50 rounded-2xl flex items-center gap-4 border border-gray-100">
+                            <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-emerald-600 shadow-sm"><Phone className="w-6 h-6" /></div>
+                            <div>
+                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">{t.dashboard.phone}</p>
+                                <p className="font-bold text-slate-900 text-lg">+62 812 3456 7890</p>
+                            </div>
+                        </div>
+                        <div className="p-5 bg-gray-50 rounded-2xl flex items-center gap-4 border border-gray-100">
+                            <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-emerald-600 shadow-sm"><CreditCard className="w-6 h-6" /></div>
+                            <div>
+                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">{t.dashboard.idNumber}</p>
+                                <p className="font-bold text-slate-900 text-lg">6472012345678901</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="mt-8 pt-8 border-t border-gray-100 relative z-10">
+                        <h4 className="font-bold text-slate-900 mb-4 flex items-center gap-2"><Trophy className="w-5 h-5 text-yellow-500" /> Achievements</h4>
+                        <div className="flex gap-4 overflow-x-auto pb-4 custom-scrollbar">
+                            {[1, 2, 3].map(i => (
+                                <div key={i} className="min-w-[100px] h-24 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl border border-emerald-100 flex flex-col items-center justify-center text-center p-2 opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition cursor-help">
+                                    <div className="text-2xl mb-1">🏔️</div>
+                                    <p className="text-[10px] font-bold text-emerald-800 leading-tight">Borneo Explorer</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
