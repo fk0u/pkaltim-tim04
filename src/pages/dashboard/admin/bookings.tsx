@@ -84,7 +84,7 @@ export default function BookingsPage() {
                                             <td className="py-4">
                                                 <div className="flex flex-col">
                                                     <span className="text-sm font-medium text-gray-900">{booking.productName}</span>
-                                                    <span className="text-xs text-gray-400">{booking.productType}</span>
+                                                    <span className="text-xs text-gray-400">{booking.productType} • {booking.totalPax} Pax</span>
                                                 </div>
                                             </td>
                                             <td className="py-4 font-bold text-gray-900">Rp {booking.amount.toLocaleString()}</td>

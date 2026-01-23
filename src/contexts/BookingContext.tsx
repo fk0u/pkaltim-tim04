@@ -41,11 +41,13 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
                 productImage: 'https://hutanlindungwehea.id/wp-content/uploads/2021/11/2.-sejarah-lansakp-hutan-scaled.jpg?auto=format&fit=crop&q=80',
                 location: 'Muara Wahau, Kutai Timur',
                 date: new Date().toISOString(),
-                pax: 2,
                 amount: 7000000,
+                adultCount: 2,
+                childCount: 0,
+                totalPax: 2,
                 travelers: [
-                    { title: 'Mr', fullName: 'Pengguna Demo' },
-                    { title: 'Mrs', fullName: 'Partner Demo' }
+                    { type: 'Adult', title: 'Mr', fullName: 'Pengguna Demo' },
+                    { type: 'Adult', title: 'Mrs', fullName: 'Partner Demo' }
                 ],
                 status: 'Paid',
                 paymentMethod: 'Credit Card',
@@ -85,7 +87,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     const stats = {
         totalRevenue: bookings.reduce((acc, curr) => acc + (curr.amount || 0), 0),
         totalBookings: bookings.length,
-        activeTravelers: bookings.filter(b => b.status === 'Completed' || b.status === 'Paid').reduce((acc, curr) => acc + curr.pax, 0)
+        activeTravelers: bookings.filter(b => b.status === 'Completed' || b.status === 'Paid').reduce((acc, curr) => acc + (curr.totalPax || 0), 0)
     };
 
     return (

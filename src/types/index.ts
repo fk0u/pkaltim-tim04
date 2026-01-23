@@ -18,6 +18,7 @@ export interface Event {
   category: 'Culture' | 'Nature' | 'Sustainability' | 'Culinary';
   tags: string[];
   price?: string;
+  priceChild?: number;
   organizer?: string;
   ticketCount?: number;
   quota?: number; // Total available slots
@@ -39,6 +40,7 @@ export interface TourPackage {
   facilities: string[];
   quota?: number; // Total available slots
   bookedCount?: number; // Currently booked slots
+  priceChild?: number;
 }
 
 export interface Activity {
@@ -83,11 +85,13 @@ export interface User {
 }
 
 export interface TravelerDetail {
+  type: 'Adult' | 'Child';
   title: 'Mr' | 'Mrs' | 'Ms' | 'Dr';
   fullName: string;
   idType?: 'KTP' | 'Passport';
   idNumber?: string;
   nationality?: string;
+  age?: number;
 }
 
 export interface Booking {
@@ -98,7 +102,9 @@ export interface Booking {
   productName: string; // Denormalized for ease
   date: string;
   amount: number;
-  pax: number;
+  adultCount: number;
+  childCount: number;
+  totalPax: number;
   travelers: TravelerDetail[]; // Detailed info for each pax
   status: 'Pending' | 'Paid' | 'Cancelled' | 'Completed';
   paymentMethod: 'Credit Card' | 'Bank Transfer' | 'E-Wallet';

@@ -96,8 +96,8 @@ export default function BookingDetailModal({ booking, customer, isOpen, onClose,
                                             <h4 className="font-bold text-lg text-gray-900">{booking.productName}</h4>
                                             <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
                                                 <span className="flex items-center gap-1"><Calendar className="w-4 h-4" /> {booking.date}</span>
-                                                <span className="flex items-center gap-1"><User className="w-4 h-4" /> 2 Guests</span>
-                                                <span className="flex items-center gap-1"><MapPin className="w-4 h-4" /> Kalimantan</span>
+                                                <span className="flex items-center gap-1"><User className="w-4 h-4" /> {booking.totalPax} Guests ({booking.adultCount} Adult, {booking.childCount} Child)</span>
+                                                <span className="flex items-center gap-1"><MapPin className="w-4 h-4" /> {booking.location || 'Kalimantan'}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -105,16 +105,22 @@ export default function BookingDetailModal({ booking, customer, isOpen, onClose,
                                     {/* Cost Breakdown */}
                                     <div className="space-y-3">
                                         <div className="flex justify-between text-sm">
-                                            <span className="text-gray-600">Package Base Price</span>
-                                            <span className="font-medium text-gray-900 overflow-hidden">{booking.amount} IDR</span>
+                                            <span className="text-gray-600">Adults ({booking.adultCount}x)</span>
+                                            <span className="font-medium text-gray-900 overflow-hidden">-</span>
                                         </div>
+                                        {booking.childCount > 0 && (
+                                            <div className="flex justify-between text-sm">
+                                                <span className="text-gray-600">Children ({booking.childCount}x)</span>
+                                                <span className="font-medium text-gray-900 overflow-hidden">-</span>
+                                            </div>
+                                        )}
                                         <div className="flex justify-between text-sm">
                                             <span className="text-gray-600">Service Fee</span>
                                             <span className="font-medium text-gray-900">0 IDR</span>
                                         </div>
                                         <div className="flex justify-between text-base font-bold pt-3 border-t border-gray-100 mt-3">
                                             <span className="text-emerald-900">Total Paid</span>
-                                            <span className="text-emerald-600 overflow-hidden">{booking.amount} IDR</span>
+                                            <span className="text-emerald-600 overflow-hidden">{booking.amount.toLocaleString('id-ID')} IDR</span>
                                         </div>
                                     </div>
                                 </div>

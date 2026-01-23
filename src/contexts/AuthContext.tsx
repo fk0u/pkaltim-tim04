@@ -10,6 +10,9 @@ interface User {
     role: UserRole;
     avatar?: string;
     onboardingCompleted?: boolean;
+    joinDate?: string;
+    totalSpent?: number;
+    status?: 'Active' | 'Inactive';
 }
 
 interface AuthContextType {
