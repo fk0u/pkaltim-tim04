@@ -4,7 +4,7 @@ import { useBooking } from '@/contexts/BookingContext';
 import { useContent } from '@/contexts/ContentContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, MapPin, Clock, CheckCircle, ArrowRight, Wallet, Bell, Settings, Star, ChevronRight, Share2, Heart, Camera, Trophy, User, LogOut, FileText, CreditCard, LayoutDashboard, MessageSquare, History, Menu, X, Phone } from 'lucide-react';
+import { Calendar, MapPin, Clock, CheckCircle, ArrowRight, Wallet, Bell, Settings, Star, ChevronRight, Share2, Heart, Camera, Trophy, User, LogOut, FileText, CreditCard, LayoutDashboard, MessageSquare, History, Menu, X, Phone, Ticket } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useState, useEffect, FormEvent } from 'react';
 import { useToast, Skeleton, ShareModal } from '@/components/ui';
@@ -43,6 +43,8 @@ export default function ClientDashboard() {
             setActiveTab(router.query.tab as string);
         }
     }, [isAuthenticated, user, router]);
+
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
     if (!user) return null;
 
@@ -99,7 +101,7 @@ export default function ClientDashboard() {
         }
     };
 
-    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
 
 
 
@@ -449,7 +451,7 @@ function BookingsView({ bookings, t, router }: BookingsProps) {
                                         <div className="bg-gray-50 p-3 rounded-xl">
                                             <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">Location</p>
                                             <div className="flex items-center gap-2 font-bold text-slate-700 text-sm">
-                                                <MapPin className="w-4 h-4 text-emerald-500" /> {booking.location.split(',')[0]}
+                                                <MapPin className="w-4 h-4 text-emerald-500" /> {booking.location?.split(',')[0]}
                                             </div>
                                         </div>
                                         <div className="bg-gray-50 p-3 rounded-xl">
