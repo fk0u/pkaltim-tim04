@@ -4,7 +4,7 @@ import { useBooking } from '@/contexts/BookingContext';
 import { useContent } from '@/contexts/ContentContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, MapPin, Clock, CheckCircle, ArrowRight, Wallet, Bell, Settings, Star, ChevronRight, Share2, Heart, Camera, Trophy, User, LogOut, FileText, CreditCard, LayoutDashboard, MessageSquare, History, Menu, X, Phone, Ticket } from 'lucide-react';
+import { Calendar, MapPin, Clock, CheckCircle, ArrowRight, Wallet, Bell, Settings, Star, ChevronRight, Share2, Heart, Camera, Trophy, User, LogOut, FileText, CreditCard, LayoutDashboard, MessageSquare, History, Menu, X, Phone, Ticket, ShieldCheck } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useState, useEffect, FormEvent } from 'react';
 import { useToast, Skeleton, ShareModal } from '@/components/ui';
@@ -488,8 +488,9 @@ function HistoryView({ bookings, t }: HistoryProps) {
         return (
             <div className="space-y-6">
                 <h2 className="text-2xl font-bold text-slate-900">{t.dashboard.transactionHistory}</h2>
-                <div className="text-center py-12 bg-white rounded-3xl border border-gray-100">
-                    <p className="text-gray-400 font-medium">{t.dashboard.noBookings}</p>
+                <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
+                    <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400"><History className="w-8 h-8" /></div>
+                    <p className="text-gray-500 font-medium">{t.dashboard.noBookings}</p>
                 </div>
             </div>
         );
@@ -499,28 +500,59 @@ function HistoryView({ bookings, t }: HistoryProps) {
         <div className="space-y-6">
             <h2 className="text-2xl font-bold text-slate-900">{t.dashboard.transactionHistory}</h2>
             <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-                <table className="w-full text-left text-sm">
-                    <thead className="bg-gray-50 border-b border-gray-100">
-                        <tr>
-                            <th className="p-5 font-bold text-gray-500">ID</th>
-                            <th className="p-5 font-bold text-gray-500">Date</th>
-                            <th className="p-5 font-bold text-gray-500">Item</th>
-                            <th className="p-5 font-bold text-gray-500 text-right">Amount</th>
-                            <th className="p-5 font-bold text-gray-500 text-center">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-100">
-                        {bookings.map((booking) => (
-                            <tr key={booking.id} className="hover:bg-gray-50 transition">
-                                <td className="p-5 font-mono text-gray-600">{booking.id}</td>
-                                <td className="p-5 text-gray-900">{new Date(booking.date).toLocaleDateString()}</td>
-                                <td className="p-5 font-medium text-gray-900">{booking.productName}</td>
-                                <td className="p-5 text-right font-bold text-gray-900">Rp {(booking.amount / 1000).toLocaleString('id-ID')}k</td>
-                                <td className="p-5 text-center"><span className="bg-emerald-100 text-emerald-700 px-2 py-1 rounded text-xs font-bold">{booking.status}</span></td>
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left text-sm">
+                        <thead className="bg-gray-50 border-b border-gray-100">
+                            <tr>
+                                <th className="p-5 font-bold text-gray-500 text-xs uppercase tracking-wider">ID & Date</th>
+                                <th className="p-5 font-bold text-gray-500 text-xs uppercase tracking-wider">Item</th>
+                                <th className="p-5 font-bold text-gray-500 text-xs uppercase tracking-wider text-right">Amount</th>
+                                <th className="p-5 font-bold text-gray-500 text-xs uppercase tracking-wider text-center">Status</th>
+                                <th className="p-5 font-bold text-gray-500 text-xs uppercase tracking-wider text-center">Actions</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100">
+                            {bookings.map((booking) => (
+                                <tr key={booking.id} className="hover:bg-gray-50 transition group">
+                                    <td className="p-5">
+                                        <div className="font-mono font-bold text-slate-900 mb-0.5">#{booking.id}</div>
+                                        <div className="text-xs text-gray-500 flex items-center gap-1.5">
+                                            <Calendar className="w-3 h-3" />
+                                            {new Date(booking.date).toLocaleDateString()}
+                                        </div>
+                                    </td>
+                                    <td className="p-5">
+                                        <div className="font-bold text-slate-900 mb-0.5 line-clamp-1">{booking.productName}</div>
+                                        <div className="text-xs text-gray-500 flex items-center gap-1.5">
+                                            <MapPin className="w-3 h-3" />
+                                            {booking.location?.split(',')[0]}
+                                        </div>
+                                    </td>
+                                    <td className="p-5 text-right font-bold text-slate-900">
+                                        Rp {(booking.amount / 1000).toLocaleString('id-ID')}k
+                                    </td>
+                                    <td className="p-5 text-center">
+                                        <span className={`inline-flex px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide ${booking.status === 'Paid' ? 'bg-emerald-100 text-emerald-700' :
+                                            booking.status === 'Pending' ? 'bg-orange-100 text-orange-700' : 'bg-gray-100 text-gray-600'
+                                            }`}>
+                                            {booking.status}
+                                        </span>
+                                    </td>
+                                    <td className="p-5 text-center">
+                                        <div className="flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <Link href={`/dashboard/vouchers/${booking.id}?tab=ticket`} className="p-2 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition" title="E-Ticket">
+                                                <Ticket className="w-4 h-4" />
+                                            </Link>
+                                            <Link href={`/dashboard/vouchers/${booking.id}?tab=invoice`} className="p-2 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 transition" title="Invoice">
+                                                <FileText className="w-4 h-4" />
+                                            </Link>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     );
@@ -529,18 +561,12 @@ function HistoryView({ bookings, t }: HistoryProps) {
 function ProfileView({ user, t, addToast }: ProfileProps) {
     const [isEditing, setIsEditing] = useState(false);
 
-    return (
-        <div className="space-y-6 max-w-2xl">
-            <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-slate-900">{isEditing ? t.dashboard.editProfile : t.dashboard.myProfile}</h2>
-                {!isEditing && (
-                    <button onClick={() => setIsEditing(true)} className="text-emerald-600 font-bold text-sm bg-emerald-50 px-4 py-2 rounded-xl hover:bg-emerald-100 transition">
-                        {t.dashboard.editProfile}
-                    </button>
-                )}
-            </div>
-
-            {isEditing ? (
+    if (isEditing) {
+        return (
+            <div className="space-y-6 max-w-2xl">
+                <div className="flex items-center justify-between">
+                    <h2 className="text-2xl font-bold text-slate-900">{t.dashboard.editProfile}</h2>
+                </div>
                 <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
                     <div className="flex items-center gap-6 mb-8">
                         <img src={user.avatar} className="w-20 h-20 rounded-full border-4 border-gray-50" alt="Avatar" />
@@ -575,53 +601,83 @@ function ProfileView({ user, t, addToast }: ProfileProps) {
                         </div>
                     </form>
                 </div>
-            ) : (
-                <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden">
-                    <div className="absolute top-0 right-0 p-6 opacity-5 pointer-events-none"><User className="w-64 h-64" /></div>
+            </div>
+        );
+    }
 
-                    <div className="flex flex-col items-center text-center mb-8 relative z-10">
-                        <div className="p-1 bg-white/50 backdrop-blur-sm rounded-full mb-4">
-                            <img src={user.avatar} className="w-28 h-28 rounded-full border-4 border-emerald-50 shadow-lg object-cover" alt="Profile" />
-                        </div>
-                        <h3 className="text-2xl font-black text-slate-900 mb-1">{user.name}</h3>
-                        <p className="text-slate-500 font-medium mb-3">{user.email}</p>
-                        <div className="flex gap-2">
-                            <span className="bg-emerald-100 text-emerald-700 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1">
-                                <CheckCircle className="w-3 h-3" /> Verified Traveler
-                            </span>
+    return (
+        <div className="space-y-6 max-w-2xl">
+            <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold text-slate-900">{t.dashboard.myProfile}</h2>
+                <button onClick={() => setIsEditing(true)} className="text-emerald-600 font-bold text-sm bg-emerald-50 px-4 py-2 rounded-xl hover:bg-emerald-100 transition">
+                    {t.dashboard.editProfile}
+                </button>
+            </div>
+
+            <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-6 opacity-5 pointer-events-none"><User className="w-64 h-64" /></div>
+
+                <div className="flex flex-col items-center text-center mb-8 relative z-10">
+                    <div className="p-1 bg-white/50 backdrop-blur-sm rounded-full mb-4">
+                        <img src={user.avatar} className="w-28 h-28 rounded-full border-4 border-emerald-50 shadow-lg object-cover" alt="Profile" />
+                    </div>
+                    <h3 className="text-2xl font-black text-slate-900 mb-1">{user.name}</h3>
+                    <p className="text-slate-500 font-medium mb-3">{user.email}</p>
+                    <div className="flex gap-2">
+                        <span className="bg-emerald-100 text-emerald-700 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1">
+                            <CheckCircle className="w-3 h-3" /> Verified Traveler
+                        </span>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10 mb-8">
+                    <div className="p-5 bg-gray-50 rounded-2xl flex items-center gap-4 border border-gray-100">
+                        <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-emerald-600 shadow-sm"><Phone className="w-6 h-6" /></div>
+                        <div>
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">{t.dashboard.phone}</p>
+                            <p className="font-bold text-slate-900 text-lg">+62 812 3456 7890</p>
                         </div>
                     </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
-                        <div className="p-5 bg-gray-50 rounded-2xl flex items-center gap-4 border border-gray-100">
-                            <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-emerald-600 shadow-sm"><Phone className="w-6 h-6" /></div>
-                            <div>
-                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">{t.dashboard.phone}</p>
-                                <p className="font-bold text-slate-900 text-lg">+62 812 3456 7890</p>
-                            </div>
-                        </div>
-                        <div className="p-5 bg-gray-50 rounded-2xl flex items-center gap-4 border border-gray-100">
-                            <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-emerald-600 shadow-sm"><CreditCard className="w-6 h-6" /></div>
-                            <div>
-                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">{t.dashboard.idNumber}</p>
-                                <p className="font-bold text-slate-900 text-lg">6472012345678901</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="mt-8 pt-8 border-t border-gray-100 relative z-10">
-                        <h4 className="font-bold text-slate-900 mb-4 flex items-center gap-2"><Trophy className="w-5 h-5 text-yellow-500" /> Achievements</h4>
-                        <div className="flex gap-4 overflow-x-auto pb-4 custom-scrollbar">
-                            {[1, 2, 3].map(i => (
-                                <div key={i} className="min-w-[100px] h-24 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl border border-emerald-100 flex flex-col items-center justify-center text-center p-2 opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition cursor-help">
-                                    <div className="text-2xl mb-1">🏔️</div>
-                                    <p className="text-[10px] font-bold text-emerald-800 leading-tight">Borneo Explorer</p>
-                                </div>
-                            ))}
+                    <div className="p-5 bg-gray-50 rounded-2xl flex items-center gap-4 border border-gray-100">
+                        <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-emerald-600 shadow-sm"><CreditCard className="w-6 h-6" /></div>
+                        <div>
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">{t.dashboard.idNumber}</p>
+                            <p className="font-bold text-slate-900 text-lg">6472012345678901</p>
                         </div>
                     </div>
                 </div>
-            )}
+
+                <div className="space-y-6 relative z-10">
+                    <div>
+                        <h4 className="font-bold text-slate-900 mb-4 flex items-center gap-2 text-sm uppercase tracking-wider"><ShieldCheck className="w-4 h-4 text-emerald-500" /> Account Security</h4>
+                        <div className="bg-gray-50 rounded-2xl p-4 space-y-2">
+                            <button className="w-full flex items-center justify-between p-3 bg-white rounded-xl border border-gray-100 hover:shadow-sm transition text-left">
+                                <span className="text-sm font-bold text-slate-700">Change Password</span>
+                                <ChevronRight className="w-4 h-4 text-gray-400" />
+                            </button>
+                            <button className="w-full flex items-center justify-between p-3 bg-white rounded-xl border border-gray-100 hover:shadow-sm transition text-left">
+                                <span className="text-sm font-bold text-slate-700">Two-Factor Authentication</span>
+                                <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded">Enabled</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 className="font-bold text-slate-900 mb-4 flex items-center gap-2 text-sm uppercase tracking-wider"><Settings className="w-4 h-4 text-emerald-500" /> Preferences</h4>
+                        <div className="bg-gray-50 rounded-2xl p-4 space-y-2">
+                            <div className="w-full flex items-center justify-between p-3 bg-white rounded-xl border border-gray-100">
+                                <span className="text-sm font-bold text-slate-700">Email Notifications</span>
+                                <div className="w-10 h-5 bg-emerald-500 rounded-full relative cursor-pointer"><div className="absolute right-0.5 top-0.5 w-4 h-4 bg-white rounded-full"></div></div>
+                            </div>
+                            <div className="w-full flex items-center justify-between p-3 bg-white rounded-xl border border-gray-100">
+                                <span className="text-sm font-bold text-slate-700">Language</span>
+                                <span className="text-xs font-bold text-gray-500">English (US)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
     );
 }
@@ -630,21 +686,42 @@ function PaymentsView({ t, setActiveModal }: { t: any, setActiveModal: (id: stri
     return (
         <div className="space-y-6 max-w-2xl">
             <h2 className="text-2xl font-bold text-slate-900">{t.dashboard.paymentMethods}</h2>
-            <div className="bg-linear-to-r from-slate-900 to-slate-800 rounded-3xl p-8 text-white shadow-xl mb-8 relative overflow-hidden group perspective-1000 transition-transform duration-500 hover:rotate-y-6">
-                <div className="absolute top-0 right-0 p-8 opacity-10"><CreditCard className="w-32 h-32" /></div>
-                <div className="relative z-10">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" className="w-12 h-auto mb-8" alt="Mastercard" />
-                    <p className="font-mono opacity-80 mb-8 text-xl tracking-widest text-shadow">**** **** **** 4242</p>
-                    <div className="flex justify-between items-end">
-                        <div>
-                            <p className="text-[10px] uppercase opacity-60 mb-1 tracking-wider">{t.dashboard.cardHolder}</p>
-                            <p className="font-bold tracking-wide">JOHN DOE</p>
+
+            <div className="grid gap-6">
+                {/* Method 1: Credit Card */}
+                <div className="bg-linear-to-r from-slate-900 to-slate-800 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden group perspective-1000 transition-transform duration-500 hover:rotate-y-2">
+                    <div className="absolute top-0 right-0 p-8 opacity-10"><CreditCard className="w-32 h-32" /></div>
+                    <div className="relative z-10">
+                        <div className="flex justify-between items-start mb-8">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" className="w-12 h-auto" alt="Mastercard" />
+                            <span className="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">Primary</span>
                         </div>
-                        <div>
-                            <p className="text-[10px] uppercase opacity-60 mb-1 tracking-wider">{t.dashboard.expiryDate}</p>
-                            <p className="font-bold tracking-wide">12/28</p>
+                        <p className="font-mono opacity-80 mb-8 text-xl tracking-widest text-shadow">**** **** **** 4242</p>
+                        <div className="flex justify-between items-end">
+                            <div>
+                                <p className="text-[10px] uppercase opacity-60 mb-1 tracking-wider">{t.dashboard.cardHolder}</p>
+                                <p className="font-bold tracking-wide">JOHN DOE</p>
+                            </div>
+                            <div>
+                                <p className="text-[10px] uppercase opacity-60 mb-1 tracking-wider">{t.dashboard.expiryDate}</p>
+                                <p className="font-bold tracking-wide">12/28</p>
+                            </div>
                         </div>
                     </div>
+                </div>
+
+                {/* Method 2: E-Wallet */}
+                <div className="bg-white border border-gray-200 rounded-3xl p-6 flex flex-col md:flex-row justify-between items-center gap-4 hover:shadow-md transition">
+                    <div className="flex items-center gap-4 w-full md:w-auto">
+                        <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center p-3">
+                            <Wallet className="w-8 h-8 text-blue-600" />
+                        </div>
+                        <div>
+                            <h4 className="font-bold text-slate-900">GoPay E-Wallet</h4>
+                            <p className="text-sm text-gray-500 font-mono">0812 **** 7890</p>
+                        </div>
+                    </div>
+                    <button className="text-sm font-bold text-red-500 hover:text-red-700 transition">Remove</button>
                 </div>
             </div>
 
@@ -664,47 +741,74 @@ function ChatView({ user, t }: ChatProps) {
         { id: 1, text: "Halo! Ada yang bisa kami bantu hari ini?", sender: 'agent', time: '10:00' }
     ]);
     const [input, setInput] = useState('');
+    const [isTyping, setIsTyping] = useState(false);
 
     const handleSend = (e: FormEvent) => {
         e.preventDefault();
         if (!input.trim()) return;
         setMessages(prev => [...prev, { id: Date.now(), text: input, sender: 'user', time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }]);
         setInput('');
+
+        setIsTyping(true);
         setTimeout(() => {
+            setIsTyping(false);
             setMessages(prev => [...prev, { id: Date.now() + 1, text: "Terima kasih, tim kami akan segera membalas.", sender: 'agent', time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }]);
-        }, 1000);
+        }, 2000);
     };
 
     return (
         <div className="h-[calc(100vh-140px)] bg-white rounded-3xl shadow-sm border border-gray-100 flex flex-col overflow-hidden">
-            <div className="p-4 border-b border-gray-100 flex items-center gap-3 bg-white">
-                <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold">BS</div>
+            <div className="p-4 border-b border-gray-100 flex items-center gap-4 bg-white shadow-sm z-10">
+                <div className="relative">
+                    <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-black text-xl border-4 border-emerald-50">BS</div>
+                    <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full animate-pulse"></span>
+                </div>
                 <div>
-                    <h4 className="font-bold text-slate-900">{t.dashboard.supportAgent}</h4>
-                    <p className="text-xs text-emerald-500 font-bold flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-500"></span> {t.dashboard.online}</p>
+                    <h4 className="font-bold text-slate-900">BorneoTrip Support</h4>
+                    <p className="text-xs text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded-full inline-block">Online • Typically replies instantly</p>
                 </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50">
+            <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50">
+                <div className="text-center text-xs font-bold text-gray-300 uppercase tracking-widest my-4">Today</div>
+
                 {messages.map(m => (
-                    <div key={m.id} className={`flex ${m.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                        <div className={`max-w-[70%] p-4 rounded-2xl text-sm ${m.sender === 'user' ? 'bg-emerald-600 text-white rounded-tr-none' : 'bg-white border border-gray-200 text-gray-700 rounded-tl-none'}`}>
-                            <p>{m.text}</p>
-                            <p className={`text-[10px] mt-1 text-right ${m.sender === 'user' ? 'text-emerald-200' : 'text-gray-400'}`}>{m.time}</p>
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        key={m.id}
+                        className={`flex ${m.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                    >
+                        <div className={`max-w-[75%] p-4 rounded-2xl text-sm shadow-sm ${m.sender === 'user' ? 'bg-emerald-600 text-white rounded-tr-sm' : 'bg-white border border-gray-100 text-gray-700 rounded-tl-sm'}`}>
+                            <p className="leading-relaxed">{m.text}</p>
+                            <p className={`text-[10px] mt-2 text-right opacity-70`}>{m.time}</p>
                         </div>
-                    </div>
+                    </motion.div>
                 ))}
+
+                {isTyping && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
+                        <div className="bg-white border border-gray-100 p-4 rounded-2xl rounded-tl-sm shadow-sm flex gap-1 items-center">
+                            <span className="w-2 h-2 bg-gray-300 rounded-full animate-bounce"></span>
+                            <span className="w-2 h-2 bg-gray-300 rounded-full animate-bounce delay-75"></span>
+                            <span className="w-2 h-2 bg-gray-300 rounded-full animate-bounce delay-150"></span>
+                        </div>
+                    </motion.div>
+                )}
             </div>
 
-            <form onSubmit={handleSend} className="p-4 bg-white border-t border-gray-100 flex gap-4">
-                <input
-                    type="text"
-                    value={input}
-                    onChange={e => setInput(e.target.value)}
-                    placeholder={t.dashboard.typeMessage}
-                    className="flex-1 bg-gray-100 border-0 rounded-xl px-4 py-3 focus:ring-2 focus:ring-emerald-500"
-                />
-                <button type="submit" className="bg-emerald-600 text-white p-3 rounded-xl hover:bg-emerald-700 transition"><MessageSquare className="w-5 h-5" /></button>
+            <form onSubmit={handleSend} className="p-4 bg-white border-t border-gray-100 flex gap-3 items-end">
+                <div className="flex-1 bg-gray-100 rounded-2xl flex items-center px-4 border border-transparent focus-within:border-emerald-200 focus-within:bg-white transition-all">
+                    <input
+                        type="text"
+                        value={input}
+                        onChange={e => setInput(e.target.value)}
+                        placeholder={t.dashboard.typeMessage}
+                        className="flex-1 bg-transparent border-0 py-4 focus:ring-0 text-sm font-medium"
+                    />
+                    <button type="button" className="text-gray-400 hover:text-emerald-600 transition"><Camera className="w-5 h-5" /></button>
+                </div>
+                <button type="submit" disabled={!input.trim()} className="bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed text-white p-4 rounded-2xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-200"><MessageSquare className="w-5 h-5" /></button>
             </form>
         </div>
     );
