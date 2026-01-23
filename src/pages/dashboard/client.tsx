@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, MapPin, Clock, CheckCircle, ArrowRight, Wallet, Bell, Settings, Star, ChevronRight, Share2, Heart, Camera, Trophy, User, LogOut, FileText, CreditCard, LayoutDashboard, MessageSquare, History, Menu, X, Phone } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useState, useEffect, FormEvent } from 'react';
-import { useToast, Skeleton } from '@/components/ui';
+import { useToast, Skeleton, ShareModal } from '@/components/ui';
 import Modal from '@/components/ui/Modal';
 import Link from 'next/link';
 import { Booking, TourPackage, User as UserType } from '@/types';
@@ -81,7 +81,7 @@ export default function ClientDashboard() {
             case 'profile':
                 return <ProfileView user={user as unknown as UserType} t={t} addToast={addToast} />;
             case 'payments':
-                return <PaymentsView t={t} addToast={addToast} />;
+                return <PaymentsView t={t} setActiveModal={setActiveModal} />;
             case 'chat':
                 return <ChatView user={user as unknown as UserType} t={t} />;
             default:
@@ -229,6 +229,62 @@ export default function ClientDashboard() {
                     <button onClick={() => { addToast('Voucher diunduh', 'success'); setActiveModal(null); }} className="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl">{t.dashboard.downloadPdf}</button>
                 </div>
             </Modal>
+
+            {/* ADD CARD MODAL */}
+            <Modal isOpen={activeModal === 'add_card'} onClose={() => setActiveModal(null)} title={t.dashboard.addNewCard}>
+                <div className="space-y-6">
+                    {/* Card Preview (Flippable) */}
+                    <div className="group perspective-1000 h-48 w-full cursor-pointer" onClick={(e) => e.currentTarget.classList.toggle('rotate-y-180')}>
+                        <div className="relative w-full h-full text-white transition-all duration-700 transform style-preserve-3d group-hover:rotate-y-6">
+                            {/* Front */}
+                            <div className="absolute inset-0 bg-linear-to-br from-slate-900 to-slate-800 rounded-2xl p-6 backface-hidden shadow-xl flex flex-col justify-between z-10">
+                                <div className="flex justify-between items-start">
+                                    <div className="w-12 h-8 bg-yellow-500/20 rounded flex items-center justify-center"><div className="w-8 h-5 border border-yellow-500/50 rounded-sm"></div></div>
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" className="w-10" alt="Mastercard" />
+                                </div>
+                                <div className="space-y-4">
+                                    <div className="font-mono text-xl tracking-widest text-shadow">0000 0000 0000 0000</div>
+                                    <div className="flex justify-between">
+                                        <div><p className="text-[9px] uppercase opacity-70">Card Holder</p><p className="font-bold text-sm">YOUR NAME</p></div>
+                                        <div><p className="text-[9px] uppercase opacity-70">Expires</p><p className="font-bold text-sm">MM/YY</p></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Form */}
+                    <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); addToast('Card added successfully', 'success'); setActiveModal(null); }}>
+                        <div>
+                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t.dashboard.cardHolder}</label>
+                            <input type="text" placeholder="John Doe" className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium outline-none focus:ring-2 focus:ring-emerald-500" />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Card Number</label>
+                            <input type="text" placeholder="0000 0000 0000 0000" className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium outline-none focus:ring-2 focus:ring-emerald-500 font-mono" />
+                        </div>
+                        <div className="flex gap-4">
+                            <div className="flex-1">
+                                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t.dashboard.expiryDate}</label>
+                                <input type="text" placeholder="MM/YY" className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium outline-none focus:ring-2 focus:ring-emerald-500" />
+                            </div>
+                            <div className="flex-1">
+                                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">CVC</label>
+                                <input type="text" placeholder="123" className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium outline-none focus:ring-2 focus:ring-emerald-500" />
+                            </div>
+                        </div>
+                        <button type="submit" className="w-full bg-emerald-600 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-200 hover:shadow-emerald-300 transition-all hover:-translate-y-1">Add Card</button>
+                    </form>
+                </div>
+            </Modal>
+
+            {/* SHARE MODAL */}
+            <ShareModal
+                isOpen={activeModal === 'share_event'}
+                onClose={() => setActiveModal(null)}
+                title="Share this Trip"
+                url="https://borneotrip.com/trips/123"
+            />
         </Layout>
     );
 }
@@ -314,9 +370,14 @@ function OverviewView({ user, t, activeTrip, setActiveModal, packages, locale, r
                                 <span className="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold">{activeTrip.status}</span>
                             </div>
                             <p className="text-sm text-slate-600 mb-4">{t.dashboard.bookingId} #{activeTrip.id}</p>
-                            <button className="text-sm font-bold text-emerald-600 flex items-center gap-1 hover:gap-2 transition-all">
-                                {t.dashboard.openVoucher} <ArrowRight className="w-4 h-4" />
-                            </button>
+                            <div className="flex gap-2 mt-4">
+                                <button onClick={() => router.push(`/dashboard/vouchers/${activeTrip.id}`)} className="flex-1 text-sm font-bold text-emerald-600 border border-emerald-200 py-2.5 rounded-xl hover:bg-emerald-50 transition flex items-center justify-center gap-2">
+                                    {t.dashboard.openVoucher} <ArrowRight className="w-4 h-4" />
+                                </button>
+                                <button onClick={(e) => { e.stopPropagation(); setActiveModal('share_event'); }} className="w-12 flex items-center justify-center border border-gray-200 rounded-xl hover:bg-gray-50 text-gray-500 transition">
+                                    <Share2 className="w-4 h-4" />
+                                </button>
+                            </div>
                         </div>
                     </div>
                 ) : (
@@ -526,27 +587,33 @@ function ProfileView({ user, t, addToast }: ProfileProps) {
     );
 }
 
-function PaymentsView({ t, addToast }: PaymentsProps) {
+function PaymentsView({ t, setActiveModal }: { t: any, setActiveModal: (id: string) => void }) {
     return (
         <div className="space-y-6 max-w-2xl">
             <h2 className="text-2xl font-bold text-slate-900">{t.dashboard.paymentMethods}</h2>
-            <div className="bg-linear-to-r from-slate-900 to-slate-800 rounded-3xl p-8 text-white shadow-xl mb-8 relative overflow-hidden">
+            <div className="bg-linear-to-r from-slate-900 to-slate-800 rounded-3xl p-8 text-white shadow-xl mb-8 relative overflow-hidden group perspective-1000 transition-transform duration-500 hover:rotate-y-6">
                 <div className="absolute top-0 right-0 p-8 opacity-10"><CreditCard className="w-32 h-32" /></div>
-                <p className="font-mono opacity-60 mb-8">**** **** **** 4242</p>
-                <div className="flex justify-between items-end">
-                    <div>
-                        <p className="text-xs uppercase opacity-60 mb-1">{t.dashboard.cardHolder}</p>
-                        <p className="font-bold">JOHN DOE</p>
-                    </div>
-                    <div>
-                        <p className="text-xs uppercase opacity-60 mb-1">{t.dashboard.expiryDate}</p>
-                        <p className="font-bold">12/28</p>
+                <div className="relative z-10">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" className="w-12 h-auto mb-8" alt="Mastercard" />
+                    <p className="font-mono opacity-80 mb-8 text-xl tracking-widest text-shadow">**** **** **** 4242</p>
+                    <div className="flex justify-between items-end">
+                        <div>
+                            <p className="text-[10px] uppercase opacity-60 mb-1 tracking-wider">{t.dashboard.cardHolder}</p>
+                            <p className="font-bold tracking-wide">JOHN DOE</p>
+                        </div>
+                        <div>
+                            <p className="text-[10px] uppercase opacity-60 mb-1 tracking-wider">{t.dashboard.expiryDate}</p>
+                            <p className="font-bold tracking-wide">12/28</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <button className="w-full border-2 border-dashed border-gray-200 rounded-3xl p-6 text-gray-400 font-bold hover:border-emerald-500 hover:text-emerald-600 hover:bg-emerald-50 transition flex items-center justify-center gap-2" onClick={() => addToast('Add Card Mock', 'info')}>
-                <div className="w-8 h-8 rounded-full bg-current flex items-center justify-center text-white">+</div>
+            <button
+                onClick={() => setActiveModal('add_card')}
+                className="w-full border-2 border-dashed border-gray-200 rounded-3xl p-6 text-gray-400 font-bold hover:border-emerald-500 hover:text-emerald-600 hover:bg-emerald-50 transition flex items-center justify-center gap-2 group"
+            >
+                <div className="w-8 h-8 rounded-full bg-gray-100 group-hover:bg-emerald-500 group-hover:text-white flex items-center justify-center text-gray-400 transition">+</div>
                 {t.dashboard.addNewCard}
             </button>
         </div>

@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
 import { useContent } from '@/contexts/ContentContext';
-import { DatePicker } from '@/components/ui';
+import { DatePicker, ShareModal } from '@/components/ui';
 import { motion } from 'framer-motion';
 import { MapPin, Clock, Star, CheckCircle, ArrowRight, ShieldCheck, Share2, Heart } from 'lucide-react';
 import Image from 'next/image';
@@ -16,6 +16,7 @@ export default function PackageDetail() {
    const { t, locale } = useLanguage();
    const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
    const [pax, setPax] = useState(1);
+   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
 
    const pkg = id ? packages.find(p => p.id === id) || null : null;
    const itinerary = id ? ITINERARY_DETAILS.find(i => i.packageId === id) || null : null;
@@ -195,9 +196,14 @@ export default function PackageDetail() {
                         </div>
 
                         <div className="flex gap-4">
-                           <button className="flex-1 py-3 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 font-bold text-sm text-gray-600 flex items-center justify-center gap-2 transition">
+                           <button onClick={() => setIsShareModalOpen(true)} className="flex-1 py-3 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 font-bold text-sm text-gray-600 flex items-center justify-center gap-2 transition">
                               <Share2 className="w-4 h-4" /> {t.packageDetail.share}
                            </button>
+                           <ShareModal
+                              isOpen={isShareModalOpen}
+                              onClose={() => setIsShareModalOpen(false)}
+                              title={title}
+                           />
                            <button className="flex-1 py-3 rounded-xl bg-white border border-gray-200 hover:border-red-200 hover:text-red-500 font-bold text-sm text-gray-600 flex items-center justify-center gap-2 transition group">
                               <Heart className="w-4 h-4 group-hover:fill-red-500" /> {t.packageDetail.wishlist}
                            </button>

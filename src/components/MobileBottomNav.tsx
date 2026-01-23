@@ -31,9 +31,11 @@ export default function MobileBottomNav() {
 
             {/* Center FAB */}
             <div className="relative -top-6">
-                <button className="w-14 h-14 bg-emerald-600 rounded-full text-white shadow-xl shadow-emerald-300 flex items-center justify-center hover:scale-105 active:scale-95 transition-all border-4 border-white ring-1 ring-gray-100">
-                    <Camera className="w-6 h-6" />
-                </button>
+                <Link href="/scan">
+                    <button className={`w-14 h-14 rounded-full text-white shadow-xl shadow-emerald-300 flex items-center justify-center hover:scale-105 active:scale-95 transition-all border-4 border-white ring-1 ring-gray-100 ${router.pathname === '/scan' ? 'bg-emerald-700' : 'bg-emerald-600'}`}>
+                        <Camera className="w-6 h-6" />
+                    </button>
+                </Link>
             </div>
 
             <Link href="/history" className={`flex flex-col items-center gap-1 transition-all duration-300 w-16 ${router.pathname === '/history' ? 'text-emerald-600 -translate-y-2' : 'text-gray-400'}`}>
