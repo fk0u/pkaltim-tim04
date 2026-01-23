@@ -81,6 +81,24 @@ export default function VoucherDetail() {
         }
     };
 
+    const handleSaveImage = async () => {
+        const element = componentRef.current;
+        if (!element) return;
+
+        try {
+            addToast("Generating Image...", "info");
+            const dataUrl = await toPng(element, { cacheBust: true });
+            const link = document.createElement('a');
+            link.download = `eticket-${item?.id || 'doc'}.png`;
+            link.href = dataUrl;
+            link.click();
+            addToast("Image Saved!", "success");
+        } catch (error) {
+            console.error("Image Save Error:", error);
+            addToast("Failed to save image", "error");
+        }
+    };
+
     useEffect(() => {
         if (router.isReady) {
             if (id === 'BK-411375') {
