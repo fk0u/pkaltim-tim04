@@ -94,44 +94,68 @@ export default function ClientDashboard() {
         }
     };
 
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+
+
     return (
         <Layout
             title={`Dashboard - ${user.name}`}
             hideFooter={true}
             hideBottomNav={true}
         >
-            <div className="min-h-screen bg-gray-50 flex pt-16">
+            <div className="min-h-screen bg-gray-50 flex flex-col lg:flex-row lg:pt-16">
 
-                {/* SIDEBAR - DESKTOP */}
-                <aside className="hidden lg:flex flex-col w-72 bg-white border-r border-gray-100 fixed h-[calc(100vh-64px)] top-16 left-0 z-30 shadow-xl shadow-gray-200/50">
-                    <div className="p-6">
-                        <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-3xl p-6 text-white shadow-lg shadow-emerald-200 relative overflow-hidden group">
-                            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition transform group-hover:scale-110"><User className="w-24 h-24" /></div>
+                {/* SIDEBAR - DESKTOP ONLY */}
+                <aside className={`hidden lg:flex flex-col bg-white border-r border-gray-100 fixed h-[calc(100vh-64px)] top-16 left-0 z-30 shadow-xl shadow-gray-200/50 transition-all duration-300 ${isSidebarCollapsed ? 'w-20' : 'w-72'}`}>
+                    {/* Toggle Button */}
+                    <button
+                        onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+                        className="absolute -right-3 top-6 bg-white border border-gray-200 rounded-full p-1 text-gray-500 hover:text-emerald-600 shadow-sm z-50"
+                    >
+                        {isSidebarCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronRight className="w-4 h-4 rotate-180" />}
+                    </button>
+
+                    <div className="p-4">
+                        <div className={`bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl text-white shadow-lg shadow-emerald-200 relative overflow-hidden group transition-all duration-300 ${isSidebarCollapsed ? 'p-2' : 'p-6'}`}>
+                            {!isSidebarCollapsed && (
+                                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition transform group-hover:scale-110"><User className="w-24 h-24" /></div>
+                            )}
                             <div className="relative z-10 flex flex-col items-center text-center">
-                                <div className="p-1 bg-white/20 rounded-full mb-3 backdrop-blur-sm">
-                                    <img src={user.avatar} className="w-16 h-16 rounded-full border-2 border-white object-cover shadow-sm" alt={user.name} />
+                                <div className={`bg-white/20 rounded-full backdrop-blur-sm transition-all duration-300 ${isSidebarCollapsed ? 'p-1 mb-0' : 'p-1 mb-3'}`}>
+                                    <img src={user.avatar} className={`rounded-full border-2 border-white object-cover shadow-sm transition-all duration-300 ${isSidebarCollapsed ? 'w-8 h-8' : 'w-16 h-16'}`} alt={user.name} />
                                 </div>
-                                <h3 className="font-bold text-lg leading-tight mb-1">{user.name}</h3>
-                                <p className="text-[10px] font-bold bg-white/20 px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">{t.dashboard.travelerMember}</p>
+                                {!isSidebarCollapsed && (
+                                    <>
+                                        <h3 className="font-bold text-lg leading-tight mb-1">{user.name}</h3>
+                                        <p className="text-[10px] font-bold bg-white/20 px-3 py-1 rounded-full uppercase tracking-wider backdrop-blur-md">{t.dashboard.travelerMember}</p>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>
 
-                    <nav className="flex-1 px-4 space-y-1 overflow-y-auto custom-scrollbar">
-                        <p className="px-4 text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 mt-2">Menu</p>
+                    <nav className="flex-1 px-3 space-y-1 overflow-y-auto custom-scrollbar">
+                        {!isSidebarCollapsed && <p className="px-4 text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 mt-2">Menu</p>}
                         {sidebarItems.map((item) => (
                             <button
                                 key={item.id}
                                 onClick={() => setActiveTab(item.id)}
-                                className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-300 font-bold text-sm group relative overflow-hidden
+                                title={isSidebarCollapsed ? item.label : ''}
+                                className={`w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-300 font-bold text-sm group relative overflow-hidden
                                     ${activeTab === item.id
                                         ? 'bg-emerald-50 text-emerald-700 shadow-sm'
-                                        : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'}`}
+                                        : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'}
+                                    ${isSidebarCollapsed ? 'justify-center' : ''}`}
                             >
                                 {activeTab === item.id && <div className="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500 rounded-r-full"></div>}
                                 <item.icon className={`w-5 h-5 transition-colors ${activeTab === item.id ? 'text-emerald-600' : 'text-gray-400 group-hover:text-gray-600'}`} />
-                                {item.label}
-                                {activeTab === item.id && <ChevronRight className="w-4 h-4 ml-auto text-emerald-400" />}
+                                {!isSidebarCollapsed && (
+                                    <>
+                                        {item.label}
+                                        {activeTab === item.id && <ChevronRight className="w-4 h-4 ml-auto text-emerald-400" />}
+                                    </>
+                                )}
                             </button>
                         ))}
                     </nav>
@@ -139,67 +163,43 @@ export default function ClientDashboard() {
                     <div className="p-4 border-t border-gray-100">
                         <button
                             onClick={handleLogout}
-                            className="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl text-red-500 hover:bg-red-50 hover:text-red-700 transition-all font-bold text-sm bg-red-50/50"
+                            title={isSidebarCollapsed ? t.dashboard.logout : ''}
+                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 hover:text-red-700 transition-all font-bold text-sm bg-red-50/50 ${isSidebarCollapsed ? 'justify-center' : ''}`}
                         >
                             <LogOut className="w-5 h-5" />
-                            {t.dashboard.logout}
+                            {!isSidebarCollapsed && t.dashboard.logout}
                         </button>
                     </div>
                 </aside>
 
-                {/* MOBILE MENU TOGGLE */}
-                <div className="lg:hidden fixed top-24 right-4 z-40">
-                    <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="bg-white p-3 rounded-full shadow-lg border border-gray-100 text-gray-700">
-                        {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                {/* MOBILE HEADER - FLUTTER STYLE */}
+                <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-100 px-6 py-4 flex justify-between items-center transition-all duration-300">
+                    <div className="flex items-center gap-3">
+                        <div className="relative">
+                            <img src={user.avatar} className="w-10 h-10 rounded-full border border-gray-100 object-cover" alt={user.name} />
+                            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full"></span>
+                        </div>
+                        <div>
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Hello,</p>
+                            <p className="text-sm font-black text-slate-900 leading-none">{user.name.split(' ')[0]}</p>
+                        </div>
+                    </div>
+                    <button className="relative p-2 rounded-full hover:bg-gray-50 transition text-gray-600">
+                        <Bell className="w-5 h-5" />
+                        <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
                     </button>
                 </div>
 
-                {/* MOBILE SIDEBAR OVERLAY */}
-                <AnimatePresence>
-                    {isMobileMenuOpen && (
-                        <motion.div
-                            initial={{ x: '100%' }}
-                            animate={{ x: 0 }}
-                            exit={{ x: '100%' }}
-                            transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                            className="fixed inset-0 z-50 bg-white pt-24 px-6 lg:hidden"
-                        >
-                            <nav className="space-y-4">
-                                {sidebarItems.map((item) => (
-                                    <button
-                                        key={item.id}
-                                        onClick={() => { setActiveTab(item.id); setIsMobileMenuOpen(false); }}
-                                        className={`w-full flex items-center gap-4 px-4 py-4 rounded-2xl transition-all duration-200 font-bold text-lg
-                                            ${activeTab === item.id
-                                                ? 'bg-emerald-50 text-emerald-700'
-                                                : 'text-gray-500'}`}
-                                    >
-                                        <item.icon className="w-6 h-6" />
-                                        {item.label}
-                                    </button>
-                                ))}
-                                <button
-                                    onClick={handleLogout}
-                                    className="w-full flex items-center gap-4 px-4 py-4 rounded-2xl text-red-600 mt-8 font-bold text-lg"
-                                >
-                                    <LogOut className="w-6 h-6" />
-                                    {t.dashboard.logout}
-                                </button>
-                            </nav>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-
 
                 {/* MAIN CONTENT AREA */}
-                <main className="flex-1 lg:ml-72 bg-gray-50 min-h-screen">
-                    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
+                <main className={`flex-1 bg-gray-50 min-h-screen transition-all duration-300 pt-20 pb-24 lg:pt-0 lg:pb-12 ${isSidebarCollapsed ? 'lg:ml-20' : 'lg:ml-72'}`}>
+                    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-12">
                         <AnimatePresence mode="wait">
                             <motion.div
                                 key={activeTab}
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -10 }}
+                                initial={{ opacity: 0, scale: 0.98 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.98 }}
                                 transition={{ duration: 0.2 }}
                             >
                                 {renderContent()}
@@ -207,6 +207,51 @@ export default function ClientDashboard() {
                         </AnimatePresence>
                     </div>
                 </main>
+
+                {/* BOTTOM NAVIGATION - MOBILE ONLY */}
+                <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-6 py-2 lg:hidden z-50 flex justify-between items-end pb-5 pt-3 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+                    {[
+                        { id: 'overview', icon: LayoutDashboard, label: 'Home' },
+                        { id: 'bookings', icon: Calendar, label: 'Trips' },
+                    ].map((item) => (
+                        <button
+                            key={item.id}
+                            onClick={() => setActiveTab(item.id)}
+                            className={`flex flex-col items-center gap-1 transition-all duration-300 w-16 ${activeTab === item.id ? 'text-emerald-600 -translate-y-2' : 'text-gray-400'}`}
+                        >
+                            <div className={`p-2 rounded-2xl transition-all ${activeTab === item.id ? 'bg-emerald-50' : 'bg-transparent'}`}>
+                                <item.icon className={`w-6 h-6 ${activeTab === item.id ? 'fill-emerald-600/20' : ''}`} />
+                            </div>
+                            <span className={`text-[10px] font-bold ${activeTab === item.id ? 'opacity-100' : 'opacity-0 h-0 overflow-hidden'}`}>{item.label}</span>
+                        </button>
+                    ))}
+
+                    {/* Center FAB */}
+                    <div className="relative -top-6">
+                        <button
+                            onClick={() => setActiveModal('voucher')}
+                            className="w-14 h-14 bg-emerald-600 rounded-full text-white shadow-xl shadow-emerald-300 flex items-center justify-center hover:scale-105 active:scale-95 transition-all border-4 border-gray-50"
+                        >
+                            <Camera className="w-6 h-6" />
+                        </button>
+                    </div>
+
+                    {[
+                        { id: 'history', icon: History, label: 'History' },
+                        { id: 'profile', icon: User, label: 'Profile' },
+                    ].map((item) => (
+                        <button
+                            key={item.id}
+                            onClick={() => setActiveTab(item.id)}
+                            className={`flex flex-col items-center gap-1 transition-all duration-300 w-16 ${activeTab === item.id ? 'text-emerald-600 -translate-y-2' : 'text-gray-400'}`}
+                        >
+                            <div className={`p-2 rounded-2xl transition-all ${activeTab === item.id ? 'bg-emerald-50' : 'bg-transparent'}`}>
+                                <item.icon className={`w-6 h-6 ${activeTab === item.id ? 'fill-emerald-600/20' : ''}`} />
+                            </div>
+                            <span className={`text-[10px] font-bold ${activeTab === item.id ? 'opacity-100' : 'opacity-0 h-0 overflow-hidden'}`}>{item.label}</span>
+                        </button>
+                    ))}
+                </div>
 
             </div>
 
