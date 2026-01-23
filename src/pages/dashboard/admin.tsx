@@ -91,16 +91,16 @@ export default function AdminDashboard() {
                             <tbody className="divide-y divide-gray-100">
                                 {recentBookings.map((booking, idx) => (
                                     <tr key={idx} className="hover:bg-gray-50/80 transition group">
-                                        <td className="px-8 py-5 font-mono text-sm font-medium text-emerald-600">#{booking.id.substring(0,8)}</td>
+                                        <td className="px-8 py-5 font-mono text-sm font-medium text-emerald-600">#{booking.id.substring(0, 8)}</td>
                                         <td className="px-8 py-5">
-                                            <div className="font-bold text-gray-900">{booking.userName}</div>
+                                            <div className="font-bold text-gray-900">{booking.customerName}</div>
                                             <div className="text-xs text-gray-400">Guest User</div>
                                         </td>
                                         <td className="px-8 py-5 text-sm text-gray-600">
-                                            <div className="font-medium text-gray-900">{booking.pkgTitle}</div>
+                                            <div className="font-medium text-gray-900">{booking.productName}</div>
                                             <div className="text-xs text-gray-400">{new Date(booking.date).toLocaleDateString()}</div>
                                         </td>
-                                        <td className="px-8 py-5 font-bold text-gray-900">Rp {(booking.totalPrice / 1000000).toFixed(1)}jt</td>
+                                        <td className="px-8 py-5 font-bold text-gray-900">Rp {(booking.amount / 1000000).toFixed(1)}jt</td>
                                         <td className="px-8 py-5">
                                             <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ring-1 ring-inset ${booking.status === 'Paid' ? 'bg-emerald-50 text-emerald-700 ring-emerald-600/20' : 'bg-orange-50 text-orange-700 ring-orange-600/20'}`}>
                                                 {booking.status === 'Paid' ? <CheckCircle className="w-3 h-3" /> : <Clock className="w-3 h-3" />}

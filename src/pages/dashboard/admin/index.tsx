@@ -1,6 +1,6 @@
 import AdminLayout from '@/components/layouts/AdminLayout';
 import { useContent } from '@/contexts/ContentContext';
-import { format } from 'date-fns';
+// import { format } from 'date-fns';
 import {
     Users, ShoppingBag, DollarSign, TrendingUp,
     ArrowUpRight, ArrowDownRight, Package, Calendar
@@ -174,9 +174,9 @@ export default function AdminDashboard() {
                                         <td className="py-4 font-bold text-gray-900">Rp {booking.amount.toLocaleString()}</td>
                                         <td className="py-4">
                                             <span className={`px-3 py-1 rounded-full text-xs font-bold ${booking.status === 'Paid' ? 'bg-emerald-100 text-emerald-700' :
-                                                    booking.status === 'Pending' ? 'bg-amber-100 text-amber-700' :
-                                                        booking.status === 'Cancelled' ? 'bg-red-100 text-red-700' :
-                                                            'bg-blue-100 text-blue-700'
+                                                booking.status === 'Pending' ? 'bg-amber-100 text-amber-700' :
+                                                    booking.status === 'Cancelled' ? 'bg-red-100 text-red-700' :
+                                                        'bg-blue-100 text-blue-700'
                                                 }`}>
                                                 {booking.status}
                                             </span>

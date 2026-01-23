@@ -39,7 +39,7 @@ export default function PartnerDashboard() {
   // In a real app, we would filter by partnerId. Here we assume the partner owns all packages they see or created.
   const myPackages = packages;
   const myBookings = bookings; // Simplifying assumption: Partner sees all bookings
-  const totalRevenue = myBookings.reduce((sum, b) => sum + b.totalPrice, 0);
+  const totalRevenue = myBookings.reduce((sum, b) => sum + b.amount, 0);
 
   useEffect(() => {
     if (!user) {

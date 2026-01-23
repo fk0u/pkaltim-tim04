@@ -76,7 +76,7 @@ export default function InvoicePage() {
                                 <h2 className="text-4xl font-light opacity-50 mb-1 print:text-gray-300">INVOICE</h2>
                                 <p className="font-mono font-bold text-xl">#{booking.id}</p>
                                 <p className="text-sm opacity-70 print:text-gray-500 mt-1">
-                                    {new Date(booking.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                                    {new Date(booking.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
                                 </p>
                             </div>
                         </div>
@@ -113,13 +113,13 @@ export default function InvoicePage() {
                                 <tbody className="text-slate-700">
                                     <tr className="border-b border-gray-50">
                                         <td className="py-6">
-                                            <p className="font-bold text-gray-900 mb-1">{booking.pkgTitle}</p>
+                                            <p className="font-bold text-gray-900 mb-1">{booking.productName}</p>
                                             <p className="text-sm text-gray-500">{new Date(booking.date).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
                                             <p className="text-xs text-gray-400 mt-1 line-clamp-1">{booking.location}</p>
                                         </td>
-                                        <td className="py-6 text-center font-medium">{booking.pax}x</td>
-                                        <td className="py-6 text-right font-medium">Rp {(booking.totalPrice / booking.pax).toLocaleString('id-ID')}</td>
-                                        <td className="py-6 text-right font-bold text-gray-900">Rp {booking.totalPrice.toLocaleString('id-ID')}</td>
+                                        <td className="py-6 text-center font-medium">{booking.totalPax}x</td>
+                                        <td className="py-6 text-right font-medium">Rp {(booking.amount / booking.totalPax).toLocaleString('id-ID')}</td>
+                                        <td className="py-6 text-right font-bold text-gray-900">Rp {booking.amount.toLocaleString('id-ID')}</td>
                                     </tr>
                                     {/* Additional Fees example */}
                                     <tr className="border-b border-gray-50">
@@ -137,7 +137,7 @@ export default function InvoicePage() {
                             <div className="w-1/2">
                                 <div className="flex justify-between py-2 border-b border-gray-100">
                                     <span className="text-gray-500">Subtotal</span>
-                                    <span className="font-medium text-gray-900">Rp {booking.totalPrice.toLocaleString('id-ID')}</span>
+                                    <span className="font-medium text-gray-900">Rp {booking.amount.toLocaleString('id-ID')}</span>
                                 </div>
                                 <div className="flex justify-between py-2 border-b border-gray-100">
                                     <span className="text-gray-500">Tax & Fees</span>
@@ -145,7 +145,7 @@ export default function InvoicePage() {
                                 </div>
                                 <div className="flex justify-between py-4">
                                     <span className="font-bold text-xl text-emerald-900">Total</span>
-                                    <span className="font-black text-2xl text-emerald-600">Rp {booking.totalPrice.toLocaleString('id-ID')}</span>
+                                    <span className="font-black text-2xl text-emerald-600">Rp {booking.amount.toLocaleString('id-ID')}</span>
                                 </div>
                             </div>
                         </div>

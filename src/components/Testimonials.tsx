@@ -17,9 +17,9 @@ export default function Testimonials() {
 
          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="text-center mb-16">
-               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{t.home?.testimonialsTitle || "Kata Mereka"}</h2>
+               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{t.homepage?.testimonialsTitle || "Kata Mereka"}</h2>
                <p className="text-gray-600 max-w-2xl mx-auto">
-                  {t.home?.testimonialsDesc || "Cerita asli dari para petualang yang telah menjadi bagian dari gerakan pariwisata berkelanjutan BorneoTrip."}
+                  {t.homepage?.testimonialsDesc || "Cerita asli dari para petualang yang telah menjadi bagian dari gerakan pariwisata berkelanjutan BorneoTrip."}
                </p>
             </div>
 
@@ -52,7 +52,7 @@ export default function Testimonials() {
 
             {/* Clients/Logos (Static Mock) */}
             <div className="mt-20 pt-10 border-t border-emerald-100/50">
-               <p className="text-center text-sm font-bold text-gray-400 uppercase tracking-widest mb-8">{t.home?.supportedBy || "Didukung Oleh"}</p>
+               <p className="text-center text-sm font-bold text-gray-400 uppercase tracking-widest mb-8">{t.homepage?.supportedBy || "Didukung Oleh"}</p>
                <div className="flex flex-wrap justify-center gap-8 md:gap-16 opacity-50 grayscale hover:grayscale-0 transition duration-500">
                   {['Kemenparekraf', 'Pemprov Kaltim', 'WWF Indonesia', 'Bankaltimtara'].map((partner) => (
                      <span key={partner} className="text-xl font-bold text-gray-800">{partner}</span>

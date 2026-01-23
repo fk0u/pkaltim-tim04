@@ -73,9 +73,9 @@ export default function HistoryPage() {
                                     <div className="flex flex-col md:flex-row gap-6">
                                         {/* Image Thumbnail */}
                                         <div className="w-full md:w-32 h-32 rounded-xl bg-gray-100 overflow-hidden relative shrink-0">
-                                            <img src={booking.pkgImage} alt={booking.pkgTitle} className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
+                                            <img src={booking.productImage} alt={booking.productName} className="w-full h-full object-cover group-hover:scale-110 transition duration-500" />
                                             <div className="absolute top-2 left-2 bg-black/50 backdrop-blur px-2 py-0.5 rounded text-[10px] font-bold text-white">
-                                                {booking.pkgTitle.includes('Ticket') ? 'EVENT' : 'TRIP'}
+                                                {booking.productName.includes('Ticket') ? 'EVENT' : 'TRIP'}
                                             </div>
                                         </div>
 
@@ -83,7 +83,7 @@ export default function HistoryPage() {
                                         <div className="flex-1">
                                             <div className="flex justify-between items-start mb-2">
                                                 <div>
-                                                    <h3 className="font-bold text-lg text-gray-900 line-clamp-1">{booking.pkgTitle}</h3>
+                                                    <h3 className="font-bold text-lg text-gray-900 line-clamp-1">{booking.productName}</h3>
                                                     <p className="text-xs text-gray-400 font-mono">{t.history.card.id}: {booking.id}</p>
                                                 </div>
                                                 <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide ${booking.status === 'Paid' ? 'bg-emerald-50 text-emerald-600' :
@@ -108,7 +108,7 @@ export default function HistoryPage() {
                                             <div className="flex items-center justify-between pt-4 border-t border-gray-50">
                                                 <div className="text-sm">
                                                     <span className="text-gray-500">{t.history.card.totalScale}:</span>
-                                                    <span className="font-bold text-gray-900 ml-2">Rp {booking.totalPrice.toLocaleString('id-ID')}</span>
+                                                    <span className="font-bold text-gray-900 ml-2">Rp {booking.amount.toLocaleString('id-ID')}</span>
                                                 </div>
                                                 <Link
                                                     href={`/invoice/${booking.id}`}
