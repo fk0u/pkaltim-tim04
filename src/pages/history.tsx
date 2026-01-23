@@ -3,7 +3,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useBooking } from '@/contexts/BookingContext';
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Calendar, MapPin, Search, Filter, Download, ChevronRight, FileText, ArrowLeft } from 'lucide-react';
+import { Calendar, MapPin, Search, Filter, Download, ChevronRight, FileText, ArrowLeft, Ticket } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -110,12 +110,20 @@ export default function HistoryPage() {
                                                     <span className="text-gray-500">{t.history.card.totalScale}:</span>
                                                     <span className="font-bold text-gray-900 ml-2">Rp {booking.amount.toLocaleString('id-ID')}</span>
                                                 </div>
-                                                <Link
-                                                    href={`/invoice/${booking.id}`}
-                                                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-50 text-emerald-700 text-sm font-bold hover:bg-emerald-100 transition"
-                                                >
-                                                    <FileText className="w-4 h-4" /> {t.history.card.invoiceBtn}
-                                                </Link>
+                                                <div className="flex gap-2">
+                                                    <Link
+                                                        href={`/dashboard/vouchers/${booking.id}?tab=ticket`}
+                                                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 text-white text-sm font-bold hover:bg-emerald-700 transition shadow-lg shadow-emerald-100"
+                                                    >
+                                                        <Ticket className="w-4 h-4" /> E-Ticket
+                                                    </Link>
+                                                    <Link
+                                                        href={`/dashboard/vouchers/${booking.id}`}
+                                                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-50 text-emerald-700 text-sm font-bold hover:bg-emerald-100 transition"
+                                                    >
+                                                        <FileText className="w-4 h-4" /> Invoice
+                                                    </Link>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

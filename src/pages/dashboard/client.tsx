@@ -407,33 +407,70 @@ function OverviewView({ user, t, activeTrip, setActiveModal, packages, locale, r
 
 function BookingsView({ bookings, t, router }: BookingsProps) {
     return (
-        <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-slate-900">{t.dashboard.myBookings}</h2>
+        <div className="space-y-8">
+            <div className="flex justify-between items-end">
+                <h2 className="text-2xl font-bold text-slate-900">{t.dashboard.myBookings}</h2>
+            </div>
+
             {bookings.length === 0 ? (
                 <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
                     <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400"><Calendar className="w-8 h-8" /></div>
                     <h3 className="font-bold text-gray-900 mb-2">{t.dashboard.noBookings}</h3>
                     <p className="text-gray-500 max-w-xs mx-auto mb-6">{t.dashboard.bookingsDesc}</p>
-                    <button onClick={() => router.push('/packages')} className="bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold">{t.dashboard.findPackage}</button>
+                    <button onClick={() => router.push('/packages')} className="bg-emerald-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-emerald-200 hover:shadow-emerald-300 hover:-translate-y-1 transition-all">{t.dashboard.findPackage}</button>
                 </div>
             ) : (
-                <div className="space-y-4">
+                <div className="grid gap-6">
                     {bookings.map((booking) => (
-                        <div key={booking.id} className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-6">
-                            <div className="w-full md:w-32 h-32 rounded-2xl bg-gray-200 overflow-hidden shrink-0">
-                                <img src={booking.productImage} className="w-full h-full object-cover" alt="img" />
-                            </div>
-                            <div className="flex-1">
-                                <div className="flex justify-between items-start mb-2">
-                                    <div>
-                                        <h3 className="font-bold text-lg text-slate-900">{booking.productName}</h3>
-                                        <p className="text-sm text-slate-500">{new Date(booking.date).toLocaleDateString()} • {booking.totalPax} Pax</p>
-                                    </div>
-                                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${booking.status === 'Paid' ? 'bg-emerald-100 text-emerald-700' : 'bg-orange-100 text-orange-700'}`}>{booking.status}</span>
+                        <div key={booking.id} className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-6 group hover:shadow-md transition-all">
+                            <div className="w-full md:w-48 h-48 md:h-auto rounded-2xl bg-gray-200 overflow-hidden shrink-0 relative">
+                                <img src={booking.productImage} className="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt="img" />
+                                <div className="absolute top-3 left-3">
+                                    <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide backdrop-blur-md shadow-sm ${booking.status === 'Paid' ? 'bg-emerald-500/90 text-white' : 'bg-orange-500/90 text-white'}`}>{booking.status}</span>
                                 </div>
-                                <div className="mt-4 flex items-center justify-between">
-                                    <p className="font-bold text-slate-900">IDR {booking.amount.toLocaleString('id-ID')}</p>
-                                    <button className="text-sm font-bold text-emerald-600 border border-emerald-200 px-4 py-2 rounded-xl hover:bg-emerald-50 transition">Details</button>
+                            </div>
+                            <div className="flex-1 flex flex-col justify-between">
+                                <div>
+                                    <div className="flex justify-between items-start mb-3">
+                                        <div>
+                                            <h3 className="font-bold text-xl text-slate-900 mb-1">{booking.productName}</h3>
+                                            <p className="text-sm text-slate-500 font-medium">#{booking.id}</p>
+                                        </div>
+                                        <p className="font-black text-xl text-emerald-600">IDR {booking.amount.toLocaleString('id-ID')}</p>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                                        <div className="bg-gray-50 p-3 rounded-xl">
+                                            <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">Date</p>
+                                            <div className="flex items-center gap-2 font-bold text-slate-700 text-sm">
+                                                <Calendar className="w-4 h-4 text-emerald-500" /> {new Date(booking.date).toLocaleDateString()}
+                                            </div>
+                                        </div>
+                                        <div className="bg-gray-50 p-3 rounded-xl">
+                                            <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">Location</p>
+                                            <div className="flex items-center gap-2 font-bold text-slate-700 text-sm">
+                                                <MapPin className="w-4 h-4 text-emerald-500" /> {booking.location.split(',')[0]}
+                                            </div>
+                                        </div>
+                                        <div className="bg-gray-50 p-3 rounded-xl">
+                                            <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">Travelers</p>
+                                            <div className="flex items-center gap-2 font-bold text-slate-700 text-sm">
+                                                <User className="w-4 h-4 text-emerald-500" /> {booking.totalPax} Pax
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-wrap gap-3 pt-4 border-t border-gray-100">
+                                    <button onClick={() => router.push(`/dashboard/vouchers/${booking.id}`)} className="flex-1 bg-emerald-600 text-white px-4 py-2.5 rounded-xl font-bold text-sm hover:bg-emerald-700 transition shadow-lg shadow-emerald-100 flex items-center justify-center gap-2">
+                                        <Ticket className="w-4 h-4" /> View Voucher
+                                    </button>
+                                    <button onClick={() => router.push(`/dashboard/vouchers/${booking.id}?tab=invoice`)} className="flex-1 bg-white border border-gray-200 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-sm hover:bg-gray-50 transition flex items-center justify-center gap-2">
+                                        <FileText className="w-4 h-4" /> Invoice
+                                    </button>
+                                    <button onClick={() => router.push(`/packages`)} className="px-4 py-2.5 rounded-xl font-bold text-sm text-gray-500 hover:text-emerald-600 hover:bg-emerald-50 transition border border-transparent hover:border-emerald-100">
+                                        Book Again
+                                    </button>
                                 </div>
                             </div>
                         </div>
