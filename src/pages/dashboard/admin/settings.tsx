@@ -42,7 +42,6 @@ export default function SettingsPage() {
         { id: 'profile', label: 'Profil Admin', icon: User },
         { id: 'general', label: 'Umum & Platform', icon: Globe },
         { id: 'security', label: 'Keamanan', icon: Shield },
-        { id: 'security', label: 'Keamanan', icon: Shield },
         { id: 'notifications', label: 'Notifikasi', icon: Bell },
         { id: 'export', label: 'Ekspor Data', icon: Download },
     ];

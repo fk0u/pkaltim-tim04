@@ -95,11 +95,15 @@ export default function ClientDashboard() {
     };
 
     return (
-        <Layout title={`Dashboard - ${user.name}`}>
-            <div className="min-h-screen bg-gray-50 flex pt-20">
+        <Layout
+            title={`Dashboard - ${user.name}`}
+            hideFooter={true}
+            hideBottomNav={true}
+        >
+            <div className="min-h-screen bg-gray-50 flex pt-16">
 
                 {/* SIDEBAR - DESKTOP */}
-                <aside className="hidden lg:flex flex-col w-72 bg-white border-r border-gray-100 fixed h-[calc(100vh-80px)] top-20 left-0 z-30 shadow-xl shadow-gray-200/50">
+                <aside className="hidden lg:flex flex-col w-72 bg-white border-r border-gray-100 fixed h-[calc(100vh-64px)] top-16 left-0 z-30 shadow-xl shadow-gray-200/50">
                     <div className="p-6">
                         <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-3xl p-6 text-white shadow-lg shadow-emerald-200 relative overflow-hidden group">
                             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition transform group-hover:scale-110"><User className="w-24 h-24" /></div>

@@ -12,6 +12,8 @@ interface LayoutProps {
   keywords?: string;
   url?: string;
   type?: 'website' | 'article';
+  hideFooter?: boolean;
+  hideBottomNav?: boolean;
 }
 
 export default function Layout({
@@ -22,7 +24,9 @@ export default function Layout({
   ogImage = 'https://borneotrip-platform.vercel.app/images/og-default.jpg', // Fallback image (needs to be created or hosted)
   keywords = 'borneo tourism, ecotourism, kalimantan timur, travel indonesia, sustainable travel',
   url = 'https://borneotrip.com',
-  type = 'website'
+  type = 'website',
+  hideFooter = false,
+  hideBottomNav = false
 }: LayoutProps) {
   const siteTitle = title.includes('BorneoTrip') ? title : `${title} | BorneoTrip`;
 
@@ -57,8 +61,8 @@ export default function Layout({
         {children}
       </main>
 
-      <Footer />
-      <BottomNav />
+      {!hideFooter && <Footer />}
+      {!hideBottomNav && <BottomNav />}
     </div>
   );
 }
