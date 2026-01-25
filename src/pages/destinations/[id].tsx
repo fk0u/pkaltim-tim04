@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { ShareModal, useToast } from '@/components/ui';
 import { useContent } from '@/contexts/ContentContext';
 import { Destination } from '@/types';
+import TripPlanner from '@/components/features/TripPlanner';
 
 export default function DestinationDetail() {
     const router = useRouter();
@@ -287,6 +288,8 @@ export default function DestinationDetail() {
 
                         </div>
 
+                        </div>
+
                         {/* RIGHT: STICKY BOOKING WIDGET (4 Cols) */}
                         <div className="lg:col-span-4 relative">
                             <div className="sticky top-28 space-y-6">
@@ -310,7 +313,7 @@ export default function DestinationDetail() {
                                             <Trophy className="w-5 h-5 text-amber-500" />
                                             <div>
                                                 <div className="text-[10px] font-bold text-gray-400 uppercase">Paket Tersedia</div>
-                                                <div className="font-bold text-gray-900">12 Paket Ekowisata</div>
+                                                <div className="font-bold text-gray-900">{relatedPackages.length} Paket Ekowisata</div>
                                             </div>
                                         </div>
                                     </div>
@@ -319,6 +322,9 @@ export default function DestinationDetail() {
                                         Cari Paket Sekarang <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
                                     </Link>
                                 </div>
+
+                                {/* Logistics Widget */}
+                                <TripPlanner destinationName={region.name} coordinates={region.coordinates} />
 
                                 {/* Share / Save */}
                                 <div className="flex gap-4">
@@ -350,6 +356,6 @@ export default function DestinationDetail() {
                 title={`Bagikan ${region.name}`}
                 url={typeof window !== 'undefined' ? window.location.href : ''}
             />
-        </Layout>
+        </Layout >
     );
 }
