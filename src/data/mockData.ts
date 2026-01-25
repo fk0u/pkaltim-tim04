@@ -221,7 +221,7 @@ export const EVENTS: Event[] = [
     ],
     gallery: [
       'https://images.unsplash.com/photo-1596401057633-565652b5d249?auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1518531933037-91b2f5d2294c?auto=format&fit=crop&q=80'
+      'https://images.unsplash.com/photo-1596401057633-565652b5d249?auto=format&fit=crop&q=80'
     ]
   },
   {
@@ -363,7 +363,7 @@ export const PACKAGES: TourPackage[] = [
       id: 'Berenang di danau dua rasa Labuan Cermin dan berinteraksi ramah dengan Hiu Paus di Talisayan.',
       en: 'Swim in the dual-flavored Lake Labuan Cermin and interact sustainably with Whale Sharks in Talisayan.'
     },
-    imageUrl: 'https://images.unsplash.com/photo-1582967788606-a171f1080ca8?auto=format&fit=crop&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1544376798-89aa6b82c6cd?auto=format&fit=crop&q=80',
     facilities: ['Speedboat', 'Alat Snorkeling', 'Dokumentasi Underwater', 'Meals'],
   },
   {
@@ -405,7 +405,7 @@ export const PACKAGES: TourPackage[] = [
       id: 'Menginap di lodge eksklusif di tengah hutan rehabilitasi Orangutan BOS Foundation.',
       en: 'Stay at an exclusive lodge in the middle of the BOS Foundation Orangutan rehabilitation forest.'
     },
-    imageUrl: 'https://images.unsplash.com/photo-1599540209228-468ae39e2468?auto=format&fit=crop&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1628045958742-1e944c699986?auto=format&fit=crop&q=80',
     facilities: ['Ecolodge Stay', 'Orangutan Feeding', 'Forest School', 'Vegetarian Meals'],
   },
   {

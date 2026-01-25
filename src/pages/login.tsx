@@ -82,7 +82,7 @@ export default function LoginPage() {
                 {/* Immersive Background */}
                 <div className="absolute inset-0 z-0">
                     <Image
-                        src="https://images.unsplash.com/photo-1518182170546-0766aa6f51cb?auto=format&fit=crop&q=80"
+                        src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80"
                         alt="Background"
                         fill
                         className="object-cover"

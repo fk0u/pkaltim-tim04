@@ -244,7 +244,7 @@ export default function Home() {
          <section className="py-20 bg-emerald-900 text-white relative overflow-hidden">
             <div className="absolute inset-0 z-0">
                <Image
-                  src="https://images.unsplash.com/photo-1518531933037-91b2f5d2294c?auto=format&fit=crop&q=80"
+                  src="https://images.unsplash.com/photo-1596401057633-565652b5d249?auto=format&fit=crop&q=80"
                   alt="Background"
                   fill
                   className="object-cover opacity-10 mix-blend-overlay"

@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "**" }
     ],
   },
+  experimental: {
+    // @ts-ignore
+    allowedDevOrigins: ["100.79.40.44", "localhost:3000"]
+  }
 };
 
 export default nextConfig;

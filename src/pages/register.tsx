@@ -17,9 +17,9 @@ export default function RegisterPage() {
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
-        
+
         const success = await register(name, email, password);
-        
+
         if (!success) {
             alert('Registration failed. Email might be already registered.');
         }
@@ -36,8 +36,8 @@ export default function RegisterPage() {
             <div className="min-h-screen flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden font-sans">
                 {/* Back Button */}
                 <div className="absolute top-6 left-6 z-20">
-                    <Link 
-                        href="/" 
+                    <Link
+                        href="/"
                         className="flex items-center gap-2 text-white/80 hover:text-white transition-all group px-4 py-2 rounded-full hover:bg-white/10 backdrop-blur-sm"
                     >
                         <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
@@ -48,7 +48,7 @@ export default function RegisterPage() {
                 {/* Immersive Background */}
                 <div className="absolute inset-0 z-0">
                     <Image
-                        src="https://images.unsplash.com/photo-1518182170546-0766aa6f51cb?auto=format&fit=crop&q=80"
+                        src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80"
                         alt="Background"
                         fill
                         className="object-cover"
