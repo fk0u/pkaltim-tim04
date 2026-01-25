@@ -6,15 +6,39 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { ShareModal, useToast } from '@/components/ui';
 
 export default function DestinationDetail() {
     const router = useRouter();
     const { id } = router.query;
     const { scrollY } = useScroll();
+    const { addToast } = useToast();
 
     // State for hydration safe rendering
     const [region, setRegion] = useState<typeof REGIONS[0] | null>(null);
     const [isReady, setIsReady] = useState(false);
+    const [isLiked, setIsLiked] = useState(false);
+    const [showShareModal, setShowShareModal] = useState(false);
+
+    // Load initial like state
+    useEffect(() => {
+        if (id) {
+            const saved = localStorage.getItem(`wishlist_destination_${id}`);
+            if (saved) setIsLiked(true);
+        }
+    }, [id]);
+
+    const handleLike = () => {
+        if (isLiked) {
+            localStorage.removeItem(`wishlist_destination_${id}`);
+            setIsLiked(false);
+            addToast('Dihapus dari wishlist', 'info');
+        } else {
+            localStorage.setItem(`wishlist_destination_${id}`, 'true');
+            setIsLiked(true);
+            addToast('Disimpan ke wishlist', 'success');
+        }
+    };
 
     // Parallax Effect
     const yHero = useTransform(scrollY, [0, 500], [0, 150]);
@@ -284,11 +308,18 @@ export default function DestinationDetail() {
 
                                 {/* Share / Save */}
                                 <div className="flex gap-4">
-                                    <button className="flex-1 py-4 rounded-2xl bg-white border border-gray-200 text-gray-600 font-bold text-sm hover:bg-gray-50 transition flex items-center justify-center gap-2">
+                                    <button
+                                        onClick={() => setShowShareModal(true)}
+                                        className="flex-1 py-4 rounded-2xl bg-white border border-gray-200 text-gray-600 font-bold text-sm hover:bg-gray-50 transition flex items-center justify-center gap-2"
+                                    >
                                         <Share2 className="w-4 h-4" /> Bagikan
                                     </button>
-                                    <button className="flex-1 py-4 rounded-2xl bg-white border border-gray-200 text-gray-600 font-bold text-sm hover:text-red-500 transition flex items-center justify-center gap-2 group">
-                                        <Heart className="w-4 h-4 group-hover:fill-red-500 transition" /> Simpan
+                                    <button
+                                        onClick={handleLike}
+                                        className={`flex-1 py-4 rounded-2xl border font-bold text-sm transition flex items-center justify-center gap-2 group ${isLiked ? 'bg-red-50 border-red-200 text-red-600' : 'bg-white border-gray-200 text-gray-600 hover:text-red-500'}`}
+                                    >
+                                        <Heart className={`w-4 h-4 transition ${isLiked ? 'fill-red-600 text-red-600' : 'group-hover:fill-red-500'}`} />
+                                        {isLiked ? 'Disimpan' : 'Simpan'}
                                     </button>
                                 </div>
 
@@ -298,6 +329,13 @@ export default function DestinationDetail() {
                     </div>
                 </div>
             </div>
+
+            <ShareModal
+                isOpen={showShareModal}
+                onClose={() => setShowShareModal(false)}
+                title={`Bagikan ${region.name}`}
+                url={typeof window !== 'undefined' ? window.location.href : ''}
+            />
         </Layout>
     );
 }
