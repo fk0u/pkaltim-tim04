@@ -9,6 +9,7 @@ import { ShareModal, useToast } from '@/components/ui';
 import { useContent } from '@/contexts/ContentContext';
 import { Destination } from '@/types';
 import TripPlanner from '@/components/features/TripPlanner';
+import SmartItinerary from '@/components/features/SmartItinerary';
 
 export default function DestinationDetail() {
     const router = useRouter();
@@ -266,6 +267,11 @@ export default function DestinationDetail() {
                                         </div>
                                     )}
                                 </div>
+                            </section>
+
+                            {/* AI Smart Itinerary Widget */}
+                            <section className="mt-12">
+                                <SmartItinerary destination={region.name} />
                             </section>
 
                             {/* Packages Section */}

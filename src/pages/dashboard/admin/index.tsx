@@ -5,10 +5,7 @@ import {
     Users, ShoppingBag, DollarSign, TrendingUp,
     ArrowUpRight, ArrowDownRight, Package, Calendar
 } from 'lucide-react';
-import {
-    AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-    BarChart, Bar, Legend, PieChart, Pie, Cell
-} from 'recharts';
+import DashboardAnalytics from '@/components/admin/DashboardAnalytics';
 
 export default function AdminDashboard() {
     const { bookings, customers, packages, events } = useContent();
@@ -84,69 +81,7 @@ export default function AdminDashboard() {
                     />
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Revenue Chart */}
-                    <div className="lg:col-span-2 bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-                        <div className="flex justify-between items-center mb-6">
-                            <h3 className="font-bold text-lg text-gray-800">Revenue Overview</h3>
-                            <select className="bg-gray-50 border-none rounded-lg text-sm font-medium px-3 py-1 text-gray-600">
-                                <option>Last 6 Months</option>
-                                <option>Last Year</option>
-                            </select>
-                        </div>
-                        <div className="h-80">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <AreaChart data={revenueData}>
-                                    <defs>
-                                        <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#10B981" stopOpacity={0.1} />
-                                            <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
-                                        </linearGradient>
-                                    </defs>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-                                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#9CA3AF', fontSize: 12 }} />
-                                    <YAxis axisLine={false} tickLine={false} tick={{ fill: '#9CA3AF', fontSize: 12 }} />
-                                    <Tooltip
-                                        contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                                    />
-                                    <Area type="monotone" dataKey="revenue" stroke="#10B981" strokeWidth={3} fillOpacity={1} fill="url(#colorRevenue)" />
-                                </AreaChart>
-                            </ResponsiveContainer>
-                        </div>
-                    </div>
-
-                    {/* Booking Status Chart */}
-                    <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-                        <h3 className="font-bold text-lg text-gray-800 mb-6">Booking Status</h3>
-                        <div className="h-64 relative">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <PieChart>
-                                    <Pie
-                                        data={statusData}
-                                        cx="50%"
-                                        cy="50%"
-                                        innerRadius={60}
-                                        outerRadius={80}
-                                        fill="#8884d8"
-                                        paddingAngle={5}
-                                        dataKey="value"
-                                    >
-                                        {statusData.map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={STATUS_COLORS[index % STATUS_COLORS.length]} />
-                                        ))}
-                                    </Pie>
-                                    <Tooltip />
-                                    <Legend verticalAlign='bottom' height={36} />
-                                </PieChart>
-                            </ResponsiveContainer>
-                            {/* Center Text */}
-                            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[20px] text-center">
-                                <p className="text-3xl font-black text-gray-800">{bookings.length}</p>
-                                <p className="text-xs font-bold text-gray-400 uppercase">Total</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <DashboardAnalytics />
 
                 {/* Recent Transactions */}
                 <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
