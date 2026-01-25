@@ -1,7 +1,21 @@
-import { TESTIMONIALS } from '@/data/mockData';
+import { useEffect, useState } from 'react';
 import { Star, Quote } from 'lucide-react';
+import { Testimonial } from '@/types';
 
 export default function Testimonials() {
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+
+  useEffect(() => {
+      fetch('/api/testimonials')
+          .then(res => res.json())
+          .then(data => {
+              if (Array.isArray(data)) {
+                  setTestimonials(data);
+              }
+          })
+          .catch(err => console.error(err));
+  }, []);
+
   return (
     <section className="py-20 bg-emerald-50 relative overflow-hidden">
       {/* Background decoration */}
@@ -20,7 +34,7 @@ export default function Testimonials() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {TESTIMONIALS.map((t) => (
+          {testimonials.map((t) => (
             <div key={t.id} className="bg-white p-8 rounded-2xl shadow-lg border border-emerald-100 flex flex-col hover:-translate-y-2 transition duration-300">
                <div className="mb-6 text-emerald-300">
                   <Quote className="w-10 h-10" />
@@ -37,7 +51,7 @@ export default function Testimonials() {
                      <p className="text-xs text-gray-500">{t.role}</p>
                   </div>
                   <div className="ml-auto flex gap-0.5 text-yellow-400">
-                     {[...Array(t.rating)].map((_, i) => (
+                     {[...Array(Number(t.rating) || 5)].map((_, i) => (
                         <Star key={i} className="w-4 h-4 fill-current" />
                      ))}
                   </div>

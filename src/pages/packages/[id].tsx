@@ -1,31 +1,42 @@
 import Layout from '@/components/Layout';
-import { ITINERARY_DETAILS } from '@/data/mockData';
-import { useContent } from '@/contexts/ContentContext';
 import { useRouter } from 'next/router';
 import { Clock, MapPin, ShieldCheck, CheckCircle2, Utensils, Bus, Camera, BedDouble, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { DatePicker, Counter, useToast } from '@/components/ui';
+import { TourPackage, ItineraryDetail } from '@/types';
+
+// Extended type for detail view (includes itinerary)
+interface PackageDetail extends TourPackage {
+    itinerary?: ItineraryDetail;
+}
 
 export default function PackageDetail() {
    const router = useRouter();
    const { id } = router.query;
    const { addToast } = useToast();
-   const { packages } = useContent();
+
+   const [pkg, setPkg] = useState<PackageDetail | null>(null);
+   const [loading, setLoading] = useState(true);
 
    const [date, setDate] = useState<Date | undefined>(undefined);
    const [pax, setPax] = useState(1);
 
-   // In a real app, fetch data based on ID. 
-   // For mock, we check if the ID matches our single itinerary detail source or fallback.
-   // We'll just look up the package info from PACKAGES and use the single ITINERARY_DETAIL for the timeline.
+   useEffect(() => {
+       if (id) {
+           fetch(`/api/packages/${id}`)
+               .then(res => res.json())
+               .then(data => {
+                   if (data.success) {
+                       setPkg(data.data);
+                   }
+                   setLoading(false);
+               })
+               .catch(() => setLoading(false));
+       }
+   }, [id]);
 
-   const pkg = packages.find(p => p.id === id);
-   // Find specific itinerary for this package, or use the first one as fallback/template
-   const itinerary = ITINERARY_DETAILS.find(i => i.packageId === id) || ITINERARY_DETAILS[0];
-
-   // Fix: Consistent loading state for Server/Client hydration
-   if (!pkg) {
+   if (loading || !pkg) {
       return (
          <Layout>
             <div className="min-h-screen flex items-center justify-center text-gray-500 font-medium bg-slate-50">
@@ -38,7 +49,14 @@ export default function PackageDetail() {
       );
    }
 
-   const totalPrice = pkg.price * pax;
+   // Safe access to itinerary
+   const itinerary = pkg.itinerary || {
+       days: [],
+       badges: []
+   };
+
+   // Fallback for badges if API structure differs or empty
+   const badges = itinerary.badges || [];
 
    const handleBooking = () => {
       if (!date) {
@@ -46,7 +64,7 @@ export default function PackageDetail() {
          return;
       }
 
-      const totalPrice = pkg.price * pax;
+      const totalPrice = (pkg.price || 0) * pax;
       router.push({
          pathname: '/checkout',
          query: {
@@ -60,6 +78,9 @@ export default function PackageDetail() {
          }
       });
    };
+
+   // Safe total price
+   const currentTotalPrice = (pkg.price || 0) * pax;
 
    return (
       <Layout title={`${pkg.title} - BorneoTrip`}>
@@ -81,9 +102,9 @@ export default function PackageDetail() {
                className="absolute bottom-0 left-0 right-0 p-8 md:p-16 text-white max-w-7xl mx-auto"
             >
                <div className="flex flex-wrap gap-2 mb-4">
-                  {itinerary.badges.map((badge, i) => (
+                  {badges.map((badge, i) => (
                      <motion.span
-                        key={badge}
+                        key={i}
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.8 + (i * 0.1) }}
@@ -123,7 +144,7 @@ export default function PackageDetail() {
                   <div className="bg-gray-50 rounded-2xl p-6">
                      <h3 className="font-bold text-gray-900 mb-4 text-sm uppercase tracking-widest">Fasilitas Premium Termasuk</h3>
                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {pkg.facilities.map(f => (
+                        {pkg.facilities?.map(f => (
                            <div key={f} className="flex items-center gap-3 text-gray-700 bg-white p-3 rounded-xl shadow-sm border border-gray-100">
                               <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
                               <span className="font-medium">{f}</span>
@@ -139,7 +160,7 @@ export default function PackageDetail() {
                   </h2>
 
                   <div className="space-y-12">
-                     {itinerary.days.map((day) => (
+                     {itinerary.days?.map((day: any) => (
                         <motion.div
                            key={day.day}
                            initial={{ opacity: 0, x: -20 }}
@@ -148,13 +169,13 @@ export default function PackageDetail() {
                            transition={{ delay: 0.1 }}
                            className="relative pl-8 border-l-2 border-emerald-100/50"
                         >
-                           <div className="absolute -left-2.25 top-0 w-4 h-4 rounded-full bg-emerald-500 ring-4 ring-emerald-50 shadow-lg"></div>
+                           <div className="absolute -left-2.25 top-0 w-4 h-4 rounded-full bg-emerald-50 ring-4 ring-emerald-50 shadow-lg"></div>
                            <h3 className="text-xl font-bold text-gray-900 mb-6 bg-emerald-50/50 inline-block px-4 py-2 rounded-lg border border-emerald-100">
                               Hari {day.day}: <span className="text-emerald-800">{day.title}</span>
                            </h3>
 
                            <div className="space-y-8">
-                              {day.activities.map((act, idx) => {
+                              {day.activities.map((act: any, idx: number) => {
                                  let Icon = Camera;
                                  let colorClass = "bg-blue-100 text-blue-600 ring-blue-50";
 
@@ -216,11 +237,11 @@ export default function PackageDetail() {
                         <div>
                            <div className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-1">Total Harga</div>
                            <div className="text-3xl font-black text-gray-900 tracking-tight">
-                              Rp {totalPrice.toLocaleString('id-ID')}
+                              Rp {currentTotalPrice.toLocaleString('id-ID')}
                            </div>
                            {pax > 1 && (
                               <div className="text-xs text-green-600 font-medium mt-1">
-                                 Rp {pkg.price.toLocaleString('id-ID')} x {pax} orang
+                                 Rp {(pkg.price || 0).toLocaleString('id-ID')} x {pax} orang
                               </div>
                            )}
                         </div>
@@ -274,7 +295,7 @@ export default function PackageDetail() {
          <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/90 backdrop-blur-xl border-t border-gray-200 lg:hidden z-50 flex items-center justify-between shadow-[0_-5px_20px_rgba(0,0,0,0.1)]">
             <div>
                <div className="text-xs text-gray-500 font-bold uppercase">Total Harga</div>
-               <div className="text-xl font-black text-emerald-700">Rp {totalPrice.toLocaleString('id-ID')}</div>
+               <div className="text-xl font-black text-emerald-700">Rp {currentTotalPrice.toLocaleString('id-ID')}</div>
                <div className="text-[10px] text-gray-400">/{pax} pax</div>
             </div>
             <button

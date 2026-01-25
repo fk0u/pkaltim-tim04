@@ -1,6 +1,7 @@
 import Layout from '@/components/Layout';
 import { useAuth } from '@/contexts/AuthContext';
-import { useContent, Package as PackageType } from '@/contexts/ContentContext';
+import { useContent } from '@/contexts/ContentContext';
+import { TourPackage as PackageType } from '@/types';
 import { useBooking } from '@/contexts/BookingContext';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -15,7 +16,7 @@ export default function PartnerDashboard() {
   const { packages, addPackage, deletePackage } = useContent();
   const { bookings } = useBooking();
   const router = useRouter();
-  const { showToast } = useToast();
+  const { addToast } = useToast();
   
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState<Partial<PackageType>>({
@@ -54,7 +55,7 @@ export default function PartnerDashboard() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title || !formData.price) {
-      showToast('Mohon lengkapi data paket', 'error');
+      addToast('Mohon lengkapi data paket', 'error');
       return;
     }
 
@@ -65,7 +66,7 @@ export default function PartnerDashboard() {
     };
 
     addPackage(newPackage as any); 
-    showToast('Paket wisata berhasil ditambahkan!', 'success');
+    addToast('Paket wisata berhasil ditambahkan!', 'success');
     setIsModalOpen(false);
     setFormData({
         title: '',
@@ -82,7 +83,7 @@ export default function PartnerDashboard() {
   const handleDelete = (id: string, name: string) => {
       if(confirm(`Yakin ingin menghapus paket ${name}?`)) {
           deletePackage(id);
-          showToast('Paket berhasil dihapus', 'success');
+          addToast('Paket berhasil dihapus', 'success');
       }
   }
 

@@ -1,11 +1,40 @@
-import { useRef } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { REGIONS } from '@/data/mockData';
-import { MapPin, Users, Ruler, Building, ArrowRight, Grid, TreePine } from 'lucide-react';
+import { MapPin, Users, Ruler, Building, Grid, TreePine } from 'lucide-react'; // Removed ArrowRight if unused
 import Link from 'next/link';
 import InteractiveMap from './InteractiveMap';
 
+// Define minimalist type here or import
+interface Region {
+    id: string;
+    name: string;
+    imageUrl: string;
+    type: string;
+    density: string;
+    capital: string;
+    area: string;
+    population: string;
+    districts: number;
+    villages: number;
+    leader: string;
+    destinations: string[]; // or object
+}
+
 export default function RegionExplorer() {
+    const [regions, setRegions] = useState<Region[]>([]);
+
+    useEffect(() => {
+        fetch('/api/regions')
+            .then(res => res.json())
+            .then(data => {
+                if(data.success) {
+                    // Map or cast if necessary, API should return compatible structure or we adjust here
+                    setRegions(data.data);
+                }
+            })
+            .catch(err => console.error(err));
+    }, []);
+
     return (
         <section className="py-20 md:py-24 bg-gray-50 overflow-hidden" id="region-explorer">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -55,7 +84,7 @@ export default function RegionExplorer() {
 
                 {/* Grid Card */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8">
-                    {REGIONS.map((region, index) => (
+                    {regions.map((region, index) => (
                         <motion.div
                             key={region.id}
                             initial={{ opacity: 0, y: 30 }}
@@ -145,12 +174,12 @@ export default function RegionExplorer() {
                                         <TreePine className="w-3 h-3" /> Wisata Unggulan
                                     </span>
                                     <div className="flex flex-wrap gap-2">
-                                        {region.destinations?.slice(0, 3).map((dest, i) => (
+                                        {Array.isArray(region.destinations) && region.destinations.slice(0, 3).map((dest, i) => (
                                             <span key={i} className="px-2 py-1 bg-emerald-50 text-emerald-700 rounded text-[10px] font-bold border border-emerald-100">
                                                 {dest}
                                             </span>
                                         ))}
-                                        {region.destinations && region.destinations.length > 3 && (
+                                        {Array.isArray(region.destinations) && region.destinations.length > 3 && (
                                             <span className="px-2 py-1 bg-gray-50 text-gray-500 rounded text-[10px] font-bold border border-gray-100">
                                                 +{region.destinations.length - 3}
                                             </span>

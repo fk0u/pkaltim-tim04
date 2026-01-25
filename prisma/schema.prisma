@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -17,7 +17,7 @@ model User {
   password  String
   role      String    @default("client") // client, mitra, admin
   onboardingCompleted Boolean @default(false)
-  preferences String? // JSON string: { interests: [], budget: "", travelStyle: "" }
+  preferences String? @db.Text // JSON string: { interests: [], budget: "", travelStyle: "" }
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   bookings  Booking[]
@@ -28,15 +28,15 @@ model Event {
   title       String
   location    String
   date        String
-  description String
+  description String   @db.Text
   imageUrl    String
   category    String
-  tags        String   // JSON
+  tags        String   @db.Text // JSON
   price       String?
   organizer   String?
   ticketCount Int?     @default(0)
-  schedule    String?  // JSON
-  gallery     String?  // JSON
+  schedule    String?  @db.Text // JSON
+  gallery     String?  @db.Text // JSON
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   bookings    Booking[]
@@ -50,9 +50,9 @@ model TourPackage {
   location    String
   rating      Float
   ecoRating   Int
-  description String
+  description String   @db.Text
   imageUrl    String
-  facilities  String   // JSON
+  facilities  String   @db.Text // JSON
   itinerary   ItineraryDetail?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -64,8 +64,8 @@ model ItineraryDetail {
   packageId     String      @unique
   package       TourPackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
   title         String
-  badges        String      // JSON
-  days          String      // JSON
+  badges        String      @db.Text // JSON
+  days          String      @db.Text // JSON
 }
 
 model Booking {
@@ -86,7 +86,7 @@ model Testimonial {
   role      String
   avatarUrl String
   rating    Int
-  content   String
+  content   String   @db.Text
 }
 
 model Region {
@@ -103,5 +103,5 @@ model Region {
   latitude    Float
   longitude   Float
   imageUrl    String
-  destinations String   // JSON
+  destinations String   @db.Text // JSON
 }

@@ -180,7 +180,7 @@ export default function CheckoutPage() {
                                                         <h3 className="font-bold text-gray-900 mb-1">Anda belum login</h3>
                                                         <p className="text-sm text-gray-600 mb-4">Masuk untuk menyimpan riwayat pesanan dan mendapatkan poin.</p>
                                                         <button 
-                                                            onClick={() => login('client')} 
+                                                            onClick={() => router.push('/login')} 
                                                             className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl text-sm font-bold transition shadow-lg shadow-blue-200"
                                                         >
                                                             Login Sekarang
