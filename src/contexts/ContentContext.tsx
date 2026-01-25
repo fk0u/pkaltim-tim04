@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { EVENTS, PACKAGES, TESTIMONIALS, MOCK_USERS, MOCK_BOOKINGS } from '@/data/mockData';
-import { TourPackage, Event, User, Booking } from '@/types';
+import { EVENTS, PACKAGES, TESTIMONIALS, MOCK_USERS, MOCK_BOOKINGS, REGIONS } from '@/data/mockData';
+import { TourPackage, Event, User, Booking, Destination } from '@/types';
 
 // Extend types slightly for internal management if needed
 interface ContentContextType {
@@ -19,6 +19,12 @@ interface ContentContextType {
     updateBookingStatus: (id: string, status: Booking['status']) => void;
     deleteBooking: (id: string) => void;
 
+    // Destinations
+    destinations: Destination[];
+    addDestination: (dest: Destination) => void;
+    updateDestination: (dest: Destination) => void;
+    deleteDestination: (id: number) => void;
+
     refreshData: () => void;
 }
 
@@ -29,6 +35,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     const [events, setEvents] = useState<Event[]>([]);
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [customers, setCustomers] = useState<User[]>([]);
+    const [destinations, setDestinations] = useState<Destination[]>([]);
 
     useEffect(() => {
         // Initialize from LocalStorage or Mock Data
@@ -36,6 +43,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         const storedEvents = localStorage.getItem('bt_events_v2');
         const storedBookings = localStorage.getItem('bt_bookings_v1');
         const storedCustomers = localStorage.getItem('bt_customers_v1');
+        const storedDestinations = localStorage.getItem('bt_destinations_v1');
 
         if (storedPackages) {
             setPackages(JSON.parse(storedPackages));
@@ -73,6 +81,13 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
             setCustomers(MOCK_USERS as User[]);
             localStorage.setItem('bt_customers_v1', JSON.stringify(MOCK_USERS));
         }
+
+        if (storedDestinations) {
+            setDestinations(JSON.parse(storedDestinations));
+        } else {
+            setDestinations(REGIONS);
+            localStorage.setItem('bt_destinations_v1', JSON.stringify(REGIONS));
+        }
     }, []);
 
     // Sync to LocalStorage on updates
@@ -87,6 +102,11 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         if (bookings.length > 0) localStorage.setItem('bt_bookings_v1', JSON.stringify(bookings));
     }, [bookings]);
+
+    useEffect(() => {
+        // Only save if we have data to avoid overwriting with empty on initial mount before load
+        if (destinations.length > 0) localStorage.setItem('bt_destinations_v1', JSON.stringify(destinations));
+    }, [destinations]);
 
     // Packages & Events Methods
     const addPackage = (pkg: TourPackage) => {
@@ -122,11 +142,26 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         setBookings(prev => prev.filter(b => b.id !== id));
     };
 
+    // Destination Methods
+    const addDestination = (dest: Destination) => {
+        setDestinations(prev => [dest, ...prev]);
+    };
+
+    const updateDestination = (dest: Destination) => {
+        setDestinations(prev => prev.map(d => d.id === dest.id ? dest : d));
+    };
+
+    const deleteDestination = (id: number) => {
+        setDestinations(prev => prev.filter(d => d.id !== id));
+    };
+
     const refreshData = () => {
         const storedPackages = localStorage.getItem('bt_packages_v2');
         const storedEvents = localStorage.getItem('bt_events_v2');
+        const storedDestinations = localStorage.getItem('bt_destinations_v1');
         if (storedPackages) setPackages(JSON.parse(storedPackages));
         if (storedEvents) setEvents(JSON.parse(storedEvents));
+        if (storedDestinations) setDestinations(JSON.parse(storedDestinations));
     }
 
     return (
@@ -135,6 +170,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
             events,
             bookings,
             customers,
+            destinations,
             addPackage,
             deletePackage,
             updatePackage,
@@ -143,6 +179,9 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
             updateEvent,
             updateBookingStatus,
             deleteBooking,
+            addDestination,
+            updateDestination,
+            deleteDestination,
             refreshData
         }}>
             {children}

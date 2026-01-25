@@ -113,3 +113,19 @@ export interface Booking {
   productImage?: string; // Denormalized
   location?: string; // Denormalized
 }
+
+export interface Destination {
+  id: number;
+  name: string;
+  type: string;
+  capital: string;
+  leader: string;
+  area: string;
+  population: string;
+  density: string;
+  districts: number;
+  villages: string;
+  coordinates: { lat: number; lng: number };
+  destinations: string[]; // List of strings to maintain backward compatibility or manual spots
+  imageUrl: string;
+}

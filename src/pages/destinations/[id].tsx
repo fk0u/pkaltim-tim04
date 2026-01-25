@@ -1,21 +1,23 @@
 import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
-import { REGIONS } from '@/data/mockData';
 import { MapPin, Users, Ruler, Building, ArrowRight, Grid, Trophy, Share2, Heart, Camera } from 'lucide-react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { ShareModal, useToast } from '@/components/ui';
+import { useContent } from '@/contexts/ContentContext';
+import { Destination } from '@/types';
 
 export default function DestinationDetail() {
     const router = useRouter();
     const { id } = router.query;
     const { scrollY } = useScroll();
     const { addToast } = useToast();
+    const { destinations, packages } = useContent();
 
     // State for hydration safe rendering
-    const [region, setRegion] = useState<typeof REGIONS[0] | null>(null);
+    const [region, setRegion] = useState<Destination | null>(null);
     const [isReady, setIsReady] = useState(false);
     const [isLiked, setIsLiked] = useState(false);
     const [showShareModal, setShowShareModal] = useState(false);
@@ -44,14 +46,19 @@ export default function DestinationDetail() {
     const yHero = useTransform(scrollY, [0, 500], [0, 150]);
     const opacityHero = useTransform(scrollY, [0, 300], [1, 0]);
 
+    // Initial Data Load
     useEffect(() => {
         if (router.isReady) {
-            // Wait for router to be ready to avoid mismatch
-            const found = REGIONS.find(r => r.id === Number(id));
+            const found = destinations.find(r => r.id === Number(id));
             setRegion(found || null);
             setIsReady(true);
         }
-    }, [router.isReady, id]);
+    }, [router.isReady, id, destinations]);
+
+    // Derived State: Related Packages based on Location matching Destination Name
+    const relatedPackages = packages.filter(pkg =>
+        region && pkg.location.toLowerCase().includes(region.name.toLowerCase())
+    );
 
     // PREVENT HYDRATION MISMATCH: Render nothing until client is ready
     if (!isReady) return null;
@@ -219,17 +226,18 @@ export default function DestinationDetail() {
                                     </div>
                                 </div>
 
+
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    {region.destinations?.map((dest, idx) => (
-                                        <div key={idx} className={`group relative rounded-[2rem] overflow-hidden cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-500 ${idx === 0 ? 'md:col-span-2 aspect-[2/1]' : 'aspect-[4/3]'}`}>
+                                    {relatedPackages.slice(0, 4).map((pkg, idx) => (
+                                        <Link href={`/packages/${pkg.id}`} key={pkg.id} className={`group relative rounded-[2rem] overflow-hidden cursor-pointer shadow-lg hover:shadow-2xl transition-all duration-500 ${idx === 0 ? 'md:col-span-2 aspect-2/1' : 'aspect-4/3'}`}>
                                             <Image
-                                                src={`https://source.unsplash.com/random/800x600?nature,landscape,${idx},${region.name}`}
+                                                src={pkg.imageUrl}
                                                 className="object-cover group-hover:scale-110 transition duration-1000"
-                                                alt={dest}
+                                                alt={typeof pkg.title === 'string' ? pkg.title : (pkg.title as any).en}
                                                 fill
                                                 sizes="(max-width: 768px) 100vw, 50vw"
                                             />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
+                                            <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
 
                                             <div className="absolute top-6 right-6">
                                                 <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition transform translate-y-4 group-hover:translate-y-0">
@@ -239,17 +247,23 @@ export default function DestinationDetail() {
 
                                             <div className="absolute bottom-0 left-0 p-6 md:p-8">
                                                 <span className="inline-block px-3 py-1 rounded-lg bg-emerald-500 text-white text-[10px] font-bold uppercase tracking-wider mb-3 shadow-lg">
-                                                    Nature & wildlife
+                                                    Package
                                                 </span>
                                                 <h3 className={`font-black text-white leading-tight mb-2 ${idx === 0 ? 'text-3xl md:text-4xl' : 'text-2xl'}`}>
-                                                    {dest}
+                                                    {typeof pkg.title === 'string' ? pkg.title : (pkg.title as any).en}
                                                 </h3>
                                                 <p className="text-gray-300 text-sm md:text-base line-clamp-2 max-w-lg opacity-0 group-hover:opacity-100 transition duration-500 delay-100 transform translate-y-2 group-hover:translate-y-0">
-                                                    Nikmati keindahan {dest} yang memukau dengan pengalaman ekowisata yang tak terlupakan.
+                                                    {typeof pkg.description === 'string' ? pkg.description : (pkg.description as any).en}
                                                 </p>
                                             </div>
-                                        </div>
+                                        </Link>
                                     ))}
+                                    {relatedPackages.length === 0 && (
+                                        <div className="col-span-full py-12 text-center bg-gray-50 rounded-3xl border border-dashed border-gray-200">
+                                            <p className="text-gray-500 font-medium mb-4">Belum ada paket wisata khusus untuk destinasi ini.</p>
+                                            <Link href="/packages" className="text-emerald-600 font-bold hover:underline">Lihat semua paket lainnya</Link>
+                                        </div>
+                                    )}
                                 </div>
                             </section>
 
