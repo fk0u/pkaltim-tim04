@@ -1,13 +1,39 @@
-import { useRef } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { REGIONS } from '@/data/mockData';
-import { MapPin, Users, Ruler, Building, ArrowRight, Grid, TreePine } from 'lucide-react';
+import { MapPin, Users, Ruler, Building, Grid, TreePine } from 'lucide-react'; // Removed ArrowRight if unused
 import Link from 'next/link';
 import InteractiveMap from './InteractiveMap';
-import { useLanguage } from '@/contexts/LanguageContext';
+
+// Define minimalist type here or import
+interface Region {
+    id: string;
+    name: string;
+    imageUrl: string;
+    type: string;
+    density: string;
+    capital: string;
+    area: string;
+    population: string;
+    districts: number;
+    villages: number;
+    leader: string;
+    destinations: string[]; // or object
+}
 
 export default function RegionExplorer() {
-    const { t } = useLanguage();
+    const [regions, setRegions] = useState<Region[]>([]);
+
+    useEffect(() => {
+        fetch('/api/regions')
+            .then(res => res.json())
+            .then(data => {
+                if(data.success) {
+                    // Map or cast if necessary, API should return compatible structure or we adjust here
+                    setRegions(data.data);
+                }
+            })
+            .catch(err => console.error(err));
+    }, []);
 
     return (
         <section className="py-20 md:py-24 bg-gray-50 overflow-hidden" id="region-explorer">
@@ -21,7 +47,7 @@ export default function RegionExplorer() {
                         viewport={{ once: true }}
                         className="inline-flex items-center gap-2 bg-emerald-100/50 border border-emerald-200 text-emerald-700 px-4 py-1.5 rounded-full text-sm font-bold tracking-wide uppercase mb-6"
                     >
-                        <MapPin className="w-4 h-4" /> {t.region.badge}
+                        <MapPin className="w-4 h-4" /> Jelajahi Destinasi
                     </motion.div>
                     <motion.h2
                         initial={{ opacity: 0, y: 20 }}
@@ -30,7 +56,7 @@ export default function RegionExplorer() {
                         transition={{ delay: 0.1 }}
                         className="text-3xl md:text-5xl font-black text-gray-900 mb-6"
                     >
-                        {t.region.title} <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500">{t.region.titleHighlight}</span>
+                        10 Mutiara <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-teal-500">Kalimantan Timur</span>
                     </motion.h2>
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}
@@ -39,7 +65,7 @@ export default function RegionExplorer() {
                         transition={{ delay: 0.2 }}
                         className="text-lg text-gray-500 max-w-3xl mx-auto leading-relaxed"
                     >
-                        {t.region.subtitle}
+                        Telusuri data lengkap demografi dan potensi wisata dari 7 Kabupaten dan 3 Kota. Data resmi BPS 2025.
                     </motion.p>
                 </div>
 
@@ -52,13 +78,13 @@ export default function RegionExplorer() {
                 >
                     <InteractiveMap />
                     <p className="text-center text-gray-400 text-xs mt-4 flex items-center justify-center gap-1">
-                        <MapPin className="w-3 h-3" /> {t.region.mapHint}
+                        <MapPin className="w-3 h-3" /> Klik marker untuk melihat detail singkat wilayah.
                     </p>
                 </motion.div>
 
                 {/* Grid Card */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8">
-                    {REGIONS.map((region, index) => (
+                    {regions.map((region, index) => (
                         <motion.div
                             key={region.id}
                             initial={{ opacity: 0, y: 30 }}
@@ -91,12 +117,12 @@ export default function RegionExplorer() {
                                     <div className="flex justify-between items-end mb-1">
                                         <h3 className="text-2xl font-bold leading-tight">{region.name}</h3>
                                         <div className="text-right">
-                                            <div className="text-[10px] uppercase font-bold text-gray-400">{t.region.density}</div>
+                                            <div className="text-[10px] uppercase font-bold text-gray-400">Padat Penduduk</div>
                                             <div className="font-bold text-emerald-300">{region.density} <span className="text-[10px] text-gray-400">/km²</span></div>
                                         </div>
                                     </div>
                                     <p className="text-gray-300 text-sm flex items-center gap-1 font-medium">
-                                        <Building className="w-3 h-3" /> {t.region.capital}: {region.capital}
+                                        <Building className="w-3 h-3" /> Ibu Kota: {region.capital}
                                     </p>
                                 </div>
                             </div>
@@ -107,25 +133,25 @@ export default function RegionExplorer() {
                                 <div className="grid grid-cols-2 gap-4 mb-6 pb-6 border-b border-dashed border-gray-100">
                                     <div>
                                         <span className="text-gray-400 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 mb-1">
-                                            <Ruler className="w-3 h-3" /> {t.region.area}
+                                            <Ruler className="w-3 h-3" /> Luas Wilayah
                                         </span>
                                         <span className="text-gray-900 font-bold text-sm">{region.area} km²</span>
                                     </div>
                                     <div>
                                         <span className="text-gray-400 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 mb-1">
-                                            <Users className="w-3 h-3" /> {t.region.population}
+                                            <Users className="w-3 h-3" /> Total Populasi
                                         </span>
                                         <span className="text-gray-900 font-bold text-sm">{region.population}</span>
                                     </div>
                                     <div>
                                         <span className="text-gray-400 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 mb-1">
-                                            <Grid className="w-3 h-3" /> {t.region.districts}
+                                            <Grid className="w-3 h-3" /> Kecamatan
                                         </span>
                                         <span className="text-gray-900 font-bold text-sm">{region.districts}</span>
                                     </div>
                                     <div>
                                         <span className="text-gray-400 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 mb-1">
-                                            <Building className="w-3 h-3" /> {t.region.villages}
+                                            <Building className="w-3 h-3" /> Desa/Kel
                                         </span>
                                         <span className="text-gray-900 font-bold text-sm">{region.villages}</span>
                                     </div>
@@ -133,7 +159,7 @@ export default function RegionExplorer() {
 
                                 {/* Leader */}
                                 <div className="mb-6">
-                                    <span className="block text-gray-400 text-[10px] font-bold uppercase tracking-wider mb-1">{t.region.leader}</span>
+                                    <span className="block text-gray-400 text-[10px] font-bold uppercase tracking-wider mb-1">Pemimpin Daerah</span>
                                     <div className="flex items-center gap-2">
                                         <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
                                             <Users className="w-4 h-4" />
@@ -145,15 +171,15 @@ export default function RegionExplorer() {
                                 {/* Top Destinations */}
                                 <div className="mb-6">
                                     <span className="block text-gray-400 text-[10px] font-bold uppercase tracking-wider mb-2 flex items-center gap-1">
-                                        <TreePine className="w-3 h-3" /> {t.region.topDestinations}
+                                        <TreePine className="w-3 h-3" /> Wisata Unggulan
                                     </span>
                                     <div className="flex flex-wrap gap-2">
-                                        {region.destinations?.slice(0, 3).map((dest, i) => (
+                                        {Array.isArray(region.destinations) && region.destinations.slice(0, 3).map((dest, i) => (
                                             <span key={i} className="px-2 py-1 bg-emerald-50 text-emerald-700 rounded text-[10px] font-bold border border-emerald-100">
                                                 {dest}
                                             </span>
                                         ))}
-                                        {region.destinations && region.destinations.length > 3 && (
+                                        {Array.isArray(region.destinations) && region.destinations.length > 3 && (
                                             <span className="px-2 py-1 bg-gray-50 text-gray-500 rounded text-[10px] font-bold border border-gray-100">
                                                 +{region.destinations.length - 3}
                                             </span>
@@ -162,7 +188,7 @@ export default function RegionExplorer() {
                                 </div>
 
                                 <Link href={`/destinations/${region.id}`} className="mt-auto w-full py-3 rounded-xl bg-gray-900 hover:bg-emerald-600 text-white font-bold text-sm transition flex items-center justify-center gap-2 shadow-lg shadow-gray-200">
-                                    {t.region.viewProfile}
+                                    Jelajahi Profil Lengkap
                                 </Link>
                             </div>
                         </motion.div>

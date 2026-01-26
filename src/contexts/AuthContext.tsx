@@ -10,15 +10,14 @@ interface User {
     role: UserRole;
     avatar?: string;
     onboardingCompleted?: boolean;
-    joinDate?: string;
-    totalSpent?: number;
-    status?: 'Active' | 'Inactive';
+    preferences?: any;
+    token?: string;
 }
 
 interface AuthContextType {
     user: User | null;
     isAuthenticated: boolean;
-    login: (email: string, password: string) => Promise<boolean>; // Return success/fail
+    login: (email: string, password: string) => Promise<boolean>; 
     logout: () => void;
     register: (name: string, email: string, password: string) => Promise<boolean>;
     loginSocial: (provider: string) => void;
@@ -31,54 +30,65 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const router = useRouter();
 
-    // Load user from local storage on mount (simple persistence)
+    // Load user/token from local storage on mount
     useEffect(() => {
         const storedUser = localStorage.getItem('borneotrip_user');
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
+        const token = localStorage.getItem('borneotrip_token');
+        if (storedUser && token) {
+            setUser({ ...JSON.parse(storedUser), token });
+            // Optionally verify token with /api/auth/me here
         }
     }, []);
 
-    const updateUserProfile = (data: Partial<User>) => {
-        if (user) {
-            const updatedUser = { ...user, ...data };
-            setUser(updatedUser);
-            localStorage.setItem('borneotrip_user', JSON.stringify(updatedUser));
+    const updateUserProfile = async (data: Partial<User>) => {
+        if (user && user.token) {
+             try {
+                const res = await fetch('/api/user/profile', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${user.token}`
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (res.ok) {
+                    const updatedUser = await res.json();
+                    const mergedUser = { ...user, ...updatedUser, token: user.token };
+                    setUser(mergedUser);
+                    localStorage.setItem('borneotrip_user', JSON.stringify(mergedUser));
+                }
+             } catch (e) {
+                 console.error('Update profile failed', e);
+             }
         }
     };
 
-
     const login = async (email: string, password: string) => {
-        // MOCK LOGIN WITHOUT DB
         try {
-            // Simulate API delay
-            await new Promise(resolve => setTimeout(resolve, 500));
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
 
-            // Allow generic login or specific mock
-            const mockUser: User = {
-                id: 'mock-user-1',
-                name: 'Pengguna Demo',
-                email: email,
-                role: 'client',
-                avatar: `https://i.pravatar.cc/150?u=${email}`,
-                onboardingCompleted: true
-            };
+            const data = await res.json();
 
-            // Special case for admin login
-            if (email.includes('admin')) {
-                mockUser.role = 'admin';
-                mockUser.name = 'Admin Demo';
-            } else if (email.includes('mitra')) {
-                mockUser.role = 'mitra' as any; // Cast temporarily if type issues exist
-                mockUser.name = 'Mitra Demo';
+            if (!res.ok) {
+                console.error(data.message);
+                return false;
             }
 
-            setUser(mockUser);
-            localStorage.setItem('borneotrip_user', JSON.stringify(mockUser));
-
-            if (mockUser.role === 'admin' || mockUser.role === 'operator') {
+            const { user: userData, token } = data;
+            const userWithToken = { ...userData, token };
+            
+            setUser(userWithToken);
+            localStorage.setItem('borneotrip_user', JSON.stringify(userData));
+            localStorage.setItem('borneotrip_token', token);
+            
+            if (userData.role === 'admin' || userData.role === 'operator') {
                 router.push('/dashboard/admin');
-            } else if (mockUser.role === 'mitra' as any) {
+            } else if (userData.role === 'mitra') {
                 router.push('/dashboard/partner');
             } else {
                 router.push('/dashboard/client');
@@ -91,36 +101,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     const loginSocial = (provider: string) => {
-        // Mock Social Login - just treat as client
-        const mockUser: User = {
-            id: `social-${Date.now()}`,
-            name: 'Dian Sastro',
-            email: 'dian@example.com',
-            role: 'client',
-            avatar: `https://i.pravatar.cc/150?u=dian`,
-            onboardingCompleted: true
-        };
-        setUser(mockUser);
-        localStorage.setItem('borneotrip_user', JSON.stringify(mockUser));
-        router.push('/dashboard/client');
+        console.log('Social login not implemented yet', provider);
     }
 
     const register = async (name: string, email: string, password: string) => {
-        // MOCK REGISTER WITHOUT DB
         try {
-            await new Promise(resolve => setTimeout(resolve, 500));
+            const res = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, password })
+            });
 
-            const userData: User = {
-                id: `user-${Date.now()}`,
-                name,
-                email,
-                role: 'client',
-                avatar: `https://i.pravatar.cc/150?u=${email}`,
-                onboardingCompleted: false // New users need onboarding
-            };
-            setUser(userData);
-            localStorage.setItem('borneotrip_user', JSON.stringify(userData));
-            router.push('/onboarding');
+            if (!res.ok) {
+                return false;
+            }
+            
+            // Auto login or redirect to login?
+            // Original code redirected to onboarding.
+            // Let's redirect to login for security or auto-login if token returned (register usually doesn't return token unless designed so).
+            // My register API implementation returns user object WITHOUT token (Step 101).
+            // So redirect to login.
+            
+            router.push('/login');
             return true;
         } catch (e) {
             console.error(e);
@@ -131,6 +133,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const logout = () => {
         setUser(null);
         localStorage.removeItem('borneotrip_user');
+        localStorage.removeItem('borneotrip_token');
         router.push('/login');
     };
 
