@@ -1,5 +1,6 @@
 import AdminLayout from '@/components/layouts/AdminLayout';
 import { useContent } from '@/contexts/ContentContext';
+import { useBooking } from '@/contexts/BookingContext';
 // import { format } from 'date-fns';
 import {
     Users, ShoppingBag, DollarSign, TrendingUp,
@@ -8,7 +9,8 @@ import {
 import DashboardAnalytics from '@/components/admin/DashboardAnalytics';
 
 export default function AdminDashboard() {
-    const { bookings, customers, packages, events } = useContent();
+    const { customers, packages, events } = useContent();
+    const { bookings } = useBooking();
 
     // Stats Calculations
     const totalRevenue = bookings

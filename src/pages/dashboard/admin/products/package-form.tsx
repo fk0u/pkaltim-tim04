@@ -5,10 +5,11 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
 import { Save, ArrowLeft, Plus, Trash2, Image as ImageIcon, CheckCircle, List, Clock, MapPin, DollarSign, Star, Globe, XCircle } from 'lucide-react';
-import { TourPackage, ItineraryDetail } from '@/types';
+import { TourPackage, ItineraryDetail, LocalizedString } from '@/types';
 import { ITINERARY_DETAILS } from '@/data/mockData';
 import ImageUpload from '@/components/ui/ImageUpload';
 import LocationInput from '@/components/ui/LocationInput';
+import { ensureLocalized } from '@/utils/localization';
 
 export default function PackageForm() {
     const router = useRouter();
@@ -20,26 +21,19 @@ export default function PackageForm() {
     const emptyPackage: TourPackage = {
         id: '',
         title: { id: '', en: '' },
-        description: { id: '', en: '' },
-        price: 0,
         duration: '',
+        price: 0,
         location: '',
+        rating: 4.5,
+        ecoRating: 4,
+        description: { id: '', en: '' },
         imageUrl: '',
-        rating: 5.0,
-        ecoRating: 5,
-        facilities: []
-    };
-
-    const emptyItinerary: ItineraryDetail = {
-        id: '',
-        packageId: '',
-        title: '',
-        badges: [],
-        days: []
+        facilities: [],
+        quota: 20
     };
 
     const [formData, setFormData] = useState<TourPackage>(emptyPackage);
-    const [itineraryData, setItineraryData] = useState<ItineraryDetail>(emptyItinerary);
+    const [itineraryData, setItineraryData] = useState<ItineraryDetail | null>(null);
     const [activeLang, setActiveLang] = useState<'id' | 'en'>('id');
     const [isLoading, setIsLoading] = useState(false);
 
@@ -47,13 +41,16 @@ export default function PackageForm() {
         if (isEditMode && id && packages.length > 0) {
             const pkg = packages.find(p => p.id === id);
             if (pkg) {
-                setFormData(pkg);
+                setFormData({
+                    ...pkg,
+                    title: ensureLocalized(pkg.title),
+                    description: ensureLocalized(pkg.description)
+                });
                 // Load itinerary from mock/store (Mock for now as it's separate)
                 const itin = ITINERARY_DETAILS.find(i => i.packageId === id);
                 if (itin) setItineraryData(itin);
             }
         } else {
-            // Generate ID for new package
             setFormData(prev => ({ ...prev, id: `pkg_${Date.now()}` }));
         }
     }, [id, packages, isEditMode]);
@@ -65,14 +62,14 @@ export default function PackageForm() {
     const handleLocalizedChange = (field: 'title' | 'description', value: string) => {
         setFormData(prev => ({
             ...prev,
-            [field]: { ...prev[field], [activeLang]: value }
+            [field]: { ...(prev[field] as LocalizedString), [activeLang]: value }
         }));
     };
 
     const addFacility = () => {
-        const facility = prompt("Enter facility name:");
-        if (facility) {
-            setFormData(prev => ({ ...prev, facilities: [...prev.facilities, facility] }));
+        const fac = prompt("Enter facility:");
+        if (fac) {
+            setFormData(prev => ({ ...prev, facilities: [...prev.facilities, fac] }));
         }
     };
 
@@ -83,12 +80,13 @@ export default function PackageForm() {
         }));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
 
-        // Simple validation
-        if (!formData.title.id || !formData.title.en) {
+        // Validation
+        const title = formData.title as LocalizedString;
+        if (!title.id || !title.en) {
             alert("Title is required in both languages");
             setIsLoading(false);
             return;
@@ -100,10 +98,10 @@ export default function PackageForm() {
             addPackage(formData);
         }
 
-        // Simulate network delay
+        // Simulate API delay
         setTimeout(() => {
             setIsLoading(false);
-            router.push('/dashboard/admin/products');
+            router.push('/dashboard/admin/products?tab=packages');
         }, 800);
     };
 
@@ -116,14 +114,13 @@ export default function PackageForm() {
                     </button>
                     <div>
                         <h2 className="text-2xl font-bold text-gray-900">{isEditMode ? 'Edit Package' : 'Create Package'}</h2>
-                        <p className="text-gray-500">Fill in the details below to {isEditMode ? 'update' : 'publish'} a tour package.</p>
+                        <p className="text-gray-500">Manage tour package details and itinerary.</p>
                     </div>
                 </div>
 
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Left Column: Main Content */}
+                    {/* Left Column */}
                     <div className="lg:col-span-2 space-y-6">
-
                         {/* Language Toggler */}
                         <div className="bg-white p-2 rounded-xl border border-gray-100 flex items-center gap-2 w-fit shadow-sm">
                             <button
@@ -148,7 +145,7 @@ export default function PackageForm() {
                                 <label className="block text-sm font-bold text-gray-700 mb-2">Package Title ({activeLang.toUpperCase()}) <span className="text-red-500">*</span></label>
                                 <input
                                     type="text"
-                                    value={formData.title[activeLang]}
+                                    value={(formData.title as LocalizedString)[activeLang]}
                                     onChange={(e) => handleLocalizedChange('title', e.target.value)}
                                     className="w-full p-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 outline-none font-bold text-lg"
                                     placeholder={activeLang === 'id' ? "Contoh: Pesona Derawan 3H2M" : "Ex: Derawan Charm 3D2N"}
@@ -158,7 +155,7 @@ export default function PackageForm() {
                             <div>
                                 <label className="block text-sm font-bold text-gray-700 mb-2">Description ({activeLang.toUpperCase()})</label>
                                 <textarea
-                                    value={formData.description[activeLang]}
+                                    value={(formData.description as LocalizedString)[activeLang]}
                                     onChange={(e) => handleLocalizedChange('description', e.target.value)}
                                     className="w-full p-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 outline-none h-40 resize-none"
                                     placeholder="Describe the highlights and experience..."

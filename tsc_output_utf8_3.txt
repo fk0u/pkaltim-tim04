@@ -1,0 +1,84 @@
+﻿prisma/seed.ts(35,83): error TS2339: Property 'id' does not exist on type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string'.
+prisma/seed.ts(39,40): error TS2339: Property 'id' does not exist on type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string'.
+prisma/seed.ts(42,52): error TS2339: Property 'id' does not exist on type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string'.
+prisma/seed.ts(58,87): error TS2339: Property 'id' does not exist on type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string'.
+prisma/seed.ts(62,38): error TS2339: Property 'id' does not exist on type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string'.
+prisma/seed.ts(68,50): error TS2339: Property 'id' does not exist on type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string'.
+src/components/HorizontalScroll.tsx(45,42): error TS7053: Element implicitly has an 'any' type because expression of type '"id" | "en"' can't be used to index type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string | LocalizedString'.
+src/components/HorizontalScroll.tsx(58,38): error TS7053: Element implicitly has an 'any' type because expression of type '"id" | "en"' can't be used to index type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string | LocalizedString'.
+src/pages/checkout.tsx(45,17): error TS2353: Object literal may only specify known properties, and 'userName' does not exist in type 'Omit<Booking, "id" | "createdAt" | "status">'.
+src/pages/dashboard/admin/destinations/destination-form.tsx(13,27): error TS2339: Property 'addDestination' does not exist on type 'ContentContextType'.
+src/pages/dashboard/admin/destinations/destination-form.tsx(13,43): error TS2339: Property 'updateDestination' does not exist on type 'ContentContextType'.
+src/pages/dashboard/admin/destinations/index.tsx(10,27): error TS2339: Property 'deleteDestination' does not exist on type 'ContentContextType'.
+src/pages/dashboard/admin/products/event-form.tsx(15,31): error TS2339: Property 'updateEvent' does not exist on type 'ContentContextType'.
+src/pages/dashboard/admin/products/event-form.tsx(67,24): error TS2698: Spread types may only be created from object types.
+src/pages/dashboard/admin/products/event-form.tsx(91,29): error TS2339: Property 'id' does not exist on type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string'.
+src/pages/dashboard/admin/products/event-form.tsx(91,51): error TS2339: Property 'en' does not exist on type 'string | LocalizedString'.
+  Property 'en' does not exist on type 'string'.
+src/pages/dashboard/admin/products/event-form.tsx(149,44): error TS7053: Element implicitly has an 'any' type because expression of type '"id" | "en"' can't be used to index type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string | LocalizedString'.
+src/pages/dashboard/admin/products/event-form.tsx(158,44): error TS7053: Element implicitly has an 'any' type because expression of type '"id" | "en"' can't be used to index type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string | LocalizedString'.
+src/pages/dashboard/admin/products/index.tsx(11,46): error TS2339: Property 'deleteEvent' does not exist on type 'ContentContextType'.
+src/pages/dashboard/admin/products/package-form.tsx(16,35): error TS2339: Property 'updatePackage' does not exist on type 'ContentContextType'.
+src/pages/dashboard/admin/products/package-form.tsx(68,24): error TS2698: Spread types may only be created from object types.
+src/pages/dashboard/admin/products/package-form.tsx(91,29): error TS2339: Property 'id' does not exist on type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string'.
+src/pages/dashboard/admin/products/package-form.tsx(91,51): error TS2339: Property 'en' does not exist on type 'string | LocalizedString'.
+  Property 'en' does not exist on type 'string'.
+src/pages/dashboard/admin/products/package-form.tsx(151,44): error TS7053: Element implicitly has an 'any' type because expression of type '"id" | "en"' can't be used to index type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string | LocalizedString'.
+src/pages/dashboard/admin/products/package-form.tsx(161,44): error TS7053: Element implicitly has an 'any' type because expression of type '"id" | "en"' can't be used to index type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string | LocalizedString'.
+src/pages/dashboard/partner.tsx(37,62): error TS2339: Property 'totalPrice' does not exist on type 'Booking'.
+src/pages/dashboard/partner.tsx(154,56): error TS2322: Type 'string | LocalizedString' is not assignable to type 'string'.
+  Type 'LocalizedString' is not assignable to type 'string'.
+src/pages/dashboard/partner.tsx(157,84): error TS2322: Type 'string | LocalizedString' is not assignable to type 'ReactNode'.
+  Type 'LocalizedString' is not assignable to type 'ReactNode'.
+src/pages/dashboard/partner.tsx(175,65): error TS2345: Argument of type 'string | LocalizedString' is not assignable to parameter of type 'string'.
+  Type 'LocalizedString' is not assignable to type 'string'.
+src/pages/dashboard/partner.tsx(213,33): error TS2322: Type 'string | LocalizedString | undefined' is not assignable to type 'string | number | readonly string[] | undefined'.
+  Type 'LocalizedString' is not assignable to type 'string | number | readonly string[] | undefined'.
+src/pages/dashboard/partner.tsx(290,29): error TS2322: Type 'string | LocalizedString | undefined' is not assignable to type 'string | number | readonly string[] | undefined'.
+  Type 'LocalizedString' is not assignable to type 'string | number | readonly string[] | undefined'.
+src/pages/events.tsx(58,20): error TS7053: Element implicitly has an 'any' type because expression of type '"id" | "en"' can't be used to index type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string | LocalizedString'.
+src/pages/events.tsx(75,18): error TS7053: Element implicitly has an 'any' type because expression of type '"id" | "en"' can't be used to index type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string | LocalizedString'.
+src/pages/events.tsx(82,18): error TS7053: Element implicitly has an 'any' type because expression of type '"id" | "en"' can't be used to index type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string | LocalizedString'.
+src/pages/events.tsx(159,32): error TS7053: Element implicitly has an 'any' type because expression of type '"id" | "en"' can't be used to index type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string | LocalizedString'.
+src/pages/events.tsx(172,114): error TS7053: Element implicitly has an 'any' type because expression of type '"id" | "en"' can't be used to index type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string | LocalizedString'.
+src/pages/events.tsx(183,36): error TS7053: Element implicitly has an 'any' type because expression of type '"id" | "en"' can't be used to index type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string | LocalizedString'.
+src/pages/events/[id].tsx(83,22): error TS7053: Element implicitly has an 'any' type because expression of type '"id" | "en"' can't be used to index type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string | LocalizedString'.
+src/pages/events/[id].tsx(99,19): error TS7053: Element implicitly has an 'any' type because expression of type '"id" | "en"' can't be used to index type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string | LocalizedString'.
+src/pages/events/[id].tsx(116,38): error TS7053: Element implicitly has an 'any' type because expression of type '"id" | "en"' can't be used to index type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string | LocalizedString'.
+src/pages/events/[id].tsx(150,30): error TS7053: Element implicitly has an 'any' type because expression of type '"id" | "en"' can't be used to index type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string | LocalizedString'.
+src/pages/events/[id].tsx(202,34): error TS7053: Element implicitly has an 'any' type because expression of type '"id" | "en"' can't be used to index type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string | LocalizedString'.
+src/pages/packages/index.tsx(138,78): error TS7053: Element implicitly has an 'any' type because expression of type '"id" | "en"' can't be used to index type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string | LocalizedString'.
+src/pages/packages/index.tsx(154,54): error TS7053: Element implicitly has an 'any' type because expression of type '"id" | "en"' can't be used to index type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string | LocalizedString'.
+src/pages/packages/index.tsx(157,54): error TS7053: Element implicitly has an 'any' type because expression of type '"id" | "en"' can't be used to index type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string | LocalizedString'.
+src/pages/search.tsx(30,31): error TS7053: Element implicitly has an 'any' type because expression of type '"id" | "en"' can't be used to index type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string | LocalizedString'.
+src/pages/search.tsx(38,31): error TS7053: Element implicitly has an 'any' type because expression of type '"id" | "en"' can't be used to index type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string | LocalizedString'.

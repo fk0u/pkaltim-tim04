@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { getLocalized } from '@/utils/localization';
 
 export default function PackagesPage() {
     const { packages } = useContent();
@@ -34,7 +35,7 @@ export default function PackagesPage() {
 
     const filteredPackages = packages.filter(pkg => {
         // Search Logic
-        const currentTitle = typeof pkg.title === 'string' ? pkg.title : pkg.title[locale === 'en' ? 'en' : 'id'];
+        const currentTitle = getLocalized(pkg.title);
         const matchesSearch = currentTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
             pkg.location.toLowerCase().includes(searchTerm.toLowerCase());
 
@@ -135,7 +136,7 @@ export default function PackagesPage() {
                                     <Link href={`/packages/${pkg.id}`} className="group block h-full">
                                         <article className="glass-panel bg-white/40 rounded-[2rem] overflow-hidden shadow-lg border border-white/50 hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 h-full flex flex-col backdrop-blur-md">
                                             <div className="relative h-64 overflow-hidden">
-                                                <img src={pkg.imageUrl} alt={pkg.title[locale === 'en' ? 'en' : 'id']} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
+                                                <img src={pkg.imageUrl} alt={getLocalized(pkg.title)} className="w-full h-full object-cover group-hover:scale-110 transition duration-700" />
                                                 <div className="absolute top-4 left-4">
                                                     <span className={`px-3 py-1 rounded-full text-xs font-bold border flex items-center gap-1 shadow-sm ${getEcoColor(pkg.rating)}`}>
                                                         <Leaf className="w-3 h-3" /> {t.packages.card.eco} {pkg.rating}/5
@@ -151,10 +152,10 @@ export default function PackagesPage() {
                                                     <MapPin className="w-3 h-3" /> {pkg.location}
                                                 </div>
                                                 <h2 className="text-xl font-bold text-gray-900 mb-3 leading-tight group-hover:text-emerald-700 transition">
-                                                    {pkg.title[locale === 'en' ? 'en' : 'id']}
+                                                    {getLocalized(pkg.title)}
                                                 </h2>
                                                 <p className="text-gray-600 text-sm line-clamp-3 mb-6 flex-grow">
-                                                    {pkg.description[locale === 'en' ? 'en' : 'id']}
+                                                    {getLocalized(pkg.description)}
                                                 </p>
 
                                                 <div className="pt-5 border-t border-gray-100 flex items-center justify-between">

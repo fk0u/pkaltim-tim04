@@ -8,13 +8,20 @@ import { TourPackage, ItineraryDetail } from '@/types';
 
 // Extended type for detail view (includes itinerary)
 interface PackageDetail extends TourPackage {
-    itinerary?: ItineraryDetail;
+   itinerary?: ItineraryDetail;
 }
 
 export default function PackageDetail() {
    const router = useRouter();
    const { id } = router.query;
    const { addToast } = useToast();
+
+   // Helper for localized content
+   const getLocalized = (content: any) => {
+      if (typeof content === 'string') return content;
+      if (content?.id) return content.id;
+      return ''; // Fallback
+   };
 
    const [pkg, setPkg] = useState<PackageDetail | null>(null);
    const [loading, setLoading] = useState(true);
@@ -23,17 +30,17 @@ export default function PackageDetail() {
    const [pax, setPax] = useState(1);
 
    useEffect(() => {
-       if (id) {
-           fetch(`/api/packages/${id}`)
-               .then(res => res.json())
-               .then(data => {
-                   if (data.success) {
-                       setPkg(data.data);
-                   }
-                   setLoading(false);
-               })
-               .catch(() => setLoading(false));
-       }
+      if (id) {
+         fetch(`/api/packages/${id}`)
+            .then(res => res.json())
+            .then(data => {
+               if (data.success) {
+                  setPkg(data.data);
+               }
+               setLoading(false);
+            })
+            .catch(() => setLoading(false));
+      }
    }, [id]);
 
    if (loading || !pkg) {
@@ -51,8 +58,8 @@ export default function PackageDetail() {
 
    // Safe access to itinerary
    const itinerary = pkg.itinerary || {
-       days: [],
-       badges: []
+      days: [],
+      badges: []
    };
 
    // Fallback for badges if API structure differs or empty
@@ -69,7 +76,7 @@ export default function PackageDetail() {
          pathname: '/checkout',
          query: {
             id: pkg.id,
-            pkg: pkg.title,
+            pkg: getLocalized(pkg.title),
             date: date.toLocaleDateString('id-ID'),
             pax: pax,
             price: totalPrice,
@@ -82,8 +89,10 @@ export default function PackageDetail() {
    // Safe total price
    const currentTotalPrice = (pkg.price || 0) * pax;
 
+
+
    return (
-      <Layout title={`${pkg.title} - BorneoTrip`}>
+      <Layout title={`${getLocalized(pkg.title)} - BorneoTrip`}>
          {/* HERO HEADER */}
          <div className="relative h-[60vh] overflow-hidden">
             <motion.img
@@ -91,7 +100,7 @@ export default function PackageDetail() {
                animate={{ scale: 1 }}
                transition={{ duration: 1.5 }}
                src={pkg.imageUrl}
-               alt={pkg.title}
+               alt={getLocalized(pkg.title)}
                className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-linear-to-t from-gray-900 via-gray-900/40 to-transparent"></div>
@@ -114,7 +123,7 @@ export default function PackageDetail() {
                      </motion.span>
                   ))}
                </div>
-               <h1 className="text-3xl md:text-5xl lg:text-6xl font-black mb-4 leading-tight drop-shadow-xl">{pkg.title}</h1>
+               <h1 className="text-3xl md:text-5xl lg:text-6xl font-black mb-4 leading-tight drop-shadow-xl">{getLocalized(pkg.title)}</h1>
                <div className="flex flex-wrap items-center gap-6 text-sm md:text-base text-gray-200">
                   <div className="flex items-center gap-2 font-medium bg-black/20 backdrop-blur px-3 py-1 rounded-full"><Clock className="w-5 h-5 text-emerald-400" /> {pkg.duration}</div>
                   <div className="flex items-center gap-2 font-medium bg-black/20 backdrop-blur px-3 py-1 rounded-full"><MapPin className="w-5 h-5 text-emerald-400" /> {pkg.location}</div>
@@ -138,7 +147,7 @@ export default function PackageDetail() {
                      <Camera className="w-6 h-6 text-emerald-600" /> Sekilas Perjalanan
                   </h2>
                   <p className="text-gray-600 leading-relaxed mb-8 text-lg">
-                     {pkg.description} Rasakan pengalaman mendalam menyatu dengan alam dan budaya lokal tanpa merusak ekosistem.
+                     {getLocalized(pkg.description)} Rasakan pengalaman mendalam menyatu dengan alam dan budaya lokal tanpa merusak ekosistem.
                   </p>
 
                   <div className="bg-gray-50 rounded-2xl p-6">

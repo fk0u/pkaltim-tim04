@@ -1,5 +1,6 @@
 import AdminLayout from '@/components/layouts/AdminLayout';
 import { useContent } from '@/contexts/ContentContext';
+import { useBooking } from '@/contexts/BookingContext';
 import { useState } from 'react';
 import {
     Search, Filter, MoreVertical, CheckCircle, XCircle, Clock, Trash2, Eye
@@ -8,7 +9,8 @@ import { Booking } from '@/types';
 import BookingDetailModal from '@/components/admin/BookingDetailModal';
 
 export default function BookingsPage() {
-    const { bookings, updateBookingStatus, deleteBooking, customers } = useContent();
+    const { customers } = useContent();
+    const { bookings, updateBookingStatus, deleteBooking } = useBooking();
     const [searchTerm, setSearchTerm] = useState('');
     const [filterStatus, setFilterStatus] = useState<'All' | Booking['status']>('All');
 

@@ -1,0 +1,4 @@
+﻿src/pages/destinations/[id].tsx(83,9): error TS2657: JSX expressions must have one parent element.
+src/pages/destinations/[id].tsx(357,15): error TS17002: Expected corresponding JSX closing tag for 'Layout'.
+src/pages/destinations/[id].tsx(365,9): error TS1005: ')' expected.
+src/pages/destinations/[id].tsx(366,5): error TS1109: Expression expected.

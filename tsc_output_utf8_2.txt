@@ -1,0 +1,50 @@
+﻿src/lib/auth.ts(1,17): error TS2307: Cannot find module 'jsonwebtoken' or its corresponding type declarations.
+src/pages/api/auth/login.ts(3,20): error TS2307: Cannot find module 'bcryptjs' or its corresponding type declarations.
+src/pages/api/auth/login.ts(4,17): error TS2307: Cannot find module 'jsonwebtoken' or its corresponding type declarations.
+src/pages/api/auth/me.ts(3,17): error TS2307: Cannot find module 'jsonwebtoken' or its corresponding type declarations.
+src/pages/api/auth/register.ts(3,20): error TS2307: Cannot find module 'bcryptjs' or its corresponding type declarations.
+src/pages/checkout.tsx(45,17): error TS2353: Object literal may only specify known properties, and 'userName' does not exist in type 'Omit<Booking, "id" | "createdAt" | "status">'.
+src/pages/dashboard/admin/bookings.tsx(11,13): error TS2339: Property 'bookings' does not exist on type 'ContentContextType'.
+src/pages/dashboard/admin/bookings.tsx(11,23): error TS2339: Property 'updateBookingStatus' does not exist on type 'ContentContextType'.
+src/pages/dashboard/admin/bookings.tsx(11,44): error TS2339: Property 'deleteBooking' does not exist on type 'ContentContextType'.
+src/pages/dashboard/admin/bookings.tsx(11,59): error TS2339: Property 'customers' does not exist on type 'ContentContextType'.
+src/pages/dashboard/admin/bookings.tsx(24,46): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/pages/dashboard/admin/bookings.tsx(80,59): error TS7006: Parameter 'booking' implicitly has an 'any' type.
+src/pages/dashboard/admin/bookings.tsx(160,42): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/pages/dashboard/admin/customers.tsx(9,13): error TS2339: Property 'customers' does not exist on type 'ContentContextType'.
+src/pages/dashboard/admin/customers.tsx(9,24): error TS2339: Property 'bookings' does not exist on type 'ContentContextType'.
+src/pages/dashboard/admin/customers.tsx(19,48): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/pages/dashboard/admin/customers.tsx(44,44): error TS7006: Parameter 'customer' implicitly has an 'any' type.
+src/pages/dashboard/admin/destinations/destination-form.tsx(13,27): error TS2339: Property 'addDestination' does not exist on type 'ContentContextType'.
+src/pages/dashboard/admin/destinations/destination-form.tsx(13,43): error TS2339: Property 'updateDestination' does not exist on type 'ContentContextType'.
+src/pages/dashboard/admin/destinations/index.tsx(10,27): error TS2339: Property 'deleteDestination' does not exist on type 'ContentContextType'.
+src/pages/dashboard/admin/index.tsx(11,13): error TS2339: Property 'bookings' does not exist on type 'ContentContextType'.
+src/pages/dashboard/admin/index.tsx(11,23): error TS2339: Property 'customers' does not exist on type 'ContentContextType'.
+src/pages/dashboard/admin/index.tsx(15,17): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/pages/dashboard/admin/index.tsx(16,18): error TS7006: Parameter 'sum' implicitly has an 'any' type.
+src/pages/dashboard/admin/index.tsx(16,23): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/pages/dashboard/admin/index.tsx(18,44): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/pages/dashboard/admin/index.tsx(36,48): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/pages/dashboard/admin/index.tsx(37,51): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/pages/dashboard/admin/index.tsx(38,53): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/pages/dashboard/admin/index.tsx(39,53): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/pages/dashboard/admin/index.tsx(104,60): error TS7006: Parameter 'booking' implicitly has an 'any' type.
+src/pages/dashboard/admin/products/event-form.tsx(15,31): error TS2339: Property 'updateEvent' does not exist on type 'ContentContextType'.
+src/pages/dashboard/admin/products/index.tsx(11,46): error TS2339: Property 'deleteEvent' does not exist on type 'ContentContextType'.
+src/pages/dashboard/admin/products/package-form.tsx(16,35): error TS2339: Property 'updatePackage' does not exist on type 'ContentContextType'.
+src/pages/dashboard/partner.tsx(23,5): error TS2322: Type 'string' is not assignable to type 'LocalizedString'.
+src/pages/dashboard/partner.tsx(27,5): error TS2322: Type 'string' is not assignable to type 'LocalizedString'.
+src/pages/dashboard/partner.tsx(37,62): error TS2339: Property 'totalPrice' does not exist on type 'Booking'.
+src/pages/dashboard/partner.tsx(72,9): error TS2322: Type 'string' is not assignable to type 'LocalizedString'.
+src/pages/dashboard/partner.tsx(76,9): error TS2322: Type 'string' is not assignable to type 'LocalizedString'.
+src/pages/dashboard/partner.tsx(154,56): error TS2322: Type 'LocalizedString' is not assignable to type 'string'.
+src/pages/dashboard/partner.tsx(157,84): error TS2322: Type 'LocalizedString' is not assignable to type 'ReactNode'.
+src/pages/dashboard/partner.tsx(175,65): error TS2345: Argument of type 'LocalizedString' is not assignable to parameter of type 'string'.
+src/pages/dashboard/partner.tsx(213,33): error TS2322: Type 'LocalizedString | undefined' is not assignable to type 'string | number | readonly string[] | undefined'.
+  Type 'LocalizedString' is not assignable to type 'string | number | readonly string[] | undefined'.
+src/pages/dashboard/partner.tsx(290,29): error TS2322: Type 'LocalizedString | undefined' is not assignable to type 'string | number | readonly string[] | undefined'.
+  Type 'LocalizedString' is not assignable to type 'string | number | readonly string[] | undefined'.
+src/pages/packages/[id].tsx(72,13): error TS2322: Type 'LocalizedString' is not assignable to type 'string | number | bigint | boolean | readonly (string | number | bigint | boolean)[] | null | undefined'.
+src/pages/packages/[id].tsx(94,16): error TS2322: Type 'LocalizedString' is not assignable to type 'string'.
+src/pages/packages/[id].tsx(117,110): error TS2322: Type 'LocalizedString' is not assignable to type 'ReactNode'.
+src/pages/packages/[id].tsx(141,22): error TS2322: Type 'LocalizedString' is not assignable to type 'ReactNode'.

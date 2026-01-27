@@ -10,10 +10,10 @@ export interface EventSchedule {
 
 export interface Event {
   id: string;
-  title: LocalizedString;
+  title: string | LocalizedString;
   location: string;
   date: string;
-  description: LocalizedString;
+  description: string | LocalizedString;
   imageUrl: string;
   category: 'Culture' | 'Nature' | 'Sustainability' | 'Culinary';
   tags: string[];
@@ -29,13 +29,13 @@ export interface Event {
 
 export interface TourPackage {
   id: string;
-  title: LocalizedString;
+  title: string | LocalizedString;
   duration: string;
   price: number;
   location: string;
   rating: number;
   ecoRating: 1 | 2 | 3 | 4 | 5;
-  description: LocalizedString;
+  description: string | LocalizedString;
   imageUrl: string;
   facilities: string[];
   quota?: number; // Total available slots

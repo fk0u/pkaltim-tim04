@@ -1,0 +1,30 @@
+﻿prisma/seed.ts(35,87): error TS2304: Cannot find name 'LocalizedString'.
+prisma/seed.ts(39,44): error TS2304: Cannot find name 'LocalizedString'.
+prisma/seed.ts(42,56): error TS2304: Cannot find name 'LocalizedString'.
+prisma/seed.ts(58,91): error TS2304: Cannot find name 'LocalizedString'.
+prisma/seed.ts(62,42): error TS2304: Cannot find name 'LocalizedString'.
+prisma/seed.ts(68,54): error TS2304: Cannot find name 'LocalizedString'.
+src/contexts/ContentContext.tsx(117,40): error TS18004: No value exists in scope for the shorthand property 'updatePackage'. Either declare one or provide an initializer.
+src/contexts/ContentContext.tsx(118,23): error TS18004: No value exists in scope for the shorthand property 'updateEvent'. Either declare one or provide an initializer.
+src/contexts/ContentContext.tsx(118,36): error TS18004: No value exists in scope for the shorthand property 'deleteEvent'. Either declare one or provide an initializer.
+src/contexts/ContentContext.tsx(119,13): error TS2552: Cannot find name 'addDestination'. Did you mean 'destinations'?
+src/contexts/ContentContext.tsx(119,29): error TS18004: No value exists in scope for the shorthand property 'updateDestination'. Either declare one or provide an initializer.
+src/contexts/ContentContext.tsx(119,48): error TS18004: No value exists in scope for the shorthand property 'deleteDestination'. Either declare one or provide an initializer.
+src/pages/checkout.tsx(46,17): error TS2353: Object literal may only specify known properties, and 'packageId' does not exist in type 'Omit<Booking, "id" | "createdAt" | "status">'.
+src/pages/dashboard/admin/destinations/destination-form.tsx(62,13): error TS2554: Expected 2 arguments, but got 1.
+src/pages/dashboard/admin/products/event-form.tsx(105,13): error TS2554: Expected 2 arguments, but got 1.
+src/pages/dashboard/admin/products/package-form.tsx(96,13): error TS2554: Expected 2 arguments, but got 1.
+src/pages/dashboard/partner.tsx(214,21): error TS2322: Type 'string | LocalizedString | undefined' is not assignable to type 'string | number | readonly string[] | undefined'.
+  Type 'LocalizedString' is not assignable to type 'string | number | readonly string[] | undefined'.
+src/pages/dashboard/partner.tsx(291,19): error TS2322: Type 'string | LocalizedString | undefined' is not assignable to type 'string | number | readonly string[] | undefined'.
+  Type 'LocalizedString' is not assignable to type 'string | number | readonly string[] | undefined'.
+src/pages/events/[id].tsx(83,22): error TS7053: Element implicitly has an 'any' type because expression of type '"id" | "en"' can't be used to index type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string | LocalizedString'.
+src/pages/events/[id].tsx(99,19): error TS7053: Element implicitly has an 'any' type because expression of type '"id" | "en"' can't be used to index type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string | LocalizedString'.
+src/pages/events/[id].tsx(116,38): error TS7053: Element implicitly has an 'any' type because expression of type '"id" | "en"' can't be used to index type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string | LocalizedString'.
+src/pages/events/[id].tsx(150,30): error TS7053: Element implicitly has an 'any' type because expression of type '"id" | "en"' can't be used to index type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string | LocalizedString'.
+src/pages/events/[id].tsx(202,34): error TS7053: Element implicitly has an 'any' type because expression of type '"id" | "en"' can't be used to index type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string | LocalizedString'.

@@ -1,12 +1,14 @@
 import AdminLayout from '@/components/layouts/AdminLayout';
 import { useContent } from '@/contexts/ContentContext';
+import { useBooking } from '@/contexts/BookingContext';
 import { useState } from 'react';
 import { Search, Mail, Calendar, DollarSign, User } from 'lucide-react';
 import CustomerDetailModal from '@/components/admin/CustomerDetailModal';
 import { User as UserType } from '@/types';
 
 export default function CustomersPage() {
-    const { customers, bookings } = useContent(); // Need bookings for history
+    const { customers } = useContent();
+    const { bookings } = useBooking(); // Need bookings for history
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCustomer, setSelectedCustomer] = useState<UserType | null>(null);
     const [isDetailOpen, setIsDetailOpen] = useState(false);

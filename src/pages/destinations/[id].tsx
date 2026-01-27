@@ -294,7 +294,7 @@ export default function DestinationDetail() {
 
                         </div>
 
-                        </div>
+
 
                         {/* RIGHT: STICKY BOOKING WIDGET (4 Cols) */}
                         <div className="lg:col-span-4 relative">
