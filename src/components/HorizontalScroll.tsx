@@ -50,7 +50,7 @@ export default function HorizontalScroll({ title, subtitle, items, linkHref }: H
                                  </div>
                               </div>
 
-                              <div className="p-6 flex flex-col flex-grow">
+                              <div className="p-6 flex flex-col grow">
                                  <div className="flex items-center text-green-600 font-medium text-xs mb-3 bg-green-50 w-fit px-2 py-1 rounded">
                                     <Calendar className="w-3 h-3 mr-1.5" /> {event.date}
                                  </div>
@@ -75,7 +75,7 @@ export default function HorizontalScroll({ title, subtitle, items, linkHref }: H
                </div>
 
                {/* Fade overlay for scroll indication on right side */}
-               <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-white to-transparent pointer-events-none md:hidden"></div>
+               <div className="absolute right-0 top-0 bottom-0 w-20 bg-linear-to-l from-white to-transparent pointer-events-none md:hidden"></div>
             </div>
          </div>
       </section>
