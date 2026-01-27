@@ -7,6 +7,7 @@ import { useToast } from '@/components/ui';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { getLocalized } from '@/utils/localization';
 
 export default function EventDetail() {
     const router = useRouter();
@@ -80,7 +81,7 @@ export default function EventDetail() {
             pathname: '/checkout',
             query: {
                 id: event.id,
-                pkg: event.title[locale === 'en' ? 'en' : 'id'],
+                pkg: getLocalized(event.title),
                 price: price * pax,
                 image: event.imageUrl,
                 location: event.location,
@@ -96,8 +97,8 @@ export default function EventDetail() {
         addToast(t.events.detail.toastLink, "success");
     };
 
-    const title = event.title[locale === 'en' ? 'en' : 'id'];
-    const description = typeof event.description === 'string' ? event.description : event.description[locale === 'en' ? 'en' : 'id'];
+    const title = getLocalized(event.title);
+    const description = getLocalized(event.description);
 
     return (
         <Layout
@@ -113,7 +114,7 @@ export default function EventDetail() {
                         <div className="relative w-full h-full opacity-70">
                             <img
                                 src={event.imageUrl}
-                                alt={event.title[locale === 'en' ? 'en' : 'id']}
+                                alt={getLocalized(event.title)}
                                 className="w-full h-full object-cover"
                             />
                         </div>
@@ -147,7 +148,7 @@ export default function EventDetail() {
                         </div>
 
                         <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-8 tracking-tight leading-tight drop-shadow-2xl">
-                            {event.title[locale === 'en' ? 'en' : 'id']}
+                            {getLocalized(event.title)}
                         </h1>
 
                         <div className="flex flex-col md:flex-row md:items-center gap-6 md:gap-12 text-lg text-gray-200">
@@ -199,7 +200,7 @@ export default function EventDetail() {
                         >
                             <h2 className="text-2xl font-bold text-gray-900 mb-6">{t.events.detail.aboutTitle}</h2>
                             <p className="text-gray-600 text-lg leading-relaxed whitespace-pre-line">
-                                {event.description[locale === 'en' ? 'en' : 'id']}
+                                {getLocalized(event.description)}
                                 {"\n\n"}
                                 Event ini merupakan kesempatan emas untuk merasakan atmosfer budaya yang kental, berinteraksi dengan komunitas lokal, dan menikmati hiburan berkualitas. Jangan lewatkan momen spesial ini bersama teman dan keluarga Anda.
                             </p>

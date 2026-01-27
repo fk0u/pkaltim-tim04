@@ -1,0 +1,159 @@
+﻿
+> borneo-trip@0.1.0 build
+> next build
+
+node.exe : ΓÜá 
+Warning: Next.js 
+inferred your 
+workspace root, but 
+it may not be 
+correct.
+At line:1 char:1
++ & "C:\Program Files
+\nodejs/node.exe" 
+"C:\Users\HP 
+VICTUS\AppData\Roam 
+...
++ ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (ΓÜá War   
+ ning: Ne...not b    
+e correct.:Strin    
+g) [], RemoteExc    
+eption
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+ We detected 
+multiple lockfiles 
+and selected the 
+directory of D:\Proje
+ct\package-lock.json 
+as the root 
+directory.
+ To silence this 
+warning, set 
+`turbopack.root` in 
+your Next.js config, 
+or consider removing 
+one of the lockfiles 
+if it's not needed.
+   See https://nextjs
+.org/docs/app/api-ref
+erence/config/next-co
+nfig-js/turbopack#roo
+t-directory for more 
+information.
+ Detected additional 
+lockfiles: 
+   * D:\Project\TIM-0
+4\package-lock.json
+
+Γû▓ Next.js 16.1.2 (Turbopack)
+- Environments: .env.local, .env
+
+  Running TypeScript ...
+  Creating an optimized production build ...
+Γ£ô Compiled successfully in 6.4s
+  Collecting page data using 11 workers ...
+  Generating static pages using 11 workers (0/34) ...
+  Generating static pages using 11 workers (8/34) 
+  Generating static pages using 11 workers (16/34) 
+  Generating static pages using 11 workers (25/34) 
+The width(-1) and 
+height(-1) of chart 
+should be greater 
+than 0,
+       please check 
+the style of 
+container, or the 
+props width(100%) 
+and height(100%),
+       or add a 
+minWidth(0) or 
+minHeight(undefined) 
+or use 
+aspect(undefined) to 
+control the
+       height and 
+width.
+The width(-1) and 
+height(-1) of chart 
+should be greater 
+than 0,
+       please check 
+the style of 
+container, or the 
+props width(100%) 
+and height(100%),
+       or add a 
+minWidth(0) or 
+minHeight(undefined) 
+or use 
+aspect(undefined) to 
+control the
+       height and 
+width.
+Γ£ô Generating static pages using 11 workers (34/34) in 578.5ms
+  Finalizing page optimization ...
+
+Route (pages)
+Γöî Γùï /
+Γö£   /_app
+Γö£ Γùï /404 (352 ms)
+Γö£ Γùï /about (352 ms)
+Γö£ ╞Æ /api/auth/login
+Γö£ ╞Æ /api/auth/me
+Γö£ ╞Æ /api/auth/register
+Γö£ ╞Æ /api/bookings
+Γö£ ╞Æ /api/bookings/[id]
+Γö£ ╞Æ /api/events
+Γö£ ╞Æ /api/events/[id]
+Γö£ ╞Æ /api/hello
+Γö£ ╞Æ /api/packages
+Γö£ ╞Æ /api/packages/[id]
+Γö£ ╞Æ /api/regions
+Γö£ ╞Æ /api/regions/[id]
+Γö£ ╞Æ /api/testimonials
+Γö£ ╞Æ /api/upload
+Γö£ ╞Æ /api/user/preferences
+Γö£ ╞Æ /api/user/profile
+Γö£ Γùï /checkout
+Γö£ Γùï /contact (352 ms)
+Γö£ Γùï /dashboard/admin (352 ms)
+Γö£ Γùï /dashboard/admin/bookings (354 ms)
+Γö£ Γùï /dashboard/admin/customers (353 ms)
+Γö£ Γùï /dashboard/admin/destinations (352 ms)
+Γö£ Γùï /dashboard/admin/destinations/destination-form
+Γö£ Γùï /dashboard/admin/products
+Γö£ Γùï /dashboard/admin/products/event-form
+Γö£ Γùï /dashboard/admin/products/package-form
+Γö£ Γùï /dashboard/admin/settings
+Γö£ Γùï /dashboard/admin/support
+Γö£ Γùï /dashboard/client
+Γö£ Γùï /dashboard/partner
+Γö£ Γùï /dashboard/vouchers/[id] (353 ms)
+Γö£ Γùï /destinations/[id]
+Γö£ Γùï /events
+Γö£ Γùï /events/[id]
+Γö£ Γùï /history
+Γö£ Γùï /invoice/[id]
+Γö£ Γùï /login
+Γö£ Γùï /onboarding
+Γö£ Γùï /packages
+Γö£ Γùï /packages/[id]
+Γö£ Γùï /privacy
+Γö£ Γùï /register
+Γö£ Γùï /scan
+Γö£ Γùï /search
+Γö£ Γùï /sustainability
+Γöö Γùï /terms
+
+Γùï  (Static)   prerendered as static content
+╞Æ  (Dynamic)  server-rendered on demand
+

@@ -1,6 +1,11 @@
 import { PrismaClient } from '@prisma/client';
 import { EVENTS, PACKAGES, REGIONS, TESTIMONIALS } from '../src/data/mockData';
 
+interface LocalizedString {
+    id: string;
+    en: string;
+}
+
 const prisma = new PrismaClient();
 
 async function main() {

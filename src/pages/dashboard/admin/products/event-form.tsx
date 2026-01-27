@@ -102,7 +102,7 @@ export default function EventForm() {
         }
 
         if (isEditMode) {
-            updateEvent(formData);
+            updateEvent(id as string, formData);
         } else {
             addEvent(formData);
         }

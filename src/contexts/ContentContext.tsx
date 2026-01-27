@@ -47,20 +47,16 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
             }
         } catch (error) {
             console.error("Failed to fetch content", error);
-            // Fallback to local storage or mock if API fails?
-            // For now, let's stick to API first approach.
         }
     };
 
     useEffect(() => {
-        // Initial Fetch
         fetchContent();
     }, []);
 
-    // Sync to LocalStorage on updates - REMOVED to avoid overwriting API data with stale state loop? 
-    // Actually, local storage is cache here. 
-    // Let's keep one way sync: API -> State -> LocalStorage (for offline/caching if implemented well)
-    // But simple useEffect fetch is enough for now.
+    const refreshData = () => {
+        fetchContent();
+    }
 
     const addPackage = async (pkg: TourPackage) => {
         // Optimistic update
@@ -75,7 +71,6 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
                 },
                 body: JSON.stringify(pkg)
             });
-            // Ideally re-fetch to get real ID
             refreshData();
         } catch (e) { console.error(e); }
     };
@@ -107,9 +102,32 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         } catch (e) { console.error(e); }
     };
 
-    const refreshData = () => {
-        fetchContent();
-    }
+    const updateEvent = async (id: string, evt: Partial<Event>) => {
+        setEvents(prev => prev.map(e => e.id === id ? { ...e, ...evt } : e));
+        // API call stub
+    };
+
+    const deleteEvent = async (id: string) => {
+        setEvents(prev => prev.filter(e => e.id !== id));
+        try {
+            await fetch(`/api/events/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('borneotrip_token')}`
+                },
+            });
+        } catch (e) { console.error(e); }
+    };
+
+    const updatePackage = async (id: string, pkg: Partial<TourPackage>) => {
+        setPackages(prev => prev.map(p => p.id === id ? { ...p, ...pkg } : p));
+        // API call stub
+    };
+
+    // Destination Stubs
+    const addDestination = (dest: Destination) => console.log('Add Dest', dest);
+    const updateDestination = (id: number, dest: Partial<Destination>) => console.log('Update Dest', id);
+    const deleteDestination = (id: number) => console.log('Delete Dest', id);
 
     return (
         <ContentContext.Provider value={{

@@ -1,0 +1,2 @@
+﻿src/pages/events/[id].tsx(87,17): error TS2322: Type 'string | LocalizedString' is not assignable to type 'string | number | bigint | boolean | readonly (string | number | bigint | boolean)[] | null | undefined'.
+  Type 'LocalizedString' is not assignable to type 'string | number | bigint | boolean | readonly (string | number | bigint | boolean)[] | null | undefined'.

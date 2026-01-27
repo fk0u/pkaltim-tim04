@@ -1,0 +1,14 @@
+﻿src/pages/checkout.tsx(43,24): error TS2345: Argument of type '{ userId: string; customerName: string; productId: string; productType: "Event" | "Package"; productName: string; productImage: string; location: string; date: string; totalPax: number; adultCount: number; childCount: number; amount: number; paymentMethod: "Credit Card"; }' is not assignable to parameter of type 'Omit<Booking, "id" | "createdAt" | "status">'.
+  Property 'travelers' is missing in type '{ userId: string; customerName: string; productId: string; productType: "Event" | "Package"; productName: string; productImage: string; location: string; date: string; totalPax: number; adultCount: number; childCount: number; amount: number; paymentMethod: "Credit Card"; }' but required in type 'Omit<Booking, "id" | "createdAt" | "status">'.
+src/pages/dashboard/admin/destinations/destination-form.tsx(62,13): error TS2554: Expected 2 arguments, but got 1.
+src/pages/dashboard/admin/products/event-form.tsx(105,13): error TS2554: Expected 2 arguments, but got 1.
+src/pages/dashboard/admin/products/package-form.tsx(96,13): error TS2554: Expected 2 arguments, but got 1.
+src/pages/events/[id].tsx(83,22): error TS7053: Element implicitly has an 'any' type because expression of type '"id" | "en"' can't be used to index type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string | LocalizedString'.
+src/pages/events/[id].tsx(99,19): error TS7053: Element implicitly has an 'any' type because expression of type '"id" | "en"' can't be used to index type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string | LocalizedString'.
+src/pages/events/[id].tsx(116,38): error TS7053: Element implicitly has an 'any' type because expression of type '"id" | "en"' can't be used to index type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string | LocalizedString'.
+src/pages/events/[id].tsx(150,30): error TS7053: Element implicitly has an 'any' type because expression of type '"id" | "en"' can't be used to index type 'string | LocalizedString'.
+  Property 'id' does not exist on type 'string | LocalizedString'.
+src/pages/events/[id].tsx(202,34): error TS2304: Cannot find name 'getLocalized'.

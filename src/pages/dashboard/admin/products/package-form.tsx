@@ -93,7 +93,7 @@ export default function PackageForm() {
         }
 
         if (isEditMode) {
-            updatePackage(formData);
+            updatePackage(id as string, formData);
         } else {
             addPackage(formData);
         }

@@ -211,7 +211,7 @@ export default function PartnerDashboard() {
                   <label className="text-sm font-semibold text-slate-700">Nama Paket</label>
                   <input
                     name="title"
-                    value={formData.title}
+                    value={getLocalized(formData.title)}
                     onChange={handleInputChange}
                     className="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
                     placeholder="Contoh: Ekowisata Derawan"
@@ -288,7 +288,7 @@ export default function PartnerDashboard() {
                 <label className="text-sm font-semibold text-slate-700">Deskripsi Singkat</label>
                 <textarea
                   name="description"
-                  value={formData.description}
+                  value={getLocalized(formData.description)}
                   onChange={handleInputChange}
                   className="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none min-h-[100px]"
                   placeholder="Jelaskan daya tarik utama paket ini..."

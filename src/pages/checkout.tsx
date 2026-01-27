@@ -18,7 +18,7 @@ export default function CheckoutPage() {
     const [isProcessing, setIsProcessing] = useState(false);
     const [selectedBank, setSelectedBank] = useState('bca');
 
-    const { pkg, date, pax, price, id, location, image } = router.query;
+    const { pkg, date, pax, price, id, location, image, type } = router.query;
 
     const pkgName = pkg ? (pkg as string) : "Paket Wisata";
     const totalPrice = price ? parseInt(price as string) : 0;
@@ -43,13 +43,18 @@ export default function CheckoutPage() {
             addBooking({
                 userId: user.id || 'guest',
                 customerName: user.name,
-                packageId: (id as string) || 'PKG-CUSTOM',
-                pkgTitle: pkgName,
-                pkgImage: pkgImage,
+                productId: (id as string) || 'PKG-CUSTOM',
+                productType: (type as string) === 'event' ? 'Event' : 'Package',
+                productName: pkgName,
+                productImage: pkgImage,
                 location: (location as string) || 'East Kalimantan',
                 date: (date as string) || new Date().toISOString(),
-                pax: Number(pax) || 1,
-                totalPrice: totalPrice || 0,
+                totalPax: Number(pax) || 1,
+                adultCount: Number(pax) || 1,
+                childCount: 0,
+                amount: totalPrice || 0,
+                paymentMethod: 'Credit Card',
+                travelers: [],
             });
 
             setIsProcessing(false);

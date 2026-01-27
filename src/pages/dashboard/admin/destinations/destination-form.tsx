@@ -59,7 +59,7 @@ export default function DestinationForm() {
         e.preventDefault();
 
         if (id) {
-            updateDestination(formData);
+            updateDestination(Number(id), formData);
             addToast('Destination updated successfully', 'success');
         } else {
             addDestination({ ...formData, id: Date.now() });
