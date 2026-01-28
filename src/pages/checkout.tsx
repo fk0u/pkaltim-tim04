@@ -174,7 +174,7 @@ export default function CheckoutPage() {
             await new Promise(r => setTimeout(r, 800));
         }
 
-        addBooking({
+        await addBooking({
             userId: user.id || 'guest',
             customerName: user.name,
             productId: (id as string) || 'PKG-CUSTOM',
@@ -188,7 +188,9 @@ export default function CheckoutPage() {
             childCount,
             totalPax,
             travelers: travelers,
-            paymentMethod: selectedBank === 'gopay' || selectedBank === 'qris' ? 'E-Wallet' : 'Bank Transfer'
+            paymentMethod: selectedBank === 'gopay' || selectedBank === 'qris' ? 'E-Wallet' : 'Bank Transfer',
+            eventId: isEvent ? (id as string) : undefined,
+            packageId: !isEvent ? (id as string) : undefined
         });
 
         setIsProcessing(false);

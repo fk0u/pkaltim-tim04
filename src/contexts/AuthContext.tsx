@@ -49,81 +49,72 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 
     const login = async (email: string, password: string) => {
-        // MOCK LOGIN WITHOUT DB
         try {
-            // Simulate API delay
-            await new Promise(resolve => setTimeout(resolve, 500));
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
 
-            // Allow generic login or specific mock
-            const mockUser: User = {
-                id: 'mock-user-1',
-                name: 'Pengguna Demo',
-                email: email,
-                role: 'client',
-                avatar: `https://i.pravatar.cc/150?u=${email}`,
-                onboardingCompleted: true
-            };
+            const data = await res.json();
 
-            // Special case for admin login
-            if (email.includes('admin')) {
-                mockUser.role = 'admin';
-                mockUser.name = 'Admin Demo';
-            } else if (email.includes('mitra')) {
-                mockUser.role = 'mitra' as any; // Cast temporarily if type issues exist
-                mockUser.name = 'Mitra Demo';
+            if (!res.ok) {
+                console.error(data.message);
+                return false;
             }
 
-            setUser(mockUser);
-            localStorage.setItem('borneotrip_user', JSON.stringify(mockUser));
+            const { user: userData, token } = data;
 
-            if (mockUser.role === 'admin' || mockUser.role === 'operator') {
+            setUser(userData);
+            localStorage.setItem('borneotrip_user', JSON.stringify(userData));
+            localStorage.setItem('borneotrip_token', token);
+
+            // Redirect based on role
+            if (userData.role === 'admin' || userData.role === 'Admin') {
                 router.push('/dashboard/admin');
-            } else if (mockUser.role === 'mitra' as any) {
+            } else if (userData.role === 'mitra') {
                 router.push('/dashboard/partner');
             } else {
                 router.push('/dashboard/client');
             }
             return true;
         } catch (e) {
-            console.error(e);
+            console.error('Login error:', e);
             return false;
         }
     };
 
     const loginSocial = (provider: string) => {
-        // Mock Social Login - just treat as client
-        const mockUser: User = {
-            id: `social-${Date.now()}`,
-            name: 'Dian Sastro',
-            email: 'dian@example.com',
-            role: 'client',
-            avatar: `https://i.pravatar.cc/150?u=dian`,
-            onboardingCompleted: true
-        };
-        setUser(mockUser);
-        localStorage.setItem('borneotrip_user', JSON.stringify(mockUser));
-        router.push('/dashboard/client');
+        // Future implementation: Backend OAuth
+        console.log(`Social login with ${provider} not yet implemented on backend.`);
     }
 
     const register = async (name: string, email: string, password: string) => {
-        // MOCK REGISTER WITHOUT DB
         try {
-            await new Promise(resolve => setTimeout(resolve, 500));
+            const res = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, password, role: 'client' })
+            });
 
-            const userData: User = {
-                id: `user-${Date.now()}`,
-                name,
-                email,
-                role: 'client',
-                avatar: `https://i.pravatar.cc/150?u=${email}`,
-                onboardingCompleted: false // New users need onboarding
-            };
+            const data = await res.json();
+
+            if (!res.ok) {
+                console.error(data.message);
+                return false;
+            }
+
+            // Auto login after register
+            const { user: userData, token } = data;
+
             setUser(userData);
             localStorage.setItem('borneotrip_user', JSON.stringify(userData));
+            localStorage.setItem('borneotrip_token', token);
+
             router.push('/onboarding');
             return true;
         } catch (e) {
-            console.error(e);
+            console.error('Registration error:', e);
             return false;
         }
     };
@@ -131,6 +122,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const logout = () => {
         setUser(null);
         localStorage.removeItem('borneotrip_user');
+        localStorage.removeItem('borneotrip_token');
         router.push('/login');
     };
 

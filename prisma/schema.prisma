@@ -6,102 +6,134 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id        String    @id @default(cuid())
-  name      String
-  email     String    @unique
-  password  String
-  role      String    @default("client") // client, mitra, admin
-  onboardingCompleted Boolean @default(false)
-  preferences String? // JSON string: { interests: [], budget: "", travelStyle: "" }
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  bookings  Booking[]
+  id                  String    @id @default(cuid())
+  name                String
+  email               String    @unique
+  password            String
+  role                String    @default("client") // client, mitra, admin
+  onboardingCompleted Boolean   @default(false)
+  preferences         Json?     // { interests: [], budget: "", travelStyle: "" }
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  bookings            Booking[]
 }
 
 model Event {
-  id          String   @id @default(cuid())
-  title       String
+  id          String    @id @default(cuid())
+  title       Json      // LocalizedString { id, en }
   location    String
   date        String
-  description String
-  imageUrl    String
+  description Json      // LocalizedString { id, en }
+  imageUrl    String    @db.Text
   category    String
-  tags        String   // JSON
+  tags        Json      // string[]
   price       String?
+  priceChild  Int?
   organizer   String?
-  ticketCount Int?     @default(0)
-  schedule    String?  // JSON
-  gallery     String?  // JSON
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  ticketCount Int?      @default(0)
+  quota       Int?      @default(0)
+  bookedCount Int?      @default(0)
+  schedule    Json?     // EventSchedule[]
+  gallery     Json?     // string[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   bookings    Booking[]
 }
 
 model TourPackage {
-  id          String   @id @default(cuid())
-  title       String
+  id          String           @id @default(cuid())
+  title       Json             // LocalizedString { id, en }
   duration    String
   price       Int
+  priceChild  Int?
+  quota       Int?             @default(0)
+  bookedCount Int?             @default(0)
   location    String
   rating      Float
   ecoRating   Int
-  description String
-  imageUrl    String
-  facilities  String   // JSON
+  description Json             // LocalizedString { id, en }
+  imageUrl    String           @db.Text
+  facilities  Json             // string[]
   itinerary   ItineraryDetail?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
   bookings    Booking[]
 }
 
 model ItineraryDetail {
-  id            String      @id @default(cuid())
-  packageId     String      @unique
-  package       TourPackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
-  title         String
-  badges        String      // JSON
-  days          String      // JSON
+  id        String      @id @default(cuid())
+  packageId String      @unique
+  package   TourPackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  title     String
+  badges    Json        // string[]
+  days      Json        // DailyItinerary[]
 }
 
 model Booking {
-  id        String   @id @default(cuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  eventId   String?
-  event     Event?   @relation(fields: [eventId], references: [id])
-  packageId String?
-  package   TourPackage? @relation(fields: [packageId], references: [id])
-  date      DateTime @default(now())
-  status    String   @default("pending")
+  id            String       @id @default(cuid())
+  userId        String
+  user          User         @relation(fields: [userId], references: [id])
+  eventId       String?
+  event         Event?       @relation(fields: [eventId], references: [id])
+  packageId     String?
+  package       TourPackage? @relation(fields: [packageId], references: [id])
+  productType   String       @default("Package") // Package, Event
+  productName   String?
+  productImage  String?      @db.Text
+  location      String?
+  adultCount    Int          @default(1)
+  childCount    Int          @default(0)
+  totalPax      Int          @default(1)
+  travelers     Json?        // TravelerDetail[]
+  amount        Int          @default(0)
+  date          DateTime     @default(now())
+  status        String       @default("pending") // pending, paid, cancelled, completed
+  paymentMethod String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
 }
 
 model Testimonial {
-  id        String   @id @default(cuid())
+  id        String @id @default(cuid())
   name      String
   role      String
-  avatarUrl String
+  avatarUrl String @db.Text
   rating    Int
-  content   String
+  content   String @db.Text
 }
 
 model Region {
-  id          Int      @id @default(autoincrement())
-  name        String
-  type        String
-  capital     String
-  leader      String
-  area        String
-  population  String
-  density     String
-  districts   Int
-  villages    String
-  latitude    Float
-  longitude   Float
-  imageUrl    String
-  destinations String   // JSON
+  id           Int    @id @default(autoincrement())
+  name         String
+  type         String
+  capital      String
+  leader       String
+  area         String
+  population   String
+  density      String
+  districts    Int
+  villages     String
+  latitude     Float
+  longitude    Float
+  imageUrl     String @db.Text
+  destinations Json   // string[]
+}
+
+model Voucher {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  discount    Int      // percentage
+  description String?  @db.Text
+  validFrom   DateTime
+  validUntil  DateTime
+  usageLimit  Int      @default(0)
+  usedCount   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

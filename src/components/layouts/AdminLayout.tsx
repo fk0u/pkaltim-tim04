@@ -4,7 +4,7 @@ import {
     LayoutDashboard, Users, ShoppingBag, Settings, LogOut,
     Search, Bell, Menu, X, ChevronRight, Globe, Package, MapPin, MessageSquare
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -19,6 +19,17 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
     const { user, logout } = useAuth();
     const router = useRouter();
     const { toggleLanguage, locale } = useLanguage();
+
+    // Protect Admin Route
+    useEffect(() => {
+        if (!user) {
+            router.push('/login');
+            return;
+        }
+        if (user.role !== 'admin') {
+            router.push(`/dashboard/${user.role === 'mitra' ? 'partner' : 'client'}`);
+        }
+    }, [user, router]);
 
     const menuItems = [
         { icon: LayoutDashboard, label: 'Overview', href: '/dashboard/admin' },

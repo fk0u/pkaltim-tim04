@@ -99,6 +99,8 @@ export interface Booking {
   id: string;
   userId: string;
   productId: string;
+  eventId?: string;
+  packageId?: string;
   productType: 'Package' | 'Event';
   productName: string; // Denormalized for ease
   date: string;

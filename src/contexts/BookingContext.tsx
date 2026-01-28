@@ -1,10 +1,11 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Booking } from '@/types';
+import { useContent } from './ContentContext';
 
 interface BookingContextType {
     bookings: Booking[];
-    addBooking: (bookingData: Omit<Booking, 'id' | 'createdAt' | 'status'>) => void;
-    updateBookingStatus: (id: string, status: Booking['status']) => void;
+    addBooking: (bookingData: Omit<Booking, 'id' | 'createdAt' | 'status'>) => Promise<void>;
+    updateBookingStatus: (id: string, status: Booking['status']) => Promise<void>;
     getBookingsByUserId: (userId: string) => Booking[];
     getBookingById: (id: string) => Booking | undefined;
     stats: {
@@ -17,63 +18,15 @@ interface BookingContextType {
 const BookingContext = createContext<BookingContextType | undefined>(undefined);
 
 export function BookingProvider({ children }: { children: React.ReactNode }) {
-    const [bookings, setBookings] = useState<Booking[]>([]);
+    // Consume data from ContentContext (Single Source of Truth)
+    const { bookings, addBooking: addBookingApi, updateBookingStatus: updateStatusApi } = useContent();
 
-    // Load from localStorage on mount
-    useEffect(() => {
-        const stored = localStorage.getItem('bt_bookings');
-        if (stored) {
-            try {
-                // eslint-disable-next-line react-hooks/set-state-in-effect
-                setBookings(JSON.parse(stored));
-            } catch (e) {
-                console.error("Failed to parse bookings", e);
-            }
-        } else {
-            // SEED DEMO DATA FOR "WOW" OPENER
-            const demoBooking: Booking = {
-                id: 'BK-DEMO-01',
-                userId: 'mock-user-1', // Matches AuthContext default user
-                customerName: 'Pengguna Demo',
-                productId: 'p1',
-                productType: 'Package',
-                productName: 'Eksplorasi Hutan Wehea & Dayak Culture',
-                productImage: 'https://hutanlindungwehea.id/wp-content/uploads/2021/11/2.-sejarah-lansakp-hutan-scaled.jpg?auto=format&fit=crop&q=80',
-                location: 'Muara Wahau, Kutai Timur',
-                date: new Date().toISOString(),
-                amount: 7000000,
-                adultCount: 2,
-                childCount: 0,
-                totalPax: 2,
-                travelers: [
-                    { type: 'Adult', title: 'Mr', fullName: 'Pengguna Demo' },
-                    { type: 'Adult', title: 'Mrs', fullName: 'Partner Demo' }
-                ],
-                status: 'Paid',
-                paymentMethod: 'Credit Card',
-            };
-            setBookings([demoBooking]);
-        }
-    }, []);
-
-    // Save to localStorage on change
-    useEffect(() => {
-        if (bookings.length > 0) {
-            localStorage.setItem('bt_bookings', JSON.stringify(bookings));
-        }
-    }, [bookings]);
-
-    const addBooking = (data: Omit<Booking, 'id' | 'status'>) => {
-        const newBooking: Booking = {
-            ...data,
-            id: `BK-${Date.now().toString().slice(-6)}`,
-            status: 'Paid', // Auto paid for demo
-        };
-        setBookings(prev => [newBooking, ...prev]);
+    const addBooking = async (data: Omit<Booking, 'id' | 'createdAt' | 'status'>) => {
+        await addBookingApi(data);
     };
 
-    const updateBookingStatus = (id: string, status: Booking['status']) => {
-        setBookings(prev => prev.map(b => b.id === id ? { ...b, status } : b));
+    const updateBookingStatus = async (id: string, status: Booking['status']) => {
+        await updateStatusApi(id, status);
     };
 
     const getBookingsByUserId = (userId: string) => {

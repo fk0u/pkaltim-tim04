@@ -6,7 +6,6 @@ import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
 import { Save, ArrowLeft, Plus, Trash2, Image as ImageIcon, CheckCircle, List, Clock, MapPin, DollarSign, Star, Globe, XCircle } from 'lucide-react';
 import { TourPackage, ItineraryDetail } from '@/types';
-import { ITINERARY_DETAILS } from '@/data/mockData';
 import ImageUpload from '@/components/ui/ImageUpload';
 import LocationInput from '@/components/ui/LocationInput';
 
@@ -45,12 +44,13 @@ export default function PackageForm() {
 
     useEffect(() => {
         if (isEditMode && id && packages.length > 0) {
-            const pkg = packages.find(p => p.id === id);
+            const pkg = packages.find(p => p.id === id) as any;
             if (pkg) {
                 setFormData(pkg);
-                // Load itinerary from mock/store (Mock for now as it's separate)
-                const itin = ITINERARY_DETAILS.find(i => i.packageId === id);
-                if (itin) setItineraryData(itin);
+                // Load itinerary from package data (from API)
+                if (pkg.itinerary) {
+                    setItineraryData(pkg.itinerary);
+                }
             }
         } else {
             // Generate ID for new package

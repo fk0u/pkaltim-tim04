@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Map, { Marker, Popup, NavigationControl } from 'react-map-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { REGIONS } from '@/data/mockData';
+import { useContent } from '@/contexts/ContentContext';
 import { MapPin, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -9,6 +9,7 @@ const MAPBOX_TOKEN = 'pk.eyJ1Ijoia291c296byIsImEiOiJjbWRsOHk1anYxM29qMmpvbXg5Y3N
 
 export default function InteractiveMap() {
     const [popupInfo, setPopupInfo] = React.useState<any>(null);
+    const { destinations: REGIONS } = useContent();
 
     // Initial view state centered on East Kalimantan
     const initialViewState = {

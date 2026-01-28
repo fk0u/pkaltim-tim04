@@ -5,8 +5,7 @@ import { DatePicker, ShareModal } from '@/components/ui';
 import { motion } from 'framer-motion';
 import { MapPin, Clock, Star, CheckCircle, ArrowRight, ShieldCheck, Share2, Heart } from 'lucide-react';
 import Image from 'next/image';
-import { useState } from 'react';
-import { ITINERARY_DETAILS } from '@/data/mockData';
+import { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function PackageDetail() {
@@ -17,9 +16,16 @@ export default function PackageDetail() {
    const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
    const [pax, setPax] = useState(1);
    const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+   const [itinerary, setItinerary] = useState<any>(null);
 
    const pkg = id ? packages.find(p => p.id === id) || null : null;
-   const itinerary = id ? ITINERARY_DETAILS.find(i => i.packageId === id) || null : null;
+
+   // Get itinerary from package data (from API)
+   useEffect(() => {
+      if (pkg && (pkg as any).itinerary) {
+         setItinerary((pkg as any).itinerary);
+      }
+   }, [pkg]);
 
    if (!pkg) return null;
 
@@ -112,14 +118,14 @@ export default function PackageDetail() {
                            <h2 className="text-2xl font-bold text-gray-900 mb-8">{t.packageDetail.itinerary}</h2>
                            <div className="space-y-8 relative">
                               <div className="absolute left-4 top-4 bottom-4 w-0.5 bg-gray-200"></div>
-                              {itinerary.days.map((day, idx) => (
+                              {itinerary.days.map((day: any, idx: number) => (
                                  <div key={idx} className="relative pl-12 group">
                                     <div className="absolute left-0 top-0 w-8 h-8 rounded-full bg-emerald-100 border-4 border-white flex items-center justify-center font-bold text-emerald-600 z-10 group-hover:bg-emerald-500 group-hover:text-white transition shadow-sm">
                                        {day.day}
                                     </div>
                                     <h3 className="text-lg font-bold text-gray-900 mb-4">{day.title}</h3>
                                     <div className="space-y-4">
-                                       {day.activities.map((act, actIdx) => (
+                                       {day.activities.map((act: any, actIdx: number) => (
                                           <div key={actIdx} className="bg-slate-50 p-4 rounded-2xl hover:bg-slate-100 transition border border-slate-100/50">
                                              <div className="flex items-center gap-3 mb-1">
                                                 <span className="px-2 py-1 bg-white rounded-lg text-xs font-bold text-emerald-600 border border-emerald-100">{act.time}</span>

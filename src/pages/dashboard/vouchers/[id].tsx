@@ -13,24 +13,6 @@ import { toPng } from 'html-to-image';
 import jsPDF from 'jspdf';
 import { useRef } from 'react';
 
-// Mock Data for the specific requested ID
-const MOCK_VOUCHER_BK_411375 = {
-    id: "BK-411375",
-    productName: "Derawan Island 3D2N Exclusive Trip",
-    date: "2024-05-15T09:00:00",
-    endDate: "2024-05-17T18:00:00",
-    location: "Kepulauan Derawan, Kalimantan Timur",
-    price: 3500000,
-    totalPax: 2,
-    amount: 7000000,
-    status: "PAID",
-    customerName: "Rizky Hasanuddin",
-    customerEmail: "rizky@example.com",
-    paymentMethod: "BCA Virtual Account",
-    bookingDate: "2024-04-10T14:30:00",
-    qrCode: "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=BK-411375"
-};
-
 export default function VoucherDetail() {
     const router = useRouter();
     const { id } = router.query;
@@ -100,24 +82,48 @@ export default function VoucherDetail() {
     };
 
     useEffect(() => {
-        if (router.isReady) {
-            if (id === 'BK-411375') {
-                setItem(MOCK_VOUCHER_BK_411375);
-            } else {
-                const found = typeof id === 'string' ? getBookingById(id) : null;
-                if (found) {
+        const fetchBooking = async () => {
+            if (!router.isReady || !id) return;
+
+            setIsLoading(true);
+            try {
+                // Try fetching from backend API first
+                const res = await fetch(`/api/bookings/${id}`);
+                if (res.ok) {
+                    const booking = await res.json();
                     setItem({
-                        ...found,
-                        // Add missing fields if any
-                        customerName: user?.name || 'Guest',
-                        customerEmail: user?.email || 'guest@example.com',
+                        ...booking,
+                        customerName: booking.user?.name || user?.name || 'Guest',
+                        customerEmail: booking.user?.email || user?.email || 'guest@example.com',
                         paymentMethod: 'Bank Transfer',
-                        qrCode: `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${found.id}`
+                        qrCode: `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${booking.id}`,
+                        productName: booking.event?.title || booking.tourPackage?.title || 'Trip Package',
+                        date: booking.date || booking.createdAt,
+                        location: booking.event?.location || booking.tourPackage?.location || 'Kalimantan Timur',
+                        amount: booking.totalPrice || 0,
+                        totalPax: booking.quantity || 1
                     });
+                } else {
+                    // Fallback to BookingContext
+                    const found = typeof id === 'string' ? getBookingById(id) : null;
+                    if (found) {
+                        setItem({
+                            ...found,
+                            customerName: user?.name || 'Guest',
+                            customerEmail: user?.email || 'guest@example.com',
+                            paymentMethod: 'Bank Transfer',
+                            qrCode: `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${found.id}`
+                        });
+                    }
                 }
+            } catch (error) {
+                console.error('Error fetching booking:', error);
+            } finally {
+                setIsLoading(false);
             }
-            setIsLoading(false);
-        }
+        };
+
+        fetchBooking();
     }, [id, router.isReady, getBookingById, user]);
 
     if (isLoading) return <Layout title="Loading..."><div className="p-8 text-center">Loading voucher details...</div></Layout>;

@@ -1,10 +1,20 @@
 import { Star, Quote } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useContent } from '@/contexts/ContentContext';
 
 export default function Testimonials() {
    const { t } = useLanguage();
-   // Safe alignment for potential type mismatch if not fully typed in context
-   const testimonials = (t.testimonials as any[]) || [];
+   // Get testimonials from backend via ContentContext
+   const { testimonials, loading } = useContent();
+
+   // Use backend data if available, otherwise fall back to language context data
+   const testimonialsData = testimonials.length > 0
+      ? testimonials
+      : (Array.isArray(t.testimonials) ? t.testimonials : []);
+
+   if (loading && testimonialsData.length === 0) {
+      return <div className="py-20 text-center text-gray-400">Loading testimonials...</div>;
+   }
 
    return (
       <section className="py-20 bg-emerald-50 relative overflow-hidden">
@@ -24,24 +34,24 @@ export default function Testimonials() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-               {testimonials.map((t: any) => (
-                  <div key={t.id} className="bg-white p-8 rounded-2xl shadow-lg border border-emerald-100 flex flex-col hover:-translate-y-2 transition duration-300">
+               {testimonialsData.map((item: any) => (
+                  <div key={item.id} className="bg-white p-8 rounded-2xl shadow-lg border border-emerald-100 flex flex-col hover:-translate-y-2 transition duration-300">
                      <div className="mb-6 text-emerald-300">
                         <Quote className="w-10 h-10" />
                      </div>
 
-                     <p className="text-gray-700 leading-relaxed italic mb-8 flex-grow">
-                        "{t.content}"
+                     <p className="text-gray-700 leading-relaxed italic mb-8 grow">
+                        "{item.content}"
                      </p>
 
                      <div className="flex items-center gap-4 border-t border-gray-100 pt-6">
-                        <img src={t.avatarUrl} alt={t.name} className="w-12 h-12 rounded-full object-cover ring-2 ring-emerald-100" />
+                        <img src={item.avatarUrl} alt={item.name} className="w-12 h-12 rounded-full object-cover ring-2 ring-emerald-100" />
                         <div>
-                           <h4 className="font-bold text-gray-900 text-sm">{t.name}</h4>
-                           <p className="text-xs text-gray-500">{t.role}</p>
+                           <h4 className="font-bold text-gray-900 text-sm">{item.name}</h4>
+                           <p className="text-xs text-gray-500">{item.role}</p>
                         </div>
                         <div className="ml-auto flex gap-0.5 text-yellow-400">
-                           {[...Array(t.rating)].map((_, i) => (
+                           {[...Array(item.rating || 5)].map((_, i) => (
                               <Star key={i} className="w-4 h-4 fill-current" />
                            ))}
                         </div>

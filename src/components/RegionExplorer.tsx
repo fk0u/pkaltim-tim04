@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { motion } from 'framer-motion';
-import { REGIONS } from '@/data/mockData';
+import { useContent } from '@/contexts/ContentContext';
 import { MapPin, Users, Ruler, Building, ArrowRight, Grid, TreePine } from 'lucide-react';
 import Link from 'next/link';
 import InteractiveMap from './InteractiveMap';
@@ -8,6 +8,8 @@ import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function RegionExplorer() {
     const { t } = useLanguage();
+    const { destinations: REGIONS, loading } = useContent();
+
 
     return (
         <section className="py-20 md:py-24 bg-gray-50 overflow-hidden" id="region-explorer">

@@ -13,8 +13,8 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <AuthProvider>
-      <BookingProvider>
-        <ContentProvider>
+      <ContentProvider>
+        <BookingProvider>
           <LanguageProvider>
             <ToastProvider>
               <PageTransition>
@@ -22,8 +22,8 @@ export default function App({ Component, pageProps }: AppProps) {
               </PageTransition>
             </ToastProvider>
           </LanguageProvider>
-        </ContentProvider>
-      </BookingProvider>
+        </BookingProvider>
+      </ContentProvider>
     </AuthProvider>
   );
 }
