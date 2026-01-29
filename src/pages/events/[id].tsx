@@ -8,11 +8,14 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
+import { useAuth } from '@/contexts/AuthContext';
+
 export default function EventDetail() {
     const router = useRouter();
     const { id } = router.query;
     const { addToast } = useToast();
     const { events } = useContent();
+    const { user } = useAuth();
     const { scrollY } = useScroll();
     const [pax, setPax] = useState(1);
     const { t, locale } = useLanguage();
@@ -73,6 +76,12 @@ export default function EventDetail() {
     };
 
     const handleTicket = () => {
+        if (!user) {
+            addToast("Please login to book a ticket", "error"); // Should use i18n ideally but text is okay for now or reuse existing keys
+            router.push('/login');
+            return;
+        }
+
         const price = parsePrice(event.price || 'Free');
         const parsedDate = parseDate(event.date); // Use existing date if valid or parser
 
@@ -81,7 +90,7 @@ export default function EventDetail() {
             query: {
                 id: event.id,
                 pkg: event.title[locale === 'en' ? 'en' : 'id'],
-                price: price * pax,
+                price: price, // Fix: Pass unit price, not total
                 image: event.imageUrl,
                 location: event.location,
                 date: parsedDate,
@@ -92,8 +101,13 @@ export default function EventDetail() {
     };
 
     const handleShare = () => {
-        navigator.clipboard.writeText(window.location.href);
-        addToast(t.events.detail.toastLink, "success");
+        if (typeof navigator !== 'undefined' && navigator.clipboard) {
+            navigator.clipboard.writeText(window.location.href);
+            addToast(t.events.detail.toastLink, "success");
+        } else {
+            // Fallback or just ignore
+            addToast("Share feature not supported", "error");
+        }
     };
 
     const title = event.title[locale === 'en' ? 'en' : 'id'];

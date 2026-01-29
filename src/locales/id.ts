@@ -52,6 +52,7 @@ export const id = {
         curatedExperiences: "Pengalaman Kurasi",
         findYourElement: "Temukan Elemenmu",
         trendingNow: "Sedang Tren",
+        popularDestination: "Destinasi Populer",
         exploreUnseen: "Jelajahi yang Tak Terlihat.",
         exploreDesc: "Dari kedalaman Kayan Mentarang hingga terumbu karang murni Maratua.",
         viewAllDestinations: "Lihat Semua Destinasi",

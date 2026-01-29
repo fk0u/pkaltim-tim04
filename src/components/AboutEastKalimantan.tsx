@@ -20,8 +20,8 @@ const AboutEastKalimantan = () => {
         },
         {
             icon: <Mountain className="w-6 h-6 text-blue-500" />,
-            title: "Karst Sangkulirang",
-            desc: "One of the largest karst clusters in the world, holding prehistoric rock art dating back 40,000 years."
+            title: t.about.why.reason3Title,
+            desc: t.about.why.reason3Desc
         }
     ];
 
@@ -39,7 +39,7 @@ const AboutEastKalimantan = () => {
                             {t.region.title} <br />
                             <span className="relative inline-block">
                                 <span className="relative z-10 text-transparent bg-clip-text bg-linear-to-r from-emerald-600 to-teal-500">{t.region.titleHighlight}</span>
-                                <span className="absolute bottom-2 left-0 w-full h-4 bg-emerald-100/50 -rotate-2 -z-0"></span>
+                                <span className="absolute bottom-2 left-0 w-full h-4 bg-emerald-100/50 -rotate-2 z-0"></span>
                             </span>
                         </h2>
                         <p className="text-lg text-gray-600 leading-relaxed mb-8 font-light">
@@ -68,7 +68,7 @@ const AboutEastKalimantan = () => {
                         </div>
 
                         {/* Floating Stats Card behind map */}
-                        <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-emerald-900 rounded-[2rem] p-6 text-white hidden lg:flex flex-col justify-between z-20 shadow-2xl">
+                        <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-emerald-900 rounded-4xl p-6 text-white hidden lg:flex flex-col justify-between z-20 shadow-2xl">
                             <Map className="w-8 h-8 opacity-50" />
                             <div>
                                 <div className="text-4xl font-black">129k</div>

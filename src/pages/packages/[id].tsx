@@ -8,10 +8,15 @@ import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/components/ui';
+
 export default function PackageDetail() {
    const router = useRouter();
    const { id } = router.query;
    const { packages } = useContent();
+   const { user } = useAuth();
+   const { addToast } = useToast();
    const { t, locale } = useLanguage();
    const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
    const [pax, setPax] = useState(1);
@@ -30,18 +35,29 @@ export default function PackageDetail() {
    if (!pkg) return null;
 
    const handleBook = () => {
+      if (!user) {
+         addToast("Please login to book a package", "error");
+         router.push('/login');
+         return;
+      }
+
       router.push({
          pathname: '/checkout',
          query: {
             id: pkg.id,
             pkg: pkg.title[locale === 'en' ? 'en' : 'id'],
-            price: pkg.price * pax,
+            price: pkg.price, // Fix: Pass unit price
             image: pkg.imageUrl,
             location: pkg.location,
             date: selectedDate ? selectedDate.toISOString() : new Date().toISOString(),
             pax: pax
          }
       });
+   };
+
+   const handleWishlist = () => {
+      addToast(t.packageDetail.wishlist + " added!", "success");
+      // Future: Persist to DB
    };
 
    const title = pkg.title[locale === 'en' ? 'en' : 'id'];
@@ -210,7 +226,10 @@ export default function PackageDetail() {
                               onClose={() => setIsShareModalOpen(false)}
                               title={title}
                            />
-                           <button className="flex-1 py-3 rounded-xl bg-white border border-gray-200 hover:border-red-200 hover:text-red-500 font-bold text-sm text-gray-600 flex items-center justify-center gap-2 transition group">
+                           <button
+                              onClick={handleWishlist}
+                              className="flex-1 py-3 rounded-xl bg-white border border-gray-200 hover:border-red-200 hover:text-red-500 font-bold text-sm text-gray-600 flex items-center justify-center gap-2 transition group"
+                           >
                               <Heart className="w-4 h-4 group-hover:fill-red-500" /> {t.packageDetail.wishlist}
                            </button>
                         </div>

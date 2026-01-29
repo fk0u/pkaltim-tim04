@@ -25,13 +25,13 @@ export default function Home() {
    const featuredPackages = packages.slice(0, 3);
    const popularDestinations = destinations.slice(0, 5); // 5 items for bento grid
 
-   const categories = [
-      { name: t.homepage.categories.island, icon: '🏝️', image: 'https://images.unsplash.com/photo-1596401057633-565652b5d249?auto=format&fit=crop&q=80' },
-      { name: t.homepage.categories.jungle, icon: '🌳', image: 'https://images.unsplash.com/photo-1448375240586-dfd8d395ea6c?auto=format&fit=crop&q=80' },
-      { name: t.homepage.categories.culture, icon: '👺', image: 'https://images.unsplash.com/photo-1542385151-efd9000d8def?auto=format&fit=crop&q=80' },
-      { name: t.homepage.categories.wildlife, icon: '🦧', image: 'https://images.unsplash.com/photo-1510797215324-95aa89f43c33?auto=format&fit=crop&q=80' },
-      { name: t.homepage.categories.diving, icon: '🤿', image: 'https://images.unsplash.com/photo-1582967788606-a171f1080cae?auto=format&fit=crop&q=80' },
-   ];
+   // const categories = [
+   //    { name: t.homepage.categories.island, icon: '🏝️', image: 'https://images.unsplash.com/photo-1596401057633-565652b5d249?auto=format&fit=crop&q=80' },
+   //    { name: t.homepage.categories.jungle, icon: '🌳', image: 'https://images.unsplash.com/photo-1448375240586-dfd8d395ea6c?auto=format&fit=crop&q=80' },
+   //    { name: t.homepage.categories.culture, icon: '👺', image: 'https://images.unsplash.com/photo-1542385151-efd9000d8def?auto=format&fit=crop&q=80' },
+   //    { name: t.homepage.categories.wildlife, icon: '🦧', image: 'https://images.unsplash.com/photo-1510797215324-95aa89f43c33?auto=format&fit=crop&q=80' },
+   //    { name: t.homepage.categories.diving, icon: '🤿', image: 'https://images.unsplash.com/photo-1582967788606-a171f1080cae?auto=format&fit=crop&q=80' },
+   // ];
 
    return (
       <Layout
@@ -123,7 +123,7 @@ export default function Home() {
                   className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/50 z-30"
                >
                   <span className="text-[10px] uppercase tracking-[0.2em]">Scroll</span>
-                  <div className="w-[1px] h-12 bg-linear-to-b from-white to-transparent opacity-50"></div>
+                  <div className="w-px h-12 bg-linear-to-b from-white to-transparent opacity-50"></div>
                </motion.div>
             </section>
 
@@ -145,7 +145,7 @@ export default function Home() {
                      <motion.div
                         whileHover={{ scale: 0.98 }}
                         key={i}
-                        className="min-w-[280px] md:min-w-[320px] h-[400px] relative rounded-[2rem] overflow-hidden group cursor-pointer shadow-lg snap-center"
+                        className="min-w-[280px] md:min-w-[320px] h-[400px] relative rounded-4xl overflow-hidden group cursor-pointer shadow-lg snap-center"
                      >
                         <Image
                            src={cat.image}
@@ -197,7 +197,7 @@ export default function Home() {
                            {/* Content Overlay */}
                            <div className="absolute bottom-0 left-0 p-6 md:p-8 w-full z-10 transition-transform duration-500 group-hover:-translate-y-2">
                               <span className="inline-block py-1 px-3 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white text-[10px] font-bold uppercase tracking-widest mb-3">
-                                 {dest.type}
+                                 {dest.type === 'Popular Destination' ? t.homepage.popularDestination : dest.type}
                               </span>
                               <h3 className={`${i === 0 ? 'text-4xl' : 'text-2xl'} font-bold text-white leading-tight`}>{dest.name}</h3>
                               <div className="flex items-center gap-2 text-emerald-300 mt-2 opacity-0 group-hover:opacity-100 transition duration-300 translate-y-4 group-hover:translate-y-0">
@@ -210,7 +210,7 @@ export default function Home() {
 
                   <div className="mt-12 text-center">
                      <Link href="/packages" className="inline-flex items-center gap-3 px-8 py-4 rounded-full border-2 border-gray-900 text-gray-900 font-bold hover:bg-gray-900 hover:text-white transition-all duration-300 group">
-                        View All Destinations <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition" />
+                        {t.homepage.viewAllDestinations} <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition" />
                      </Link>
                   </div>
                </div>

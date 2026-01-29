@@ -18,8 +18,13 @@ export default function ShareModal({ isOpen, onClose, title = "Share this Trip",
 
     const handleCopy = () => {
         if (!shareUrl) return;
-        navigator.clipboard.writeText(shareUrl);
-        addToast('Link copied to clipboard', 'success');
+        if (typeof navigator !== 'undefined' && navigator.clipboard) {
+            navigator.clipboard.writeText(shareUrl);
+            addToast('Link copied to clipboard', 'success');
+        } else {
+            // Fallback
+            addToast('Copy feature not supported', 'error');
+        }
     };
 
     const handleShare = (platform: string) => {

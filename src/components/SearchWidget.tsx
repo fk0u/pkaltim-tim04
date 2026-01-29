@@ -11,6 +11,7 @@ export default function SearchWidget() {
   const [isSearching, setIsSearching] = useState(false);
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [travelers, setTravelers] = useState("1 Dewasa");
+  const [location, setLocation] = useState("");
   const { addToast } = useToast();
   const { t } = useLanguage();
 
@@ -28,6 +29,7 @@ export default function SearchWidget() {
       pathname: '/search',
       query: {
         type: activeTab,
+        q: location, // Pass location as query
         date: date ? date.toISOString() : undefined,
         travelers
       }
@@ -72,6 +74,8 @@ export default function SearchWidget() {
             <DestinationSearch
               label={activeTab === 'Event' ? t.search.eventLocation : t.search.destination}
               placeholder={activeTab === 'Event' ? t.hero.searchPlaceholderEvent : t.hero.searchPlaceholderPackage}
+              value={location}
+              onChange={setLocation}
             />
           </div>
 

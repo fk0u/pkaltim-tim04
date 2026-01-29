@@ -52,6 +52,7 @@ export const en = {
         curatedExperiences: "Curated Experiences",
         findYourElement: "Find Your Element",
         trendingNow: "Trending Now",
+        popularDestination: "Popular Destination",
         exploreUnseen: "Explore the Unseen.",
         exploreDesc: "From the depths of the Kayan Mentarang to the pristine reefs of Maratua.",
         viewAllDestinations: "View All Destinations",
