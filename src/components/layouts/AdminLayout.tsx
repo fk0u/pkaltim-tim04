@@ -34,6 +34,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
     const menuItems = [
         { icon: LayoutDashboard, label: 'Overview', href: '/dashboard/admin' },
         { icon: Package, label: 'Products', href: '/dashboard/admin/products' },
+        { icon: Globe, label: 'Categories', href: '/dashboard/admin/categories' },
         { icon: MapPin, label: 'Destinations', href: '/dashboard/admin/destinations' },
         { icon: ShoppingBag, label: 'Bookings', href: '/dashboard/admin/bookings' },
         { icon: Users, label: 'Customers', href: '/dashboard/admin/customers' },

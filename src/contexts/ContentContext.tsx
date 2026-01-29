@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { TourPackage, Event, User, Booking, Destination, Testimonial } from '@/types';
+import { DatabaseError } from '@/components/ui';
 
 interface ContentContextType {
     packages: TourPackage[];
@@ -48,13 +49,23 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     const [customers, setCustomers] = useState<User[]>([]);
     const [destinations, setDestinations] = useState<Destination[]>([]);
     const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
-    const [categories, setCategories] = useState<any[]>([]); // Define Category type if possible
+    const [categories, setCategories] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [dbError, setDbError] = useState(false);
 
     // Fetch all data from backend APIs
     const fetchData = useCallback(async () => {
         setLoading(true);
+        setDbError(false);
         try {
+            // First check DB health
+            const healthRes = await fetch('/api/health');
+            if (healthRes.status === 503 || !healthRes.ok) {
+                setDbError(true);
+                setLoading(false);
+                return;
+            }
+
             const [packagesRes, eventsRes, bookingsRes, usersRes, regionsRes, testimonialsRes, categoriesRes] = await Promise.all([
                 fetch('/api/packages'),
                 fetch('/api/events'),
@@ -359,6 +370,10 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     const refreshData = async () => {
         await fetchData();
     };
+
+    if (dbError) {
+        return <DatabaseError onRetry={refreshData} />;
+    }
 
     return (
         <ContentContext.Provider value={{

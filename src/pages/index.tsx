@@ -11,8 +11,8 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useRef } from 'react';
 
 export default function Home() {
-   const { t } = useLanguage();
-   const { packages, events, destinations } = useContent();
+   const { t, locale } = useLanguage();
+   const { packages, events, destinations, categories } = useContent();
 
    // Parallax & Scroll Logic
    const targetRef = useRef(null);
@@ -134,42 +134,100 @@ export default function Home() {
                </motion.div>
             </section>
 
-            {/* --- CATEGORIES SLIDER --- */}
-            <section className="pt-32 pb-16 md:py-24 bg-white relative z-20 rounded-t-[2.5rem] md:rounded-t-[4rem] -mt-6 md:-mt-20 overflow-hidden">
-               <div className="container mx-auto px-4 mb-12 flex justify-between items-end mt-12 md:mt-24">
+            {/* --- IMMERSIVE CATEGORIES GALLERY --- */}
+            <section className="py-24 bg-white relative z-20 rounded-t-[3rem] md:rounded-t-[5rem] -mt-10 md:-mt-20 overflow-hidden">
+               <div className="container mx-auto px-4 mb-12 flex justify-between items-end">
                   <div>
-                     <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest mb-2">{t.homepage.curatedExperiences}</h3>
-                     <h2 className="text-4xl font-bold text-gray-900">{t.homepage.findYourElement}</h2>
+                     <motion.h3
+                        initial={{ opacity: 0, x: -20 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        className="text-sm font-black text-gray-400 uppercase tracking-widest mb-2"
+                     >
+                        {t.homepage.curatedExperiences}
+                     </motion.h3>
+                     <motion.h2
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.1 }}
+                        className="text-4xl md:text-5xl font-bold text-gray-900"
+                     >
+                        {t.homepage.findYourElement}
+                     </motion.h2>
                   </div>
-                  <div className="hidden md:flex gap-2">
-                     <button className="p-3 rounded-full border hover:bg-black hover:text-white transition"><ArrowRight className="rotate-180 w-5 h-5" /></button>
-                     <button className="p-3 rounded-full border hover:bg-black hover:text-white transition"><ArrowRight className="w-5 h-5" /></button>
+                  <div className="hidden md:flex gap-4">
+                     <div className="flex items-center gap-2 text-sm font-medium text-gray-400">
+                        <ArrowRight className="w-4 h-4 animate-pulse" />
+                        <span>Drag to explore</span>
+                     </div>
                   </div>
                </div>
 
-               <div className="flex gap-6 overflow-x-auto pb-8 container mx-auto px-4 scrollbar-hide snap-x">
-                  {categories.map((cat, i) => (
-                     <motion.div
-                        whileHover={{ scale: 0.98 }}
-                        key={i}
-                        className="min-w-[280px] md:min-w-[320px] h-[400px] relative rounded-4xl overflow-hidden group cursor-pointer shadow-lg snap-center"
-                     >
-                        <Image
-                           src={cat.imageUrl}
-                           alt={cat.name[locale === 'en' ? 'en' : 'id']}
-                           fill
-                           className="object-cover group-hover:scale-110 transition duration-700"
-                        />
-                        <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent p-8 flex flex-col justify-end">
-                           <span className="text-emerald-400 font-bold uppercase tracking-widest text-xs mb-2">{cat.icon} {t.homepage.popularDestination}</span>
-                           <h3 className="text-2xl font-bold text-white mb-2">{cat.name[locale === 'en' ? 'en' : 'id']}</h3>
-                           <div className="flex items-center gap-2 text-white/80 text-sm group-hover:gap-4 transition-all">
-                              {t.homepage.viewAllDestinations} <ArrowRight className="w-4 h-4" />
+               {/* Draggable Carousel */}
+               <motion.div
+                  className="cursor-grab active:cursor-grabbing pl-4 md:pl-0"
+                  whileTap={{ cursor: "grabbing" }}
+               >
+                  <motion.div
+                     drag="x"
+                     dragConstraints={{ right: 0, left: -((categories.length * 320) - 300) }}
+                     className="flex gap-6 md:gap-8 container mx-auto px-4 w-max"
+                  >
+                     {categories.map((cat, i) => (
+                        <motion.div
+                           key={i}
+                           initial={{ opacity: 0, y: 50 }}
+                           whileInView={{ opacity: 1, y: 0 }}
+                           viewport={{ once: true, margin: "-100px" }}
+                           transition={{ delay: i * 0.1, duration: 0.6 }}
+                           whileHover={{
+                              scale: 1.02,
+                              width: 380,
+                              transition: { duration: 0.4, ease: "easeOut" }
+                           }}
+                           className="relative w-[280px] md:w-[320px] h-[450px] md:h-[500px] rounded-[2.5rem] overflow-hidden shrink-0 group shadow-2xl shadow-gray-200/50"
+                        >
+                           <Image
+                              src={cat.imageUrl}
+                              alt={cat.name[locale === 'en' ? 'en' : 'id']}
+                              fill
+                              className="object-cover group-hover:scale-110 transition duration-1000 ease-in-out"
+                              sizes="(max-width: 768px) 100vw, 33vw"
+                           />
+
+                           {/* Gradient Overlay */}
+                           <div className="absolute inset-0 bg-linear-to-b from-black/10 via-transparent to-black/90 group-hover:to-black/80 transition-all duration-500" />
+
+                           {/* Floating Badge */}
+                           <div className="absolute top-6 right-6 w-12 h-12 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center text-xl shadow-lg ring-1 ring-white/10 group-hover:bg-emerald-500 group-hover:text-white group-hover:rotate-12 transition-all duration-300">
+                              {cat.icon}
                            </div>
-                        </div>
-                     </motion.div>
-                  ))}
-               </div>
+
+                           {/* Content */}
+                           <div className="absolute bottom-0 left-0 p-8 w-full transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+                              <motion.div
+                                 className="w-10 h-1 bg-emerald-500 mb-6 rounded-full"
+                                 initial={{ width: 0 }}
+                                 whileInView={{ width: 40 }}
+                              />
+                              <h3 className="text-3xl font-bold text-white mb-3 leading-tight">
+                                 {cat.name[locale === 'en' ? 'en' : 'id']}
+                              </h3>
+                              <p className="text-white/60 text-sm opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-100 line-clamp-2 mb-4">
+                                 Explore the best {cat.name[locale === 'en' ? 'en' : 'id']} destinations curated just for you.
+                              </p>
+                              <div className="flex items-center gap-3 text-emerald-300 font-bold uppercase tracking-widest text-xs opacity-80 group-hover:opacity-100 group-hover:gap-5 transition-all duration-300">
+                                 <span>{t.homepage.viewAllDestinations}</span>
+                                 <div className="w-8 h-8 rounded-full border border-emerald-300/30 flex items-center justify-center group-hover:bg-emerald-500 group-hover:border-emerald-500 group-hover:text-white transition-all">
+                                    <ArrowRight className="w-3 h-3" />
+                                 </div>
+                              </div>
+                           </div>
+                        </motion.div>
+                     ))}
+                  </motion.div>
+               </motion.div>
             </section>
 
             {/* --- ABOUT EAST KALIMANTAN (New Section) --- */}

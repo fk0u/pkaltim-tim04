@@ -4,7 +4,7 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { BookingProvider } from "@/contexts/BookingContext";
 import { ContentProvider } from "@/contexts/ContentContext";
-import { ToastProvider } from "@/components/ui";
+import { ToastProvider, CookieConsent, SmoothScroll } from "@/components/ui";
 import CursorEffect from "@/components/ui/CursorEffect";
 import PageTransition from "@/components/PageTransition";
 import { useRouter } from "next/router";
@@ -19,9 +19,12 @@ export default function App({ Component, pageProps }: AppProps) {
           <LanguageProvider>
             <ToastProvider>
               <CursorEffect />
-              <PageTransition>
-                <Component {...pageProps} />
-              </PageTransition>
+              <CookieConsent />
+              <SmoothScroll>
+                <PageTransition>
+                  <Component {...pageProps} />
+                </PageTransition>
+              </SmoothScroll>
             </ToastProvider>
           </LanguageProvider>
         </BookingProvider>

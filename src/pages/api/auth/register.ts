@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
-import { hashPassword, generateToken } from '@/lib/auth';
+import { hashPassword, generateToken, setCookie } from '@/lib/auth';
 
 export default async function handler(
   req: NextApiRequest,
@@ -47,12 +47,15 @@ export default async function handler(
 
     const token = generateToken({ userId: user.id, email: user.email, role: user.role });
 
+    // Set HttpOnly Cookie
+    setCookie(res, 'token', token);
+
     // Don't send password in response
     const { password: _, ...userWithoutPassword } = user;
 
     return res.status(201).json({
       user: userWithoutPassword,
-      token
+      // Token is in cookie
     });
   } catch (error) {
     console.error('Registration error:', error);

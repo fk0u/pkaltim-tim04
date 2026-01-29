@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
+import { sign, verify } from 'jsonwebtoken';
+import { hash, compare } from 'bcryptjs';
+import { serialize } from 'cookie';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'borneotrip-secret-key';
 
@@ -14,60 +15,73 @@ export interface AuthenticatedRequest extends NextApiRequest {
     user?: JwtPayload;
 }
 
-/**
- * Hash a password using bcrypt
- */
-export async function hashPassword(password: string): Promise<string> {
-    return bcrypt.hash(password, 10);
+export async function hashPassword(password: string) {
+    return await hash(password, 12);
 }
 
-/**
- * Compare password with hash
- */
-export async function verifyPassword(password: string, hash: string): Promise<boolean> {
-    return bcrypt.compare(password, hash);
+export async function verifyPassword(password: string, hashed: string) {
+    return await compare(password, hashed);
 }
 
-/**
- * Generate JWT token
- */
-export function generateToken(payload: JwtPayload): string {
-    return jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
+export function generateToken(payload: object) {
+    return sign(payload, JWT_SECRET, { expiresIn: '7d' });
 }
 
-/**
- * Verify JWT token
- */
-export function verifyToken(token: string): JwtPayload | null {
+export function verifyToken(token: string) {
     try {
-        return jwt.verify(token, JWT_SECRET) as JwtPayload;
+        return verify(token, JWT_SECRET) as JwtPayload;
     } catch {
         return null;
     }
 }
 
-/**
- * Middleware to authenticate requests
- */
+export function setCookie(res: NextApiResponse, name: string, value: string, options: any = {}) {
+    const stringValue = typeof value === 'object' ? 'j:' + JSON.stringify(value) : String(value);
+
+    const opts = {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        path: '/',
+        maxAge: 7 * 24 * 60 * 60,
+        sameSite: 'strict',
+        ...options
+    };
+
+    res.setHeader('Set-Cookie', serialize(name, String(stringValue), opts));
+}
+
+export function removeCookie(res: NextApiResponse, name: string) {
+    res.setHeader('Set-Cookie', serialize(name, '', {
+        maxAge: -1,
+        path: '/',
+    }));
+}
+
 export function withAuth(
     handler: (req: AuthenticatedRequest, res: NextApiResponse) => Promise<void>,
     requiredRole?: string | string[]
 ) {
     return async (req: AuthenticatedRequest, res: NextApiResponse) => {
-        const authHeader = req.headers.authorization;
+        const tokenCookie = req.cookies.token;
 
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        // Also verify header as fallback/alternative if needed, but primary is cookie now
+        // const authHeader = req.headers.authorization; 
+
+        let token = tokenCookie;
+        // if (!token && authHeader && authHeader.startsWith('Bearer ')) {
+        //     token = authHeader.substring(7);
+        // }
+
+        if (!token) {
             return res.status(401).json({ message: 'Unauthorized: No token provided' });
         }
 
-        const token = authHeader.substring(7);
         const payload = verifyToken(token);
 
         if (!payload) {
             return res.status(401).json({ message: 'Unauthorized: Invalid token' });
         }
 
-        // Check role if required
         if (requiredRole) {
             const roles = Array.isArray(requiredRole) ? requiredRole : [requiredRole];
             if (!roles.includes(payload.role)) {
@@ -76,27 +90,6 @@ export function withAuth(
         }
 
         req.user = payload;
-        return handler(req, res);
-    };
-}
-
-/**
- * Optional auth - doesn't fail if no token, but attaches user if present
- */
-export function withOptionalAuth(
-    handler: (req: AuthenticatedRequest, res: NextApiResponse) => Promise<void>
-) {
-    return async (req: AuthenticatedRequest, res: NextApiResponse) => {
-        const authHeader = req.headers.authorization;
-
-        if (authHeader && authHeader.startsWith('Bearer ')) {
-            const token = authHeader.substring(7);
-            const payload = verifyToken(token);
-            if (payload) {
-                req.user = payload;
-            }
-        }
-
         return handler(req, res);
     };
 }

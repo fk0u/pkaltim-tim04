@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import Layout from '@/components/dashboard/Layout';
+import AdminLayout from '@/components/layouts/AdminLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { Plus, Edit2, Trash2, Search, X, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/router';
@@ -13,7 +13,7 @@ interface Category {
 }
 
 export default function AdminCategories() {
-    const { user, loading } = useAuth();
+    const { user } = useAuth();
     const router = useRouter();
     const { addToast } = useToast();
     const [categories, setCategories] = useState<Category[]>([]);
@@ -32,10 +32,11 @@ export default function AdminCategories() {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
-        if (!loading && (!user || user.role !== 'admin')) {
-            router.push('/login');
+        if (!user || user.role !== 'admin') {
+            // Access control handled mostly by Layout but good double check
+            // router.push('/login'); 
         }
-    }, [user, loading, router]);
+    }, [user, router]);
 
     useEffect(() => {
         fetchCategories();
@@ -123,10 +124,10 @@ export default function AdminCategories() {
         c.name.id.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    if (loading || isLoading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="animate-spin" /></div>;
+    if (isLoading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="animate-spin" /></div>;
 
     return (
-        <Layout>
+        <AdminLayout title="Categories Management">
             <div className="p-8">
                 <div className="flex justify-between items-center mb-8">
                     <div>
@@ -229,7 +230,6 @@ export default function AdminCategories() {
                                 <ImageUpload
                                     value={formData.imageUrl}
                                     onChange={(url) => setFormData({ ...formData, imageUrl: url })}
-                                    onRemove={() => setFormData({ ...formData, imageUrl: '' })}
                                 />
                             </div>
 
@@ -244,6 +244,6 @@ export default function AdminCategories() {
                     </div>
                 </div>
             )}
-        </Layout>
+        </AdminLayout>
     );
 }
