@@ -2,6 +2,7 @@ import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import Layout from '@/components/Layout';
 import SearchWidget from '@/components/SearchWidget';
 import Testimonials from '@/components/Testimonials';
+import AboutEastKalimantan from '@/components/AboutEastKalimantan';
 import { useContent } from '@/contexts/ContentContext';
 import { ArrowRight, MapPin, Star, Leaf, Heart, Globe, Play } from 'lucide-react';
 import Link from 'next/link';
@@ -25,11 +26,11 @@ export default function Home() {
    const popularDestinations = destinations.slice(0, 5); // 5 items for bento grid
 
    const categories = [
-      { name: 'Island Hopping', icon: '🏝️', image: 'https://images.unsplash.com/photo-1596401057633-565652b5d249?auto=format&fit=crop&q=80' },
-      { name: 'Deep Jungle', icon: '🌳', image: 'https://images.unsplash.com/photo-1448375240586-dfd8d395ea6c?auto=format&fit=crop&q=80' },
-      { name: 'Cultural Heritage', icon: '👺', image: 'https://images.unsplash.com/photo-1542385151-efd9000d8def?auto=format&fit=crop&q=80' },
-      { name: 'Wildlife Safari', icon: '🦧', image: 'https://images.unsplash.com/photo-1510797215324-95aa89f43c33?auto=format&fit=crop&q=80' },
-      { name: 'Luxury Diving', icon: '🤿', image: 'https://images.unsplash.com/photo-1582967788606-a171f1080cae?auto=format&fit=crop&q=80' },
+      { name: t.homepage.categories.island, icon: '🏝️', image: 'https://images.unsplash.com/photo-1596401057633-565652b5d249?auto=format&fit=crop&q=80' },
+      { name: t.homepage.categories.jungle, icon: '🌳', image: 'https://images.unsplash.com/photo-1448375240586-dfd8d395ea6c?auto=format&fit=crop&q=80' },
+      { name: t.homepage.categories.culture, icon: '👺', image: 'https://images.unsplash.com/photo-1542385151-efd9000d8def?auto=format&fit=crop&q=80' },
+      { name: t.homepage.categories.wildlife, icon: '🦧', image: 'https://images.unsplash.com/photo-1510797215324-95aa89f43c33?auto=format&fit=crop&q=80' },
+      { name: t.homepage.categories.diving, icon: '🤿', image: 'https://images.unsplash.com/photo-1582967788606-a171f1080cae?auto=format&fit=crop&q=80' },
    ];
 
    return (
@@ -89,8 +90,8 @@ export default function Home() {
                         transition={{ delay: 0.2, duration: 1, ease: [0.16, 1, 0.3, 1] }}
                         className="text-6xl md:text-8xl lg:text-9xl font-black text-white tracking-tighter leading-[0.9] drop-shadow-2xl"
                      >
-                        Wait for the <br />
-                        <span className="text-transparent bg-clip-text bg-linear-to-r from-emerald-400 via-teal-200 to-cyan-400 animate-pulse-slow">Magic.</span>
+                        {t.hero.waitMagic} <br />
+                        <span className="text-transparent bg-clip-text bg-linear-to-r from-emerald-400 via-teal-200 to-cyan-400 animate-pulse-slow">{t.hero.magic}</span>
                      </motion.h1>
 
                      <motion.p
@@ -130,8 +131,8 @@ export default function Home() {
             <section className="py-20 bg-white relative z-20 rounded-t-[3rem] -mt-10 overflow-hidden">
                <div className="container mx-auto px-4 mb-12 flex justify-between items-end">
                   <div>
-                     <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest mb-2">Curated Experiences</h3>
-                     <h2 className="text-4xl font-bold text-gray-900">Find Your Element</h2>
+                     <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest mb-2">{t.homepage.curatedExperiences}</h3>
+                     <h2 className="text-4xl font-bold text-gray-900">{t.homepage.findYourElement}</h2>
                   </div>
                   <div className="hidden md:flex gap-2">
                      <button className="p-3 rounded-full border hover:bg-black hover:text-white transition"><ArrowRight className="rotate-180 w-5 h-5" /></button>
@@ -156,20 +157,23 @@ export default function Home() {
                         <div className="absolute bottom-0 left-0 p-8 w-full transform translate-y-2 group-hover:translate-y-0 transition duration-300">
                            <div className="text-4xl mb-4 transform -translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition duration-500 delay-100">{cat.icon}</div>
                            <h3 className="text-2xl font-bold text-white mb-2">{cat.name}</h3>
-                           <div className="h-[1px] w-0 bg-emerald-500 group-hover:w-full transition-all duration-500 delay-200"></div>
+                           <div className="h-px w-0 bg-emerald-500 group-hover:w-full transition-all duration-500 delay-200"></div>
                         </div>
                      </motion.div>
                   ))}
                </div>
             </section>
 
+            {/* --- ABOUT EAST KALIMANTAN (New Section) --- */}
+            <AboutEastKalimantan />
+
             {/* --- BENTO GRID DESTINATIONS --- */}
             <section className="py-24 bg-gray-50">
                <div className="container mx-auto px-4">
                   <div className="text-center max-w-3xl mx-auto mb-20">
-                     <span className="text-emerald-600 font-bold tracking-widest text-sm uppercase block mb-4">Trending Now</span>
-                     <h2 className="text-5xl md:text-6xl font-black text-gray-900 mb-6">Explore the Unseen.</h2>
-                     <p className="text-xl text-gray-500 font-light">From the depths of the Kayan Mentarang to the pristine reefs of Maratua.</p>
+                     <span className="text-emerald-600 font-bold tracking-widest text-sm uppercase block mb-4">{t.homepage.trendingNow}</span>
+                     <h2 className="text-5xl md:text-6xl font-black text-gray-900 mb-6">{t.homepage.exploreUnseen}</h2>
+                     <p className="text-xl text-gray-500 font-light">{t.homepage.exploreDesc}</p>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-4 md:h-[800px]">
@@ -178,8 +182,8 @@ export default function Home() {
                            href={`/destinations/${dest.id}`}
                            key={dest.id}
                            className={`group relative rounded-3xl overflow-hidden cursor-pointer shadow-lg ${i === 0 ? 'md:col-span-2 md:row-span-2' :
-                                 i === 1 ? 'md:col-span-1 md:row-span-1' :
-                                    i === 2 ? 'md:col-span-1 md:row-span-2' : ''
+                              i === 1 ? 'md:col-span-1 md:row-span-1' :
+                                 i === 2 ? 'md:col-span-1 md:row-span-2' : ''
                               }`}
                         >
                            <Image
@@ -197,7 +201,7 @@ export default function Home() {
                               </span>
                               <h3 className={`${i === 0 ? 'text-4xl' : 'text-2xl'} font-bold text-white leading-tight`}>{dest.name}</h3>
                               <div className="flex items-center gap-2 text-emerald-300 mt-2 opacity-0 group-hover:opacity-100 transition duration-300 translate-y-4 group-hover:translate-y-0">
-                                 <span className="text-sm font-bold">Discover</span> <ArrowRight className="w-4 h-4" />
+                                 <span className="text-sm font-bold">{t.homepage.discover}</span> <ArrowRight className="w-4 h-4" />
                               </div>
                            </div>
                         </Link>
@@ -223,19 +227,15 @@ export default function Home() {
                      <div>
                         <Leaf className="w-16 h-16 text-emerald-400 mb-8" />
                         <h2 className="text-5xl md:text-7xl font-black mb-8 leading-tight">
-                           Travel that <br />
-                           <span className="text-emerald-400">Heals Nature.</span>
+                           {t.homepage.travelHeals} <br />
+                           <span className="text-emerald-400">{t.homepage.healsNature}</span>
                         </h2>
                         <div className="space-y-8 text-lg text-emerald-100 font-light leading-relaxed">
                            <p>
-                              Every journey you take is a seed planted for the future. We don't just explore; we restore.
+                              {t.homepage.impactDesc}
                            </p>
                            <ul className="space-y-4">
-                              {[
-                                 'Zero-Plastic Policy on all trips',
-                                 '5% of profits go to Orangutan Conservation',
-                                 'Empowering Local Dayak Communities'
-                              ].map((item, i) => (
+                              {t.homepage.impactList.map((item, i) => (
                                  <li key={i} className="flex items-center gap-4">
                                     <div className="w-2 h-2 rounded-full bg-emerald-400"></div>
                                     {item}
@@ -244,7 +244,7 @@ export default function Home() {
                            </ul>
                            <div className="pt-8">
                               <Link href="/about" className="inline-flex items-center gap-2 text-white font-bold border-b border-emerald-400 pb-1 hover:text-emerald-400 transition">
-                                 Read our Impact Report <ArrowRight className="w-4 h-4" />
+                                 {t.homepage.readImpact} <ArrowRight className="w-4 h-4" />
                               </Link>
                            </div>
                         </div>
@@ -252,22 +252,22 @@ export default function Home() {
 
                      {/* Stats Grid */}
                      <div className="grid grid-cols-2 gap-6">
-                        <div className="bg-white/10 backdrop-blur-md p-8 rounded-[2rem] border border-white/10 hover:bg-white/15 transition duration-500 group">
+                        <div className="bg-white/10 backdrop-blur-md p-8 rounded-4xl border border-white/10 hover:bg-white/15 transition duration-500 group">
                            <div className="text-5xl font-black text-white mb-2 group-hover:scale-110 origin-left transition">500+</div>
-                           <div className="text-emerald-300 font-bold uppercase tracking-widest text-sm">Trees Planted</div>
+                           <div className="text-emerald-300 font-bold uppercase tracking-widest text-sm">{t.homepage.treesPlanted}</div>
                         </div>
-                        <div className="bg-white/10 backdrop-blur-md p-8 rounded-[2rem] border border-white/10 hover:bg-white/15 transition duration-500 translate-y-12">
+                        <div className="bg-white/10 backdrop-blur-md p-8 rounded-4xl border border-white/10 hover:bg-white/15 transition duration-500 translate-y-12">
                            <div className="text-5xl font-black text-white mb-2">Rp 2M</div>
-                           <div className="text-emerald-300 font-bold uppercase tracking-widest text-sm">Donated</div>
+                           <div className="text-emerald-300 font-bold uppercase tracking-widest text-sm">{t.homepage.donationDistributed}</div>
                         </div>
-                        <div className="bg-white/10 backdrop-blur-md p-8 rounded-[2rem] border border-white/10 hover:bg-white/15 transition duration-500">
+                        <div className="bg-white/10 backdrop-blur-md p-8 rounded-4xl border border-white/10 hover:bg-white/15 transition duration-500">
                            <div className="text-5xl font-black text-white mb-2">15</div>
-                           <div className="text-emerald-300 font-bold uppercase tracking-widest text-sm">Communities</div>
+                           <div className="text-emerald-300 font-bold uppercase tracking-widest text-sm">{t.homepage.communities}</div>
                         </div>
-                        <div className="bg-emerald-500 p-8 rounded-[2rem] shadow-2xl shadow-emerald-900/50 flex items-center justify-center translate-y-12 cursor-pointer hover:scale-105 transition">
+                        <div className="bg-emerald-500 p-8 rounded-4xl shadow-2xl shadow-emerald-900/50 flex items-center justify-center translate-y-12 cursor-pointer hover:scale-105 transition">
                            <div className="text-center">
                               <Heart className="w-10 h-10 text-white mx-auto mb-2 animate-bounce" />
-                              <div className="font-bold">Join the Movement</div>
+                              <div className="font-bold">{t.homepage.joinMovement}</div>
                            </div>
                         </div>
                      </div>

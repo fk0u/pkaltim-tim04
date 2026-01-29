@@ -28,7 +28,10 @@ export const id = {
         searchPlaceholderEvent: "Tenggarong, Samarinda...",
         searchPlaceholderPackage: "Pulau Derawan...",
         dateLabel: "Tanggal",
-        travelersLabel: "Peserta"
+        travelersLabel: "Peserta",
+        scroll: "Gulir",
+        waitMagic: "Nantikan",
+        magic: "Keajaibannya."
     },
     homepage: {
         supportedBy: "Didukung Oleh",
@@ -45,7 +48,32 @@ export const id = {
         eventTitle: "Event Paling Ditunggu",
         eventSubtitle: "Festival budaya dan ekowisata yang hanya terjadi setahun sekali.",
         testimonialsTitle: "Kata Mereka",
-        testimonialsDesc: "Cerita asli dari para petualang yang telah menjadi bagian dari gerakan pariwisata berkelanjutan BorneoTrip."
+        testimonialsDesc: "Cerita asli dari para petualang yang telah menjadi bagian dari gerakan pariwisata berkelanjutan BorneoTrip.",
+        curatedExperiences: "Pengalaman Kurasi",
+        findYourElement: "Temukan Elemenmu",
+        trendingNow: "Sedang Tren",
+        exploreUnseen: "Jelajahi yang Tak Terlihat.",
+        exploreDesc: "Dari kedalaman Kayan Mentarang hingga terumbu karang murni Maratua.",
+        viewAllDestinations: "Lihat Semua Destinasi",
+        discover: "Jelajahi",
+        travelHeals: "Perjalanan yang",
+        healsNature: "Memulihkan Alam.",
+        impactDesc: "Setiap perjalanan yang Anda lakukan adalah benih untuk masa depan. Kami tidak hanya menjelajah; kami memulihkan.",
+        impactList: [
+            "Kebijakan Nol-Plastik di semua perjalanan",
+            "5% keuntungan untuk Konservasi Orangutan",
+            "Memberdayakan Masyarakat Dayak Lokal"
+        ],
+        readImpact: "Baca Laporan Dampak Kami",
+        communities: "Komunitas",
+        joinMovement: "Gabung Gerakan",
+        categories: {
+            island: "Jelajah Pulau",
+            jungle: "Hutan Rimba",
+            culture: "Warisan Budaya",
+            wildlife: "Safari Satwa",
+            diving: "Menyalam Mewah"
+        }
     },
     search: {
         eventLocation: "Lokasi Event",
@@ -159,10 +187,10 @@ export const id = {
         rights: "BorneoTrip Digital Ventures. All rights reserved."
     },
     region: {
-        badge: "Jelajahi Destinasi",
-        title: "10 Mutiara",
-        titleHighlight: "Kalimantan Timur",
-        subtitle: "Telusuri data lengkap demografi dan potensi wisata dari 7 Kabupaten dan 3 Kota. Data resmi BPS 2025.",
+        badge: "Ibu Kota Masa Depan",
+        title: "Kalimantan Timur",
+        titleHighlight: "Permata Borneo",
+        subtitle: "Rumah bagi hutan hujan tertua di dunia, budaya adat yang hidup, dan ibu kota masa depan Indonesia, Nusantara. Tanah penemuan tanpa batas.",
         mapHint: "Klik marker untuk melihat detail singkat wilayah.",
         density: "Padat Penduduk",
         capital: "Ibu Kota",
@@ -248,7 +276,9 @@ export const id = {
             reason1Title: "Paru-paru Dunia",
             reason1Desc: "Rumah bagi jutaan hektar hutan hujan tropis yang vital bagi iklim global dan habitat satwa langka.",
             reason2Title: "Sungai Mahakam",
-            reason2Desc: "Urat nadi kehidupan yang menyimpan sejarah peradaban kerajaan tertua dan budaya sungai yang unik."
+            reason2Desc: "Urat nadi kehidupan yang menyimpan sejarah peradaban kerajaan tertua dan budaya sungai yang unik.",
+            reason3Title: "Karst Sangkulirang",
+            reason3Desc: "Salah satu gugusan karst terbesar di dunia, menyimpan seni cadas prasejarah yang berasal dari 40.000 tahun lalu."
         }
     },
     contact: {

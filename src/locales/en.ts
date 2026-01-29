@@ -28,7 +28,10 @@ export const en = {
         searchPlaceholderEvent: "Tenggarong, Samarinda...",
         searchPlaceholderPackage: "Derawan Island...",
         dateLabel: "Date",
-        travelersLabel: "Travelers"
+        travelersLabel: "Travelers",
+        scroll: "Scroll",
+        waitMagic: "Wait for the",
+        magic: "Magic."
     },
     homepage: {
         supportedBy: "Supported By",
@@ -45,7 +48,32 @@ export const en = {
         eventTitle: "Most Awaited Events",
         eventSubtitle: "Cultural and ecotourism festivals that happen only once a year.",
         testimonialsTitle: "What They Say",
-        testimonialsDesc: "Real stories from adventurers who have joined the BorneoTrip sustainable tourism movement."
+        testimonialsDesc: "Real stories from adventurers who have joined the BorneoTrip sustainable tourism movement.",
+        curatedExperiences: "Curated Experiences",
+        findYourElement: "Find Your Element",
+        trendingNow: "Trending Now",
+        exploreUnseen: "Explore the Unseen.",
+        exploreDesc: "From the depths of the Kayan Mentarang to the pristine reefs of Maratua.",
+        viewAllDestinations: "View All Destinations",
+        discover: "Discover",
+        travelHeals: "Travel that",
+        healsNature: "Heals Nature.",
+        impactDesc: "Every journey you take is a seed planted for the future. We don't just explore; we restore.",
+        impactList: [
+            "Zero-Plastic Policy on all trips",
+            "5% of profits go to Orangutan Conservation",
+            "Empowering Local Dayak Communities"
+        ],
+        readImpact: "Read our Impact Report",
+        communities: "Communities",
+        joinMovement: "Join the Movement",
+        categories: {
+            island: "Island Hopping",
+            jungle: "Deep Jungle",
+            culture: "Cultural Heritage",
+            wildlife: "Wildlife Safari",
+            diving: "Luxury Diving"
+        }
     },
     search: {
         eventLocation: "Event Location",
@@ -159,10 +187,10 @@ export const en = {
         rights: "BorneoTrip Digital Ventures. All rights reserved."
     },
     region: {
-        badge: "Explore Destinations",
-        title: "10 Pearls of",
-        titleHighlight: "East Kalimantan",
-        subtitle: "Explore complete demographic data and tourism potential of 7 Regencies and 3 Cities. Official BPS 2025 data.",
+        badge: "The Future Capital",
+        title: "East Kalimantan",
+        titleHighlight: "Borneo's Jewel",
+        subtitle: "Home to the world's oldest rainforests, vibrant indigenous cultures, and the future capital of Indonesia, Nusantara. A land of endless discovery.",
         mapHint: "Click marker to see brief region details.",
         density: "Population Density",
         capital: "Capital",
@@ -248,7 +276,9 @@ export const en = {
             reason1Title: "Lungs of the World",
             reason1Desc: "Home to millions of hectares of tropical rainforests vital for global climate and rare wildlife habitats.",
             reason2Title: "Mahakam River",
-            reason2Desc: "The lifeblood vein holding the history of the oldest kingdom civilization and unique river culture."
+            reason2Desc: "The lifeblood vein holding the history of the oldest kingdom civilization and unique river culture.",
+            reason3Title: "Karst Sangkulirang",
+            reason3Desc: "One of the largest karst clusters in the world, holding prehistoric rock art dating back 40,000 years."
         }
     },
     contact: {
