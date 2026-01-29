@@ -35,20 +35,23 @@ export default function Testimonials() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                {testimonialsData.map((item: any) => (
-                  <div key={item.id} className="bg-white p-8 rounded-2xl shadow-lg border border-emerald-100 flex flex-col hover:-translate-y-2 transition duration-300">
-                     <div className="mb-6 text-emerald-300">
-                        <Quote className="w-10 h-10" />
+                  <div key={item.id} className="bg-white p-8 md:p-10 rounded-[2.5rem] shadow-xl shadow-emerald-900/5 group hover:-translate-y-2 transition duration-500 border border-transparent hover:border-emerald-100 flex flex-col h-full">
+                     <div className="mb-8 text-emerald-500 bg-emerald-50 w-14 h-14 rounded-2xl flex items-center justify-center group-hover:scale-110 transition duration-500">
+                        <Quote className="w-6 h-6 fill-emerald-500" />
                      </div>
 
-                     <p className="text-gray-700 leading-relaxed italic mb-8 grow">
+                     <p className="text-xl text-gray-800 leading-relaxed font-medium mb-10 grow">
                         "{item.content}"
                      </p>
 
-                     <div className="flex items-center gap-4 border-t border-gray-100 pt-6">
-                        <img src={item.avatarUrl} alt={item.name} className="w-12 h-12 rounded-full object-cover ring-2 ring-emerald-100" />
+                     <div className="flex items-center gap-4 mt-auto">
+                        <div className="relative">
+                           <div className="absolute inset-0 bg-emerald-500 rounded-full blur opacity-20 group-hover:opacity-40 transition"></div>
+                           <img src={item.avatarUrl} alt={item.name} className="relative w-14 h-14 rounded-full object-cover ring-4 ring-white" />
+                        </div>
                         <div>
-                           <h4 className="font-bold text-gray-900 text-sm">{item.name}</h4>
-                           <p className="text-xs text-gray-500">{item.role}</p>
+                           <h4 className="font-extrabold text-gray-900 text-lg">{item.name}</h4>
+                           <p className="text-xs font-bold text-emerald-600 uppercase tracking-widest">{item.role}</p>
                         </div>
                         <div className="ml-auto flex gap-0.5 text-yellow-400">
                            {[...Array(item.rating || 5)].map((_, i) => (
