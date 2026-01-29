@@ -22,9 +22,9 @@ export default function BookingsPage() {
     };
 
     const filteredBookings = bookings.filter(b => {
-        const matchesSearch = b.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            b.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            b.id.includes(searchTerm);
+        const matchesSearch = (b.customerName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (b.productName || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (b.id || '').toLowerCase().includes(searchTerm.toLowerCase());
         const matchesStatus = filterStatus === 'All' || b.status === filterStatus;
         return matchesSearch && matchesStatus;
     });

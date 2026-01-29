@@ -147,16 +147,7 @@ export default function LoginPage() {
 
                                     <form className="space-y-6" onSubmit={handleLogin}>
                                         {/* Demo Credentials Hint */}
-                                        {activeTab === 'staff' && (
-                                            <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 flex items-start gap-3">
-                                                <Info className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
-                                                <div className="text-xs text-blue-800">
-                                                    <p className="font-bold mb-1">{t.auth.demoHint}</p>
-                                                    <p>Admin: <span className="font-mono bg-blue-100 px-1 rounded">admin@borneotrip.id</span></p>
-                                                    <p>Pass: <span className="font-mono bg-blue-100 px-1 rounded">admin123</span></p>
-                                                </div>
-                                            </div>
-                                        )}
+                                        {/* Demo Credentials Hint Removed */}
 
                                         <div className="space-y-4">
                                             <div>

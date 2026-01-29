@@ -74,7 +74,14 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
 
             if (bookingsRes.ok) {
                 const bookingsData = await bookingsRes.json();
-                setBookings(bookingsData);
+                // Map API response to match Booking interface (denormalize customerName)
+                const mappedBookings = bookingsData.map((b: any) => ({
+                    ...b,
+                    customerName: b.customerName || b.user?.name || 'Guest',
+                    productImage: b.productImage || b.package?.imageUrl || b.event?.imageUrl || 'https://via.placeholder.com/150',
+                    location: b.location || b.package?.location || b.event?.location || 'Borneo'
+                }));
+                setBookings(mappedBookings);
             }
 
             if (usersRes.ok) {
@@ -210,7 +217,13 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
             });
             if (res.ok) {
                 const newBooking = await res.json();
-                setBookings(prev => [newBooking, ...prev]);
+                const mappedBooking = {
+                    ...newBooking,
+                    customerName: newBooking.customerName || newBooking.user?.name || booking.customerName || 'Guest',
+                    productImage: newBooking.productImage || newBooking.package?.imageUrl || newBooking.event?.imageUrl,
+                    location: newBooking.location || newBooking.package?.location || newBooking.event?.location
+                };
+                setBookings(prev => [mappedBooking, ...prev]);
             }
         } catch (error) {
             console.error('Error adding booking:', error);
