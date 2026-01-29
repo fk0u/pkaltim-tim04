@@ -33,14 +33,16 @@ export default function TravelersInput({ label, onChange }: TravelersInputProps)
 
     return (
         <div className="relative group" ref={containerRef}>
-            <label className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-wider block mb-1 md:mb-2 px-1">{label}</label>
+            <label className="text-xs font-black text-gray-400 uppercase tracking-widest block mb-1">{label}</label>
             <div
-                className="relative cursor-pointer"
+                className="relative cursor-pointer flex items-center group"
                 onClick={() => setIsOpen(!isOpen)}
             >
-                <Users className={`absolute left-0 top-3 transition w-4 h-4 md:w-5 md:h-5 ${isOpen ? 'text-green-500' : 'text-gray-400'}`} style={{ top: '50%', transform: 'translateY(-50%)' }} />
-                <div className="w-full pl-6 md:pl-8 pr-4 py-2 bg-transparent">
-                    <span className={`font-bold text-sm md:text-base ${isOpen ? 'text-gray-900' : 'text-gray-700'}`}>
+                <div className={`absolute left-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${isOpen ? 'bg-emerald-100 text-emerald-600 scale-100' : 'bg-gray-100 text-gray-400 scale-90'}`}>
+                    <Users className="w-4 h-4" />
+                </div>
+                <div className="w-full pl-10 pr-4 py-1 bg-transparent">
+                    <span className={`font-black text-base md:text-lg tracking-tight ${isOpen ? 'text-gray-800' : 'text-gray-700'}`}>
                         {adults} {t.search.adults}{children > 0 ? `, ${children} ${t.search.children}` : ''}
                     </span>
                 </div>

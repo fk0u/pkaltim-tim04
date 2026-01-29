@@ -102,15 +102,17 @@ export default function DatePicker({ label, selected, onChange, minDate = new Da
 
     return (
         <div className="relative group w-full" ref={containerRef}>
-            {label && <label className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-wider block mb-1 md:mb-2 px-1">{label}</label>}
+            {label && <label className="text-xs font-black text-gray-400 uppercase tracking-widest block mb-1">{label}</label>}
 
             <div
                 onClick={() => setIsOpen(!isOpen)}
-                className="relative cursor-pointer"
+                className="relative cursor-pointer flex items-center group"
             >
-                <CalendarIcon className={`absolute left-0 top-1/2 -translate-y-1/2 transition w-4 h-4 md:w-5 md:h-5 ${isOpen ? 'text-green-500' : 'text-gray-400'}`} />
-                <div className={`w-full pl-6 md:pl-8 pr-4 py-2 bg-transparent border-b md:border-none border-gray-100 ${!selected ? 'text-gray-300' : 'text-gray-900 font-bold'}`}>
-                    {selected ? selected.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : placeholder}
+                <div className={`absolute left-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${isOpen || selected ? 'bg-emerald-100 text-emerald-600 scale-100' : 'bg-gray-100 text-gray-400 scale-90'}`}>
+                    <CalendarIcon className="w-4 h-4" />
+                </div>
+                <div className={`w-full pl-10 pr-4 py-1 bg-transparent border-none text-base md:text-lg tracking-tight ${!selected ? 'text-gray-300 font-bold' : 'text-gray-800 font-black'}`}>
+                    {selected ? selected.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : placeholder}
                 </div>
             </div>
 
