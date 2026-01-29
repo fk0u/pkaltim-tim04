@@ -25,13 +25,14 @@ export default function Home() {
    const featuredPackages = packages.slice(0, 3);
    const popularDestinations = destinations.slice(0, 5); // 5 items for bento grid
 
-   const categories = [
-      { name: t.homepage.categories.island, icon: '🏝️', image: 'https://images.unsplash.com/photo-1596401057633-565652b5d249?auto=format&fit=crop&q=80' },
-      { name: t.homepage.categories.jungle, icon: '🌳', image: 'https://images.unsplash.com/photo-1448375240586-dfd8d395ea6c?auto=format&fit=crop&q=80' },
-      { name: t.homepage.categories.culture, icon: '👺', image: 'https://images.unsplash.com/photo-1542385151-efd9000d8def?auto=format&fit=crop&q=80' },
-      { name: t.homepage.categories.wildlife, icon: '🦧', image: 'https://images.unsplash.com/photo-1510797215324-95aa89f43c33?auto=format&fit=crop&q=80' },
-      { name: t.homepage.categories.diving, icon: '🤿', image: 'https://images.unsplash.com/photo-1582967788606-a171f1080cae?auto=format&fit=crop&q=80' },
-   ];
+   // Hardcoded categories removed - now using dynamic data from ContentContext
+   // const categories = [
+   //    { name: t.homepage.categories.island, icon: '🏝️', image: 'https://images.unsplash.com/photo-1596401057633-565652b5d249?auto=format&fit=crop&q=80' },
+   //    { name: t.homepage.categories.jungle, icon: '🌳', image: 'https://images.unsplash.com/photo-1448375240586-dfd8d395ea6c?auto=format&fit=crop&q=80' },
+   //    { name: t.homepage.categories.culture, icon: '👺', image: 'https://images.unsplash.com/photo-1542385151-efd9000d8def?auto=format&fit=crop&q=80' },
+   //    { name: t.homepage.categories.wildlife, icon: '🦧', image: 'https://images.unsplash.com/photo-1510797215324-95aa89f43c33?auto=format&fit=crop&q=80' },
+   //    { name: t.homepage.categories.diving, icon: '🤿', image: 'https://images.unsplash.com/photo-1582967788606-a171f1080cae?auto=format&fit=crop&q=80' },
+   // ];
 
    return (
       <Layout
@@ -135,7 +136,7 @@ export default function Home() {
 
             {/* --- CATEGORIES SLIDER --- */}
             <section className="pt-32 pb-16 md:py-24 bg-white relative z-20 rounded-t-[2.5rem] md:rounded-t-[4rem] -mt-6 md:-mt-20 overflow-hidden">
-               <div className="container mx-auto px-4 mb-12 flex justify-between items-end">
+               <div className="container mx-auto px-4 mb-12 flex justify-between items-end mt-12 md:mt-24">
                   <div>
                      <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest mb-2">{t.homepage.curatedExperiences}</h3>
                      <h2 className="text-4xl font-bold text-gray-900">{t.homepage.findYourElement}</h2>
@@ -154,16 +155,17 @@ export default function Home() {
                         className="min-w-[280px] md:min-w-[320px] h-[400px] relative rounded-4xl overflow-hidden group cursor-pointer shadow-lg snap-center"
                      >
                         <Image
-                           src={cat.image}
-                           alt={cat.name}
+                           src={cat.imageUrl}
+                           alt={cat.name[locale === 'en' ? 'en' : 'id']}
                            fill
                            className="object-cover group-hover:scale-110 transition duration-700"
                         />
-                        <div className="absolute inset-0 bg-linear-to-t from-black/80 to-transparent opacity-80 group-hover:opacity-90 transition"></div>
-                        <div className="absolute bottom-0 left-0 p-8 w-full transform translate-y-2 group-hover:translate-y-0 transition duration-300">
-                           <div className="text-4xl mb-4 transform -translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition duration-500 delay-100">{cat.icon}</div>
-                           <h3 className="text-2xl font-bold text-white mb-2">{cat.name}</h3>
-                           <div className="h-px w-0 bg-emerald-500 group-hover:w-full transition-all duration-500 delay-200"></div>
+                        <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent p-8 flex flex-col justify-end">
+                           <span className="text-emerald-400 font-bold uppercase tracking-widest text-xs mb-2">{cat.icon} {t.homepage.popularDestination}</span>
+                           <h3 className="text-2xl font-bold text-white mb-2">{cat.name[locale === 'en' ? 'en' : 'id']}</h3>
+                           <div className="flex items-center gap-2 text-white/80 text-sm group-hover:gap-4 transition-all">
+                              {t.homepage.viewAllDestinations} <ArrowRight className="w-4 h-4" />
+                           </div>
                         </div>
                      </motion.div>
                   ))}

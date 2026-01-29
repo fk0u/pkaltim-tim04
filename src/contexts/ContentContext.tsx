@@ -8,6 +8,7 @@ interface ContentContextType {
     customers: User[];
     destinations: Destination[];
     testimonials: Testimonial[];
+    categories: any[];
     loading: boolean;
 
     // Package Methods
@@ -47,19 +48,21 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     const [customers, setCustomers] = useState<User[]>([]);
     const [destinations, setDestinations] = useState<Destination[]>([]);
     const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+    const [categories, setCategories] = useState<any[]>([]); // Define Category type if possible
     const [loading, setLoading] = useState(true);
 
     // Fetch all data from backend APIs
     const fetchData = useCallback(async () => {
         setLoading(true);
         try {
-            const [packagesRes, eventsRes, bookingsRes, usersRes, regionsRes, testimonialsRes] = await Promise.all([
+            const [packagesRes, eventsRes, bookingsRes, usersRes, regionsRes, testimonialsRes, categoriesRes] = await Promise.all([
                 fetch('/api/packages'),
                 fetch('/api/events'),
                 fetch('/api/bookings'),
                 fetch('/api/users'),
                 fetch('/api/regions'),
-                fetch('/api/testimonials')
+                fetch('/api/testimonials'),
+                fetch('/api/categories')
             ]);
 
             if (packagesRes.ok) {
@@ -107,6 +110,11 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
             if (testimonialsRes.ok) {
                 const testimonialsData = await testimonialsRes.json();
                 setTestimonials(testimonialsData);
+            }
+
+            if (categoriesRes.ok) {
+                const categoriesData = await categoriesRes.json();
+                setCategories(categoriesData);
             }
         } catch (error) {
             console.error('Error fetching data from backend:', error);
@@ -360,6 +368,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
             customers,
             destinations,
             testimonials,
+            categories,
             loading,
             addPackage,
             deletePackage,

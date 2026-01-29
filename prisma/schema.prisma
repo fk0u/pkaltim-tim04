@@ -137,3 +137,12 @@ model Voucher {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+model Category {
+  id        String   @id @default(cuid())
+  name      Json     // LocalizedString { id, en }
+  icon      String   // Emoji or Lucide icon name
+  imageUrl  String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
