@@ -5,6 +5,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { BookingProvider } from "@/contexts/BookingContext";
 import { ContentProvider } from "@/contexts/ContentContext";
 import { ToastProvider } from "@/components/ui";
+import CursorEffect from "@/components/ui/CursorEffect";
 import PageTransition from "@/components/PageTransition";
 import { useRouter } from "next/router";
 
@@ -17,6 +18,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <BookingProvider>
           <LanguageProvider>
             <ToastProvider>
+              <CursorEffect />
               <PageTransition>
                 <Component {...pageProps} />
               </PageTransition>
