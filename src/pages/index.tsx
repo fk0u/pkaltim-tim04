@@ -25,13 +25,13 @@ export default function Home() {
    const featuredPackages = packages.slice(0, 3);
    const popularDestinations = destinations.slice(0, 5); // 5 items for bento grid
 
-   // const categories = [
-   //    { name: t.homepage.categories.island, icon: '🏝️', image: 'https://images.unsplash.com/photo-1596401057633-565652b5d249?auto=format&fit=crop&q=80' },
-   //    { name: t.homepage.categories.jungle, icon: '🌳', image: 'https://images.unsplash.com/photo-1448375240586-dfd8d395ea6c?auto=format&fit=crop&q=80' },
-   //    { name: t.homepage.categories.culture, icon: '👺', image: 'https://images.unsplash.com/photo-1542385151-efd9000d8def?auto=format&fit=crop&q=80' },
-   //    { name: t.homepage.categories.wildlife, icon: '🦧', image: 'https://images.unsplash.com/photo-1510797215324-95aa89f43c33?auto=format&fit=crop&q=80' },
-   //    { name: t.homepage.categories.diving, icon: '🤿', image: 'https://images.unsplash.com/photo-1582967788606-a171f1080cae?auto=format&fit=crop&q=80' },
-   // ];
+   const categories = [
+      { name: t.homepage.categories.island, icon: '🏝️', image: 'https://images.unsplash.com/photo-1596401057633-565652b5d249?auto=format&fit=crop&q=80' },
+      { name: t.homepage.categories.jungle, icon: '🌳', image: 'https://images.unsplash.com/photo-1448375240586-dfd8d395ea6c?auto=format&fit=crop&q=80' },
+      { name: t.homepage.categories.culture, icon: '👺', image: 'https://images.unsplash.com/photo-1542385151-efd9000d8def?auto=format&fit=crop&q=80' },
+      { name: t.homepage.categories.wildlife, icon: '🦧', image: 'https://images.unsplash.com/photo-1510797215324-95aa89f43c33?auto=format&fit=crop&q=80' },
+      { name: t.homepage.categories.diving, icon: '🤿', image: 'https://images.unsplash.com/photo-1582967788606-a171f1080cae?auto=format&fit=crop&q=80' },
+   ];
 
    return (
       <Layout
@@ -41,11 +41,11 @@ export default function Home() {
          ogImage="/images/hero-bg.jpg"
          type="website"
       >
-         <div ref={targetRef}>
+         <div ref={targetRef} className="relative bg-black">
 
             {/* --- HERO SECTION --- */}
-            <section className="relative h-[110vh] flex items-center justify-center overflow-hidden bg-black -mt-[20vh] pt-[20vh]">
-               {/* Video Background with Parallax */}
+            {/* --- HERO BACKGROUND (Global Layer z-0) --- */}
+            <div className="absolute top-0 left-0 w-full h-[120vh] z-0 overflow-hidden pointer-events-none">
                <motion.div
                   style={{ scale: heroScale, opacity: heroOpacity }}
                   className="absolute inset-0 z-0"
@@ -64,9 +64,15 @@ export default function Home() {
                      <source src="/video/bumper.mp4" type="video/mp4" />
                   </video>
                </motion.div>
+            </div>
+
+            {/* --- HERO SECTION CONTENT (z-30) --- */}
+            <section className="relative min-h-screen md:min-h-[110vh] flex items-center justify-center bg-transparent -mt-[20vh] pt-36 pb-60 md:pt-[20vh] md:pb-0 z-30 pointer-events-none">
+               {/* Enable pointer events only for content */}
+               <div className="absolute inset-0 pointer-events-none"></div>
 
                {/* Hero Content */}
-               <div className="relative z-30 container mx-auto px-4 h-full flex flex-col justify-center items-center text-center mt-20">
+               <div className="relative z-30 container mx-auto px-4 h-full flex flex-col justify-center items-center text-center mt-20 pointer-events-auto">
                   <motion.div
                      style={{ y: textY }}
                      className="space-y-8 max-w-5xl mx-auto"
@@ -109,7 +115,7 @@ export default function Home() {
                      initial={{ opacity: 0, y: 100 }}
                      animate={{ opacity: 1, y: 0 }}
                      transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }}
-                     className="w-full max-w-5xl mt-12 md:mt-20"
+                     className="w-full max-w-5xl mt-8 md:mt-20"
                   >
                      <SearchWidget />
                   </motion.div>
@@ -128,7 +134,7 @@ export default function Home() {
             </section>
 
             {/* --- CATEGORIES SLIDER --- */}
-            <section className="py-20 bg-white relative z-20 rounded-t-[3rem] -mt-10 overflow-hidden">
+            <section className="pt-32 pb-16 md:py-24 bg-white relative z-20 rounded-t-[2.5rem] md:rounded-t-[4rem] -mt-6 md:-mt-20 overflow-hidden">
                <div className="container mx-auto px-4 mb-12 flex justify-between items-end">
                   <div>
                      <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest mb-2">{t.homepage.curatedExperiences}</h3>

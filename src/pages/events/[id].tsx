@@ -132,8 +132,8 @@ export default function EventDetail() {
                             />
                         </div>
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
-                    <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-transparent"></div>
+                    <div className="absolute inset-0 bg-linear-to-t from-black via-transparent to-transparent"></div>
+                    <div className="absolute inset-0 bg-linear-to-b from-black/60 to-transparent"></div>
                 </motion.div>
 
                 <div className="absolute top-0 left-0 p-6 z-20">
@@ -318,7 +318,7 @@ export default function EventDetail() {
                                 </button>
                             </motion.div>
 
-                            <div className="glass-dark bg-gradient-to-br from-emerald-800 to-teal-900 rounded-3xl p-8 text-white shadow-lg overflow-hidden relative">
+                            <div className="glass-dark bg-linear-to-br from-emerald-800 to-teal-900 rounded-3xl p-8 text-white shadow-lg overflow-hidden relative">
                                 <div className="relative z-10">
                                     <Heart className="w-8 h-8 mb-4 text-emerald-300" />
                                     <h3 className="text-xl font-bold mb-2">{t.events.detail.sponsorTitle}</h3>
