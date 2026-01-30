@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
-import { getServerSession } from '@/lib/auth'; // Hypothetical helper, or use existing session check
+import { getServerSession } from '@/lib/session';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     // 1. Auth Check

@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
-import { getServerSession } from '@/lib/auth';
+import { getServerSession } from '@/lib/session';
 
 // Simple chat handler
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

@@ -2,6 +2,10 @@ import Head from 'next/head';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import MobileBottomNav from './MobileBottomNav';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/components/ui';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -29,6 +33,21 @@ export default function Layout({
   hideBottomNav = false
 }: LayoutProps) {
   const siteTitle = title.includes('BorneoTrip') ? title : `${title} | BorneoTrip`;
+
+  const { user } = useAuth();
+  const { addToast } = useToast();
+  const router = useRouter();
+
+  useEffect(() => {
+    // Check if user is logged in, not on onboarding page, and has incomplete profile
+    if (user && router.pathname !== '/onboarding' && router.pathname !== '/login' && router.pathname !== '/register') {
+      if (!user.onboardingCompleted) {
+        addToast('⚠️ Langkah yang belum anda selesaikan: Lengkapi Profil Anda di halaman Onboarding', 'warning', 10000); // 10s duration
+        // Optional: Redirect to onboarding? 
+        // router.push('/onboarding'); // The user asked for a Toast, not forced redirect, but toast is good.
+      }
+    }
+  }, [user, router.pathname, addToast]); // Add dependencies
 
   return (
     <div className="min-h-screen min-h-[100dvh] flex flex-col font-sans text-slate-900 bg-slate-50">

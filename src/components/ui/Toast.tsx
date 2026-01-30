@@ -2,16 +2,17 @@ import React, { createContext, useContext, useEffect, useState, useCallback } fr
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, CheckCircle, AlertCircle, Info } from 'lucide-react';
 
-export type ToastType = 'success' | 'error' | 'info';
+export type ToastType = 'success' | 'error' | 'info' | 'warning';
 
 interface Toast {
     id: string;
     message: string;
     type: ToastType;
+    duration?: number;
 }
 
 interface ToastContextType {
-    addToast: (message: string, type?: ToastType) => void;
+    addToast: (message: string, type?: ToastType, duration?: number) => void;
 }
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
@@ -19,9 +20,9 @@ const ToastContext = createContext<ToastContextType | undefined>(undefined);
 export function ToastProvider({ children }: { children: React.ReactNode }) {
     const [toasts, setToasts] = useState<Toast[]>([]);
 
-    const addToast = useCallback((message: string, type: ToastType = 'info') => {
+    const addToast = useCallback((message: string, type: ToastType = 'info', duration?: number) => {
         const id = Math.random().toString(36).substring(7);
-        setToasts((prev) => [...prev, { id, message, type }]);
+        setToasts((prev) => [...prev, { id, message, type, duration }]);
     }, []);
 
     const removeToast = (id: string) => {
@@ -46,20 +47,22 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
     useEffect(() => {
         const timer = setTimeout(() => {
             onRemove(toast.id);
-        }, 4000);
+        }, toast.duration || 4000);
         return () => clearTimeout(timer);
     }, [toast.id, onRemove]);
 
     const bgColors = {
         success: 'bg-emerald-50 border-emerald-200 text-emerald-800',
         error: 'bg-red-50 border-red-200 text-red-800',
-        info: 'bg-blue-50 border-blue-200 text-blue-800'
+        info: 'bg-blue-50 border-blue-200 text-blue-800',
+        warning: 'bg-amber-50 border-amber-200 text-amber-800'
     };
 
     const icons = {
         success: <CheckCircle className="w-5 h-5 text-emerald-500" />,
         error: <AlertCircle className="w-5 h-5 text-red-500" />,
-        info: <Info className="w-5 h-5 text-blue-500" />
+        info: <Info className="w-5 h-5 text-blue-500" />,
+        warning: <AlertCircle className="w-5 h-5 text-amber-500" />
     };
 
     return (
