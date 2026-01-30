@@ -6,7 +6,7 @@ import { useToast } from '@/components/ui';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { TravelerDetail } from '@/types';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, CheckCircle, ShieldCheck, User, Calendar, Users, MapPin, BadgeCheck, Banknote, Wallet, Building2, QrCode, AlertCircle, Baby, Ticket, Loader2 } from 'lucide-react';
+import { ArrowLeft, CheckCircle, ShieldCheck, User, Calendar, Users, MapPin, BadgeCheck, Banknote, Wallet, Building2, QrCode, AlertCircle, Baby, Ticket, Loader2, CreditCard } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
@@ -59,6 +59,19 @@ export default function CheckoutPage() {
         }
     }, [router.isReady, pax]);
 
+    // Fetch Saved Payment Methods
+    const [savedMethods, setSavedMethods] = useState<any[]>([]);
+    useEffect(() => {
+        if (step === 2 && user) {
+            fetch('/api/user/payment-methods')
+                .then(res => res.json())
+                .then(data => {
+                    if (Array.isArray(data)) setSavedMethods(data);
+                })
+                .catch(err => console.error(err));
+        }
+    }, [step, user]);
+
     // Validation & Traveler Array Sync
     useEffect(() => {
         if (!router.isReady) return;
@@ -95,8 +108,9 @@ export default function CheckoutPage() {
                     title: 'Mr',
                     fullName: (i === 0 && user) ? user.name : '',
                     idType: 'KTP',
-                    idNumber: '',
-                    nationality: 'Indonesia'
+                    idNumber: (i === 0 && user) ? (user as any).idNumber || '' : '',
+                    nationality: 'Indonesia',
+                    phoneNumber: (i === 0 && user) ? (user as any).phone || '' : '',
                 });
             }
 
@@ -525,6 +539,34 @@ export default function CheckoutPage() {
                                             </div>
 
                                             <div className="space-y-6 mb-8">
+                                                {/* SAVED METHODS */}
+                                                {savedMethods.length > 0 && (
+                                                    <div className="mb-6">
+                                                        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Saved Methods</h3>
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                            {savedMethods.map((method) => (
+                                                                <div
+                                                                    key={method.id}
+                                                                    onClick={() => setSelectedBank(method.id)}
+                                                                    className={`flex items-center p-4 border rounded-xl cursor-pointer transition-all duration-200 relative overflow-hidden group
+                                                                            ${selectedBank === method.id
+                                                                            ? 'border-emerald-500 bg-emerald-50/30 ring-1 ring-emerald-500'
+                                                                            : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'}`}
+                                                                >
+                                                                    <div className={`p-2 rounded-lg mr-3 ${selectedBank === method.id ? 'bg-emerald-100 text-emerald-600' : 'bg-gray-100 text-gray-500'}`}>
+                                                                        {method.provider === 'card' ? <CreditCard className="w-5 h-5" /> : <Wallet className="w-5 h-5" />}
+                                                                    </div>
+                                                                    <div>
+                                                                        <div className={`font-bold text-sm ${selectedBank === method.id ? 'text-emerald-900' : 'text-gray-700'}`}>{method.brand} •••• {method.last4}</div>
+                                                                        <div className="text-[10px] text-gray-500 uppercase">{method.holder}</div>
+                                                                    </div>
+                                                                    {selectedBank === method.id && (<div className="absolute top-0 right-0 p-1.5 bg-emerald-500 rounded-bl-xl"><CheckCircle className="w-3 h-3 text-white" /></div>)}
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                )}
+
                                                 {/* Virtual Account Group */}
                                                 <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">{t.checkout.virtualAccount}</h3>
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

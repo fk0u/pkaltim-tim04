@@ -24,6 +24,44 @@ model User {
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
   bookings            Booking[]
+  paymentMethods      PaymentMethod[]
+  chatSessions        ChatSession[]
+  sentMessages        Message[]
+}
+
+model PaymentMethod {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  provider  String   // "card" | "wallet" | "bank"
+  last4     String?  // For cards
+  brand     String?  // visa, mastercard, gopay
+  holder    String?
+  expiry    String?  // MM/YY
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model ChatSession {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  status    String    @default("open") // open, closed
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  messages  Message[]
+}
+
+model Message {
+  id        String      @id @default(cuid())
+  sessionId String
+  session   ChatSession @relation(fields: [sessionId], references: [id])
+  senderId  String?     // If null, it's system/admin (or add specific admin relation)
+  sender    User?       @relation(fields: [senderId], references: [id])
+  isAdmin   Boolean     @default(false)
+  content   String      @db.Text
+  read      Boolean     @default(false)
+  createdAt DateTime    @default(now())
 }
 
 model Event {

@@ -4,13 +4,14 @@ import { useBooking } from '@/contexts/BookingContext';
 import { useContent } from '@/contexts/ContentContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, MapPin, Clock, CheckCircle, ArrowRight, Wallet, Bell, Settings, Star, ChevronRight, Share2, Heart, Camera, Trophy, User, LogOut, FileText, CreditCard, LayoutDashboard, MessageSquare, History, Menu, X, Phone, Ticket, ShieldCheck, Search, CheckCheck, Paperclip } from 'lucide-react';
+import { Calendar, MapPin, Clock, CheckCircle, ArrowRight, Wallet, Bell, Settings, Star, ChevronRight, Share2, Heart, Camera, Trophy, User, LogOut, FileText, CreditCard, LayoutDashboard, MessageSquare, History, Menu, X, Phone, Ticket, ShieldCheck, Search, CheckCheck, Paperclip, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useState, useEffect, FormEvent } from 'react';
 import { useToast, Skeleton, ShareModal } from '@/components/ui';
 import Modal from '@/components/ui/Modal';
 import Link from 'next/link';
 import { Booking, TourPackage, User as UserType } from '@/types';
+import { useRef } from 'react';
 
 export default function ClientDashboard() {
     const { user, logout, isAuthenticated } = useAuth();
@@ -190,23 +191,57 @@ export default function ClientDashboard() {
                             </div>
                         </div>
                     </div>
-                    <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); addToast('Card added successfully', 'success'); setActiveModal(null); }}>
+                    <form className="space-y-4" onSubmit={async (e) => {
+                        e.preventDefault();
+                        // @ts-ignore
+                        const holder = e.target.holder.value;
+                        // @ts-ignore
+                        const number = e.target.number.value;
+                        // @ts-ignore
+                        const expiry = e.target.expiry.value;
+
+                        try {
+                            const res = await fetch('/api/user/payment-methods', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    provider: 'card',
+                                    holder,
+                                    last4: number.slice(-4),
+                                    brand: 'Mastercard', // Simulate detection
+                                    expiry
+                                })
+                            });
+
+                            if (res.ok) {
+                                addToast('Card added successfully', 'success');
+                                setActiveModal(null);
+                                // Ideally trigger refresh in child, but for now simple close. 
+                                // In real app, lift state or use context.
+                                window.location.reload(); // Brute force refresh for simplicity
+                            } else {
+                                addToast('Failed to add card', 'error');
+                            }
+                        } catch (err) {
+                            addToast('Error adding card', 'error');
+                        }
+                    }}>
                         <div>
                             <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t.dashboard.cardHolder}</label>
-                            <input type="text" placeholder="John Doe" className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium outline-none focus:ring-2 focus:ring-emerald-500" />
+                            <input type="text" name="holder" placeholder="John Doe" className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium outline-none focus:ring-2 focus:ring-emerald-500" required />
                         </div>
                         <div>
                             <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Card Number</label>
-                            <input type="text" placeholder="0000 0000 0000 0000" className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium outline-none focus:ring-2 focus:ring-emerald-500 font-mono" />
+                            <input type="text" name="number" placeholder="0000 0000 0000 0000" className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium outline-none focus:ring-2 focus:ring-emerald-500 font-mono" required />
                         </div>
                         <div className="flex gap-4">
                             <div className="flex-1">
                                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t.dashboard.expiryDate}</label>
-                                <input type="text" placeholder="MM/YY" className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium outline-none focus:ring-2 focus:ring-emerald-500" />
+                                <input type="text" name="expiry" placeholder="MM/YY" className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium outline-none focus:ring-2 focus:ring-emerald-500" required />
                             </div>
                             <div className="flex-1">
                                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">CVC</label>
-                                <input type="text" placeholder="123" className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium outline-none focus:ring-2 focus:ring-emerald-500" />
+                                <input type="text" placeholder="123" className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium outline-none focus:ring-2 focus:ring-emerald-500" required />
                             </div>
                         </div>
                         <button type="submit" className="w-full bg-emerald-600 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-200 hover:shadow-emerald-300 transition-all hover:-translate-y-1">Add Card</button>
@@ -615,39 +650,95 @@ function ProfileView({ user, t, addToast }: ProfileProps) {
     );
 }
 
-function PaymentsView({ t, setActiveModal }: { t: any, setActiveModal: (id: string) => void }) {
+function PaymentsView({ t, setActiveModal }: { t: any, setActiveModal: (id: string | null) => void }) {
+    const [methods, setMethods] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const { addToast } = useToast();
+
+    // Fetch methods
+    const fetchMethods = async () => {
+        try {
+            const res = await fetch('/api/user/payment-methods');
+            if (res.ok) {
+                const data = await res.json();
+                setMethods(data);
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchMethods();
+    }, []);
+
+    const handleDelete = async (id: string) => {
+        if (!confirm('Are you sure?')) return;
+        try {
+            const res = await fetch(`/api/user/payment-methods?id=${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                addToast('Payment method removed', 'success');
+                fetchMethods();
+            } else {
+                addToast('Failed to remove', 'error');
+            }
+        } catch (error) {
+            addToast('Error removing method', 'error');
+        }
+    };
+
     return (
         <div className="space-y-6 max-w-2xl">
             <h2 className="text-2xl font-bold text-slate-900">{t.dashboard.paymentMethods}</h2>
-            <div className="grid gap-6">
-                <div className="bg-linear-to-r from-slate-900 to-slate-800 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden group perspective-1000 transition-transform duration-500 hover:rotate-y-2">
-                    <div className="absolute top-0 right-0 p-8 opacity-10"><CreditCard className="w-32 h-32" /></div>
-                    <div className="relative z-10">
-                        <div className="flex justify-between items-start mb-8"><img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" className="w-12 h-auto" alt="Mastercard" /><span className="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">Primary</span></div>
-                        <p className="font-mono opacity-80 mb-8 text-xl tracking-widest text-shadow">**** **** **** 4242</p>
-                        <div className="flex justify-between items-end">
-                            <div><p className="text-[10px] uppercase opacity-60 mb-1 tracking-wider">{t.dashboard.cardHolder}</p><p className="font-bold tracking-wide">JOHN DOE</p></div>
-                            <div><p className="text-[10px] uppercase opacity-60 mb-1 tracking-wider">{t.dashboard.expiryDate}</p><p className="font-bold tracking-wide">12/28</p></div>
+
+            {loading ? (
+                <div className="space-y-4">
+                    <Skeleton className="h-48 w-full rounded-3xl" />
+                    <Skeleton className="h-24 w-full rounded-3xl" />
+                </div>
+            ) : (
+                <div className="grid gap-6">
+                    {methods.length === 0 && (
+                        <div className="text-center py-10 bg-gray-50 rounded-3xl border border-dashed border-gray-200">
+                            <CreditCard className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                            <p className="text-gray-500 font-medium">{t.dashboard.noPaymentMethods || "No saved payment methods"}</p>
                         </div>
-                    </div>
+                    )}
+
+                    {methods.map((method) => (
+                        <div key={method.id} className={`rounded-3xl p-6 shadow-md relative overflow-hidden group transition-all duration-300 hover:-translate-y-1 ${method.provider === 'card' ? 'bg-linear-to-r from-slate-900 to-slate-800 text-white' : 'bg-white border border-gray-200'}`}>
+                            {method.provider === 'card' ? (
+                                <>
+                                    <div className="absolute top-0 right-0 p-8 opacity-10"><CreditCard className="w-32 h-32" /></div>
+                                    <div className="relative z-10">
+                                        <div className="flex justify-between items-start mb-8">
+                                            {/* Brand Logo Placeholder */}
+                                            <div className="text-xl font-bold font-serif italic">{method.brand}</div>
+                                            <button onClick={() => handleDelete(method.id)} className="bg-white/20 hover:bg-red-500 hover:text-white backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider transition">Remove</button>
+                                        </div>
+                                        <p className="font-mono opacity-80 mb-8 text-xl tracking-widest text-shadow">**** **** **** {method.last4}</p>
+                                        <div className="flex justify-between items-end">
+                                            <div><p className="text-[10px] uppercase opacity-60 mb-1 tracking-wider">{t.dashboard.cardHolder}</p><p className="font-bold tracking-wide">{method.holder}</p></div>
+                                            <div><p className="text-[10px] uppercase opacity-60 mb-1 tracking-wider">{t.dashboard.expiryDate}</p><p className="font-bold tracking-wide">{method.expiry}</p></div>
+                                        </div>
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="flex justify-between items-center">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center p-3"><Wallet className="w-8 h-8 text-blue-600" /></div>
+                                        <div><h4 className="font-bold text-slate-900 capitalize">{method.brand} E-Wallet</h4><p className="text-sm text-gray-500 font-mono">{method.holder}</p></div>
+                                    </div>
+                                    <button onClick={() => handleDelete(method.id)} className="text-sm font-bold text-red-500 hover:text-red-700 transition">Remove</button>
+                                </div>
+                            )}
+                        </div>
+                    ))}
                 </div>
-                {/* Transaction History for Card */}
-                <div className="bg-white border text-sm border-gray-200 rounded-3xl p-6">
-                    <h4 className="font-bold text-slate-900 mb-4 flex items-center gap-2"><History className="w-4 h-4 text-gray-400" /> Recent Transactions (Mastercard)</h4>
-                    <div className="space-y-3">
-                        <div className="flex justify-between items-center pb-3 border-b border-gray-50"><div><p className="font-bold text-slate-700">Derawan Dive Trip</p><p className="text-xs text-gray-400">Jan 12, 2024</p></div><span className="font-bold text-slate-900">- IDR 4.500.000</span></div>
-                        <div className="flex justify-between items-center pb-3 border-b border-gray-50"><div><p className="font-bold text-slate-700">Mahakam River Cruise</p><p className="text-xs text-gray-400">Dec 20, 2023</p></div><span className="font-bold text-slate-900">- IDR 2.100.000</span></div>
-                    </div>
-                </div>
-                {/* E-Wallet */}
-                <div className="bg-white border border-gray-200 rounded-3xl p-6 flex flex-col md:flex-row justify-between items-center gap-4 hover:shadow-md transition">
-                    <div className="flex items-center gap-4 w-full md:w-auto">
-                        <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center p-3"><Wallet className="w-8 h-8 text-blue-600" /></div>
-                        <div><h4 className="font-bold text-slate-900">GoPay E-Wallet</h4><p className="text-sm text-gray-500 font-mono">0812 **** 7890</p></div>
-                    </div>
-                    <button className="text-sm font-bold text-red-500 hover:text-red-700 transition">Remove</button>
-                </div>
-            </div>
+            )}
+
             <button onClick={() => setActiveModal('add_card')} className="w-full border-2 border-dashed border-gray-200 rounded-3xl p-6 text-gray-400 font-bold hover:border-emerald-500 hover:text-emerald-600 hover:bg-emerald-50 transition flex items-center justify-center gap-2 group">
                 <div className="w-8 h-8 rounded-full bg-gray-100 group-hover:bg-emerald-500 group-hover:text-white flex items-center justify-center text-gray-400 transition">+</div>{t.dashboard.addNewCard}
             </button>
@@ -656,21 +747,60 @@ function PaymentsView({ t, setActiveModal }: { t: any, setActiveModal: (id: stri
 }
 
 function ChatView({ user, t }: ChatProps) {
-    const [messages, setMessages] = useState([
-        { id: 1, text: "Halo! Ada yang bisa kami bantu hari ini?", sender: 'agent', time: '10:00', read: true }
-    ]);
+    const [messages, setMessages] = useState<any[]>([]);
     const [input, setInput] = useState('');
-    const [isTyping, setIsTyping] = useState(false);
+    const [isSending, setIsSending] = useState(false);
+    const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    const handleSend = (text: string = input) => {
+    // Poll for messages
+    useEffect(() => {
+        const fetchMessages = async () => {
+            try {
+                const res = await fetch('/api/chat');
+                if (res.ok) {
+                    const data = await res.json();
+                    // Only update if different? For now just set
+                    // Ideally compare length or last ID to avoid re-renders or scroll jumps
+                    // But for simple polling this is okay-ish
+                    setMessages(data.messages || []);
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        };
+
+        fetchMessages();
+        const interval = setInterval(fetchMessages, 3000); // Poll every 3s
+        return () => clearInterval(interval);
+    }, []);
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+
+    const handleSend = async (text: string = input) => {
         if (!text.trim()) return;
-        setMessages(prev => [...prev, { id: Date.now(), text: text, sender: 'user', time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), read: false }]);
-        setInput('');
-        setIsTyping(true);
-        setTimeout(() => {
-            setIsTyping(false);
-            setMessages(prev => [...prev.map(m => ({ ...m, read: true })), { id: Date.now() + 1, text: "Terima kasih, tim kami akan segera membalas.", sender: 'agent', time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), read: true }]);
-        }, 2000);
+        setIsSending(true);
+        try {
+            const res = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content: text })
+            });
+            if (res.ok) {
+                const newMsg = await res.json();
+                setMessages(prev => [...prev, newMsg]);
+                setInput('');
+            }
+        } catch (error) {
+            console.error('Failed to send', error);
+        } finally {
+            setIsSending(false);
+        }
     };
 
     return (
@@ -680,25 +810,25 @@ function ChatView({ user, t }: ChatProps) {
                 <div><h4 className="font-bold text-slate-900">BorneoTrip Support</h4><p className="text-xs text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded-full inline-block">Online • Typically replies instantly</p></div>
             </div>
             <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50">
-                <div className="text-center text-xs font-bold text-gray-300 uppercase tracking-widest my-4">Today</div>
+                {messages.length === 0 && (
+                    <div className="text-center text-gray-400 my-10">
+                        <p>No messages yet. Start the conversation!</p>
+                    </div>
+                )}
+
                 {messages.map(m => (
-                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} key={m.id} className={`flex ${m.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                        <div className={`max-w-[75%] p-4 rounded-2xl text-sm shadow-sm ${m.sender === 'user' ? 'bg-emerald-600 text-white rounded-tr-sm' : 'bg-white border border-gray-100 text-gray-700 rounded-tl-sm'}`}>
-                            <p className="leading-relaxed">{m.text}</p>
+                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} key={m.id} className={`flex ${m.senderId === user.id ? 'justify-end' : 'justify-start'}`}>
+                        <div className={`max-w-[75%] p-4 rounded-2xl text-sm shadow-sm ${m.senderId === user.id ? 'bg-emerald-600 text-white rounded-tr-sm' : 'bg-white border border-gray-100 text-gray-700 rounded-tl-sm'}`}>
+                            <p className="leading-relaxed">{m.content}</p>
                             <div className="flex items-center justify-end gap-1 mt-1 opacity-70">
-                                <span className="text-[10px]">{m.time}</span>
-                                {m.sender === 'user' && (m.read ? <CheckCheck className="w-3 h-3 text-white" /> : <CheckCircle className="w-3 h-3 text-white/50" />)}
+                                <span className="text-[10px]">{new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                {m.senderId === user.id && (m.read ? <CheckCheck className="w-3 h-3 text-white" /> : <CheckCircle className="w-3 h-3 text-white/50" />)}
                             </div>
                         </div>
                     </motion.div>
                 ))}
-                {isTyping && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
-                        <div className="bg-white border border-gray-100 p-4 rounded-2xl rounded-tl-sm shadow-sm flex gap-1 items-center">
-                            <span className="w-2 h-2 bg-gray-300 rounded-full animate-bounce"></span><span className="w-2 h-2 bg-gray-300 rounded-full animate-bounce delay-75"></span><span className="w-2 h-2 bg-gray-300 rounded-full animate-bounce delay-150"></span>
-                        </div>
-                    </motion.div>
-                )}
+
+                <div ref={messagesEndRef} />
             </div>
             {/* Quick Replies */}
             <div className="px-4 py-2 bg-gray-50 border-t border-gray-100 flex gap-2 overflow-x-auto no-scrollbar">
@@ -711,7 +841,9 @@ function ChatView({ user, t }: ChatProps) {
                     <input type="text" value={input} onChange={e => setInput(e.target.value)} placeholder={t.dashboard.typeMessage} className="flex-1 bg-transparent border-0 py-4 focus:ring-0 text-sm font-medium" />
                     <button type="button" className="text-gray-400 hover:text-emerald-600 transition"><Paperclip className="w-5 h-5" /></button>
                 </div>
-                <button type="submit" disabled={!input.trim()} className="bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed text-white p-4 rounded-2xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-200"><MessageSquare className="w-5 h-5" /></button>
+                <button type="submit" disabled={!input.trim() || isSending} className="bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed text-white p-4 rounded-2xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-200">
+                    {isSending ? <Loader2 className="w-5 h-5 animate-spin" /> : <MessageSquare className="w-5 h-5" />}
+                </button>
             </form>
         </div>
     );
