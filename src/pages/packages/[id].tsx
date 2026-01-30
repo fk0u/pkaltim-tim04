@@ -22,6 +22,7 @@ export default function PackageDetail() {
    const [pax, setPax] = useState(1);
    const [isShareModalOpen, setIsShareModalOpen] = useState(false);
    const [itinerary, setItinerary] = useState<any>(null);
+   const [isWishlisted, setIsWishlisted] = useState(false);
 
    const pkg = id ? packages.find(p => p.id === id) || null : null;
 
@@ -37,7 +38,10 @@ export default function PackageDetail() {
    const handleBook = () => {
       if (!user) {
          addToast("Please login to book a package", "error");
-         router.push('/login');
+         router.push({
+            pathname: '/login',
+            query: { callbackUrl: router.asPath }
+         });
          return;
       }
 
@@ -56,7 +60,8 @@ export default function PackageDetail() {
    };
 
    const handleWishlist = () => {
-      addToast(t.packageDetail.wishlist + " added!", "success");
+      setIsWishlisted(!isWishlisted);
+      addToast(t.packageDetail.wishlist + (isWishlisted ? " removed!" : " added!"), "success");
       // Future: Persist to DB
    };
 
@@ -226,12 +231,17 @@ export default function PackageDetail() {
                               onClose={() => setIsShareModalOpen(false)}
                               title={title}
                            />
+
+
+                           // ... (existing code)
+
                            <button
                               onClick={handleWishlist}
-                              className="flex-1 py-3 rounded-xl bg-white border border-gray-200 hover:border-red-200 hover:text-red-500 font-bold text-sm text-gray-600 flex items-center justify-center gap-2 transition group"
+                              className={`flex-1 py-3 rounded-xl bg-white border font-bold text-sm flex items-center justify-center gap-2 transition group ${isWishlisted ? 'border-red-200 text-red-500' : 'border-gray-200 text-gray-600 hover:border-red-200 hover:text-red-500'}`}
                            >
-                              <Heart className="w-4 h-4 group-hover:fill-red-500" /> {t.packageDetail.wishlist}
+                              <Heart className={`w-4 h-4 ${isWishlisted ? 'fill-red-500 text-red-500' : 'group-hover:fill-red-500'}`} /> {t.packageDetail.wishlist}
                            </button>
+
                         </div>
                      </div>
                   </div>

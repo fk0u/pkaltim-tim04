@@ -74,7 +74,9 @@ export const id = {
             culture: "Warisan Budaya",
             wildlife: "Safari Satwa",
             diving: "Menyalam Mewah"
-        }
+        },
+        dragToExplore: "Geser untuk jelajahi",
+        categoryDesc: "Jelajahi destinasi {category} terbaik yang dikurasi khusus untuk Anda."
     },
     search: {
         eventLocation: "Lokasi Event",

@@ -159,7 +159,7 @@ export default function Home() {
                   <div className="hidden md:flex gap-4">
                      <div className="flex items-center gap-2 text-sm font-medium text-gray-400">
                         <ArrowRight className="w-4 h-4 animate-pulse" />
-                        <span>Drag to explore</span>
+                        <span>{t.homepage.dragToExplore}</span>
                      </div>
                   </div>
                </div>
@@ -215,7 +215,7 @@ export default function Home() {
                                  {cat.name[locale === 'en' ? 'en' : 'id']}
                               </h3>
                               <p className="text-white/60 text-sm opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-100 line-clamp-2 mb-4">
-                                 Explore the best {cat.name[locale === 'en' ? 'en' : 'id']} destinations curated just for you.
+                                 {t.homepage.categoryDesc.replace('{category}', cat.name[locale === 'en' ? 'en' : 'id'])}
                               </p>
                               <div className="flex items-center gap-3 text-emerald-300 font-bold uppercase tracking-widest text-xs opacity-80 group-hover:opacity-100 group-hover:gap-5 transition-all duration-300">
                                  <span>{t.homepage.viewAllDestinations}</span>

@@ -1,5 +1,6 @@
 ﻿import Image from 'next/image';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { useAuth } from '@/contexts/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Lock, ArrowRight, Shield, Briefcase, Mail, Info, Check, ArrowLeft, Send } from 'lucide-react';
@@ -8,6 +9,7 @@ import { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function LoginPage() {
+    const router = useRouter();
     const { login, loginSocial } = useAuth();
     const { t } = useLanguage();
     const [email, setEmail] = useState('');
@@ -27,7 +29,8 @@ export default function LoginPage() {
         e.preventDefault();
         setIsLoading(true);
 
-        const success = await login(email, password);
+        const { callbackUrl } = router.query;
+        const success = await login(email, password, Array.isArray(callbackUrl) ? callbackUrl[0] : callbackUrl);
         if (!success) {
             alert('Login failed. Please check your credentials.');
         }

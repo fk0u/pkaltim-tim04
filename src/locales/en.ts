@@ -74,7 +74,9 @@ export const en = {
             culture: "Cultural Heritage",
             wildlife: "Wildlife Safari",
             diving: "Luxury Diving"
-        }
+        },
+        dragToExplore: "Drag to explore",
+        categoryDesc: "Explore the best {category} destinations curated just for you."
     },
     search: {
         eventLocation: "Event Location",

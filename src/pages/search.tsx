@@ -28,7 +28,7 @@ export default function SearchPage() {
         if (activeTab === 'Package') {
             return packages.filter(pkg => {
                 const title = pkg.title[locale === 'en' ? 'en' : 'id'];
-                const matchLocation = pkg.location.toLowerCase().includes(queryLocation) || title.toLowerCase().includes(queryLocation);
+                const matchLocation = pkg.location.toLowerCase().includes(queryLocation);
                 const matchPrice = pkg.price <= priceRange;
                 const matchRating = (pkg.rating || 0) >= ratingFilter;
                 return matchLocation && matchPrice && matchRating;
@@ -36,7 +36,7 @@ export default function SearchPage() {
         } else {
             return events.filter(evt => {
                 const title = evt.title[locale === 'en' ? 'en' : 'id'];
-                const matchLocation = evt.location.toLowerCase().includes(queryLocation) || title.toLowerCase().includes(queryLocation);
+                const matchLocation = evt.location.toLowerCase().includes(queryLocation);
                 // Events usually free or low cost, but let's assume we filter if price is numeric. 
                 // Currently event price is string 'Free' or 'Rp ...'
                 return matchLocation;

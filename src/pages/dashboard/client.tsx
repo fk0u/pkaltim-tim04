@@ -258,6 +258,33 @@ interface ChatProps {
 }
 
 
+// --- ANIMATED COUNTER COMPONENT ---
+function AnimatedCounter({ value, label, icon: Icon, color }: { value: number, label: string, icon: any, color: string }) {
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden group hover:shadow-lg transition-all duration-300"
+        >
+            <div className={`absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity ${color.replace('bg-', 'text-')}`}>
+                <Icon className="w-16 h-16" />
+            </div>
+            <div className="relative z-10">
+                <div className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-2">{label}</div>
+                <div className="flex items-baseline gap-1">
+                    <motion.span
+                        className="text-3xl font-black text-slate-900"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                    >
+                        {value.toLocaleString('id-ID')}
+                    </motion.span>
+                </div>
+            </div>
+        </motion.div>
+    );
+}
+
 // --- SUB-COMPONENTS ---
 function OverviewView({ user, t, activeTrip, setActiveModal, packages, locale, router, stats }: OverviewProps) {
     return (
@@ -266,16 +293,26 @@ function OverviewView({ user, t, activeTrip, setActiveModal, packages, locale, r
                 <h1 className="text-3xl font-black text-slate-900 mb-2">{t.dashboard.welcome} <span className="text-emerald-600">{user.name.split(' ')[0]}</span> 👋</h1>
                 <p className="text-slate-500">{t.dashboard.ready}</p>
             </div>
+
+            {/* Immersive Stats Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-                    <div className="text-xs text-gray-400 font-bold uppercase mb-2">{t.dashboard.totalXp}</div>
-                    <div className="text-2xl font-black text-slate-900">2,450</div>
-                </div>
-                <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-                    <div className="text-xs text-gray-400 font-bold uppercase mb-2">Bookings</div>
-                    <div className="text-2xl font-black text-slate-900">{stats.totalBookings}</div>
-                </div>
+                <AnimatedCounter value={stats.totalXP} label={t.dashboard.totalXp} icon={Star} color="bg-yellow-500" />
+                <AnimatedCounter value={stats.totalBookings} label="Total Bookings" icon={Calendar} color="bg-blue-500" />
+                <AnimatedCounter value={stats.activeTripsCount} label="Active Trips" icon={MapPin} color="bg-emerald-500" />
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-emerald-600 p-6 rounded-3xl shadow-lg shadow-emerald-200 relative overflow-hidden group cursor-pointer hover:bg-emerald-700 transition"
+                    onClick={() => router.push('/packages')}
+                >
+                    <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+                    <div className="relative z-10 text-white h-full flex flex-col justify-between">
+                        <div className="font-bold uppercase text-[10px] tracking-widest opacity-80">Next Adventure</div>
+                        <div className="flex items-center gap-2 font-bold">Explore <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" /></div>
+                    </div>
+                </motion.div>
             </div>
+
             <div>
                 <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2"><Calendar className="w-5 h-5 text-emerald-500" /> {t.dashboard.activeTrip}</h2>
                 {activeTrip ? (
@@ -480,17 +517,46 @@ function ProfileView({ user, t, addToast }: ProfileProps) {
                         <img src={user.avatar} className="w-20 h-20 rounded-full border-4 border-gray-50" alt="Avatar" />
                         <button className="text-emerald-600 font-bold text-sm bg-emerald-50 px-4 py-2 rounded-xl">Change Photo</button>
                     </div>
-                    <form className="space-y-6" onSubmit={(e: FormEvent) => { e.preventDefault(); addToast('Profile updated (Mock)', 'success'); setIsEditing(false); }}>
+                    <form className="space-y-6" onSubmit={async (e: FormEvent) => {
+                        e.preventDefault();
+                        try {
+                            // @ts-ignore
+                            const name = e.target.name.value;
+                            // @ts-ignore
+                            const phone = e.target.phone.value;
+                            // @ts-ignore
+                            const idNumber = e.target.idNumber.value;
+                            // @ts-ignore
+                            const bio = e.target.bio.value;
+
+                            const res = await fetch('/api/user/profile', {
+                                method: 'PUT',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ name, phone, idNumber, bio })
+                            });
+
+                            if (res.ok) {
+                                addToast('Profile updated successfully', 'success');
+                                setIsEditing(false);
+                                // Ideally reload user context here
+                                window.location.reload();
+                            } else {
+                                addToast('Failed to update profile', 'error');
+                            }
+                        } catch (err) {
+                            addToast('An error occurred', 'error');
+                        }
+                    }}>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div><label className="block text-xs font-bold text-gray-500 uppercase mb-2">{t.dashboard.fullName}</label><input type="text" defaultValue={user.name} className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium" /></div>
-                            <div><label className="block text-xs font-bold text-gray-500 uppercase mb-2">{t.dashboard.email}</label><input type="email" defaultValue={user.email} className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium text-gray-500" disabled /></div>
-                            <div><label className="block text-xs font-bold text-gray-500 uppercase mb-2">{t.dashboard.phone}</label><input type="tel" placeholder="+62..." className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium" /></div>
-                            <div><label className="block text-xs font-bold text-gray-500 uppercase mb-2">{t.dashboard.idNumber}</label><input type="text" placeholder="16 digit NIK" className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium" /></div>
+                            <div><label className="block text-xs font-bold text-gray-500 uppercase mb-2">{t.dashboard.fullName}</label><input type="text" name="name" defaultValue={user.name} className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium outline-none focus:ring-2 focus:ring-emerald-500" /></div>
+                            <div><label className="block text-xs font-bold text-gray-500 uppercase mb-2">{t.dashboard.email}</label><input type="email" name="email" defaultValue={user.email} className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium text-gray-500" disabled /></div>
+                            <div><label className="block text-xs font-bold text-gray-500 uppercase mb-2">{t.dashboard.phone}</label><input type="tel" name="phone" defaultValue={(user as any).phone || ''} placeholder="+62..." className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium outline-none focus:ring-2 focus:ring-emerald-500" /></div>
+                            <div><label className="block text-xs font-bold text-gray-500 uppercase mb-2">{t.dashboard.idNumber}</label><input type="text" name="idNumber" defaultValue={(user as any).idNumber || ''} placeholder="16 digit NIK" className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium outline-none focus:ring-2 focus:ring-emerald-500" /></div>
                         </div>
-                        <div><label className="block text-xs font-bold text-gray-500 uppercase mb-2">{t.dashboard.bio}</label><textarea className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium h-24" placeholder="Tell us about yourself..."></textarea></div>
+                        <div><label className="block text-xs font-bold text-gray-500 uppercase mb-2">{t.dashboard.bio}</label><textarea name="bio" defaultValue={(user as any).bio || ''} className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium h-24 outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Tell us about yourself..."></textarea></div>
                         <div className="flex justify-end gap-4 pt-4">
                             <button type="button" onClick={() => setIsEditing(false)} className="text-gray-500 font-bold hover:text-gray-900 transition">{t.dashboard.cancel}</button>
-                            <button type="submit" className="bg-emerald-600 text-white font-bold px-8 py-3 rounded-xl shadow-lg shadow-emerald-200">{t.dashboard.saveChanges}</button>
+                            <button type="submit" className="bg-emerald-600 text-white font-bold px-8 py-3 rounded-xl shadow-lg shadow-emerald-200 hover:bg-emerald-700 transition">{t.dashboard.saveChanges}</button>
                         </div>
                     </form>
                 </div>
@@ -513,8 +579,10 @@ function ProfileView({ user, t, addToast }: ProfileProps) {
                     <div className="flex gap-2"><span className="bg-emerald-100 text-emerald-700 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1"><CheckCircle className="w-3 h-3" /> Verified Traveler</span></div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10 mb-8">
-                    <div className="p-5 bg-gray-50 rounded-2xl flex items-center gap-4 border border-gray-100"><div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-emerald-600 shadow-sm"><Phone className="w-6 h-6" /></div><div><p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">{t.dashboard.phone}</p><p className="font-bold text-slate-900 text-lg">+62 812 3456 7890</p></div></div>
-                    <div className="p-5 bg-gray-50 rounded-2xl flex items-center gap-4 border border-gray-100"><div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-emerald-600 shadow-sm"><CreditCard className="w-6 h-6" /></div><div><p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">{t.dashboard.idNumber}</p><p className="font-bold text-slate-900 text-lg">6472012345678901</p></div></div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10 mb-8">
+                        <div className="p-5 bg-gray-50 rounded-2xl flex items-center gap-4 border border-gray-100"><div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-emerald-600 shadow-sm"><Phone className="w-6 h-6" /></div><div><p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">{t.dashboard.phone}</p><p className="font-bold text-slate-900 text-lg">{(user as any).phone || '-'}</p></div></div>
+                        <div className="p-5 bg-gray-50 rounded-2xl flex items-center gap-4 border border-gray-100"><div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-emerald-600 shadow-sm"><CreditCard className="w-6 h-6" /></div><div><p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">{t.dashboard.idNumber}</p><p className="font-bold text-slate-900 text-lg">{(user as any).idNumber || '-'}</p></div></div>
+                    </div>
                 </div>
                 <div className="space-y-6 relative z-10">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

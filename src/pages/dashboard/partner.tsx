@@ -1,349 +1,65 @@
 import Layout from '@/components/Layout';
 import { useAuth } from '@/contexts/AuthContext';
-import { useContent } from '@/contexts/ContentContext';
-import { TourPackage as PackageType } from '@/types';
-import { useBooking } from '@/contexts/BookingContext';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-import { Plus, Package, Users, TrendingUp, Calendar, MapPin, DollarSign, Trash2, X } from 'lucide-react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { Modal } from '@/components/ui';
-import { useToast } from '@/components/ui/Toast';
-import { useLanguage } from '@/contexts/LanguageContext';
+import { useEffect } from 'react';
+import { Building2, ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export default function PartnerDashboard() {
-  const { user } = useAuth();
-  const { packages, addPackage, deletePackage } = useContent();
-  const { bookings } = useBooking();
+  const { user, isAuthenticated } = useAuth();
   const router = useRouter();
-  const { addToast: showToast } = useToast();
-  const { locale } = useLanguage();
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  // Flattened state for form
-  const [formData, setFormData] = useState({
-    titleId: '',
-    titleEn: '',
-    location: '',
-    price: 0,
-    duration: '3D2N',
-    descriptionId: '',
-    descriptionEn: '',
-    ecoRating: 4,
-    rating: 4.5,
-    imageUrl: '/picture/packages/1.jpg'
-  });
-
-  // Calculate Stats
-  // In a real app, we would filter by partnerId. Here we assume the partner owns all packages they see or created.
-  const myPackages = packages;
-  const myBookings = bookings; // Simplifying assumption: Partner sees all bookings
-  const totalRevenue = myBookings.reduce((sum, b) => sum + b.amount, 0);
 
   useEffect(() => {
-    if (!user) {
-      if (typeof window !== 'undefined') router.push('/login');
-    } else if (user.role !== 'mitra' && user.role !== 'admin') {
+    if (!isAuthenticated) router.push('/login');
+    if (user && user.role !== 'mitra' && user.role !== 'admin') {
       router.push('/dashboard/client');
     }
-  }, [user, router]);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: (name === 'price' || name === 'rating' || name === 'ecoRating') ? parseFloat(value) : value
-    }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.titleId || !formData.price) {
-      showToast('Mohon lengkapi data paket', 'error');
-      return;
-    }
-
-    // Ensure we send valid matching type
-    const newPackage: any = {
-      ...formData,
-      title: {
-        id: formData.titleId,
-        en: formData.titleEn || formData.titleId // Fallback to ID if EN is empty
-      },
-      description: {
-        id: formData.descriptionId,
-        en: formData.descriptionEn || formData.descriptionId
-      },
-      facilities: ['Transport', 'Guide', 'Meals'] // Default facilities for demo
-    };
-
-    // Remove flat fields before sending if needed, but casting to any bypasses checks.
-    // Ideally we should construct a clean object.
-
-    addPackage(newPackage);
-    showToast('Paket wisata berhasil ditambahkan!', 'success');
-    setIsModalOpen(false);
-    setFormData({
-      titleId: '',
-      titleEn: '',
-      location: '',
-      price: 0,
-      duration: '3D2N',
-      descriptionId: '',
-      descriptionEn: '',
-      ecoRating: 4,
-      rating: 4.5,
-      imageUrl: '/picture/packages/1.jpg'
-    });
-  };
-
-  const handleDelete = (id: string, name: string) => {
-    if (confirm(`Yakin ingin menghapus paket ${name}?`)) {
-      deletePackage(id);
-      showToast('Paket berhasil dihapus', 'success');
-    }
-  }
+  }, [isAuthenticated, user, router]);
 
   if (!user) return null;
 
   return (
-    <Layout>
-      <div className="bg-slate-50 min-h-screen pt-24 pb-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <Layout title="Partner Dashboard - Coming Soon">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="max-w-2xl w-full text-center">
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="bg-white rounded-[2.5rem] p-12 shadow-2xl border border-gray-100 relative overflow-hidden"
+          >
+            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-400 via-teal-500 to-cyan-500"></div>
 
-          {/* Header */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-            <div>
-              <h1 className="text-3xl font-bold text-slate-900">Dashboard Mitra Travel</h1>
-              <p className="text-slate-500">Selamat datang kembali, <span className="text-emerald-600 font-semibold">{user.name}</span></p>
+            <div className="w-24 h-24 bg-emerald-50 rounded-3xl mx-auto flex items-center justify-center mb-8 text-emerald-600 shadow-lg shadow-emerald-100">
+              <Building2 className="w-12 h-12" />
             </div>
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-bold transition shadow-lg shadow-emerald-200"
-            >
-              <Plus size={20} /> Tambah Paket Baru
-            </button>
-          </div>
 
-          {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            {[
-              { label: 'Paket Aktif', value: myPackages.length, icon: Package, color: 'bg-blue-500', sub: 'Total paket tersedia' },
-              { label: 'Total Booking', value: myBookings.length, icon: Calendar, color: 'bg-emerald-500', sub: 'Semua pesanan masuk' },
-              { label: 'Pendapatan', value: `Rp ${(totalRevenue / 1000000).toFixed(1)}Jt`, icon: DollarSign, color: 'bg-amber-500', sub: 'Total pendapatan kotor' },
-              { label: 'Rata-rata Rating', value: 4.8, icon: TrendingUp, color: 'bg-rose-500', sub: 'Kepuasan pelanggan' },
-            ].map((stat, idx) => (
-              <div key={idx} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-start justify-between hover:shadow-md transition">
-                <div>
-                  <p className="text-slate-400 text-sm font-medium mb-1">{stat.label}</p>
-                  <h3 className="text-2xl font-bold text-slate-900">{stat.value}</h3>
-                  <span className="text-xs text-emerald-600 font-medium bg-emerald-50 px-2 py-0.5 rounded mt-2 inline-block">{stat.sub}</span>
-                </div>
-                <div className={`p-3 rounded-xl text-white ${stat.color} shadow-lg shadow-black/10`}>
-                  <stat.icon size={24} />
-                </div>
-              </div>
-            ))}
-          </div>
+            <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-4 tracking-tight">
+              Partner Dashboard
+            </h1>
+            <p className="text-xl text-gray-400 font-medium mb-8">
+              We are building something amazing for our partners. <br />
+              <span className="text-emerald-600 font-bold">Coming Soon!</span>
+            </p>
 
-          {/* Packages Table */}
-          <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-              <h2 className="text-lg font-bold text-slate-900">Daftar Paket Wisata</h2>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider">
-                    <th className="px-6 py-4 font-semibold">Nama Paket</th>
-                    <th className="px-6 py-4 font-semibold">Lokasi</th>
-                    <th className="px-6 py-4 font-semibold">Harga</th>
-                    <th className="px-6 py-4 font-semibold text-center">Durasi</th>
-                    <th className="px-6 py-4 font-semibold text-right">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {myPackages.map((pkg) => (
-                    <tr key={pkg.id} className="hover:bg-slate-50/80 transition">
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-4">
-                          <div className="hidden md:block w-12 h-12 bg-slate-200 rounded-lg overflow-hidden relative min-w-[3rem]">
-                            <Image src={pkg.imageUrl} alt={pkg.title[locale === 'en' ? 'en' : 'id']} fill className="object-cover" />
-                          </div>
-                          <div>
-                            <div className="font-bold text-slate-900 line-clamp-1">{pkg.title[locale === 'en' ? 'en' : 'id']}</div>
-                            <div className="text-xs text-slate-500">ID: {pkg.id.substring(0, 8)}...</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-slate-600">
-                        <div className="flex items-center gap-1">
-                          <MapPin size={14} className="text-slate-400" /> {pkg.location}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 font-semibold text-slate-900">
-                        Rp {pkg.price.toLocaleString('id-ID')}
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        <span className="bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded-full font-bold">{pkg.duration}</span>
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        <button
-                          onClick={() => handleDelete(pkg.id, pkg.title[locale === 'en' ? 'en' : 'id'])}
-                          className="text-slate-400 hover:text-rose-600 transition font-medium text-sm flex items-center gap-1 ml-auto"
-                        >
-                          <Trash2 size={16} /> Hapus
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                  {myPackages.length === 0 && (
-                    <tr>
-                      <td colSpan={5} className="px-6 py-8 text-center text-slate-500">
-                        Belum ada paket wisata. Silakan tambah paket baru.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Manual Modal Implementation since UI Modal might be simple */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center sticky top-0 bg-white z-10">
-              <h3 className="text-xl font-bold text-slate-900">Tambah Paket Wisata</h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-slate-600">
-                <X size={24} />
+            <div className="inline-flex flex-col gap-3">
+              <button
+                onClick={() => router.push('/')}
+                className="px-8 py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl transition shadow-lg shadow-emerald-200 flex items-center gap-2 justify-center"
+              >
+                Back to Home <ArrowRight className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => router.push('/dashboard/client')}
+                className="px-8 py-4 bg-white border-2 border-gray-100 hover:border-emerald-200 text-gray-500 hover:text-emerald-600 font-bold rounded-2xl transition"
+              >
+                Go to Traveler Dashboard
               </button>
             </div>
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-slate-700">Nama Paket (Indonesia)</label>
-                  <input
-                    name="titleId"
-                    value={formData.titleId}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
-                    placeholder="Contoh: Ekowisata Derawan"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-slate-700">Nama Paket (English)</label>
-                  <input
-                    name="titleEn"
-                    value={formData.titleEn}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
-                    placeholder="Example: Derawan Ecotourism"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-slate-700">Lokasi</label>
-                  <input
-                    name="location"
-                    value={formData.location}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
-                    placeholder="Contoh: Berau, Kalimantan Timur"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-slate-700">Harga (Rp)</label>
-                  <input
-                    type="number"
-                    name="price"
-                    value={formData.price}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
-                    placeholder="0"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-slate-700">Durasi</label>
-                  <select
-                    name="duration"
-                    value={formData.duration}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
-                  >
-                    <option value="1 Hari">1 Hari</option>
-                    <option value="2D1N">2D1N (2 Hari 1 Malam)</option>
-                    <option value="3D2N">3D2N (3 Hari 2 Malam)</option>
-                    <option value="4D3N">4D3N (4 Hari 3 Malam)</option>
-                    <option value="5D4N">5D4N (5 Hari 4 Malam)</option>
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-slate-700">Tingkat Eco (1-5)</label>
-                  <select
-                    name="ecoRating"
-                    value={formData.ecoRating}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
-                  >
-                    <option value="5">5 - Sangat Ramah</option>
-                    <option value="4">4 - Ramah</option>
-                    <option value="3">3 - Cukup</option>
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-slate-700">Gambar Sampul</label>
-                  <select
-                    name="imageUrl"
-                    value={formData.imageUrl}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
-                  >
-                    <option value="/picture/packages/1.jpg">Gambar Gunung/Hutan 1</option>
-                    <option value="/picture/packages/2.jpg">Gambar Sungai/Perahu</option>
-                    <option value="/picture/packages/3.jpg">Gambar Hutan/Trekking</option>
-                    <option value="/picture/packages/4.jpg">Gambar Desa Adat</option>
-                  </select>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-slate-700">Deskripsi Singkat (Indonesia)</label>
-                <textarea
-                  name="descriptionId"
-                  value={formData.descriptionId}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none min-h-[80px]"
-                  placeholder="Jelaskan daya tarik utama paket ini..."
-                  required
-                ></textarea>
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-slate-700">Deskripsi Singkat (English)</label>
-                <textarea
-                  name="descriptionEn"
-                  value={formData.descriptionEn}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none min-h-[80px]"
-                  placeholder="Explain the main highlights..."
-                ></textarea>
-              </div>
-              <div className="pt-4 border-t border-slate-100 flex justify-end gap-3">
-                <button type="button" onClick={() => setIsModalOpen(false)} className="px-5 py-2.5 rounded-xl font-bold text-slate-500 hover:bg-slate-100 transition">
-                  Batal
-                </button>
-                <button type="submit" className="px-5 py-2.5 rounded-xl font-bold bg-emerald-600 text-white hover:bg-emerald-700 transition shadow-lg shadow-emerald-200">
-                  Simpan Paket
-                </button>
-              </div>
-            </form>
-          </div>
+
+          </motion.div>
         </div>
-      )}
+      </div>
     </Layout>
   );
 }

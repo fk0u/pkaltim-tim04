@@ -78,7 +78,10 @@ export default function EventDetail() {
     const handleTicket = () => {
         if (!user) {
             addToast("Please login to book a ticket", "error"); // Should use i18n ideally but text is okay for now or reuse existing keys
-            router.push('/login');
+            router.push({
+                pathname: '/login',
+                query: { callbackUrl: router.asPath }
+            });
             return;
         }
 
@@ -100,12 +103,16 @@ export default function EventDetail() {
         });
     };
 
-    const handleShare = () => {
-        if (typeof navigator !== 'undefined' && navigator.clipboard) {
-            navigator.clipboard.writeText(window.location.href);
-            addToast(t.events.detail.toastLink, "success");
-        } else {
-            // Fallback or just ignore
+    const handleShare = async () => {
+        try {
+            if (navigator?.clipboard?.writeText) {
+                await navigator.clipboard.writeText(window.location.href);
+                addToast(t.events.detail.toastLink, "success");
+            } else {
+                throw new Error('Clipboard API unavailable');
+            }
+        } catch (error) {
+            console.error('Share error:', error);
             addToast("Share feature not supported", "error");
         }
     };

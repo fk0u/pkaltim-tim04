@@ -18,7 +18,7 @@ interface User {
 interface AuthContextType {
     user: User | null;
     isAuthenticated: boolean;
-    login: (email: string, password: string) => Promise<boolean>; // Return success/fail
+    login: (email: string, password: string, callbackUrl?: string) => Promise<boolean>; // Return success/fail
     logout: () => void;
     register: (name: string, email: string, password: string) => Promise<boolean>;
     loginSocial: (provider: string) => void;
@@ -54,7 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
 
-    const login = async (email: string, password: string) => {
+    const login = async (email: string, password: string, callbackUrl?: string) => {
         try {
             const res = await fetch('/api/auth/login', {
                 method: 'POST',
@@ -72,8 +72,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             // Cookie is set by API, just update local state
             setUser(data.user);
 
-            // Redirect based on role
-            if (data.user.role === 'admin' || data.user.role === 'Admin') {
+            // Redirect based on role or callback
+            if (callbackUrl && callbackUrl.startsWith('/')) {
+                router.push(callbackUrl);
+            } else if (data.user.role === 'admin' || data.user.role === 'Admin') {
                 router.push('/dashboard/admin');
             } else if (data.user.role === 'mitra') {
                 router.push('/dashboard/partner');
