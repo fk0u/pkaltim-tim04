@@ -14,7 +14,7 @@ import { Booking, TourPackage, User as UserType } from '@/types';
 import { useRef } from 'react';
 
 export default function ClientDashboard() {
-    const { user, logout, isAuthenticated } = useAuth();
+    const { user, logout, isAuthenticated, isLoading } = useAuth();
     const { bookings, stats, getBookingsByUserId } = useBooking();
     const { packages } = useContent();
     const { t, locale } = useLanguage();
@@ -32,16 +32,27 @@ export default function ClientDashboard() {
     const activeTrip = userBookings.length > 0 ? userBookings[0] : null;
 
     useEffect(() => {
-        if (!isAuthenticated) router.push('/login');
+        if (isLoading) return; // Wait for session check
+
+        if (!isAuthenticated) {
+            router.push('/login');
+            // addToast(t.common.loading, 'success'); // Remove toast to avoid spam on generic redirect
+            return;
+        }
+
         if (user && (user.role as string) !== 'Customer' && (user.role as string) !== 'client') {
             router.push(`/dashboard/${user.role}`);
         }
         if (router.query.tab) {
             setActiveTab(router.query.tab as string);
         }
-    }, [isAuthenticated, user, router]);
+    }, [isAuthenticated, user, router, isLoading]);
 
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+    if (isLoading) {
+        return <div className="min-h-screen flex items-center justify-center bg-slate-50"><Loader2 className="w-8 h-8 animate-spin text-emerald-600" /></div>;
+    }
 
     if (!user) return null;
 
@@ -58,6 +69,8 @@ export default function ClientDashboard() {
         { id: 'profile', label: t.dashboard.myProfile, icon: User },
         { id: 'payments', label: t.dashboard.paymentMethods, icon: CreditCard },
         { id: 'chat', label: t.dashboard.chatSupport, icon: MessageSquare },
+        { id: 'addresses', label: "Address Book", icon: MapPin },
+        { id: 'settings', label: "Settings", icon: Settings },
     ];
 
     const renderContent = () => {
@@ -74,6 +87,10 @@ export default function ClientDashboard() {
                 return <PaymentsView t={t} setActiveModal={setActiveModal} />;
             case 'chat':
                 return <ChatView user={user as unknown as UserType} t={t} />;
+            case 'addresses':
+                return <AddressBookView t={t} addToast={addToast} />;
+            case 'settings':
+                return <SettingsView user={user as unknown as UserType} t={t} addToast={addToast} />;
             default:
                 return <OverviewView user={user as unknown as UserType} t={t} activeTrip={activeTrip} setActiveModal={setActiveModal} packages={packages} locale={locale} router={router} stats={stats} />;
         }
@@ -573,7 +590,7 @@ function ProfileView({ user, t, addToast }: ProfileProps) {
                             if (res.ok) {
                                 addToast('Profile updated successfully', 'success');
                                 setIsEditing(false);
-                                // Ideally reload user context here
+                                // Reload to update context
                                 window.location.reload();
                             } else {
                                 addToast('Failed to update profile', 'error');
@@ -845,6 +862,289 @@ function ChatView({ user, t }: ChatProps) {
                     {isSending ? <Loader2 className="w-5 h-5 animate-spin" /> : <MessageSquare className="w-5 h-5" />}
                 </button>
             </form>
+        </div>
+    );
+}
+
+// --- NEW COMPONENTS ---
+
+interface AddressBookProps {
+    t: any;
+    addToast: any;
+}
+
+interface SettingsProps {
+    user: UserType;
+    t: any;
+    addToast: any;
+}
+
+function AddressBookView({ t, addToast }: AddressBookProps) {
+    const [addresses, setAddresses] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [isAdding, setIsAdding] = useState(false);
+
+    const fetchAddresses = async () => {
+        try {
+            const res = await fetch('/api/user/addresses');
+            if (res.ok) {
+                const data = await res.json();
+                setAddresses(data);
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchAddresses();
+    }, []);
+
+    const handleDelete = async (id: string) => {
+        if (!confirm('Delete address?')) return;
+        try {
+            const res = await fetch(`/api/user/addresses?id=${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                addToast('Address deleted', 'success');
+                fetchAddresses();
+            }
+        } catch (error) {
+            addToast('Error deleting address', 'error');
+        }
+    };
+
+    const handleAdd = async (e: FormEvent) => {
+        e.preventDefault();
+        // @ts-ignore
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData.entries());
+        data.isDefault = data.isDefault === 'on';
+
+        try {
+            const res = await fetch('/api/user/addresses', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            if (res.ok) {
+                addToast('Address added', 'success');
+                setIsAdding(false);
+                fetchAddresses();
+            }
+        } catch (error) {
+            addToast('Error adding address', 'error');
+        }
+    };
+
+    return (
+        <div className="space-y-6 max-w-3xl">
+            <h2 className="text-2xl font-bold text-slate-900">Address Book</h2>
+
+            {isAdding ? (
+                <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                    <h3 className="font-bold text-lg mb-4">Add New Address</h3>
+                    <form onSubmit={handleAdd} className="space-y-4">
+                        <div className="grid grid-cols-2 gap-4">
+                            <div><label className="text-xs font-bold uppercase text-gray-400">Label</label><input name="label" placeholder="Home, Office" className="w-full border p-2 rounded-lg" required /></div>
+                            <div><label className="text-xs font-bold uppercase text-gray-400">Recipient</label><input name="recipientName" placeholder="Full Name" className="w-full border p-2 rounded-lg" required /></div>
+                        </div>
+                        <div><label className="text-xs font-bold uppercase text-gray-400">Phone</label><input name="phone" className="w-full border p-2 rounded-lg" required /></div>
+                        <div><label className="text-xs font-bold uppercase text-gray-400">Address</label><textarea name="address" className="w-full border p-2 rounded-lg" required></textarea></div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div><label className="text-xs font-bold uppercase text-gray-400">City</label><input name="city" className="w-full border p-2 rounded-lg" required /></div>
+                            <div><label className="text-xs font-bold uppercase text-gray-400">Postal Code</label><input name="postalCode" className="w-full border p-2 rounded-lg" required /></div>
+                        </div>
+                        <div className="flex items-center gap-2"><input type="checkbox" name="isDefault" id="def" /><label htmlFor="def" className="text-sm font-bold">Set as Default</label></div>
+                        <div className="flex gap-2">
+                            <button type="button" onClick={() => setIsAdding(false)} className="px-4 py-2 rounded-lg border">Cancel</button>
+                            <button type="submit" className="px-4 py-2 rounded-lg bg-emerald-600 text-white font-bold">Save</button>
+                        </div>
+                    </form>
+                </div>
+            ) : (
+                <button onClick={() => setIsAdding(true)} className="flex items-center gap-2 text-emerald-600 font-bold bg-emerald-50 px-4 py-3 rounded-xl hover:bg-emerald-100 transition">+ Add New Address</button>
+            )}
+
+            <div className="grid gap-4">
+                {addresses.map((addr) => (
+                    <div key={addr.id} className="bg-white p-6 rounded-2xl border border-gray-100 flex justify-between items-start">
+                        <div>
+                            <div className="flex items-center gap-2 mb-1">
+                                <span className="font-bold text-slate-900">{addr.label}</span>
+                                {addr.isDefault && <span className="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold">DEFAULT</span>}
+                            </div>
+                            <p className="font-bold text-sm text-gray-700">{addr.recipientName} ({addr.phone})</p>
+                            <p className="text-sm text-gray-500">{addr.address}, {addr.city} {addr.postalCode}</p>
+                        </div>
+                        <button onClick={() => handleDelete(addr.id)} className="text-red-500 text-xs font-bold hover:underline">Delete</button>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+function SettingsView({ user, t, addToast }: SettingsProps) {
+    const [prefs, setPrefs] = useState({
+        notifications: { email: true, push: true },
+        currency: 'IDR',
+        language: 'en'
+    });
+
+    // 2FA State
+    const [is2FAEnabled, setIs2FAEnabled] = useState(false); // In real app, load from user prop/api 
+    const [setupStep, setSetupStep] = useState(0); // 0: none, 1: qr, 2: verify
+    const [qrData, setQrData] = useState<any>(null);
+    const [token, setToken] = useState('');
+
+    useEffect(() => {
+        // Load initial settings if in user preferences
+        if (user.preferences) {
+            // @ts-ignore
+            setPrefs({ ...prefs, ...user.preferences });
+        }
+        if ((user as any).isTwoFactorEnabled) {
+            setIs2FAEnabled(true);
+        }
+    }, [user]);
+
+    const handleSavePrefs = async () => {
+        try {
+            const res = await fetch('/api/user/settings', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(prefs)
+            });
+            if (res.ok) {
+                addToast('Preferences saved', 'success');
+            }
+        } catch (e) {
+            addToast('Error saving preferences', 'error');
+        }
+    };
+
+    const start2FASetup = async () => {
+        try {
+            const res = await fetch('/api/auth/2fa', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'setup' })
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setQrData(data); // { secret, otpauth }
+                setSetupStep(1);
+            }
+        } catch (e) {
+            addToast('Error starting setup', 'error');
+        }
+    };
+
+    const verify2FA = async () => {
+        try {
+            const res = await fetch('/api/auth/2fa', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'verify', token })
+            });
+            if (res.ok) {
+                addToast('2FA Enabled Successfully', 'success');
+                setIs2FAEnabled(true);
+                setSetupStep(0);
+                setQrData(null);
+            } else {
+                addToast('Invalid Token', 'error');
+            }
+        } catch (e) {
+            addToast('Verification failed', 'error');
+        }
+    };
+
+    return (
+        <div className="space-y-8 max-w-2xl">
+            <h2 className="text-2xl font-bold text-slate-900">Settings</h2>
+
+            {/* PREFERENCES */}
+            <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                <h3 className="font-bold text-lg mb-4">Preferences</h3>
+                <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                        <span className="font-bold text-slate-700">Email Notifications</span>
+                        <div
+                            className={`w-12 h-6 rounded-full relative cursor-pointer px-1 transition-colors ${prefs.notifications.email ? 'bg-emerald-500' : 'bg-gray-200'}`}
+                            onClick={() => setPrefs({ ...prefs, notifications: { ...prefs.notifications, email: !prefs.notifications.email } })}
+                        >
+                            <div className={`w-4 h-4 rounded-full bg-white absolute top-1 transition-all ${prefs.notifications.email ? 'left-7' : 'left-1'}`}></div>
+                        </div>
+                    </div>
+                    <div className="flex justify-between items-center">
+                        <span className="font-bold text-slate-700">Push Notifications</span>
+                        <div
+                            className={`w-12 h-6 rounded-full relative cursor-pointer px-1 transition-colors ${prefs.notifications.push ? 'bg-emerald-500' : 'bg-gray-200'}`}
+                            onClick={() => setPrefs({ ...prefs, notifications: { ...prefs.notifications, push: !prefs.notifications.push } })}
+                        >
+                            <div className={`w-4 h-4 rounded-full bg-white absolute top-1 transition-all ${prefs.notifications.push ? 'left-7' : 'left-1'}`}></div>
+                        </div>
+                    </div>
+                    <div className="pt-4 border-t border-gray-100">
+                        <label className="block text-xs font-bold text-gray-400 uppercase mb-2">Currency</label>
+                        <select
+                            value={prefs.currency}
+                            onChange={(e) => setPrefs({ ...prefs, currency: e.target.value })}
+                            className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2"
+                        >
+                            <option value="IDR">IDR (Indonesian Rupiah)</option>
+                            <option value="USD">USD (US Dollar)</option>
+                        </select>
+                    </div>
+                </div>
+                <div className="mt-6">
+                    <button onClick={handleSavePrefs} className="w-full bg-gray-900 text-white font-bold py-3 rounded-xl hover:bg-black transition">Save Preferences</button>
+                </div>
+            </div>
+
+            {/* 2FA SECURITY */}
+            <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                <div className="flex items-center gap-3 mb-4">
+                    <ShieldCheck className="w-6 h-6 text-emerald-500" />
+                    <div>
+                        <h3 className="font-bold text-lg">Two-Factor Authentication</h3>
+                        <p className="text-xs text-gray-500">Secure your account with TOTP</p>
+                    </div>
+                </div>
+
+                {!setupStep && !is2FAEnabled && (
+                    <button onClick={start2FASetup} className="bg-emerald-600 text-white font-bold px-6 py-2 rounded-xl hover:bg-emerald-700 transition">Enable 2FA</button>
+                )}
+
+                {setupStep === 1 && qrData && (
+                    <div className="bg-gray-50 p-6 rounded-xl text-center space-y-4">
+                        <p className="text-sm font-bold text-gray-700">Scan this QR Code with Google Authenticator</p>
+                        <div className="w-48 h-48 bg-white mx-auto flex items-center justify-center border">
+                            <img src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrData.otpauth)}`} alt="QR" />
+                        </div>
+                        <p className="text-xs font-mono bg-white p-2 border rounded select-all break-all">{qrData.secret}</p>
+
+                        <input
+                            type="text"
+                            placeholder="Enter 6-digit code"
+                            className="text-center text-xl tracking-widest font-mono w-48 mx-auto border-2 border-emerald-500 rounded-lg p-2"
+                            value={token}
+                            onChange={(e) => setToken(e.target.value)}
+                        />
+                        <button onClick={verify2FA} className="bg-emerald-600 text-white font-bold px-8 py-2 rounded-xl">Verify & Enable</button>
+                    </div>
+                )}
+
+                {is2FAEnabled && (
+                    <div className="bg-emerald-50 border border-emerald-100 p-4 rounded-xl flex justify-between items-center">
+                        <span className="font-bold text-emerald-700 flex items-center gap-2"><CheckCircle className="w-4 h-4" /> 2FA is Enabled</span>
+                        <button className="text-red-500 text-xs font-bold hover:underline">Disable</button>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

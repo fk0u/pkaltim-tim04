@@ -19,9 +19,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const updateData: any = {};
         if (name) updateData.name = name;
         if (email) updateData.email = email;
-        if (phone) updateData.phone = phone;
-        if (bio) updateData.bio = bio;
-        if (idNumber) updateData.idNumber = idNumber;
+        if (phone !== undefined) updateData.phone = phone;
+        if (bio !== undefined) updateData.bio = bio;
+        if (idNumber !== undefined) updateData.idNumber = idNumber;
         if (onboardingCompleted !== undefined) updateData.onboardingCompleted = onboardingCompleted;
 
         if (preferences) {

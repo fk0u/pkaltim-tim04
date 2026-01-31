@@ -13,14 +13,18 @@ interface User {
     joinDate?: string;
     totalSpent?: number;
     status?: 'Active' | 'Inactive';
+    phone?: string;
+    idNumber?: string;
+    bio?: string;
 }
 
 interface AuthContextType {
     user: User | null;
     isAuthenticated: boolean;
-    login: (email: string, password: string, callbackUrl?: string) => Promise<boolean>; // Return success/fail
+    isLoading: boolean;
+    login: (email: string, password: string, callbackUrl?: string) => Promise<{ success: boolean; error?: string }>; // Return success/fail
     logout: () => void;
-    register: (name: string, email: string, password: string) => Promise<boolean>;
+    register: (name: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>;
     loginSocial: (provider: string) => void;
     updateUserProfile: (data: Partial<User>) => void;
 }

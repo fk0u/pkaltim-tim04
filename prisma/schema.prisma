@@ -11,33 +11,51 @@ datasource db {
 }
 
 model User {
-  id                  String    @id @default(cuid())
+  id                  String          @id @default(cuid())
   name                String
-  email               String    @unique
+  email               String          @unique
   password            String
-  role                String    @default("client") // client, mitra, admin
-  onboardingCompleted Boolean   @default(false)
-  preferences         Json?     // { interests: [], budget: "", travelStyle: "" }
+  role                String          @default("client") // client, mitra, admin
+  onboardingCompleted Boolean         @default(false)
+  preferences         Json? // { interests: [], budget: "", travelStyle: "", currency: "IDR", language: "en", notifications: { email: true, push: true } }
   phone               String?
-  bio                 String?   @db.Text
+  bio                 String?         @db.Text
   idNumber            String?
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
+  isTwoFactorEnabled  Boolean         @default(false)
+  twoFactorSecret     String?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
   bookings            Booking[]
   paymentMethods      PaymentMethod[]
   chatSessions        ChatSession[]
   sentMessages        Message[]
+  addresses           Address[]
+}
+
+model Address {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  label         String // Home, Office, etc.
+  recipientName String
+  phone         String
+  address       String   @db.Text
+  city          String
+  postalCode    String
+  isDefault     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model PaymentMethod {
   id        String   @id @default(cuid())
   userId    String
   user      User     @relation(fields: [userId], references: [id])
-  provider  String   // "card" | "wallet" | "bank"
-  last4     String?  // For cards
-  brand     String?  // visa, mastercard, gopay
+  provider  String // "card" | "wallet" | "bank"
+  last4     String? // For cards
+  brand     String? // visa, mastercard, gopay
   holder    String?
-  expiry    String?  // MM/YY
+  expiry    String? // MM/YY
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
 }
@@ -56,7 +74,7 @@ model Message {
   id        String      @id @default(cuid())
   sessionId String
   session   ChatSession @relation(fields: [sessionId], references: [id])
-  senderId  String?     // If null, it's system/admin (or add specific admin relation)
+  senderId  String? // If null, it's system/admin (or add specific admin relation)
   sender    User?       @relation(fields: [senderId], references: [id])
   isAdmin   Boolean     @default(false)
   content   String      @db.Text
@@ -66,21 +84,21 @@ model Message {
 
 model Event {
   id          String    @id @default(cuid())
-  title       Json      // LocalizedString { id, en }
+  title       Json // LocalizedString { id, en }
   location    String
   date        String
-  description Json      // LocalizedString { id, en }
+  description Json // LocalizedString { id, en }
   imageUrl    String    @db.Text
   category    String
-  tags        Json      // string[]
+  tags        Json // string[]
   price       String?
   priceChild  Int?
   organizer   String?
   ticketCount Int?      @default(0)
   quota       Int?      @default(0)
   bookedCount Int?      @default(0)
-  schedule    Json?     // EventSchedule[]
-  gallery     Json?     // string[]
+  schedule    Json? // EventSchedule[]
+  gallery     Json? // string[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   bookings    Booking[]
@@ -88,7 +106,7 @@ model Event {
 
 model TourPackage {
   id          String           @id @default(cuid())
-  title       Json             // LocalizedString { id, en }
+  title       Json // LocalizedString { id, en }
   duration    String
   price       Int
   priceChild  Int?
@@ -97,9 +115,9 @@ model TourPackage {
   location    String
   rating      Float
   ecoRating   Int
-  description Json             // LocalizedString { id, en }
+  description Json // LocalizedString { id, en }
   imageUrl    String           @db.Text
-  facilities  Json             // string[]
+  facilities  Json // string[]
   itinerary   ItineraryDetail?
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
@@ -111,8 +129,8 @@ model ItineraryDetail {
   packageId String      @unique
   package   TourPackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
   title     String
-  badges    Json        // string[]
-  days      Json        // DailyItinerary[]
+  badges    Json // string[]
+  days      Json // DailyItinerary[]
 }
 
 model Booking {
@@ -130,7 +148,7 @@ model Booking {
   adultCount    Int          @default(1)
   childCount    Int          @default(0)
   totalPax      Int          @default(1)
-  travelers     Json?        // TravelerDetail[]
+  travelers     Json? // TravelerDetail[]
   amount        Int          @default(0)
   date          DateTime     @default(now())
   status        String       @default("pending") // pending, paid, cancelled, completed
@@ -162,13 +180,13 @@ model Region {
   latitude     Float
   longitude    Float
   imageUrl     String @db.Text
-  destinations Json   // string[]
+  destinations Json // string[]
 }
 
 model Voucher {
   id          String   @id @default(cuid())
   code        String   @unique
-  discount    Int      // percentage
+  discount    Int // percentage
   description String?  @db.Text
   validFrom   DateTime
   validUntil  DateTime
@@ -181,8 +199,8 @@ model Voucher {
 
 model Category {
   id        String   @id @default(cuid())
-  name      Json     // LocalizedString { id, en }
-  icon      String   // Emoji or Lucide icon name
+  name      Json // LocalizedString { id, en }
+  icon      String // Emoji or Lucide icon name
   imageUrl  String   @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

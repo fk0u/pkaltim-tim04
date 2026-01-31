@@ -18,10 +18,10 @@ export default function RegisterPage() {
         e.preventDefault();
         setIsLoading(true);
 
-        const success = await register(name, email, password);
+        const result = await register(name, email, password);
 
-        if (!success) {
-            alert('Registration failed. Email might be already registered.');
+        if (!result.success) {
+            alert(`Registration failed: ${result.error}`);
         }
         setIsLoading(false);
     };

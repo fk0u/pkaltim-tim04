@@ -414,7 +414,27 @@ export default function CheckoutPage() {
                                                             </select>
                                                         </div>
                                                         <div className="md:col-span-3 space-y-2">
-                                                            <label className="text-xs font-bold text-gray-500 uppercase">{t.checkout.formFullName}</label>
+                                                            <div className="flex justify-between items-center mb-1">
+                                                                <label className="text-xs font-bold text-gray-500 uppercase">{t.checkout.formFullName}</label>
+                                                                {user && idx === 0 && (
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => {
+                                                                            if (!user) return;
+                                                                            updateTraveler(idx, 'fullName', user.name || '');
+                                                                            // Also fill ID and Phone if type is Adult
+                                                                            if (traveler.type === 'Adult') {
+                                                                                updateTraveler(idx, 'idNumber', (user as any).idNumber || '');
+                                                                                updateTraveler(idx, 'phoneNumber', (user as any).phone || '');
+                                                                                addToast('Data diambil dari profil', 'success');
+                                                                            }
+                                                                        }}
+                                                                        className="text-[10px] font-bold text-emerald-600 hover:text-emerald-700 bg-emerald-50 px-2 py-1 rounded transition"
+                                                                    >
+                                                                        Isi dari Profil
+                                                                    </button>
+                                                                )}
+                                                            </div>
                                                             <input
                                                                 type="text"
                                                                 className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 font-medium focus:ring-2 focus:ring-emerald-500 transition"

@@ -43,12 +43,13 @@ export default function Layout({
   const router = useRouter();
 
   useEffect(() => {
-    // Check if user is logged in, not on onboarding page, and has incomplete profile
+    // Check if user is logged in, not on onboarding/login/register pages
     if (user && router.pathname !== '/onboarding' && router.pathname !== '/login' && router.pathname !== '/register') {
-      if (!user.onboardingCompleted) {
-        addToast('⚠️ Langkah yang belum anda selesaikan: Lengkapi Profil Anda di halaman Onboarding', 'warning', 10000); // 10s duration
-        // Optional: Redirect to onboarding? 
-        // router.push('/onboarding'); // The user asked for a Toast, not forced redirect, but toast is good.
+      // Check for missing strict profile fields
+      const isProfileIncomplete = !user.phone || !user.idNumber || !user.bio || !user.onboardingCompleted;
+
+      if (isProfileIncomplete) {
+        addToast('⚠️ Profil belum lengkap. Mohon lengkapi data diri (HP, NIK, Bio) di halaman Profil Saya > Edit.', 'warning', 8000);
       }
     }
   }, [user, router.pathname, addToast]); // Add dependencies

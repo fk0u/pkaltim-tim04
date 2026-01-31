@@ -30,9 +30,9 @@ export default function LoginPage() {
         setIsLoading(true);
 
         const { callbackUrl } = router.query;
-        const success = await login(email, password, Array.isArray(callbackUrl) ? callbackUrl[0] : callbackUrl);
-        if (!success) {
-            alert('Login failed. Please check your credentials.');
+        const result = await login(email, password, Array.isArray(callbackUrl) ? callbackUrl[0] : callbackUrl);
+        if (!result.success) {
+            alert(`Login failed: ${result.error}`);
         }
         setIsLoading(false);
     };
