@@ -6,6 +6,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
+import dynamic from 'next/dynamic';
+
+const InteractiveCursor = dynamic(() => import('./InteractiveCursor'), { ssr: false });
+
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -82,6 +86,9 @@ export default function Layout({
 
       {!hideFooter && <Footer />}
       {!hideBottomNav && <MobileBottomNav />}
+
+      {/* Interactive Cursor - Global */}
+      <InteractiveCursor />
     </div>
   );
 }

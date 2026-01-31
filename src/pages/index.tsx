@@ -8,7 +8,12 @@ import { ArrowRight, MapPin, Star, Leaf, Heart, Globe, Play } from 'lucide-react
 import Link from 'next/link';
 import Image from 'next/image';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useRef } from 'react';
+import { useRef, useLayoutEffect, useEffect } from 'react';
+import gsap from 'gsap';
+
+import dynamic from 'next/dynamic';
+
+const Hero3D = dynamic(() => import('@/components/canvas/Hero3D'), { ssr: false });
 
 export default function Home() {
    const { t, locale } = useLanguage();
@@ -24,6 +29,26 @@ export default function Home() {
 
    const featuredPackages = packages.slice(0, 3);
    const popularDestinations = destinations.slice(0, 5); // 5 items for bento grid
+
+   // GSAP Animation
+   useLayoutEffect(() => {
+      const ctx = gsap.context(() => {
+         gsap.to('.hero-char', {
+            y: 0,
+            duration: 1.2,
+            stagger: 0.03,
+            ease: 'power4.out',
+            delay: 0.2
+         });
+         gsap.to('.hero-highlight', {
+            y: 0,
+            duration: 1.2,
+            ease: 'power4.out',
+            delay: 0.8
+         });
+      });
+      return () => ctx.revert();
+   }, [t.hero.waitMagic, t.hero.magic]);
 
    // Hardcoded categories removed - now using dynamic data from ContentContext
    // const categories = [
@@ -53,17 +78,25 @@ export default function Home() {
                >
                   <div className="absolute inset-0 bg-black/40 z-10 mix-blend-multiply" />
                   <div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-black z-20" />
+
+                  {/* Video Background */}
                   <video
                      autoPlay
                      loop
                      muted
                      playsInline
                      poster="https://images.unsplash.com/photo-1596401057633-565652b5d249?auto=format&fit=crop&q=80"
-                     className="absolute inset-0 w-full h-full object-cover"
+                     className="absolute inset-0 w-full h-full object-cover opacity-80"
                   >
                      <source src="/video/bumper.webm" type="video/webm" />
                      <source src="/video/bumper.mp4" type="video/mp4" />
                   </video>
+
+                  {/* 3D Particle Layer - Renders ON TOP of video but behind content */}
+                  <div className="absolute inset-0 z-10 opacity-70 mix-blend-screen">
+                     <Hero3D />
+                  </div>
+
                </motion.div>
             </div>
 
@@ -91,15 +124,22 @@ export default function Home() {
                         {t.hero.badge}
                      </motion.div>
 
-                     <motion.h1
-                        initial={{ opacity: 0, y: 50 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2, duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                        className="text-6xl md:text-8xl lg:text-9xl font-black text-white tracking-tighter leading-[0.9] drop-shadow-2xl"
-                     >
-                        {t.hero.waitMagic} <br />
-                        <span className="text-transparent bg-clip-text bg-linear-to-r from-emerald-400 via-teal-200 to-cyan-400 animate-pulse-slow">{t.hero.magic}</span>
-                     </motion.h1>
+                     <div ref={targetRef} className="relative z-10">
+                        <h1 className="text-6xl md:text-8xl lg:text-9xl font-black text-white tracking-tighter leading-[0.9] drop-shadow-2xl overflow-hidden">
+                           <span className="block overflow-hidden mb-2">
+                              {t.hero.waitMagic.split('').map((char, i) => (
+                                 <span key={i} className="hero-char inline-block translate-y-full">
+                                    {char === ' ' ? '\u00A0' : char}
+                                 </span>
+                              ))}
+                           </span>
+                           <span className="block overflow-hidden">
+                              <span className="hero-highlight inline-block translate-y-full text-transparent bg-clip-text bg-linear-to-r from-emerald-400 via-teal-200 to-cyan-400 animate-pulse-slow pb-2">
+                                 {t.hero.magic}
+                              </span>
+                           </span>
+                        </h1>
+                     </div>
 
                      <motion.p
                         initial={{ opacity: 0 }}
