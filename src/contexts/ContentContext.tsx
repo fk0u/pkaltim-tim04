@@ -13,14 +13,14 @@ interface ContentContextType {
     loading: boolean;
 
     // Package Methods
-    addPackage: (pkg: Omit<TourPackage, 'id'>) => Promise<void>;
+    addPackage: (pkg: Omit<TourPackage, 'id'>) => Promise<boolean>;
     deletePackage: (id: string) => Promise<void>;
-    updatePackage: (pkg: TourPackage) => Promise<void>;
+    updatePackage: (pkg: TourPackage) => Promise<boolean>;
 
     // Event Methods
-    addEvent: (evt: Omit<Event, 'id'>) => Promise<void>;
+    addEvent: (evt: Omit<Event, 'id'>) => Promise<boolean>;
     deleteEvent: (id: string) => Promise<void>;
-    updateEvent: (evt: Event) => Promise<void>;
+    updateEvent: (evt: Event) => Promise<boolean>;
 
     // Booking Methods
     addBooking: (booking: Omit<Booking, 'id' | 'status' | 'createdAt'>) => Promise<void>;
@@ -28,8 +28,8 @@ interface ContentContextType {
     deleteBooking: (id: string) => Promise<void>;
 
     // Destination Methods
-    addDestination: (dest: Partial<Destination>) => Promise<void>;
-    updateDestination: (dest: Destination) => Promise<void>;
+    addDestination: (dest: Partial<Destination>) => Promise<boolean>;
+    updateDestination: (dest: Destination) => Promise<boolean>;
     deleteDestination: (id: number) => Promise<void>;
 
     // Testimonial Methods
@@ -149,9 +149,12 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
             if (res.ok) {
                 const newPkg = await res.json();
                 setPackages(prev => [newPkg, ...prev]);
+                return true;
             }
+            return false;
         } catch (error) {
             console.error('Error adding package:', error);
+            return false;
         }
     };
 
@@ -176,9 +179,12 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
             if (res.ok) {
                 const pkg = await res.json();
                 setPackages(prev => prev.map(p => p.id === pkg.id ? pkg : p));
+                return true;
             }
+            return false;
         } catch (error) {
             console.error('Error updating package:', error);
+            return false;
         }
     };
 
@@ -193,9 +199,12 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
             if (res.ok) {
                 const newEvt = await res.json();
                 setEvents(prev => [newEvt, ...prev]);
+                return true;
             }
+            return false;
         } catch (error) {
             console.error('Error adding event:', error);
+            return false;
         }
     };
 
@@ -220,9 +229,12 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
             if (res.ok) {
                 const evt = await res.json();
                 setEvents(prev => prev.map(e => e.id === evt.id ? evt : e));
+                return true;
             }
+            return false;
         } catch (error) {
             console.error('Error updating event:', error);
+            return false;
         }
     };
 
@@ -278,11 +290,14 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
     // Destination Methods
     const addDestination = async (dest: Partial<Destination>) => {
         try {
+            // Remove ID if it's a temp ID (timestamp) to let DB handle it
+            const { id, ...dataToSubmit } = dest as any;
+
             const res = await fetch('/api/regions', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    ...dest,
+                    ...dataToSubmit,
                     latitude: dest.coordinates?.lat,
                     longitude: dest.coordinates?.lng
                 })
@@ -290,9 +305,12 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
             if (res.ok) {
                 const newDest = await res.json();
                 setDestinations(prev => [newDest, ...prev]);
+                return true;
             }
+            return false;
         } catch (error) {
             console.error('Error adding destination:', error);
+            return false;
         }
     };
 
@@ -306,9 +324,12 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
             if (res.ok) {
                 const updated = await res.json();
                 setDestinations(prev => prev.map(d => d.id === updated.id ? updated : d));
+                return true;
             }
+            return false;
         } catch (error) {
             console.error('Error updating destination:', error);
+            return false;
         }
     };
 

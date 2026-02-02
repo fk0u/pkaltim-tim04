@@ -17,7 +17,197 @@ async function main() {
     await prisma.event.deleteMany();
     await prisma.tourPackage.deleteMany();
     await prisma.user.deleteMany();
-    await prisma.region.deleteMany(); // If applicable
+    await prisma.region.deleteMany();
+    await prisma.category.deleteMany();
+
+    // --- Categories ---
+    console.log('🏷️ Creating Categories...');
+    await prisma.category.createMany({
+        data: [
+            {
+                name: { en: 'Nature & Wildlife', id: 'Alam & Hewan Liar' },
+                icon: '🌳',
+                imageUrl: 'https://images.unsplash.com/photo-1541348166540-3b692d770c69?q=80&w=1000&auto=format&fit=crop'
+            },
+            {
+                name: { en: 'Marine & Islands', id: 'Bahari & Kepulauan' },
+                icon: '🏝️',
+                imageUrl: 'https://images.unsplash.com/photo-1596401057633-565652b5d249?q=80&w=1000&auto=format&fit=crop'
+            },
+            {
+                name: { en: 'Culture & Heritage', id: 'Budaya & Warisan' },
+                icon: '👺',
+                imageUrl: 'https://images.unsplash.com/photo-1627393166858-6a56c429676e?q=80&w=1000&auto=format&fit=crop'
+            },
+            {
+                name: { en: 'Modern & Urban', id: 'Kota Modern' },
+                icon: '🏙️',
+                imageUrl: 'https://images.unsplash.com/photo-1636952765355-66795f7267eb?q=80&w=1000&auto=format&fit=crop'
+            },
+            {
+                name: { en: 'Culinary', id: 'Kuliner' },
+                icon: '🍽️',
+                imageUrl: 'https://images.unsplash.com/photo-1626082896492-766af4eb6501?q=80&w=1000&auto=format&fit=crop'
+            }
+        ]
+    });
+
+    // --- Regions ---
+    console.log('🗺️ Creating Regions...');
+    await prisma.region.createMany({
+        data: [
+            {
+                name: 'Samarinda',
+                type: 'Kota',
+                capital: 'Samarinda',
+                leader: 'Andi Harun',
+                area: '718.00',
+                population: '868,499',
+                density: '1,210',
+                districts: 10,
+                villages: '59 Kelurahan',
+                latitude: -0.5022,
+                longitude: 117.1536,
+                imageUrl: 'https://images.unsplash.com/photo-1636952765355-66795f7267eb?q=80&w=1000&auto=format&fit=crop',
+                destinations: ['Islamic Center', 'Mahakam River', 'Pampang Cultural Village']
+            },
+            {
+                name: 'Balikpapan',
+                type: 'Kota',
+                capital: 'Balikpapan',
+                leader: 'Rahmad Mas\'ud',
+                area: '511.01',
+                population: '757,418',
+                density: '1,482',
+                districts: 6,
+                villages: '34 Kelurahan',
+                latitude: -1.2379,
+                longitude: 116.8529,
+                imageUrl: 'https://images.unsplash.com/photo-1619946450654-7d8858db194a?q=80&w=1000&auto=format&fit=crop',
+                destinations: ['Kemala Beach', 'Samboja Lestari', 'Carribean Island Waterpark']
+            },
+            {
+                name: 'Bontang',
+                type: 'Kota',
+                capital: 'Bontang',
+                leader: 'Basri Rase',
+                area: '161.88',
+                population: '191,811',
+                density: '1,185',
+                districts: 3,
+                villages: '15 Kelurahan',
+                latitude: 0.1332,
+                longitude: 117.5000,
+                imageUrl: 'https://images.unsplash.com/photo-1595168434316-d3524a8775df?q=80&w=1000&auto=format&fit=crop', // Generic Industrial/Port
+                destinations: ['Bontang Mangrove Park', 'Beras Basah Island', 'Kutai National Park']
+            },
+            {
+                name: 'Kutai Kartanegara',
+                type: 'Kabupaten',
+                capital: 'Tenggarong',
+                leader: 'Edi Damansyah',
+                area: '27,263.10',
+                population: '789,767',
+                density: '29',
+                districts: 18,
+                villages: '238 Desa/Kelurahan',
+                latitude: -0.4000,
+                longitude: 117.0000,
+                imageUrl: 'https://images.unsplash.com/photo-1549480397-28d15a51989e?q=80&w=1000&auto=format&fit=crop',
+                destinations: ['Museum Mulawarman', 'Ladaya', 'Pulau Kumala']
+            },
+            {
+                name: 'Berau',
+                type: 'Kabupaten',
+                capital: 'Tanjung Redeb',
+                leader: 'Sri Juniarsih Mas',
+                area: '36,962.37',
+                population: '299,005',
+                density: '8',
+                districts: 13,
+                villages: '110 Desa/Kelurahan',
+                latitude: 2.1500,
+                longitude: 117.5000,
+                imageUrl: 'https://images.unsplash.com/photo-1578496480157-58e846059d62?q=80&w=1000&auto=format&fit=crop',
+                destinations: ['Derawan Islands', 'Labuan Cermin', 'Kakaban']
+            },
+            {
+                name: 'Kutai Barat',
+                type: 'Kabupaten',
+                capital: 'Sendawar',
+                leader: 'F.X. Yapan',
+                area: '20,384.60',
+                population: '186,581',
+                density: '9',
+                districts: 16,
+                villages: '194 Desa/Kelurahan',
+                latitude: -0.5000,
+                longitude: 115.5000,
+                imageUrl: 'https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272?q=80&w=1000&auto=format&fit=crop',
+                destinations: ['Kersik Luway', 'Jantur Inar', 'Lamin Long Iram']
+            },
+            {
+                name: 'Kutai Timur',
+                type: 'Kabupaten',
+                capital: 'Sangatta',
+                leader: 'Ardiansyah Sulaiman',
+                area: '31,239.84',
+                population: '448,850',
+                density: '14',
+                districts: 18,
+                villages: '141 Desa/Kelurahan',
+                latitude: 0.9000,
+                longitude: 117.5000,
+                imageUrl: 'https://images.unsplash.com/photo-1579290074697-3f303f90b2b8?q=80&w=1000&auto=format&fit=crop', // Forest/Park
+                destinations: ['Kutai National Park', 'Prevab', 'Teluk Lombok']
+            },
+            {
+                name: 'Penajam Paser Utara',
+                type: 'Kabupaten',
+                capital: 'Penajam',
+                leader: 'Makmur Marbun (Pj)',
+                area: '3,333.06',
+                population: '202,067',
+                density: '61',
+                districts: 4,
+                villages: '54 Desa/Kelurahan',
+                latitude: -1.2500,
+                longitude: 116.6667,
+                imageUrl: 'https://images.unsplash.com/photo-1549480397-28d15a51989e?q=80&w=1000&auto=format&fit=crop', // IKN Area
+                destinations: ['Titik Nol Nusantara', 'Mangrove Center', 'Nipah-Nipah Beach']
+            },
+            {
+                name: 'Mahakam Ulu',
+                type: 'Kabupaten',
+                capital: 'Ujoh Bilang',
+                leader: 'Bonifasius Belawan Geh',
+                area: '18,427.81',
+                population: '39,319',
+                density: '2',
+                districts: 5,
+                villages: '50 Desa',
+                latitude: 0.8333,
+                longitude: 115.1667,
+                imageUrl: 'https://images.unsplash.com/photo-1448375240586-dfd8d395ea6c?q=80&w=1000&auto=format&fit=crop',
+                destinations: ['Long Apari', 'Riam Udang', 'Kenyah Culture']
+            },
+            {
+                name: 'Paser',
+                type: 'Kabupaten',
+                capital: 'Tanah Grogot',
+                leader: 'Fahmi Fadli',
+                area: '11,603.94',
+                population: '309,667',
+                density: '27',
+                districts: 10,
+                villages: '144 Desa/Kelurahan',
+                latitude: -1.8000,
+                longitude: 116.0000,
+                imageUrl: 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=1000&auto=format&fit=crop',
+                destinations: ['Museum Sadurengas', 'Pasir Mayang Beach', 'Mount Boga']
+            }
+        ]
+    });
 
     // --- Users ---
     console.log('👤 Creating Users...');

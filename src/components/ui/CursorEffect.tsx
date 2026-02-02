@@ -2,7 +2,12 @@ import { useEffect, useState } from 'react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
 
 export default function CursorEffect() {
+    const [isActive, setIsActive] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+        setIsActive(true);
+    }, []);
 
     const cursorX = useMotionValue(-100);
     const cursorY = useMotionValue(-100);
@@ -33,6 +38,7 @@ export default function CursorEffect() {
     }, [cursorX, cursorY, isVisible]);
 
     // Don't render on touch devices or if not ready
+    if (!isActive) return null;
     if (typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches) return null;
 
     return (

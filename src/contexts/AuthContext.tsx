@@ -70,7 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
             if (!res.ok) {
                 console.error(data.message);
-                return false;
+                return { success: false, error: data.message || 'Login failed' };
             }
 
             // Cookie is set by API, just update local state
@@ -86,10 +86,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             } else {
                 router.push('/dashboard/client');
             }
-            return true;
+            return { success: true };
         } catch (e) {
             console.error('Login error:', e);
-            return false;
+            return { success: false, error: 'Network error. Please try again.' };
         }
     };
 
@@ -110,24 +110,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
             if (!res.ok) {
                 console.error(data.message);
-                return false;
+                return { success: false, error: data.message || 'Registration failed' };
             }
-
-            // API should set cookie on register too, strictly speaking, 
-            // but if register just returns token, we might need to adjust.
-            // Assuming register also sets cookie or we auto-login.
-            // If register endpoint wasn't updated to setCookie, we might need to fix that too.
-            // For now, let's assume it returns user and we set state.
-            // Ideally we should call login() after register or update register API.
-            // Let's check register behavior. If it returns token, we effectively miss the cookie.
-            // BUT, for now, let's stick to this refactor.
 
             setUser(data.user);
             router.push('/onboarding');
-            return true;
+            return { success: true };
         } catch (e) {
             console.error('Registration error:', e);
-            return false;
+            return { success: false, error: 'Network error. Please try again.' };
         }
     };
 

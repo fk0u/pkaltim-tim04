@@ -30,6 +30,7 @@ model User {
   chatSessions        ChatSession[]
   sentMessages        Message[]
   addresses           Address[]
+  wishlist            Wishlist[]
 }
 
 model Address {
@@ -102,6 +103,7 @@ model Event {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   bookings    Booking[]
+  wishlist    Wishlist[]
 }
 
 model TourPackage {
@@ -122,6 +124,7 @@ model TourPackage {
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
   bookings    Booking[]
+  wishlist    Wishlist[]
 }
 
 model ItineraryDetail {
@@ -204,4 +207,17 @@ model Category {
   imageUrl  String   @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Wishlist {
+  id        String       @id @default(cuid())
+  userId    String
+  user      User         @relation(fields: [userId], references: [id])
+  packageId String?
+  package   TourPackage? @relation(fields: [packageId], references: [id])
+  eventId   String?
+  event     Event?       @relation(fields: [eventId], references: [id])
+  createdAt DateTime     @default(now())
+  
+  @@unique([userId, packageId, eventId])
 }

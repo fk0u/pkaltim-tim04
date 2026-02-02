@@ -83,7 +83,7 @@ export default function PackageForm() {
         }));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
 
@@ -94,17 +94,23 @@ export default function PackageForm() {
             return;
         }
 
+        let success = false;
         if (isEditMode) {
-            updatePackage(formData);
+            success = await updatePackage(formData);
         } else {
-            addPackage(formData);
+            // Remove temp ID
+            const { id: _, ...dataToSend } = formData;
+            // @ts-ignore
+            success = await addPackage(dataToSend);
         }
 
-        // Simulate network delay
-        setTimeout(() => {
-            setIsLoading(false);
+        setIsLoading(false);
+
+        if (success) {
             router.push('/dashboard/admin/products');
-        }, 800);
+        } else {
+            alert("Failed to save package. Please try again.");
+        }
     };
 
     return (

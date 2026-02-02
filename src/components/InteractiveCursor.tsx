@@ -54,7 +54,7 @@ export default function InteractiveCursor() {
                 animate={{
                     scale: isHovering ? 1.5 : 1,
                     opacity: isHovering ? 1 : 0.5,
-                    backgroundColor: isHovering ? 'rgba(16, 185, 129, 0.1)' : 'transparent'
+                    backgroundColor: isHovering ? 'rgba(16, 185, 129, 0.1)' : 'rgba(16, 185, 129, 0)'
                 }}
                 transition={{ duration: 0.2 }}
             />

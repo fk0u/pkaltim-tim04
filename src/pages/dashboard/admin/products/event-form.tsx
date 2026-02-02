@@ -75,7 +75,7 @@ export default function EventForm() {
         }
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         // Date Change Confirmation
@@ -94,16 +94,23 @@ export default function EventForm() {
             return;
         }
 
+        let success = false;
         if (isEditMode) {
-            updateEvent(formData);
+            success = await updateEvent(formData);
         } else {
-            addEvent(formData);
+            // Remove temp ID
+            const { id: _, ...dataToSend } = formData;
+            // @ts-ignore
+            success = await addEvent(dataToSend);
         }
 
-        setTimeout(() => {
-            setIsLoading(false);
+        setIsLoading(false);
+
+        if (success) {
             router.push('/dashboard/admin/products?tab=events');
-        }, 800);
+        } else {
+            alert("Failed to save event. Please check your connection and try again.");
+        }
     };
 
     return (

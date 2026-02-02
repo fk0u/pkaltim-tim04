@@ -8,7 +8,7 @@ function Fireflies(props: any) {
     const [sphere] = useState(() => random.inSphere(new Float32Array(5000), { radius: 1.5 }));
 
     useFrame((state, delta) => {
-        if (ref.current) {
+        if (ref.current && ref.current.geometry && ref.current.geometry.attributes.position) {
             ref.current.rotation.x -= delta / 10;
             ref.current.rotation.y -= delta / 15;
         }

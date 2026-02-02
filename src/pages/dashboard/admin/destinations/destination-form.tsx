@@ -55,17 +55,27 @@ export default function DestinationForm() {
         }));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        let success = false;
         if (id) {
-            updateDestination(formData);
-            addToast('Destination updated successfully', 'success');
+            // @ts-ignore
+            success = await updateDestination(formData);
+            if (success) addToast('Destination updated successfully', 'success');
         } else {
-            addDestination({ ...formData, id: Date.now() });
-            addToast('Destination created successfully', 'success');
+            // @ts-ignore
+            // We pass the data without ID, allowing backend to generate it
+            const { id: _, ...dataToSend } = formData;
+            success = await addDestination(dataToSend);
+            if (success) addToast('Destination created successfully', 'success');
         }
-        router.push('/dashboard/admin/destinations');
+
+        if (success) {
+            router.push('/dashboard/admin/destinations');
+        } else {
+            addToast('Failed to save destination. Please try again.', 'error');
+        }
     };
 
     return (
