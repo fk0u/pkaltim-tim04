@@ -37,6 +37,10 @@ interface ContentContextType {
     updateTestimonial: (testimonial: Testimonial) => Promise<void>;
     deleteTestimonial: (id: string) => Promise<void>;
 
+    // User Methods
+    updateUser: (id: string, data: Partial<User>) => Promise<boolean>;
+    deleteUser: (id: string) => Promise<boolean>;
+
     refreshData: () => Promise<void>;
 }
 
@@ -93,7 +97,11 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
                     ...b,
                     customerName: b.customerName || b.user?.name || 'Guest',
                     productImage: b.productImage || b.package?.imageUrl || b.event?.imageUrl || 'https://via.placeholder.com/150',
-                    location: b.location || b.package?.location || b.event?.location || 'Borneo'
+                    location: b.location || b.package?.location || b.event?.location || 'Borneo',
+                    location: b.location || b.package?.location || b.event?.location || 'Borneo',
+                    // Normalize status to Title Case to match frontend filters
+                    status: b.status ? b.status.charAt(0).toUpperCase() + b.status.slice(1).toLowerCase() : 'Pending',
+                    specialRequest: b.specialRequest
                 }));
                 setBookings(mappedBookings);
             }
@@ -252,7 +260,8 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
                     ...newBooking,
                     customerName: newBooking.customerName || newBooking.user?.name || booking.customerName || 'Guest',
                     productImage: newBooking.productImage || newBooking.package?.imageUrl || newBooking.event?.imageUrl,
-                    location: newBooking.location || newBooking.package?.location || newBooking.event?.location
+                    location: newBooking.location || newBooking.package?.location || newBooking.event?.location,
+                    status: newBooking.status ? newBooking.status.charAt(0).toUpperCase() + newBooking.status.slice(1).toLowerCase() : 'Pending'
                 };
                 setBookings(prev => [mappedBooking, ...prev]);
             }
@@ -388,6 +397,40 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
         }
     };
 
+    // User Methods
+    const updateUser = async (id: string, data: Partial<User>) => {
+        try {
+            const res = await fetch(`/api/users/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            if (res.ok) {
+                const updated = await res.json();
+                setCustomers(prev => prev.map(u => u.id === id ? { ...u, ...updated } : u));
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error('Error updating user:', error);
+            return false;
+        }
+    };
+
+    const deleteUser = async (id: string) => {
+        try {
+            const res = await fetch(`/api/users/${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                setCustomers(prev => prev.filter(u => u.id !== id));
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error('Error deleting user:', error);
+            return false;
+        }
+    };
+
     const refreshData = async () => {
         await fetchData();
     };
@@ -421,6 +464,8 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
             addTestimonial,
             updateTestimonial,
             deleteTestimonial,
+            updateUser,
+            deleteUser,
             refreshData
         }}>
             {children}

@@ -24,7 +24,7 @@ interface AuthContextType {
     isLoading: boolean;
     login: (email: string, password: string, callbackUrl?: string) => Promise<{ success: boolean; error?: string }>; // Return success/fail
     logout: () => void;
-    register: (name: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+    register: (name: string, email: string, password: string, role?: string) => Promise<{ success: boolean; error?: string }>;
     loginSocial: (provider: string) => void;
     updateUserProfile: (data: Partial<User>) => void;
 }
@@ -33,6 +33,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
     const router = useRouter();
 
     // Check session on mount
@@ -46,6 +47,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 }
             } catch (error) {
                 console.error('Session check failed', error);
+            } finally {
+                setIsLoading(false);
             }
         };
         checkSession();
@@ -70,7 +73,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
             if (!res.ok) {
                 console.error(data.message);
-                return { success: false, error: data.message || 'Login failed' };
+                return { success: false, error: data.message || 'Login gagal' };
             }
 
             // Cookie is set by API, just update local state
@@ -89,7 +92,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             return { success: true };
         } catch (e) {
             console.error('Login error:', e);
-            return { success: false, error: 'Network error. Please try again.' };
+            return { success: false, error: 'Kesalahan jaringan. Silakan coba lagi.' };
         }
     };
 
@@ -98,27 +101,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         console.log(`Social login with ${provider} not yet implemented on backend.`);
     }
 
-    const register = async (name: string, email: string, password: string) => {
+    const register = async (name: string, email: string, password: string, role: string = 'client') => {
         try {
             const res = await fetch('/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, email, password, role: 'client' })
+                body: JSON.stringify({ name, email, password, role })
             });
 
             const data = await res.json();
 
             if (!res.ok) {
                 console.error(data.message);
-                return { success: false, error: data.message || 'Registration failed' };
+                return { success: false, error: data.message || 'Registrasi gagal' };
             }
 
             setUser(data.user);
-            router.push('/onboarding');
+
+            // Redirect based on role
+            if (role === 'mitra') {
+                router.push('/dashboard/partner/onboarding');
+            } else {
+                router.push('/onboarding');
+            }
+
             return { success: true };
         } catch (e) {
             console.error('Registration error:', e);
-            return { success: false, error: 'Network error. Please try again.' };
+            return { success: false, error: 'Kesalahan jaringan. Silakan coba lagi.' };
         }
     };
 
@@ -133,7 +143,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     return (
-        <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, logout, register, loginSocial, updateUserProfile }}>
+        <AuthContext.Provider value={{ user, isAuthenticated: !!user, isLoading, login, logout, register, loginSocial, updateUserProfile }}>
             {children}
         </AuthContext.Provider>
     );

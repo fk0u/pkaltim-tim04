@@ -8,6 +8,7 @@ export default async function handler(
   if (req.method === 'GET') {
     try {
       const packages = await prisma.tourPackage.findMany({
+        where: { status: 'approved' },
         include: { itinerary: true },
         orderBy: { createdAt: 'desc' }
       });

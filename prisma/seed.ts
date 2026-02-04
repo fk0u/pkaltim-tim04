@@ -357,22 +357,150 @@ async function main() {
         },
     });
 
+    const wehea = await prisma.tourPackage.create({
+        data: {
+            title: { id: 'Ekspedisi Hutan Lindung Wehea', en: 'Wehea Forest Expedition' },
+            description: {
+                id: 'Petualangan 5 hari menembus hutan hujan Wehea. Bertemu Orangutan liar, Rusa Sambar dan masyarakat Dayak Wehea yang menjaga hutan.',
+                en: '5-days adventure through the Wehea rainforest. Meet wild Orangutans, Sambar Deer and the Dayak Wehea community who guard the forest.'
+            },
+            duration: '5 Days 4 Nights',
+            price: 4500000,
+            priceChild: 3000000,
+            location: 'Muara Wahau, Kutai Timur',
+            rating: 5.0,
+            ecoRating: 5,
+            quota: 8,
+            bookedCount: 3,
+            imageUrl: 'https://images.unsplash.com/photo-1516934024742-b461fba47600?q=80&w=1000&auto=format&fit=crop', // Rainforest
+            facilities: ['Jungle Lodge', '4WD Transport', 'Ranger', 'Meals', 'Porter'],
+        },
+    });
+
+    const mahakam = await prisma.tourPackage.create({
+        data: {
+            title: { id: 'Mahakam River Houseboat Safari', en: 'Mahakam River Houseboat Safari' },
+            description: {
+                id: 'Menyusuri Sungai Mahakam dengan kapal wisata tradisional. Mengunjungi desa Dayak Benuaq, melihat Pesut Mahakam, dan anggrek hitam.',
+                en: 'Cruising the Mahakam River on a traditional houseboat. Visit Dayak Benuaq villages, spot Mahakam Dolphins, and black orchids.'
+            },
+            duration: '4 Days 3 Nights',
+            price: 3200000,
+            priceChild: 2000000,
+            location: 'Mahakam Ulu, Kalimantan Timur',
+            rating: 4.6,
+            ecoRating: 4,
+            quota: 12,
+            bookedCount: 6,
+            imageUrl: 'https://images.unsplash.com/photo-1564659907532-6b3f98c86024?q=80&w=1000&auto=format&fit=crop', // River boat
+            facilities: ['Houseboat Cabin', 'Full Board Meals', 'Cultural Performance', 'Local Guide'],
+        },
+    });
+
+    const maratua = await prisma.tourPackage.create({
+        data: {
+            title: { id: 'Maratua Paradise Dive Trip', en: 'Maratua Paradise Dive Trip' },
+            description: {
+                id: 'Paket khusus penyelam bersertifikat untuk eksplorasi "Big Fish Country" Maratua. Channel point, Turtle Traffic, dan Barracuda Point.',
+                en: 'Special package for certified divers to explore Maratua\'s "Big Fish Country". Channel point, Turtle Traffic, and Barracuda Point.'
+            },
+            duration: '5 Days 4 Nights',
+            price: 5500000,
+            priceChild: 4000000,
+            location: 'Maratua, Berau',
+            rating: 4.9,
+            ecoRating: 5,
+            quota: 10,
+            bookedCount: 8,
+            imageUrl: 'https://images.unsplash.com/photo-1682687220742-aba13b6e50ba?q=80&w=1000&auto=format&fit=crop', // Underwater/Diving
+            facilities: ['Water Villa', '10x Dives', 'Dive Gear', 'Meals', 'Instructor'],
+        },
+    });
+
     // --- Events ---
     console.log('📅 Creating Events...');
     const erau = await prisma.event.create({
         data: {
             title: { id: 'Festival Erau 2026', en: 'Erau Festival 2026' },
             description: {
-                id: 'Upacara adat Kesultanan Kutai Kartanegara Ing Martadipura yang sakral dan meriah.',
-                en: 'A sacred and festive traditional ceremony of the Kutai Kartanegara Ing Martadipura Sultanate.'
+                id: 'Upacara adat Kesultanan Kutai Kartanegara Ing Martadipura yang sakral dan meriah. Menampilkan tarian sakral, olahraga tradisional, dan Belimbur.',
+                en: 'A sacred and festive traditional ceremony of the Kutai Kartanegara Ing Martadipura Sultanate. Featuring sacred dances, traditional sports, and Belimbur.'
             },
             location: 'Tenggarong',
             date: '2026-09-20',
-            imageUrl: 'https://images.unsplash.com/photo-1579290074697-3f303f90b2b8?q=80&w=1000&auto=format&fit=crop', // Cultural
+            imageUrl: 'https://images.unsplash.com/photo-1516083692465-27a5d092d640?q=80&w=1000&auto=format&fit=crop', // Cultural
             category: 'Culture',
             tags: ['Culture', 'History', 'Festival'],
             price: 'Free',
             organizer: 'Dispar Kukar'
+        }
+    });
+
+    const ebiff = await prisma.event.create({
+        data: {
+            title: { id: 'East Borneo International Folklore Festival (EBIFF)', en: 'East Borneo International Folklore Festival (EBIFF)' },
+            description: {
+                id: 'Festival pertukaran budaya internasional di Samarinda yang mengundang seniman dari berbagai negara untuk menampilkan tarian dan musik rakyat.',
+                en: 'International cultural exchange festival in Samarinda inviting artists from various countries to showcase folk dance and music.'
+            },
+            location: 'Samarinda',
+            date: '2026-07-25',
+            imageUrl: 'https://images.unsplash.com/photo-1533174072545-e8d4aa97edf9?q=80&w=1000&auto=format&fit=crop', // Performance
+            category: 'Festival',
+            tags: ['International', 'Dance', 'Art'],
+            price: 'Free',
+            organizer: 'Pemprov Kaltim'
+        }
+    });
+
+    const lomPlai = await prisma.event.create({
+        data: {
+            title: { id: 'Festival Lom Plai (Pesta Panen Wehea)', en: 'Lom Plai Festival (Wehea Harvest Feast)' },
+            description: {
+                id: 'Ritual syukur panen padi masyarakat Dayak Wehea. Rangkaian acara meliputi Ngesea Egung, tarian di atas rakit (Jengea), dan Embob Jengea.',
+                en: 'Rice harvest thanksgiving ritual of the Dayak Wehea community. Events include Ngesea Egung, raft dancing (Jengea), and Embob Jengea.'
+            },
+            location: 'Muara Wahau, Kutai Timur',
+            date: '2026-03-18',
+            imageUrl: 'https://images.unsplash.com/photo-1582650625119-3a31f8fa2699?q=80&w=1000&auto=format&fit=crop', // Traditional Tribe
+            category: 'Culture',
+            tags: ['Dayak', 'Harvest', 'Ritual'],
+            price: 'Free',
+            organizer: 'Lembaga Adat Wehea'
+        }
+    });
+
+    const hudoq = await prisma.event.create({
+        data: {
+            title: { id: 'Hudoq Pekayang', en: 'Hudoq Pekayang' },
+            description: {
+                id: 'Upacara topeng Hudoq untuk memohon kesuburan tanah. Penari mengenakan topeng kayu dan kostum daun pisang, menari mengelilingi desa.',
+                en: 'Hudoq mask ceremony to pray for soil fertility. Dancers wear wooden masks and banana leaf costumes, dancing around the village.'
+            },
+            location: 'Mahakam Ulu',
+            date: '2026-10-20',
+            imageUrl: 'https://images.unsplash.com/photo-1599579165971-c06dc7e22037?q=80&w=1000&auto=format&fit=crop', // Mask/Costume
+            category: 'Culture',
+            tags: ['Mask', 'Dance', 'Spiritual'],
+            price: 'Free',
+            organizer: 'Dispar Mahakam Ulu'
+        }
+    });
+
+    const balikpapanFest = await prisma.event.create({
+        data: {
+            title: { id: 'Balikpapan Fest 2026', en: 'Balikpapan Fest 2026' },
+            description: {
+                id: 'Pesta rakyat tahunan Balikpapan menyambut Hari Pariwisata Dunia. Fashion carnival, kuliner nusantara, dan konser musik di tepi pantai.',
+                en: 'Annual Balikpapan people\'s party welcoming World Tourism Day. Fashion carnival, archipelago culinary, and seaside music concerts.'
+            },
+            location: 'Balikpapan',
+            date: '2026-09-26',
+            imageUrl: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1000&auto=format&fit=crop', // Concert/Crowd
+            category: 'Festival',
+            tags: ['Modern', 'Music', 'Food'],
+            price: 'IDR 50.000',
+            organizer: 'Disporapar Balikpapan'
         }
     });
 

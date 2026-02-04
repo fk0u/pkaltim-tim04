@@ -29,7 +29,7 @@ export default function SearchWidget() {
       pathname: '/search',
       query: {
         type: activeTab,
-        q: location, // Pass location as query
+        location: location, // Pass location as query
         date: date ? date.toISOString() : undefined,
         travelers
       }

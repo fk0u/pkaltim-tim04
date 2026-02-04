@@ -7,10 +7,12 @@ import { User, Lock, ArrowRight, Shield, Briefcase, Mail, Info, Check, ArrowLeft
 import Link from 'next/link';
 import { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useToast } from '@/components/ui';
 
 export default function LoginPage() {
     const router = useRouter();
     const { login, loginSocial } = useAuth();
+    const { addToast } = useToast();
     const { t } = useLanguage();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -32,7 +34,9 @@ export default function LoginPage() {
         const { callbackUrl } = router.query;
         const result = await login(email, password, Array.isArray(callbackUrl) ? callbackUrl[0] : callbackUrl);
         if (!result.success) {
-            alert(`Login failed: ${result.error}`);
+            addToast(`Login gagal: ${result.error}`, 'error');
+        } else {
+            addToast('Login berhasil! Selamat datang kembali.', 'success');
         }
         setIsLoading(false);
     };

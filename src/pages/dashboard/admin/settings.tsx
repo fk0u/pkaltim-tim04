@@ -7,43 +7,105 @@ import { User, Bell, Lock, Globe, Save, Upload, Shield, Download, FileText, Acti
 import { useToast } from '@/components/ui';
 
 export default function SettingsPage() {
-    const { user, isAuthenticated } = useAuth();
+    const { user, isAuthenticated, login } = useAuth(); // Assuming login updates user stat locally? or need fetchUser
     const router = useRouter();
     const { addToast } = useToast();
     const [activeTab, setActiveTab] = useState('profile');
     const [isLoading, setIsLoading] = useState(false);
 
-    // Mock States for form
+    // Profile State
+    const [profileData, setProfileData] = useState({
+        name: '',
+        email: '',
+        bio: ''
+    });
+
+    // General Settings State
     const [formData, setFormData] = useState({
         siteName: 'BorneoTrip Platform',
-        adminEmail: 'admin@borneotrip.com',
         maintenanceMode: false,
-        emailNotif: true,
-        pushNotif: false,
-        '2fa': true
     });
 
     useEffect(() => {
         if (!isAuthenticated) router.push('/login');
-    }, [isAuthenticated, router]);
+        if (user) {
+            setProfileData({
+                name: user.name || '',
+                email: user.email || '',
+                bio: user.bio || ''
+            });
+        }
+    }, [isAuthenticated, router, user]);
+
+    // Fetch Global Settings
+    useEffect(() => {
+        const fetchSettings = async () => {
+            try {
+                const res = await fetch('/api/settings');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.siteName) setFormData(prev => ({ ...prev, siteName: data.siteName }));
+                    if (data.maintenanceMode !== undefined) setFormData(prev => ({ ...prev, maintenanceMode: data.maintenanceMode }));
+                }
+            } catch (error) {
+                console.error('Failed to fetch settings');
+            }
+        };
+        fetchSettings();
+    }, []);
+
+    const handleSaveProfile = async () => {
+        setIsLoading(true);
+        try {
+            // Update User Profile
+            const res = await fetch(`/api/users/${user?.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(profileData)
+            });
+
+            if (res.ok) {
+                addToast("Profil berhasil diperbarui", "success");
+                // Ideally refresh user context here
+            } else {
+                addToast("Gagal memperbarui profil", "error");
+            }
+        } catch (error) {
+            addToast("Terjadi kesalahan", "error");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleSaveGeneral = async () => {
+        setIsLoading(true);
+        try {
+            const res = await fetch('/api/settings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+
+            if (res.ok) {
+                addToast("Pengaturan sistem berhasil disimpan", "success");
+            } else {
+                addToast("Gagal menyimpan pengaturan", "error");
+            }
+        } catch (error) {
+            addToast("Terjadi kesalahan", "error");
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     if (!user) return null;
-
-    const handleSave = () => {
-        setIsLoading(true);
-        // Simulate API Call
-        setTimeout(() => {
-            setIsLoading(false);
-            addToast("Pengaturan berhasil disimpan!", "success");
-        }, 1200);
-    };
 
     const tabs = [
         { id: 'profile', label: 'Profil Admin', icon: User },
         { id: 'general', label: 'Umum & Platform', icon: Globe },
         { id: 'security', label: 'Keamanan', icon: Shield },
-        { id: 'notifications', label: 'Notifikasi', icon: Bell },
-        { id: 'export', label: 'Ekspor Data', icon: Download },
+        // { id: 'notifications', label: 'Notifikasi', icon: Bell },
+        // { id: 'export', label: 'Ekspor Data', icon: Download },
     ];
 
     return (
@@ -94,9 +156,6 @@ export default function SettingsPage() {
                                         <div className="w-24 h-24 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 text-3xl font-bold overflow-hidden border-4 border-white shadow-lg">
                                             {user.avatar ? <img src={user.avatar} className="w-full h-full object-cover" /> : 'AD'}
                                         </div>
-                                        <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
-                                            <Upload className="w-6 h-6 text-white" />
-                                        </div>
                                     </div>
                                     <div>
                                         <h3 className="font-bold text-lg text-gray-900">{user.name}</h3>
@@ -108,16 +167,41 @@ export default function SettingsPage() {
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="space-y-2">
                                         <label className="text-sm font-bold text-gray-700">Nama Lengkap</label>
-                                        <input type="text" defaultValue={user.name} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition bg-gray-50" />
+                                        <input
+                                            type="text"
+                                            value={profileData.name}
+                                            onChange={e => setProfileData({ ...profileData, name: e.target.value })}
+                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition bg-gray-50"
+                                        />
                                     </div>
                                     <div className="space-y-2">
                                         <label className="text-sm font-bold text-gray-700">Email Login</label>
-                                        <input type="email" defaultValue={user.email} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition bg-gray-50" />
+                                        <input
+                                            type="email"
+                                            value={profileData.email}
+                                            onChange={e => setProfileData({ ...profileData, email: e.target.value })}
+                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition bg-gray-50"
+                                        />
                                     </div>
                                     <div className="space-y-2 md:col-span-2">
                                         <label className="text-sm font-bold text-gray-700">Bio Singkat</label>
-                                        <textarea rows={3} className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition bg-gray-50" defaultValue="Lead Administrator for BorneoTrip platform operations." />
+                                        <textarea
+                                            rows={3}
+                                            value={profileData.bio}
+                                            onChange={e => setProfileData({ ...profileData, bio: e.target.value })}
+                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition bg-gray-50"
+                                        />
                                     </div>
+                                </div>
+
+                                <div className="mt-8 flex justify-end">
+                                    <button
+                                        onClick={handleSaveProfile}
+                                        disabled={isLoading}
+                                        className="px-6 py-2.5 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition shadow-lg shadow-emerald-200 flex items-center gap-2 disabled:opacity-70 disabled:cursor-wait"
+                                    >
+                                        {isLoading ? 'Menyimpan...' : <><Save className="w-4 h-4" /> Simpan Profil</>}
+                                    </button>
                                 </div>
                             </div>
                         )}
@@ -153,6 +237,16 @@ export default function SettingsPage() {
                                         </div>
                                     </div>
                                 </div>
+
+                                <div className="mt-8 flex justify-end">
+                                    <button
+                                        onClick={handleSaveGeneral}
+                                        disabled={isLoading}
+                                        className="px-6 py-2.5 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition shadow-lg shadow-emerald-200 flex items-center gap-2 disabled:opacity-70 disabled:cursor-wait"
+                                    >
+                                        {isLoading ? 'Menyimpan...' : <><Save className="w-4 h-4" /> Simpan Konfigurasi</>}
+                                    </button>
+                                </div>
                             </div>
                         )}
 
@@ -162,77 +256,10 @@ export default function SettingsPage() {
                                 <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                                     <Shield className="w-6 h-6 text-red-600" /> Keamanan Akun
                                 </h2>
-
-                                <div className="space-y-6">
-                                    <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-100 flex items-start gap-4">
-                                        <div className="p-2 bg-emerald-100 rounded-lg text-emerald-600 mt-1">
-                                            <Lock className="w-5 h-5" />
-                                        </div>
-                                        <div>
-                                            <h4 className="font-bold text-emerald-900">Password Terakhir Diubah</h4>
-                                            <p className="text-sm text-emerald-700/80 mb-3">3 hari yang lalu. Disarankan mengganti password setiap 90 hari.</p>
-                                            <button className="text-sm font-bold text-emerald-700 underline">Ganti Password</button>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                                {/* Audit Logs */}
-                                <div className="pt-6 border-t border-gray-100">
-                                    <h4 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                                        <Activity className="w-5 h-5 text-gray-400" /> Audit Logs (Aktivitas Terakhir)
-                                    </h4>
-                                    <div className="bg-gray-50 rounded-xl p-4 space-y-3">
-                                        {[
-                                            { action: 'Login Berhasil', user: 'Admin', time: 'Baru saja', ip: '192.168.1.1' },
-                                            { action: 'Update Status Booking #BK001', user: 'Admin', time: '2 jam lalu', ip: '192.168.1.1' },
-                                            { action: 'Ganti Password', user: 'Admin', time: '3 hari lalu', ip: '192.168.1.1' },
-                                        ].map((log, i) => (
-                                            <div key={i} className="flex justify-between items-center text-sm border-b border-gray-200 last:border-0 pb-2 last:pb-0">
-                                                <div>
-                                                    <p className="font-bold text-gray-800">{log.action}</p>
-                                                    <p className="text-xs text-gray-500">{log.user} • {log.ip}</p>
-                                                </div>
-                                                <span className="text-xs font-mono text-gray-400">{log.time}</span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
+                                <p className="text-gray-500">Coming soon. Change password implementation.</p>
                             </div>
                         )}
 
-                        {/* NOTIFICATION TAB */}
-                        {activeTab === 'notifications' && (
-                            <div className="p-8">
-                                <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                                    <Bell className="w-6 h-6 text-yellow-500" /> Preferensi Notifikasi
-                                </h2>
-                                <div className="space-y-4">
-                                    {['Email Notifikasi Booking Baru', 'Laporan Harian via Email', 'Notifikasi Pembayaran', 'Push Notification Browser'].map((item, idx) => (
-                                        <div key={idx} className="flex items-center justify-between py-3 border-b border-gray-50 last:border-0">
-                                            <span className="font-medium text-gray-700">{item}</span>
-                                            <input type="checkbox" defaultChecked={idx < 2} className="w-5 h-5 text-emerald-600 rounded focus:ring-emerald-500 border-gray-300" />
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* FOOTER ACTIONS */}
-                        <div className="bg-gray-50 px-8 py-5 border-t border-gray-100 flex justify-end gap-3">
-                            <button className="px-6 py-2.5 rounded-xl font-bold text-gray-600 hover:bg-gray-200 transition">Batal</button>
-                            <button
-                                onClick={handleSave}
-                                disabled={isLoading}
-                                className="px-6 py-2.5 rounded-xl font-bold text-white bg-emerald-600 hover:bg-emerald-700 transition shadow-lg shadow-emerald-200 flex items-center gap-2 disabled:opacity-70 disabled:cursor-wait"
-                            >
-                                {isLoading ? (
-                                    <>Menyimpan...</>
-                                ) : (
-                                    <><Save className="w-4 h-4" /> Simpan Perubahan</>
-                                )}
-                            </button>
-                        </div>
                     </motion.div>
                 </div>
             </div>

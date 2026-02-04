@@ -132,7 +132,7 @@ export default function BookingDetailModal({ booking, customer, isOpen, onClose,
                                         Special Requests
                                     </h4>
                                     <p className="text-gray-600 text-sm italic">
-                                        "No spicy food please. Provide vegetarian options if possible."
+                                        {booking.specialRequest ? `"${booking.specialRequest}"` : "No special requests."}
                                     </p>
                                 </div>
                             </div>

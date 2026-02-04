@@ -26,6 +26,9 @@ export default async function handler(
                     preferences: true,
                     createdAt: true,
                     updatedAt: true,
+                    bio: true,
+                    phone: true,
+                    idNumber: true,
                     _count: { select: { bookings: true } }
                 },
                 orderBy: { createdAt: 'desc' }

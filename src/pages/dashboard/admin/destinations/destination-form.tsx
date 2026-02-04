@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useToast } from '@/components/ui';
+import ImageUpload from '@/components/ui/ImageUpload';
 
 export default function DestinationForm() {
     const router = useRouter();
@@ -118,13 +119,10 @@ export default function DestinationForm() {
                             </div>
                             <div>
                                 <label className="block text-sm font-bold text-gray-700 mb-2">Image URL</label>
-                                <div className="flex gap-2">
-                                    <input name="imageUrl" value={formData.imageUrl} onChange={handleChange} className="flex-1 px-4 py-3 rounded-xl bg-gray-50 border-transparent focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition text-sm" placeholder="https://..." />
-                                    <div className="w-12 h-12 rounded-lg bg-gray-100 relative overflow-hidden shrink-0 border border-gray-200">
-                                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                                        <img src={formData.imageUrl} alt="Preview" className="w-full h-full object-cover" />
-                                    </div>
-                                </div>
+                                <ImageUpload
+                                    value={formData.imageUrl}
+                                    onChange={(url) => setFormData(prev => ({ ...prev, imageUrl: url }))}
+                                />
                             </div>
                         </div>
                     </div>

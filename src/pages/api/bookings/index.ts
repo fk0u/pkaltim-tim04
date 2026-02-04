@@ -38,7 +38,7 @@ export default async function handler(
             const {
                 userId, eventId, packageId, productType, productName, productImage,
                 location, adultCount, childCount, totalPax, travelers, amount,
-                status, paymentMethod
+                status, paymentMethod, specialRequest
             } = req.body;
 
             if (!userId || (!eventId && !packageId)) {
@@ -60,7 +60,9 @@ export default async function handler(
                     travelers: travelers || [],
                     amount: amount || 0,
                     status: status || 'pending',
-                    paymentMethod
+                    status: status || 'pending',
+                    paymentMethod,
+                    specialRequest
                 },
                 include: {
                     user: { select: { id: true, name: true, email: true } },

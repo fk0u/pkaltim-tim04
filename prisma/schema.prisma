@@ -31,6 +31,27 @@ model User {
   sentMessages        Message[]
   addresses           Address[]
   wishlist            Wishlist[]
+  partnerProfile      PartnerProfile?
+  organizedEvents     Event[]            @relation("EventOrganizer")
+  organizedPackages   TourPackage[]      @relation("PackageOrganizer")
+}
+
+model PartnerProfile {
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  user            User      @relation(fields: [userId], references: [id])
+  businessName    String
+  businessType    String    // "Personal", "EO", "Business"
+  description     String?   @db.Text
+  address         String?   @db.Text
+  website         String?
+  ktpUrl          String?   @db.Text
+  licenseUrl      String?   @db.Text
+  status          String    @default("pending") // pending, verified, rejected
+  rejectionReason String?   @db.Text
+  rating          Float     @default(0)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 }
 
 model Address {
@@ -94,7 +115,11 @@ model Event {
   tags        Json // string[]
   price       String?
   priceChild  Int?
-  organizer   String?
+  organizer   String?   // Keep for display if needed, or use relation
+  organizerId String?
+  organizerUser User?   @relation("EventOrganizer", fields: [organizerId], references: [id])
+  status      String    @default("pending") // pending, approved, rejected, draft
+  adminNote   String?   @db.Text
   ticketCount Int?      @default(0)
   quota       Int?      @default(0)
   bookedCount Int?      @default(0)
@@ -120,6 +145,10 @@ model TourPackage {
   description Json // LocalizedString { id, en }
   imageUrl    String           @db.Text
   facilities  Json // string[]
+  organizerId String?
+  organizerUser User?          @relation("PackageOrganizer", fields: [organizerId], references: [id])
+  status      String           @default("pending") // pending, approved, rejected, draft
+  adminNote   String?          @db.Text
   itinerary   ItineraryDetail?
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
@@ -153,8 +182,10 @@ model Booking {
   totalPax      Int          @default(1)
   travelers     Json? // TravelerDetail[]
   amount        Int          @default(0)
+ 
   date          DateTime     @default(now())
   status        String       @default("pending") // pending, paid, cancelled, completed
+  specialRequest String?     @db.Text
   paymentMethod String?
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
@@ -220,4 +251,12 @@ model Wishlist {
   createdAt DateTime     @default(now())
   
   @@unique([userId, packageId, eventId])
+}
+
+model SystemSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

@@ -170,7 +170,9 @@ export const en = {
         verifyingQuota: "Verifying Slot Availability...",
         generatingTicket: "Generating E-Ticket...",
         ticketReview: "Ticket Review",
-        totalGuest: "Total Guests"
+        totalGuest: "Total Guests",
+        paymentSubmitted: "Payment Submitted",
+        verificationDesc: "Your payment is being verified by admin."
     },
     footer: {
         ctaTitle: "Ready to Explore",
@@ -529,6 +531,23 @@ export const en = {
         emailSupport: "Send Email",
         showQr: "Show this QR Code to our staff",
         downloadPdf: "Download PDF"
+    },
+    admin: {
+        sidebar: {
+            overview: "Overview",
+            products: "Products",
+            categories: "Categories",
+            destinations: "Destinations",
+            bookings: "Bookings",
+            customers: "Customers",
+            helpdesk: "Helpdesk",
+            settings: "Settings",
+            logout: "Sign Out"
+        },
+        header: {
+            searchPlaceholder: "Search data...",
+            profile: "Profile"
+        }
     },
     testimonials: [
         {

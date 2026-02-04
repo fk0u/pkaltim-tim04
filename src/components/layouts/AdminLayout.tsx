@@ -1,8 +1,9 @@
 import Link from 'next/link';
+// Admin Layout Component
 import { useRouter } from 'next/router';
 import {
     LayoutDashboard, Users, ShoppingBag, Settings, LogOut,
-    Search, Bell, Menu, X, ChevronRight, Globe, Package, MapPin, MessageSquare
+    Search, Bell, Menu, X, ChevronRight, Globe, Package, MapPin, MessageSquare, CheckSquare
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -18,7 +19,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
     const [isSidebarOpen, setSidebarOpen] = useState(true);
     const { user, logout } = useAuth();
     const router = useRouter();
-    const { toggleLanguage, locale } = useLanguage();
+    const { toggleLanguage, locale, t } = useLanguage();
 
     // Protect Admin Route
     useEffect(() => {
@@ -32,14 +33,16 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
     }, [user, router]);
 
     const menuItems = [
-        { icon: LayoutDashboard, label: 'Overview', href: '/dashboard/admin' },
-        { icon: Package, label: 'Products', href: '/dashboard/admin/products' },
-        { icon: Globe, label: 'Categories', href: '/dashboard/admin/categories' },
-        { icon: MapPin, label: 'Destinations', href: '/dashboard/admin/destinations' },
-        { icon: ShoppingBag, label: 'Bookings', href: '/dashboard/admin/bookings' },
-        { icon: Users, label: 'Customers', href: '/dashboard/admin/customers' },
-        { icon: MessageSquare, label: 'Helpdesk', href: '/dashboard/admin/support' },
-        { icon: Settings, label: 'Settings', href: '/dashboard/admin/settings' },
+        { icon: LayoutDashboard, label: t.admin.sidebar.overview, href: '/dashboard/admin' },
+        { icon: Users, label: 'Verifikasi Mitra', href: '/dashboard/admin/partners' },
+        { icon: CheckSquare, label: 'Persetujuan Konten', href: '/dashboard/admin/approvals' },
+        { icon: Package, label: t.admin.sidebar.products, href: '/dashboard/admin/products' },
+        { icon: Globe, label: t.admin.sidebar.categories, href: '/dashboard/admin/categories' },
+        { icon: MapPin, label: t.admin.sidebar.destinations, href: '/dashboard/admin/destinations' },
+        { icon: ShoppingBag, label: t.admin.sidebar.bookings, href: '/dashboard/admin/bookings' },
+        { icon: Users, label: t.admin.sidebar.customers, href: '/dashboard/admin/customers' },
+        { icon: MessageSquare, label: t.admin.sidebar.helpdesk, href: '/dashboard/admin/support' },
+        { icon: Settings, label: t.admin.sidebar.settings, href: '/dashboard/admin/settings' },
     ];
 
     return (
@@ -99,7 +102,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                         className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-red-500/20 text-red-300 hover:text-red-100 transition-all ${!isSidebarOpen && 'justify-center'}`}
                     >
                         <LogOut className="w-5 h-5 flex-shrink-0" />
-                        {isSidebarOpen && <span className="font-bold text-sm">Sign Out</span>}
+                        {isSidebarOpen && <span className="font-bold text-sm">{t.admin.sidebar.logout}</span>}
                     </button>
                 </div>
             </aside>
@@ -120,7 +123,7 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
                     <div className="flex items-center gap-6">
                         <div className="relative hidden lg:block w-64">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                            <input type="text" placeholder="Search data..." className="w-full bg-gray-100 border-none rounded-full py-2 pl-10 pr-4 text-sm font-medium focus:ring-2 focus:ring-emerald-500 transition" />
+                            <input type="text" placeholder={t.admin.header.searchPlaceholder} className="w-full bg-gray-100 border-none rounded-full py-2 pl-10 pr-4 text-sm font-medium focus:ring-2 focus:ring-emerald-500 transition" />
                         </div>
 
                         <div className="flex items-center gap-3">

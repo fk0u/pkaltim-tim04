@@ -170,7 +170,9 @@ export const id = {
         verifyingQuota: "Memverifikasi Ketersediaan Slot...",
         generatingTicket: "Menerbitkan E-Tiket...",
         ticketReview: "Review Tiket",
-        totalGuest: "Total Tamu"
+        totalGuest: "Total Tamu",
+        paymentSubmitted: "Pembayaran Dikirim",
+        verificationDesc: "Pembayaran Anda sedang diverifikasi oleh admin."
     },
     footer: {
         ctaTitle: "Siap Menjelajahi",
@@ -529,6 +531,23 @@ export const id = {
         emailSupport: "Kirim Email",
         showQr: "Tunjukkan QR Code ini kepada petugas",
         downloadPdf: "Unduh PDF"
+    },
+    admin: {
+        sidebar: {
+            overview: "Ringkasan",
+            products: "Produk",
+            categories: "Kategori",
+            destinations: "Destinasi",
+            bookings: "Pesanan",
+            customers: "Pelanggan",
+            helpdesk: "Bantuan",
+            settings: "Pengaturan",
+            logout: "Keluar"
+        },
+        header: {
+            searchPlaceholder: "Cari data...",
+            profile: "Profil"
+        }
     },
     testimonials: [
         {

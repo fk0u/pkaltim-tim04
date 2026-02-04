@@ -5,9 +5,11 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Lock, Mail, ArrowRight, Briefcase, Sparkles, ArrowLeft } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/components/ui';
 
 export default function RegisterPage() {
     const { register } = useAuth();
+    const { addToast } = useToast();
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -18,10 +20,14 @@ export default function RegisterPage() {
         e.preventDefault();
         setIsLoading(true);
 
-        const result = await register(name, email, password);
+        // Map UI role to DB role: 'partner' -> 'mitra', 'traveler' -> 'client'
+        const dbRole = role === 'partner' ? 'mitra' : 'client';
+        const result = await register(name, email, password, dbRole);
 
         if (!result.success) {
-            alert(`Registration failed: ${result.error}`);
+            addToast(`Registrasi gagal: ${result.error}`, 'error');
+        } else {
+            addToast('Registrasi berhasil! Silakan cek email Anda.', 'success');
         }
         setIsLoading(false);
     };

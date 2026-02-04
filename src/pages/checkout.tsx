@@ -6,10 +6,11 @@ import { useToast } from '@/components/ui';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { TravelerDetail } from '@/types';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, CheckCircle, ShieldCheck, User, Calendar, Users, MapPin, BadgeCheck, Banknote, Wallet, Building2, QrCode, AlertCircle, Baby, Ticket, Loader2, CreditCard } from 'lucide-react';
+import { ArrowLeft, CheckCircle, ShieldCheck, User, Calendar, Users, MapPin, BadgeCheck, Banknote, Wallet, Building2, QrCode, AlertCircle, Baby, Ticket, Loader2, CreditCard, Clock } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import PaymentStep from '@/components/checkout/PaymentStep';
 
 export default function CheckoutPage() {
     const { user } = useAuth();
@@ -243,12 +244,12 @@ export default function CheckoutPage() {
                         {/* Confetti / Decor */}
                         <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-400 to-teal-500"></div>
 
-                        <div className="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
-                            <CheckCircle className="w-12 h-12 text-emerald-600" />
+                        <div className="w-24 h-24 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+                            <Clock className="w-12 h-12 text-amber-600" />
                         </div>
-                        <h1 className="text-3xl font-black text-slate-900 mb-2">{t.checkout.paymentSuccess}</h1>
+                        <h1 className="text-3xl font-black text-slate-900 mb-2">{t?.checkout?.paymentSubmitted || "Payment Submitted"}</h1>
                         <p className="text-slate-500 mb-8">
-                            {t.checkout.successEmail} <b>{user?.email}</b>. {t.checkout.checkDashboard}
+                            {t?.checkout?.verificationDesc || "Your payment is being verified by our admin."} <b>{user?.email}</b>. {t?.checkout?.checkDashboard || "You can check the status in your dashboard."}
                         </p>
 
                         <div className="bg-slate-50 rounded-2xl p-6 mb-8 text-left border border-slate-100 relative">
@@ -347,6 +348,14 @@ export default function CheckoutPage() {
                                         exit={{ opacity: 0, x: -20 }}
                                         className="bg-white p-6 md:p-8 rounded-3xl shadow-xl shadow-gray-200/40 border border-gray-100"
                                     >
+                                        {/* ... Step 1 Content (Guest Info) remains same, just ensuring we don't break it by replacing the whole block if I selected too much. 
+                                            Wait, the user wants me to replace the payment section which is in Step 2. 
+                                            I should target Step 2 specifically or the whole AnimatePresence block to be safe.
+                                            Actually, I can just replace the Step 2 block. 
+                                        */}
+                                        {/* RE-INSERTING STEP 1 CODE FOR SAFETY if I replace the whole thing, OR easier: just replace step 2 content. 
+                                            Let me check the line numbers again. Step 2 starts around line 514.
+                                        */}
                                         <div className="flex items-center gap-4 mb-8">
                                             <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
                                                 <Users className="w-6 h-6" />
@@ -356,7 +365,6 @@ export default function CheckoutPage() {
                                                 <p className="text-sm text-gray-500">{t.checkout.guestConfig}</p>
                                             </div>
                                         </div>
-
                                         {/* GUEST CONFIGURATION */}
                                         <div className="bg-gray-50 p-6 rounded-2xl mb-8 border border-gray-100">
                                             <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-200 last:mb-0 last:pb-0 last:border-0 h-14">
@@ -422,7 +430,6 @@ export default function CheckoutPage() {
                                                                         onClick={() => {
                                                                             if (!user) return;
                                                                             updateTraveler(idx, 'fullName', user.name || '');
-                                                                            // Also fill ID and Phone if type is Adult
                                                                             if (traveler.type === 'Adult') {
                                                                                 updateTraveler(idx, 'idNumber', (user as any).idNumber || '');
                                                                                 updateTraveler(idx, 'phoneNumber', (user as any).phone || '');
@@ -512,145 +519,21 @@ export default function CheckoutPage() {
                                 )}
 
                                 {step === 2 && (
-                                    <motion.div
-                                        key="step2"
-                                        initial={{ opacity: 0, x: 20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        exit={{ opacity: 0, x: -20 }}
-                                        className="space-y-6"
-                                    >
-                                        {/* Ticket Preview Card */}
-                                        <div className="bg-white rounded-3xl overflow-hidden shadow-xl shadow-gray-200/40 border border-gray-100">
-                                            <div className="bg-gray-900 text-white p-6 flex justify-between items-center relative overflow-hidden">
-                                                <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
-                                                <div className="relative z-10 flex items-center gap-3">
-                                                    <Ticket className="w-6 h-6 text-emerald-400" />
-                                                    <h2 className="font-bold text-lg tracking-wide">{t.checkout.ticketReview}</h2>
-                                                </div>
-                                            </div>
-                                            <div className="p-6">
-                                                <div className="flex flex-col md:flex-row gap-6 items-start">
-                                                    <Image src={pkgImage} width={100} height={100} className="rounded-xl object-cover bg-gray-100" alt="Product" />
-                                                    <div className="space-y-2 flex-1">
-                                                        <h3 className="font-bold text-gray-900">{pkgName}</h3>
-                                                        <div className="flex items-center gap-4 text-xs text-gray-500">
-                                                            <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {new Date(date as string).toLocaleDateString()}</span>
-                                                            <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {location}</span>
-                                                        </div>
-                                                        <div className="flex gap-2 mt-2">
-                                                            <span className="text-xs bg-emerald-50 text-emerald-700 px-2 py-1 rounded-md font-bold">{adultCount} Adults</span>
-                                                            {childCount > 0 && <span className="text-xs bg-pink-50 text-pink-700 px-2 py-1 rounded-md font-bold">{childCount} Children</span>}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {/* Payment Method */}
-                                        <div className="bg-white p-6 md:p-8 rounded-3xl shadow-xl shadow-gray-200/40 border border-gray-100">
-                                            <div className="flex items-center gap-4 mb-8">
-                                                <div className="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
-                                                    <Wallet className="w-6 h-6" />
-                                                </div>
-                                                <div>
-                                                    <h2 className="text-xl font-bold text-gray-900">{t.checkout.paymentMethod}</h2>
-                                                    <p className="text-sm text-gray-500">{t.checkout.chooseMathod}</p>
-                                                </div>
-                                            </div>
-
-                                            <div className="space-y-6 mb-8">
-                                                {/* SAVED METHODS */}
-                                                {savedMethods.length > 0 && (
-                                                    <div className="mb-6">
-                                                        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Saved Methods</h3>
-                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                            {savedMethods.map((method) => (
-                                                                <div
-                                                                    key={method.id}
-                                                                    onClick={() => setSelectedBank(method.id)}
-                                                                    className={`flex items-center p-4 border rounded-xl cursor-pointer transition-all duration-200 relative overflow-hidden group
-                                                                            ${selectedBank === method.id
-                                                                            ? 'border-emerald-500 bg-emerald-50/30 ring-1 ring-emerald-500'
-                                                                            : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'}`}
-                                                                >
-                                                                    <div className={`p-2 rounded-lg mr-3 ${selectedBank === method.id ? 'bg-emerald-100 text-emerald-600' : 'bg-gray-100 text-gray-500'}`}>
-                                                                        {method.provider === 'card' ? <CreditCard className="w-5 h-5" /> : <Wallet className="w-5 h-5" />}
-                                                                    </div>
-                                                                    <div>
-                                                                        <div className={`font-bold text-sm ${selectedBank === method.id ? 'text-emerald-900' : 'text-gray-700'}`}>{method.brand} •••• {method.last4}</div>
-                                                                        <div className="text-[10px] text-gray-500 uppercase">{method.holder}</div>
-                                                                    </div>
-                                                                    {selectedBank === method.id && (<div className="absolute top-0 right-0 p-1.5 bg-emerald-500 rounded-bl-xl"><CheckCircle className="w-3 h-3 text-white" /></div>)}
-                                                                </div>
-                                                            ))}
-                                                        </div>
-                                                    </div>
-                                                )}
-
-                                                {/* Virtual Account Group */}
-                                                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">{t.checkout.virtualAccount}</h3>
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                    {[
-                                                        { id: 'bca', label: 'BCA Virtual Account', icon: <Building2 className="w-5 h-5" /> },
-                                                        { id: 'mandiri', label: 'Mandiri VA', icon: <Building2 className="w-5 h-5" /> },
-                                                        { id: 'bni', label: 'BNI Virtual Account', icon: <Building2 className="w-5 h-5" /> }
-                                                    ].map((bank) => (
-                                                        <div
-                                                            key={bank.id}
-                                                            onClick={() => setSelectedBank(bank.id)}
-                                                            className={`flex items-center p-4 border rounded-xl cursor-pointer transition-all duration-200 relative overflow-hidden group
-                                                                    ${selectedBank === bank.id
-                                                                    ? 'border-emerald-500 bg-emerald-50/30 ring-1 ring-emerald-500'
-                                                                    : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'}`}
-                                                        >
-                                                            <div className={`p-2 rounded-lg mr-3 ${selectedBank === bank.id ? 'bg-emerald-100 text-emerald-600' : 'bg-gray-100 text-gray-500'}`}>
-                                                                {bank.icon}
-                                                            </div>
-                                                            <span className={`font-bold text-sm ${selectedBank === bank.id ? 'text-emerald-900' : 'text-gray-700'}`}>{bank.label}</span>
-                                                            {selectedBank === bank.id && (<div className="absolute top-0 right-0 p-1.5 bg-emerald-500 rounded-bl-xl"><CheckCircle className="w-3 h-3 text-white" /></div>)}
-                                                        </div>
-                                                    ))}
-                                                </div>
-
-                                                <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 mt-4">{t.checkout.ewallet}</h3>
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                    {[
-                                                        { id: 'gopay', label: 'GoPay', icon: <Wallet className="w-5 h-5" /> },
-                                                        { id: 'qris', label: 'QRIS', icon: <QrCode className="w-5 h-5" /> }
-                                                    ].map((wallet) => (
-                                                        <div
-                                                            key={wallet.id}
-                                                            onClick={() => setSelectedBank(wallet.id)}
-                                                            className={`flex items-center p-4 border rounded-xl cursor-pointer transition-all duration-200 relative overflow-hidden group
-                                                                    ${selectedBank === wallet.id
-                                                                    ? 'border-emerald-500 bg-emerald-50/30 ring-1 ring-emerald-500'
-                                                                    : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'}`}
-                                                        >
-                                                            <div className={`p-2 rounded-lg mr-3 ${selectedBank === wallet.id ? 'bg-emerald-100 text-emerald-600' : 'bg-gray-100 text-gray-500'}`}>
-                                                                {wallet.icon}
-                                                            </div>
-                                                            <span className={`font-bold text-sm ${selectedBank === wallet.id ? 'text-emerald-900' : 'text-gray-700'}`}>{wallet.label}</span>
-                                                            {selectedBank === wallet.id && (<div className="absolute top-0 right-0 p-1.5 bg-emerald-500 rounded-bl-xl"><CheckCircle className="w-3 h-3 text-white" /></div>)}
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-
-                                            <div className="flex gap-4">
-                                                <button type="button" onClick={() => setStep(1)} className="w-1/3 bg-gray-100 text-gray-600 font-bold py-4 rounded-xl hover:bg-gray-200 transition">
-                                                    {t.auth.back}
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    onClick={handlePayment}
-                                                    className="w-2/3 bg-emerald-600 text-white font-bold py-4 rounded-xl hover:bg-emerald-700 transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-200"
-                                                >
-                                                    <Banknote className="w-5 h-5" />
-                                                    {t.checkout.pay} IDR {totalPrice.toLocaleString('id-ID')}
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </motion.div>
+                                    <PaymentStep
+                                        pkgImage={pkgImage}
+                                        pkgName={pkgName}
+                                        date={date as string}
+                                        location={location as string}
+                                        adultCount={adultCount}
+                                        childCount={childCount}
+                                        savedMethods={savedMethods}
+                                        selectedBank={selectedBank}
+                                        setSelectedBank={setSelectedBank}
+                                        setStep={setStep}
+                                        handlePayment={handlePayment}
+                                        t={t}
+                                        totalPrice={totalPrice}
+                                    />
                                 )}
                             </AnimatePresence>
                         </div>

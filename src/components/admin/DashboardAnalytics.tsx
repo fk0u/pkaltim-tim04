@@ -3,23 +3,9 @@ import {
     BarChart, Bar, Legend, PieChart, Pie, Cell
 } from 'recharts';
 
-// Mock Data
-const revenueData = [
-    { name: 'Jan', revenue: 45000000, bookings: 24 },
-    { name: 'Feb', revenue: 52000000, bookings: 28 },
-    { name: 'Mar', revenue: 48000000, bookings: 26 },
-    { name: 'Apr', revenue: 61000000, bookings: 32 },
-    { name: 'May', revenue: 55000000, bookings: 29 },
-    { name: 'Jun', revenue: 78000000, bookings: 45 },
-    { name: 'Jul', revenue: 92000000, bookings: 52 },
-];
-
-const categoryData = [
-    { name: 'Nature', value: 45, color: '#10b981' }, // Emerald-500
-    { name: 'Culture', value: 25, color: '#8b5cf6' }, // Violet-500
-    { name: 'Culinary', value: 20, color: '#f59e0b' }, // Amber-500
-    { name: 'Adventure', value: 10, color: '#ef4444' }, // Red-500
-];
+// Data passed via props
+// const revenueData = ...
+// const categoryData = ...
 
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
@@ -38,7 +24,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     return null;
 };
 
-export default function DashboardAnalytics() {
+export default function DashboardAnalytics({ revenueData, statusData, categoryData }: any) {
     return (
         <div className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -117,7 +103,7 @@ export default function DashboardAnalytics() {
                                     paddingAngle={5}
                                     dataKey="value"
                                 >
-                                    {categoryData.map((entry, index) => (
+                                    {categoryData.map((entry: any, index: number) => (
                                         <Cell key={`cell-${index}`} fill={entry.color} stroke="none" />
                                     ))}
                                 </Pie>
@@ -137,7 +123,7 @@ export default function DashboardAnalytics() {
                     </div>
 
                     <div className="grid grid-cols-2 gap-2 mt-4">
-                        {categoryData.map((cat) => (
+                        {categoryData.map((cat: any) => (
                             <div key={cat.name} className="flex items-center gap-2">
                                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: cat.color }}></div>
                                 <span className="text-xs font-bold text-gray-600">{cat.name}</span>

@@ -28,7 +28,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 email: true,
                 role: true,
                 onboardingCompleted: true,
-                createdAt: true
+                createdAt: true,
+                phone: true,
+                bio: true,
+                idNumber: true,
+                preferences: true
+                // avatar: true -- Removed as it's not in schema
             }
         });
 
@@ -40,10 +45,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const userData = {
             ...user,
             role: user.role as any, // Cast string to UserRole
-            avatar: `https://i.pravatar.cc/150?u=${user.id}`,
+            // Extract avatar from preferences or use default
+            avatar: (user.preferences as any)?.avatar || `https://i.pravatar.cc/150?u=${user.id}`,
             joinDate: user.createdAt.toISOString().split('T')[0],
             totalSpent: 0, // Placeholder or calculate
-            status: 'Active' as const
+            status: 'Active' as const,
+            phone: user.phone || undefined,
+            bio: user.bio || undefined,
+            idNumber: user.idNumber || undefined,
+            preferences: user.preferences || undefined
         };
 
         // Return the user data (success)

@@ -13,7 +13,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     try {
-        const { name, email, phone, bio, idNumber, preferences, onboardingCompleted } = req.body;
+        const { name, email, phone, bio, idNumber, preferences, onboardingCompleted, avatar } = req.body;
 
         // Construct update data dynamically to avoid overwriting with undefined
         const updateData: any = {};
@@ -24,8 +24,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if (idNumber !== undefined) updateData.idNumber = idNumber;
         if (onboardingCompleted !== undefined) updateData.onboardingCompleted = onboardingCompleted;
 
-        if (preferences) {
-            updateData.preferences = preferences;
+        // Handle preferences merging if avatar is provided or preferences are updated
+        if (preferences || avatar) {
+            // We need current preferences to merge if we are just adding avatar
+            const currentUser = await prisma.user.findUnique({
+                where: { id: session.id },
+                select: { preferences: true }
+            });
+
+            const currentPrefs = (currentUser?.preferences as any) || {};
+            let newPrefs = { ...currentPrefs };
+
+            if (preferences) {
+                newPrefs = { ...newPrefs, ...preferences };
+            }
+            if (avatar) {
+                newPrefs.avatar = avatar;
+            }
+
+            updateData.preferences = newPrefs;
         }
 
         const updatedUser = await prisma.user.update({
