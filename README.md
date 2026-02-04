@@ -12,12 +12,26 @@ BorneoTrip adalah platform "Sustainable Tourism" yang menghubungkan wisatawan de
 
 ![Project Banner](public/picture/city/samarinda.jpg)
 
+## 📸 Glimpse of the App
+
+> **"Experience the beauty of Borneo through our Motion-First Interface."**
+
+<div align="center">
+  <img src="public/docs/images/landing-page.png" width="45%" alt="Landing Page" style="border-radius: 10px; margin: 5px;" />
+  <img src="public/docs/images/event-listing.png" width="45%" alt="Event Listing" style="border-radius: 10px; margin: 5px;" />
+  <br/>
+  <img src="public/docs/images/event-detail.png" width="45%" alt="Event Detail" style="border-radius: 10px; margin: 5px;" />
+  <img src="public/docs/images/admin-dashboard.png" width="45%" alt="Admin Dashboard" style="border-radius: 10px; margin: 5px;" />
+</div>
+
+*Lihat detail visual dan motion design di [docs/FEATURES.md](docs/FEATURES.md)*
+
 ## ✨ Fitur Unggulan
 
 - **🌱 Sustainable Packages**: Paket wisata yang terkurasi berdasarkan *Eco-Rating*.
 - **📅 Event Calendar**: Informasi lengkap event tahunan Kaltim (Erau, Festival Mahakam, dll).
 - **💳 Seamless Booking**: Alur pemesanan modern dengan simulasi invoice dan e-voucher.
-- **� Secure Authentication**: Login/Register dengan enkripsi bcrypt dan JWT session.
+- ** Secure Authentication**: Login/Register dengan enkripsi bcrypt dan JWT session.
 - **🗄️ Full Backend Implementation**: Database MySQL dengan Prisma ORM untuk manajemen data yang kuat.
 - **👤 Role-Based Dashboard**:
   - **Traveler**: Gamifikasi level, riwayat trip, dan personalisasi.
