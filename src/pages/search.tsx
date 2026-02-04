@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
-import { useState, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import Layout from '@/components/Layout';
-import { useContent } from '@/contexts/ContentContext';
+
 import { Search, MapPin, Filter, Calendar, Clock, DollarSign, Star, Ticket, Package as PackageIcon } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -12,7 +12,6 @@ import { getLocalized } from '@/utils/localization';
 export default function SearchPage() {
     const router = useRouter();
     const { type = 'event', location = '', date, travelers } = router.query;
-    const { packages, events } = useContent();
     const { t, locale } = useLanguage();
 
     // Tab State (mirrors query param or defaults)
@@ -22,10 +21,10 @@ export default function SearchPage() {
     const [priceRange, setPriceRange] = useState<number>(10000000);
     const [ratingFilter, setRatingFilter] = useState<number>(0);
 
-    // Filter Logic
-    const filteredResults = useMemo(() => {
-        const queryLocation = (location as string || '').toLowerCase();
+    const [results, setResults] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
 
+<<<<<<< HEAD
         if (activeTab === 'Package') {
             return packages.filter(pkg => {
                 const title = getLocalized(pkg.title);
@@ -42,8 +41,38 @@ export default function SearchPage() {
                 // Currently event price is string 'Free' or 'Rp ...'
                 return matchLocation;
             });
+=======
+    // Fetch from API
+    useEffect(() => {
+        const fetchResults = async () => {
+            setLoading(true);
+            try {
+                // Build Query String
+                const params = new URLSearchParams();
+                if (type) params.append('type', type as string);
+                if (location) params.append('location', location as string);
+                if (type === 'package') {
+                    params.append('priceMax', priceRange.toString());
+                    if (ratingFilter > 0) params.append('rating', ratingFilter.toString());
+                }
+
+                const res = await fetch(`/api/search?${params.toString()}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    setResults(data);
+                }
+            } catch (error) {
+                console.error("Search error:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (router.isReady) {
+            fetchResults();
+>>>>>>> 332fc3d2c0ba159299a2ec965f3ed464edf8bd18
         }
-    }, [activeTab, location, packages, events, priceRange, ratingFilter]);
+    }, [router.isReady, type, location, priceRange, ratingFilter]);
 
     return (
         <Layout title={`${t.searchPage.title} - BorneoTrip`}>
@@ -134,7 +163,20 @@ export default function SearchPage() {
 
                         {/* Results Grid */}
                         <div className="lg:w-3/4">
-                            {filteredResults.length === 0 ? (
+                            {loading ? (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {[1, 2, 3, 4].map(n => (
+                                        <div key={n} className="bg-white rounded-3xl h-96 animate-pulse">
+                                            <div className="h-48 bg-slate-200 w-full mb-4 rounded-t-3xl"></div>
+                                            <div className="p-6 space-y-3">
+                                                <div className="h-4 bg-slate-200 w-1/3 rounded"></div>
+                                                <div className="h-6 bg-slate-200 w-3/4 rounded"></div>
+                                                <div className="h-4 bg-slate-200 w-full rounded"></div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : results.length === 0 ? (
                                 <div className="text-center py-20 bg-white rounded-3xl border border-dashed border-slate-200">
                                     <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                         <Search className="w-6 h-6 text-slate-400" />
@@ -148,10 +190,14 @@ export default function SearchPage() {
                             ) : (
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     {activeTab === 'Package' ? (
-                                        (filteredResults as any[]).map((pkg) => (
+                                        (results as any[]).map((pkg) => (
                                             <Link href={`/packages/${pkg.id}`} key={pkg.id} className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition duration-300 border border-slate-100 flex flex-col">
                                                 <div className="relative h-48 overflow-hidden">
+<<<<<<< HEAD
                                                     <Image src={pkg.imageUrl} alt={getLocalized(pkg.title)} fill className="object-cover group-hover:scale-110 transition duration-700" />
+=======
+                                                    <Image src={pkg.imageUrl} alt={pkg.title && pkg.title[locale === 'en' ? 'en' : 'id'] ? pkg.title[locale === 'en' ? 'en' : 'id'] : 'Package'} fill className="object-cover group-hover:scale-110 transition duration-700" />
+>>>>>>> 332fc3d2c0ba159299a2ec965f3ed464edf8bd18
                                                     <div className="absolute top-4 right-4 bg-white/90 backdrop-blur text-slate-900 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-sm">
                                                         <Star className="w-3 h-3 text-amber-500 fill-amber-500" /> {pkg.rating}
                                                     </div>
@@ -160,7 +206,11 @@ export default function SearchPage() {
                                                     <div className="flex items-center gap-2 text-xs text-slate-500 mb-3 uppercase tracking-wider font-semibold">
                                                         <MapPin className="w-3 h-3" /> {pkg.location}
                                                     </div>
+<<<<<<< HEAD
                                                     <h3 className="text-xl font-bold text-slate-900 mb-2 leading-tight group-hover:text-emerald-600 transition">{getLocalized(pkg.title)}</h3>
+=======
+                                                    <h3 className="text-xl font-bold text-slate-900 mb-2 leading-tight group-hover:text-emerald-600 transition">{pkg.title && pkg.title[locale === 'en' ? 'en' : 'id'] ? pkg.title[locale === 'en' ? 'en' : 'id'] : 'Tour Package'}</h3>
+>>>>>>> 332fc3d2c0ba159299a2ec965f3ed464edf8bd18
                                                     <div className="mt-auto pt-4 flex items-end justify-between border-t border-slate-50">
                                                         <div>
                                                             <div className="text-xs text-slate-400 font-medium">{t.searchPage.startFrom}</div>
@@ -172,10 +222,14 @@ export default function SearchPage() {
                                             </Link>
                                         ))
                                     ) : (
-                                        (filteredResults as any[]).map((evt) => (
+                                        (results as any[]).map((evt) => (
                                             <Link href={`/events/${evt.id}`} key={evt.id} className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition duration-300 border border-slate-100 flex flex-col">
                                                 <div className="relative h-48 overflow-hidden">
+<<<<<<< HEAD
                                                     <Image src={evt.imageUrl} alt={getLocalized(evt.title)} fill className="object-cover group-hover:scale-110 transition duration-700" />
+=======
+                                                    <Image src={evt.imageUrl} alt={evt.title && evt.title[locale === 'en' ? 'en' : 'id'] ? evt.title[locale === 'en' ? 'en' : 'id'] : 'Event'} fill className="object-cover group-hover:scale-110 transition duration-700" />
+>>>>>>> 332fc3d2c0ba159299a2ec965f3ed464edf8bd18
                                                     <div className="absolute top-4 left-4 bg-emerald-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
                                                         {evt.category}
                                                     </div>
@@ -184,7 +238,11 @@ export default function SearchPage() {
                                                     <div className="flex items-center gap-2 text-xs text-slate-500 mb-1 font-medium">
                                                         <Calendar className="w-3 h-3" /> {evt.date}
                                                     </div>
+<<<<<<< HEAD
                                                     <h3 className="text-xl font-bold text-slate-900 mb-2 leading-tight group-hover:text-emerald-600 transition">{getLocalized(evt.title)}</h3>
+=======
+                                                    <h3 className="text-xl font-bold text-slate-900 mb-2 leading-tight group-hover:text-emerald-600 transition">{evt.title && evt.title[locale === 'en' ? 'en' : 'id'] ? evt.title[locale === 'en' ? 'en' : 'id'] : 'Event'}</h3>
+>>>>>>> 332fc3d2c0ba159299a2ec965f3ed464edf8bd18
                                                     <div className="flex items-center gap-1 text-sm text-slate-500 mb-4">
                                                         <MapPin className="w-4 h-4 text-slate-400" /> {evt.location}
                                                     </div>

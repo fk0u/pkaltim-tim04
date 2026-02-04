@@ -13,24 +13,6 @@ import { toPng } from 'html-to-image';
 import jsPDF from 'jspdf';
 import { useRef } from 'react';
 
-// Mock Data for the specific requested ID
-const MOCK_VOUCHER_BK_411375 = {
-    id: "BK-411375",
-    productName: "Derawan Island 3D2N Exclusive Trip",
-    date: "2024-05-15T09:00:00",
-    endDate: "2024-05-17T18:00:00",
-    location: "Kepulauan Derawan, Kalimantan Timur",
-    price: 3500000,
-    totalPax: 2,
-    amount: 7000000,
-    status: "PAID",
-    customerName: "Rizky Hasanuddin",
-    customerEmail: "rizky@example.com",
-    paymentMethod: "BCA Virtual Account",
-    bookingDate: "2024-04-10T14:30:00",
-    qrCode: "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=BK-411375"
-};
-
 export default function VoucherDetail() {
     const router = useRouter();
     const { id } = router.query;
@@ -100,34 +82,75 @@ export default function VoucherDetail() {
     };
 
     useEffect(() => {
-        if (router.isReady) {
-            if (id === 'BK-411375') {
-                setItem(MOCK_VOUCHER_BK_411375);
-            } else {
-                const found = typeof id === 'string' ? getBookingById(id) : null;
-                if (found) {
+        const fetchData = async () => {
+            if (!router.isReady || !id) return;
+
+            setIsLoading(true);
+            try {
+                // Fetch Booking
+                const bookingRes = await fetch(`/api/bookings/${id}`);
+                const booking = bookingRes.ok ? await bookingRes.json() : null;
+
+                // Fetch User Addresses (for Billed To)
+                const addressRes = await fetch('/api/user/addresses');
+                const addresses = addressRes.ok ? await addressRes.json() : [];
+                const defaultAddress = addresses.find((a: any) => a.isDefault) || addresses[0];
+
+                if (booking) {
                     setItem({
-                        ...found,
-                        // Add missing fields if any
-                        customerName: user?.name || 'Guest',
-                        customerEmail: user?.email || 'guest@example.com',
-                        paymentMethod: 'Bank Transfer',
-                        qrCode: `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${found.id}`
+                        ...booking,
+                        customerName: booking.user?.name || user?.name || 'Guest',
+                        customerEmail: booking.user?.email || user?.email || 'guest@example.com',
+                        customerAddress: defaultAddress
+                            ? `${defaultAddress.address}, ${defaultAddress.city} ${defaultAddress.postalCode}`
+                            : 'No address provided',
+                        paymentMethod: booking.paymentMethod || 'Bank Transfer',
+                        qrCode: `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${booking.id}`,
+                        productName: booking.event?.title || booking.tourPackage?.title || booking.productName || 'Trip Package',
+                        date: booking.date || booking.createdAt,
+                        location: booking.event?.location || booking.tourPackage?.location || booking.location || 'Kalimantan Timur',
+                        amount: booking.totalPrice || booking.amount || 0,
+                        totalPax: booking.quantity || booking.totalPax || 1,
+                        status: booking.status || 'Pending'
                     });
+                } else {
+                    // Fallback to Context
+                    const found = typeof id === 'string' ? getBookingById(id) : null;
+                    if (found) {
+                        setItem({
+                            ...found,
+                            customerName: user?.name || 'Guest',
+                            customerEmail: user?.email || 'guest@example.com',
+                            customerAddress: defaultAddress
+                                ? `${defaultAddress.address}, ${defaultAddress.city} ${defaultAddress.postalCode}`
+                                : 'No address provided',
+                            paymentMethod: found.paymentMethod || 'Bank Transfer', // Use found payment method or default
+                            qrCode: `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${found.id}`,
+                            productName: found.productName || 'Trip Package', // Ensure product name exists
+                            amount: found.amount || 0,
+                            totalPax: found.totalPax || 1,
+                            status: found.status || 'Pending'
+                        });
+                    }
                 }
+            } catch (error) {
+                console.error('Error fetching details:', error);
+            } finally {
+                setIsLoading(false);
             }
-            setIsLoading(false);
-        }
+        };
+
+        fetchData();
     }, [id, router.isReady, getBookingById, user]);
 
-    if (isLoading) return <Layout title="Loading..."><div className="p-8 text-center">Loading voucher details...</div></Layout>;
+    if (isLoading) return <Layout title="Loading..."><div className="min-h-screen flex items-center justify-center bg-gray-50"><div className="text-center"><div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div><p className="text-gray-500 font-bold">Loading document...</p></div></div></Layout>;
 
     if (!item) return (
         <Layout title="Not Found">
             <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-8">
                 <FileText className="w-16 h-16 text-gray-300 mb-4" />
-                <h2 className="text-xl font-bold text-gray-900 mb-2">Voucher Not Found</h2>
-                <p className="text-gray-500 mb-6">Could not find voucher details for ID: {id}</p>
+                <h2 className="text-xl font-bold text-gray-900 mb-2">Document Not Found</h2>
+                <p className="text-gray-500 mb-6">Could not find booking details for ID: {id}</p>
                 <Link href="/dashboard/client" className="text-emerald-600 font-bold hover:underline">Return to Dashboard</Link>
             </div>
         </Layout>
@@ -175,7 +198,22 @@ export default function VoucherDetail() {
                     {activeTab === 'invoice' ? (
                         <InvoiceView item={item} />
                     ) : (
-                        <TicketView item={item} onSaveImage={handleSaveImage} />
+                        item.status === 'Paid' || item.status === 'Completed' ? (
+                            <TicketView item={item} onSaveImage={handleSaveImage} />
+                        ) : (
+                            <div className="bg-white rounded-3xl p-12 text-center border border-gray-100 shadow-sm">
+                                <div className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                                    <Clock className="w-10 h-10 text-amber-500" />
+                                </div>
+                                <h2 className="text-2xl font-bold text-slate-900 mb-2">Payment Verification in Progress</h2>
+                                <p className="text-gray-500 max-w-md mx-auto mb-8">
+                                    Your payment is currently being verified by our team. The E-Ticket will be available here once the verification is complete.
+                                </p>
+                                <button onClick={() => setActiveTab('invoice')} className="text-emerald-600 font-bold hover:underline">
+                                    View Invoice Instead
+                                </button>
+                            </div>
+                        )
                     )}
                 </div>
             </div>
@@ -191,92 +229,115 @@ export default function VoucherDetail() {
 }
 
 function InvoiceView({ item }: { item: any }) {
+    // Generate logical Invoice Number: INV/YYYY/MM/ID_LAST4
+    const invoiceDate = new Date(item.createdAt || new Date());
+    const invoiceNumber = `INV/${invoiceDate.getFullYear()}/${(invoiceDate.getMonth() + 1).toString().padStart(2, '0')}/${item.id.slice(-4).toUpperCase()}`;
+
+    // Tax Calculation (assuming total includes 11% tax)
+    const totalAmount = item.amount;
+    const subtotal = Math.round(totalAmount / 1.11);
+    const tax = totalAmount - subtotal;
+
+    // Status Colors
+    const statusColor = item.status === 'Paid' || item.status === 'Completed' ? 'emerald' : item.status === 'Cancelled' ? 'red' : 'orange';
+
     return (
-        <div className="bg-white rounded-3xl shadow-xl overflow-hidden relative">
+        <div className="bg-white rounded-3xl shadow-xl overflow-hidden relative print:shadow-none print:border print:border-gray-200">
             {/* Status Stamp */}
-            <div className="absolute top-0 right-0 p-8 md:p-12 pointer-events-none opacity-10">
-                <div className="border-4 border-emerald-500 rounded-lg p-2 rotate-12">
-                    <span className="text-3xl md:text-4xl font-black text-emerald-500 uppercase tracking-widest">PAID</span>
+            <div className="absolute top-0 right-0 p-8 md:p-12 pointer-events-none opacity-20 z-0">
+                <div className={`border-8 border-${statusColor}-500 rounded-xl p-4 rotate-12 mask-stamp`}>
+                    <span className={`text-4xl md:text-6xl font-black text-${statusColor}-500 uppercase tracking-widest`}>{item.status}</span>
                 </div>
             </div>
 
             {/* Header */}
-            <div className="bg-slate-900 text-white p-8 md:p-10">
+            <div className="bg-slate-900 text-white p-8 md:p-12 relative z-10 print:bg-white print:text-black">
                 <div className="flex flex-col md:flex-row justify-between md:items-start gap-6">
                     <div>
-                        <h1 className="text-2xl font-black mb-2 flex items-center gap-2">
+                        <h1 className="text-3xl font-black mb-2 flex items-center gap-2">
                             BorneoTrip<span className="text-emerald-400">.</span>
                         </h1>
-                        <p className="opacity-70 text-xs md:text-sm leading-relaxed max-w-xs">
+                        <p className="opacity-70 text-sm leading-relaxed max-w-xs">
                             PT. Borneo Trip Indonesia<br />
                             Jl. Mulawarman No. 45, Samarinda<br />
                             Kalimantan Timur, Indonesia 75112
                         </p>
                     </div>
                     <div className="text-left md:text-right">
-                        <h2 className="text-3xl font-light opacity-50 mb-1">INVOICE</h2>
-                        <p className="font-mono font-bold text-lg">#{item.id}</p>
+                        <h2 className="text-4xl font-light opacity-50 mb-1 tracking-widest">INVOICE</h2>
+                        <p className="font-mono font-bold text-xl">{invoiceNumber}</p>
                         <p className="text-sm opacity-70 mt-1">
-                            {new Date(item.bookingDate || item.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                            Issued: {invoiceDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
                         </p>
                     </div>
                 </div>
             </div>
 
             {/* Details */}
-            <div className="p-8 md:p-10">
-                <div className="flex flex-col md:flex-row justify-between gap-8 mb-10">
+            <div className="p-8 md:p-12 relative z-10">
+                <div className="flex flex-col md:flex-row justify-between gap-10 mb-12">
                     <div>
-                        <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Billed To</h3>
-                        <p className="font-bold text-lg text-gray-900">{item.customerName}</p>
-                        <p className="text-sm text-gray-500">{item.customerEmail}</p>
+                        <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Billed To</h3>
+                        <p className="font-bold text-xl text-slate-900 mb-1">{item.customerName}</p>
+                        <p className="text-sm text-gray-500 mb-1">{item.customerEmail}</p>
+                        <p className="text-sm text-gray-500 max-w-xs leading-relaxed">{item.customerAddress}</p>
                     </div>
                     <div className="text-left md:text-right">
-                        <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Payment Method</h3>
-                        <div className="inline-block bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100 text-xs font-bold text-gray-700">
-                            {item.paymentMethod}
+                        <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Payment Method</h3>
+                        <div className="inline-block bg-gray-50 px-4 py-2 rounded-xl border border-gray-100 text-sm font-bold text-slate-800 capitalize">
+                            {item.paymentMethod || 'Bank Transfer'}
                         </div>
                     </div>
                 </div>
 
-                <div className="mb-10">
+                <div className="mb-12">
                     <table className="w-full">
                         <thead>
                             <tr className="border-b-2 border-gray-100">
-                                <th className="text-left py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest w-1/2">Description</th>
-                                <th className="text-center py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Qty</th>
-                                <th className="text-right py-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total</th>
+                                <th className="text-left py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest w-1/2">Description</th>
+                                <th className="text-center py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Qty</th>
+                                <th className="text-right py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Amount</th>
                             </tr>
                         </thead>
                         <tbody className="text-slate-700">
-                            <tr className="border-b border-gray-50">
-                                <td className="py-5">
-                                    <p className="font-bold text-gray-900 text-sm md:text-base mb-1">{item.productName}</p>
-                                    <p className="text-xs text-gray-500">{new Date(item.date).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short' })}</p>
+                            <tr className="border-b border-gray-50 group hover:bg-gray-50 transition">
+                                <td className="py-6">
+                                    <p className="font-bold text-slate-900 text-lg mb-1">{item.productName}</p>
+                                    <p className="text-xs text-slate-500 font-medium flex items-center gap-1.5">
+                                        <Calendar className="w-3 h-3" />
+                                        Trip Date: {new Date(item.date).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' })}
+                                    </p>
                                 </td>
-                                <td className="py-5 text-center font-medium text-sm">{item.totalPax}x</td>
-                                <td className="py-5 text-right font-bold text-gray-900 text-sm md:text-base">Rp {item.amount.toLocaleString('id-ID')}</td>
+                                <td className="py-6 text-center font-bold text-slate-900">{item.totalPax}</td>
+                                <td className="py-6 text-right font-bold text-slate-900">Rp {item.amount.toLocaleString('id-ID')}</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
 
                 <div className="flex justify-end">
-                    <div className="w-full md:w-1/2 space-y-3">
+                    <div className="w-full md:w-5/12 space-y-4">
                         <div className="flex justify-between py-2 border-b border-gray-100">
-                            <span className="text-sm text-gray-500">Subtotal</span>
-                            <span className="font-medium text-gray-900 text-sm">Rp {item.amount.toLocaleString('id-ID')}</span>
+                            <span className="text-sm font-medium text-gray-500">Subtotal</span>
+                            <span className="font-bold text-slate-700">Rp {subtotal.toLocaleString('id-ID')}</span>
                         </div>
-                        <div className="flex justify-between py-2">
-                            <span className="font-bold text-lg text-emerald-900">Total</span>
-                            <span className="font-black text-xl text-emerald-600">Rp {item.amount.toLocaleString('id-ID')}</span>
+                        <div className="flex justify-between py-2 border-b border-gray-100">
+                            <span className="text-sm font-medium text-gray-500">Tax (11% VAT)</span>
+                            <span className="font-bold text-slate-700">Rp {tax.toLocaleString('id-ID')}</span>
+                        </div>
+                        <div className="flex justify-between py-4">
+                            <span className="font-black text-xl text-slate-900">Total Paid</span>
+                            <span className="font-black text-2xl text-emerald-600">Rp {totalAmount.toLocaleString('id-ID')}</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div className="bg-gray-50 p-6 text-center text-xs text-gray-400 border-t border-gray-100">
-                Authorized by Payment Gateway. This is a computer-generated invoice.
+            <div className="bg-gray-50 p-8 text-center border-t border-gray-100">
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Thank you for your business</p>
+                <p className="text-[10px] text-gray-400 max-w-md mx-auto leading-relaxed">
+                    Authorized by Payment Gateway. This is a computer-generated invoice and corresponds to the transaction ID #{item.id}. No signature required.
+                </p>
             </div>
         </div>
     );

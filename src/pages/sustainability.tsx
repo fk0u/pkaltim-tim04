@@ -79,7 +79,7 @@ export default function Sustainability() {
                     <div className="flex flex-col md:flex-row items-center gap-12">
                         <div className="md:w-1/2">
                             <div className="relative rounded-3xl overflow-hidden shadow-2xl group">
-                                <img src="https://images.unsplash.com/photo-1590486803833-1c5dc8ce69f7?auto=format&fit=crop&q=80" className="w-full h-full object-cover transform group-hover:scale-110 transition duration-700" alt="Orangutan" />
+                                <img src="https://ppiddata.kaltimprov.go.id/diskominfo.prod/storage/image/6dac1MZhWMiVUYvN.jpg?auto=format&fit=crop&q=80" className="w-full h-full object-cover transform group-hover:scale-110 transition duration-700" alt="Orangutan" />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                             </div>
                         </div>
@@ -97,7 +97,7 @@ export default function Sustainability() {
                     <div className="flex flex-col md:flex-row-reverse items-center gap-12">
                         <div className="md:w-1/2">
                             <div className="relative rounded-3xl overflow-hidden shadow-2xl group">
-                                <img src="https://images.unsplash.com/photo-1540327310574-04d33a6b5791?auto=format&fit=crop&q=80" className="w-full h-full object-cover transform group-hover:scale-110 transition duration-700" alt="Dayak Culture" />
+                                <img src="https://4.bp.blogspot.com/-_szmZe6LdXY/UWcBx9-ERxI/AAAAAAAADBQ/r8t3JwkbGgE/s1600/DAYAK.jpg?auto=format&fit=crop&q=80" className="w-full h-full object-cover transform group-hover:scale-110 transition duration-700" alt="Dayak Culture" />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                             </div>
                         </div>

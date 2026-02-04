@@ -4,16 +4,17 @@ import { useBooking } from '@/contexts/BookingContext';
 import { useContent } from '@/contexts/ContentContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, MapPin, Clock, CheckCircle, ArrowRight, Wallet, Bell, Settings, Star, ChevronRight, Share2, Heart, Camera, Trophy, User, LogOut, FileText, CreditCard, LayoutDashboard, MessageSquare, History, Menu, X, Phone, Ticket, ShieldCheck, Search, CheckCheck, Paperclip } from 'lucide-react';
+import { Calendar, MapPin, Clock, CheckCircle, ArrowRight, Wallet, Bell, Settings, Star, ChevronRight, Share2, Heart, Camera, Trophy, User, LogOut, FileText, CreditCard, LayoutDashboard, MessageSquare, History, Menu, X, Phone, Ticket, ShieldCheck, Search, CheckCheck, Paperclip, Loader2, Check, ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useState, useEffect, FormEvent } from 'react';
-import { useToast, Skeleton, ShareModal } from '@/components/ui';
+import { useToast, Skeleton, ShareModal, ImageUpload } from '@/components/ui';
 import Modal from '@/components/ui/Modal';
 import Link from 'next/link';
 import { Booking, TourPackage, User as UserType } from '@/types';
+import { useRef } from 'react';
 
 export default function ClientDashboard() {
-    const { user, logout, isAuthenticated } = useAuth();
+    const { user, logout, isAuthenticated, isLoading } = useAuth();
     const { bookings, stats, getBookingsByUserId } = useBooking();
     const { packages } = useContent();
     const { t, locale } = useLanguage();
@@ -31,16 +32,27 @@ export default function ClientDashboard() {
     const activeTrip = userBookings.length > 0 ? userBookings[0] : null;
 
     useEffect(() => {
-        if (!isAuthenticated) router.push('/login');
+        if (isLoading) return; // Wait for session check
+
+        if (!isAuthenticated) {
+            router.push('/login');
+            // addToast(t.common.loading, 'success'); // Remove toast to avoid spam on generic redirect
+            return;
+        }
+
         if (user && (user.role as string) !== 'Customer' && (user.role as string) !== 'client') {
             router.push(`/dashboard/${user.role}`);
         }
         if (router.query.tab) {
             setActiveTab(router.query.tab as string);
         }
-    }, [isAuthenticated, user, router]);
+    }, [isAuthenticated, user, router, isLoading]);
 
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+    if (isLoading) {
+        return <div className="min-h-screen flex items-center justify-center bg-slate-50"><Loader2 className="w-8 h-8 animate-spin text-emerald-600" /></div>;
+    }
 
     if (!user) return null;
 
@@ -57,6 +69,8 @@ export default function ClientDashboard() {
         { id: 'profile', label: t.dashboard.myProfile, icon: User },
         { id: 'payments', label: t.dashboard.paymentMethods, icon: CreditCard },
         { id: 'chat', label: t.dashboard.chatSupport, icon: MessageSquare },
+        { id: 'addresses', label: "Address Book", icon: MapPin },
+        { id: 'settings', label: "Settings", icon: Settings },
     ];
 
     const renderContent = () => {
@@ -70,9 +84,13 @@ export default function ClientDashboard() {
             case 'profile':
                 return <ProfileView user={user as unknown as UserType} t={t} addToast={addToast} />;
             case 'payments':
-                return <PaymentsView t={t} setActiveModal={setActiveModal} />;
+                return <PaymentsView t={t} setActiveModal={setActiveModal} activeModal={activeModal} />;
             case 'chat':
                 return <ChatView user={user as unknown as UserType} t={t} />;
+            case 'addresses':
+                return <AddressBookView t={t} addToast={addToast} />;
+            case 'settings':
+                return <SettingsView user={user as unknown as UserType} t={t} addToast={addToast} />;
             default:
                 return <OverviewView user={user as unknown as UserType} t={t} activeTrip={activeTrip} setActiveModal={setActiveModal} packages={packages} locale={locale} router={router} stats={stats} />;
         }
@@ -171,48 +189,7 @@ export default function ClientDashboard() {
                 </div>
             </Modal>
 
-            <Modal isOpen={activeModal === 'add_card'} onClose={() => setActiveModal(null)} title={t.dashboard.addNewCard}>
-                <div className="space-y-6">
-                    <div className="group perspective-1000 h-48 w-full cursor-pointer" onClick={(e) => e.currentTarget.classList.toggle('rotate-y-180')}>
-                        <div className="relative w-full h-full text-white transition-all duration-700 transform style-preserve-3d group-hover:rotate-y-6">
-                            <div className="absolute inset-0 bg-linear-to-br from-slate-900 to-slate-800 rounded-2xl p-6 backface-hidden shadow-xl flex flex-col justify-between z-10">
-                                <div className="flex justify-between items-start">
-                                    <div className="w-12 h-8 bg-yellow-500/20 rounded flex items-center justify-center"><div className="w-8 h-5 border border-yellow-500/50 rounded-sm"></div></div>
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" className="w-10" alt="Mastercard" />
-                                </div>
-                                <div className="space-y-4">
-                                    <div className="font-mono text-xl tracking-widest text-shadow">0000 0000 0000 0000</div>
-                                    <div className="flex justify-between">
-                                        <div><p className="text-[9px] uppercase opacity-70">Card Holder</p><p className="font-bold text-sm">YOUR NAME</p></div>
-                                        <div><p className="text-[9px] uppercase opacity-70">Expires</p><p className="font-bold text-sm">MM/YY</p></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); addToast('Card added successfully', 'success'); setActiveModal(null); }}>
-                        <div>
-                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t.dashboard.cardHolder}</label>
-                            <input type="text" placeholder="John Doe" className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium outline-none focus:ring-2 focus:ring-emerald-500" />
-                        </div>
-                        <div>
-                            <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Card Number</label>
-                            <input type="text" placeholder="0000 0000 0000 0000" className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium outline-none focus:ring-2 focus:ring-emerald-500 font-mono" />
-                        </div>
-                        <div className="flex gap-4">
-                            <div className="flex-1">
-                                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">{t.dashboard.expiryDate}</label>
-                                <input type="text" placeholder="MM/YY" className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium outline-none focus:ring-2 focus:ring-emerald-500" />
-                            </div>
-                            <div className="flex-1">
-                                <label className="block text-xs font-bold text-gray-500 uppercase mb-1">CVC</label>
-                                <input type="text" placeholder="123" className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium outline-none focus:ring-2 focus:ring-emerald-500" />
-                            </div>
-                        </div>
-                        <button type="submit" className="w-full bg-emerald-600 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-200 hover:shadow-emerald-300 transition-all hover:-translate-y-1">Add Card</button>
-                    </form>
-                </div>
-            </Modal>
+            <AddPaymentMethodModal isOpen={activeModal === 'add_card'} onClose={() => setActiveModal(null)} addToast={addToast} />
             <ShareModal isOpen={activeModal === 'share_event'} onClose={() => setActiveModal(null)} title="Share this Trip" url="https://borneotrip.com/trips/123" />
         </Layout>
     );
@@ -258,6 +235,33 @@ interface ChatProps {
 }
 
 
+// --- ANIMATED COUNTER COMPONENT ---
+function AnimatedCounter({ value, label, icon: Icon, color }: { value: number, label: string, icon: any, color: string }) {
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden group hover:shadow-lg transition-all duration-300"
+        >
+            <div className={`absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity ${color.replace('bg-', 'text-')}`}>
+                <Icon className="w-16 h-16" />
+            </div>
+            <div className="relative z-10">
+                <div className="text-xs text-gray-400 font-bold uppercase tracking-wider mb-2">{label}</div>
+                <div className="flex items-baseline gap-1">
+                    <motion.span
+                        className="text-3xl font-black text-slate-900"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                    >
+                        {value.toLocaleString('id-ID')}
+                    </motion.span>
+                </div>
+            </div>
+        </motion.div>
+    );
+}
+
 // --- SUB-COMPONENTS ---
 function OverviewView({ user, t, activeTrip, setActiveModal, packages, locale, router, stats }: OverviewProps) {
     return (
@@ -266,16 +270,26 @@ function OverviewView({ user, t, activeTrip, setActiveModal, packages, locale, r
                 <h1 className="text-3xl font-black text-slate-900 mb-2">{t.dashboard.welcome} <span className="text-emerald-600">{user.name.split(' ')[0]}</span> 👋</h1>
                 <p className="text-slate-500">{t.dashboard.ready}</p>
             </div>
+
+            {/* Immersive Stats Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-                    <div className="text-xs text-gray-400 font-bold uppercase mb-2">{t.dashboard.totalXp}</div>
-                    <div className="text-2xl font-black text-slate-900">2,450</div>
-                </div>
-                <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-                    <div className="text-xs text-gray-400 font-bold uppercase mb-2">Bookings</div>
-                    <div className="text-2xl font-black text-slate-900">{stats.totalBookings}</div>
-                </div>
+                <AnimatedCounter value={stats.totalXP} label={t.dashboard.totalXp} icon={Star} color="bg-yellow-500" />
+                <AnimatedCounter value={stats.totalBookings} label="Total Bookings" icon={Calendar} color="bg-blue-500" />
+                <AnimatedCounter value={stats.activeTripsCount} label="Active Trips" icon={MapPin} color="bg-emerald-500" />
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-emerald-600 p-6 rounded-3xl shadow-lg shadow-emerald-200 relative overflow-hidden group cursor-pointer hover:bg-emerald-700 transition"
+                    onClick={() => router.push('/packages')}
+                >
+                    <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+                    <div className="relative z-10 text-white h-full flex flex-col justify-between">
+                        <div className="font-bold uppercase text-[10px] tracking-widest opacity-80">Next Adventure</div>
+                        <div className="flex items-center gap-2 font-bold">Explore <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" /></div>
+                    </div>
+                </motion.div>
             </div>
+
             <div>
                 <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2"><Calendar className="w-5 h-5 text-emerald-500" /> {t.dashboard.activeTrip}</h2>
                 {activeTrip ? (
@@ -293,9 +307,15 @@ function OverviewView({ user, t, activeTrip, setActiveModal, packages, locale, r
                             </div>
                             <p className="text-sm text-slate-600 mb-4">{t.dashboard.bookingId} #{activeTrip.id}</p>
                             <div className="flex gap-2 mt-4">
-                                <button onClick={() => router.push(`/dashboard/vouchers/${activeTrip.id}`)} className="flex-1 text-sm font-bold text-emerald-600 border border-emerald-200 py-2.5 rounded-xl hover:bg-emerald-50 transition flex items-center justify-center gap-2">
-                                    {t.dashboard.openVoucher} <ArrowRight className="w-4 h-4" />
-                                </button>
+                                {activeTrip.status === 'Paid' || activeTrip.status === 'Completed' ? (
+                                    <button onClick={() => router.push(`/dashboard/vouchers/${activeTrip.id}`)} className="flex-1 text-sm font-bold text-emerald-600 border border-emerald-200 py-2.5 rounded-xl hover:bg-emerald-50 transition flex items-center justify-center gap-2">
+                                        {t.dashboard.openVoucher} <ArrowRight className="w-4 h-4" />
+                                    </button>
+                                ) : (
+                                    <button disabled className="flex-1 text-sm font-bold text-gray-400 border border-gray-200 py-2.5 rounded-xl bg-gray-50 flex items-center justify-center gap-2 cursor-not-allowed">
+                                        <Clock className="w-4 h-4" /> Verifying Payment...
+                                    </button>
+                                )}
                                 <button onClick={(e) => { e.stopPropagation(); setActiveModal('share_event'); }} className="w-12 flex items-center justify-center border border-gray-200 rounded-xl hover:bg-gray-50 text-gray-500 transition">
                                     <Share2 className="w-4 h-4" />
                                 </button>
@@ -371,7 +391,11 @@ function BookingsView({ bookings, t, router }: BookingsProps) {
                                     </div>
                                 </div>
                                 <div className="flex flex-wrap gap-3 pt-4 border-t border-gray-100">
-                                    <button onClick={() => router.push(`/dashboard/vouchers/${booking.id}`)} className="flex-1 bg-emerald-600 text-white px-4 py-2.5 rounded-xl font-bold text-sm hover:bg-emerald-700 transition shadow-lg shadow-emerald-100 flex items-center justify-center gap-2"><Ticket className="w-4 h-4" /> View Voucher</button>
+                                    {booking.status === 'Paid' || booking.status === 'Completed' ? (
+                                        <button onClick={() => router.push(`/dashboard/vouchers/${booking.id}`)} className="flex-1 bg-emerald-600 text-white px-4 py-2.5 rounded-xl font-bold text-sm hover:bg-emerald-700 transition shadow-lg shadow-emerald-100 flex items-center justify-center gap-2"><Ticket className="w-4 h-4" /> View Voucher</button>
+                                    ) : (
+                                        <button disabled className="flex-1 bg-gray-100 text-gray-400 px-4 py-2.5 rounded-xl font-bold text-sm cursor-not-allowed flex items-center justify-center gap-2" title="Waiting for Payment Verification"><Clock className="w-4 h-4" /> Verifying...</button>
+                                    )}
                                     <button onClick={() => router.push(`/dashboard/vouchers/${booking.id}?tab=invoice`)} className="flex-1 bg-white border border-gray-200 text-slate-700 px-4 py-2.5 rounded-xl font-bold text-sm hover:bg-gray-50 transition flex items-center justify-center gap-2"><FileText className="w-4 h-4" /> Invoice</button>
                                     <button onClick={() => router.push(`/packages`)} className="px-4 py-2.5 rounded-xl font-bold text-sm text-gray-500 hover:text-emerald-600 hover:bg-emerald-50 transition border border-transparent hover:border-emerald-100">Book Again</button>
                                 </div>
@@ -451,7 +475,11 @@ function HistoryView({ bookings, t }: HistoryProps) {
                                         </td>
                                         <td className="p-5 text-center">
                                             <div className="flex items-center justify-center gap-2">
-                                                <Link href={`/dashboard/vouchers/${booking.id}?tab=ticket`} className="p-2 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition" title="E-Ticket"><Ticket className="w-4 h-4" /></Link>
+                                                {booking.status === 'Paid' || booking.status === 'Completed' ? (
+                                                    <Link href={`/dashboard/vouchers/${booking.id}?tab=ticket`} className="p-2 rounded-lg bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition" title="E-Ticket"><Ticket className="w-4 h-4" /></Link>
+                                                ) : (
+                                                    <span className="p-2 rounded-lg bg-gray-100 text-gray-400 cursor-not-allowed" title="Verification in Progress"><Clock className="w-4 h-4" /></span>
+                                                )}
                                                 <Link href={`/dashboard/vouchers/${booking.id}?tab=invoice`} className="p-2 rounded-lg bg-gray-50 text-gray-600 hover:bg-gray-100 transition" title="Invoice"><FileText className="w-4 h-4" /></Link>
                                             </div>
                                         </td>
@@ -468,29 +496,102 @@ function HistoryView({ bookings, t }: HistoryProps) {
 
 function ProfileView({ user, t, addToast }: ProfileProps) {
     const [isEditing, setIsEditing] = useState(false);
+    const [avatarUrl, setAvatarUrl] = useState(user.avatar || '');
 
     if (isEditing) {
         return (
-            <div className="space-y-6 max-w-2xl">
+            <div className="space-y-8 max-w-4xl mx-auto">
                 <div className="flex items-center justify-between">
-                    <h2 className="text-2xl font-bold text-slate-900">{t.dashboard.editProfile}</h2>
-                </div>
-                <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100">
-                    <div className="flex items-center gap-6 mb-8">
-                        <img src={user.avatar} className="w-20 h-20 rounded-full border-4 border-gray-50" alt="Avatar" />
-                        <button className="text-emerald-600 font-bold text-sm bg-emerald-50 px-4 py-2 rounded-xl">Change Photo</button>
+                    <div className="flex items-center gap-3">
+                        <button onClick={() => setIsEditing(false)} className="p-2 rounded-full hover:bg-gray-100 text-gray-500 transition">
+                            <ArrowLeft className="w-5 h-5" />
+                        </button>
+                        <h2 className="text-2xl font-black text-slate-900">{t.dashboard.editProfile}</h2>
                     </div>
-                    <form className="space-y-6" onSubmit={(e: FormEvent) => { e.preventDefault(); addToast('Profile updated (Mock)', 'success'); setIsEditing(false); }}>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div><label className="block text-xs font-bold text-gray-500 uppercase mb-2">{t.dashboard.fullName}</label><input type="text" defaultValue={user.name} className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium" /></div>
-                            <div><label className="block text-xs font-bold text-gray-500 uppercase mb-2">{t.dashboard.email}</label><input type="email" defaultValue={user.email} className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium text-gray-500" disabled /></div>
-                            <div><label className="block text-xs font-bold text-gray-500 uppercase mb-2">{t.dashboard.phone}</label><input type="tel" placeholder="+62..." className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium" /></div>
-                            <div><label className="block text-xs font-bold text-gray-500 uppercase mb-2">{t.dashboard.idNumber}</label><input type="text" placeholder="16 digit NIK" className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium" /></div>
-                        </div>
-                        <div><label className="block text-xs font-bold text-gray-500 uppercase mb-2">{t.dashboard.bio}</label><textarea className="w-full bg-gray-50 border-gray-200 rounded-xl px-4 py-3 font-medium h-24" placeholder="Tell us about yourself..."></textarea></div>
-                        <div className="flex justify-end gap-4 pt-4">
-                            <button type="button" onClick={() => setIsEditing(false)} className="text-gray-500 font-bold hover:text-gray-900 transition">{t.dashboard.cancel}</button>
-                            <button type="submit" className="bg-emerald-600 text-white font-bold px-8 py-3 rounded-xl shadow-lg shadow-emerald-200">{t.dashboard.saveChanges}</button>
+                </div>
+                <div className="bg-white p-8 rounded-[2.5rem] shadow-xl shadow-gray-200/50 border border-gray-100">
+                    <form className="space-y-8" onSubmit={async (e: FormEvent) => {
+                        e.preventDefault();
+                        try {
+                            // @ts-ignore
+                            const name = e.target.name.value;
+                            // @ts-ignore
+                            const phone = e.target.phone.value;
+                            // @ts-ignore
+                            const idNumber = e.target.idNumber.value;
+                            // @ts-ignore
+                            const bio = e.target.bio.value;
+
+                            const res = await fetch('/api/user/profile', {
+                                method: 'PUT',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ name, phone, idNumber, bio, avatar: avatarUrl })
+                            });
+
+                            if (res.ok) {
+                                addToast('Profile updated successfully', 'success');
+                                setIsEditing(false);
+                                // Reload to update context
+                                window.location.reload();
+                            } else {
+                                addToast('Failed to update profile', 'error');
+                            }
+                        } catch (err) {
+                            addToast('An error occurred', 'error');
+                        }
+                    }}>
+                        <div className="flex flex-col md:flex-row gap-10">
+                            {/* Left Column: Avatar */}
+                            <div className="w-full md:w-1/3 flex flex-col items-center">
+                                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Profile Picture</p>
+                                <div className="w-full">
+                                    <ImageUpload
+                                        value={avatarUrl}
+                                        onChange={setAvatarUrl}
+                                        label=""
+                                        className="w-full"
+                                    />
+                                </div>
+                                <p className="text-xs text-center text-gray-400 mt-4 leading-relaxed">
+                                    Upload a high-quality image.<br />Recommended size: 500x500px.
+                                </p>
+                            </div>
+
+                            {/* Right Column: Details */}
+                            <div className="flex-1 space-y-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-500 uppercase mb-2 ml-1">{t.dashboard.fullName}</label>
+                                        <input type="text" name="name" defaultValue={user.name} className="w-full bg-gray-50 border-gray-200 rounded-2xl px-5 py-4 font-bold text-slate-900 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-500 uppercase mb-2 ml-1">{t.dashboard.email}</label>
+                                        <input type="email" name="email" defaultValue={user.email} className="w-full bg-gray-100 border-transparent rounded-2xl px-5 py-4 font-bold text-gray-400 cursor-not-allowed" disabled />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-500 uppercase mb-2 ml-1">{t.dashboard.phone}</label>
+                                        <div className="relative">
+                                            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                            <input type="tel" name="phone" defaultValue={user.phone || ''} placeholder="+62..." className="w-full bg-gray-50 border-gray-200 rounded-2xl pl-12 pr-5 py-4 font-bold text-slate-900 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition" />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-bold text-gray-500 uppercase mb-2 ml-1">{t.dashboard.idNumber}</label>
+                                        <div className="relative">
+                                            <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                            <input type="text" name="idNumber" defaultValue={user.idNumber || ''} placeholder="16 digit NIK" className="w-full bg-gray-50 border-gray-200 rounded-2xl pl-12 pr-5 py-4 font-bold text-slate-900 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-500 uppercase mb-2 ml-1">{t.dashboard.bio}</label>
+                                    <textarea name="bio" defaultValue={user.bio || ''} className="w-full bg-gray-50 border-gray-200 rounded-2xl px-5 py-4 font-medium text-slate-700 h-32 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition resize-none" placeholder="Tell us about your travel preferences..."></textarea>
+                                </div>
+                                <div className="flex justify-end gap-3 pt-6 border-t border-gray-100">
+                                    <button type="button" onClick={() => setIsEditing(false)} className="px-6 py-3 rounded-xl font-bold text-gray-500 hover:bg-gray-50 transition">{t.dashboard.cancel}</button>
+                                    <button type="submit" className="bg-emerald-600 text-white font-bold px-8 py-3 rounded-xl shadow-lg shadow-emerald-200 hover:bg-emerald-700 hover:shadow-emerald-300 transform hover:-translate-y-1 transition-all">{t.dashboard.saveChanges}</button>
+                                </div>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -499,44 +600,132 @@ function ProfileView({ user, t, addToast }: ProfileProps) {
     }
 
     return (
-        <div className="space-y-6 max-w-2xl">
+        <div className="max-w-5xl mx-auto space-y-8">
             <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-slate-900">{t.dashboard.myProfile}</h2>
-                <button onClick={() => setIsEditing(true)} className="text-emerald-600 font-bold text-sm bg-emerald-50 px-4 py-2 rounded-xl hover:bg-emerald-100 transition">{t.dashboard.editProfile}</button>
+                <div>
+                    <h2 className="text-3xl font-black text-slate-900 tracking-tight">{t.dashboard.myProfile}</h2>
+                    <p className="text-slate-500 mt-1">Manage your account settings and preferences.</p>
+                </div>
+                <button onClick={() => setIsEditing(true)} className="group flex items-center gap-2 bg-slate-900 text-white px-5 py-3 rounded-xl font-bold hover:bg-slate-800 transition shadow-lg shadow-slate-200">
+                    <Settings className="w-4 h-4 group-hover:rotate-45 transition duration-300" />
+                    {t.dashboard.editProfile}
+                </button>
             </div>
-            <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-6 opacity-5 pointer-events-none"><User className="w-64 h-64" /></div>
-                <div className="flex flex-col items-center text-center mb-8 relative z-10">
-                    <div className="p-1 bg-white/50 backdrop-blur-sm rounded-full mb-4"><img src={user.avatar} className="w-28 h-28 rounded-full border-4 border-emerald-50 shadow-lg object-cover" alt="Profile" /></div>
-                    <h3 className="text-2xl font-black text-slate-900 mb-1">{user.name}</h3>
-                    <p className="text-slate-500 font-medium mb-3">{user.email}</p>
-                    <div className="flex gap-2"><span className="bg-emerald-100 text-emerald-700 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider flex items-center gap-1"><CheckCircle className="w-3 h-3" /> Verified Traveler</span></div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10 mb-8">
-                    <div className="p-5 bg-gray-50 rounded-2xl flex items-center gap-4 border border-gray-100"><div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-emerald-600 shadow-sm"><Phone className="w-6 h-6" /></div><div><p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">{t.dashboard.phone}</p><p className="font-bold text-slate-900 text-lg">+62 812 3456 7890</p></div></div>
-                    <div className="p-5 bg-gray-50 rounded-2xl flex items-center gap-4 border border-gray-100"><div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-emerald-600 shadow-sm"><CreditCard className="w-6 h-6" /></div><div><p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">{t.dashboard.idNumber}</p><p className="font-bold text-slate-900 text-lg">6472012345678901</p></div></div>
-                </div>
-                <div className="space-y-6 relative z-10">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <h4 className="font-bold text-slate-900 mb-4 flex items-center gap-2 text-sm uppercase tracking-wider"><ShieldCheck className="w-4 h-4 text-emerald-500" /> Account Security</h4>
-                            <div className="bg-gray-50 rounded-2xl p-4 space-y-2">
-                                <button className="w-full flex items-center justify-between p-3 bg-white rounded-xl border border-gray-100 hover:shadow-sm transition text-left"><span className="text-sm font-bold text-slate-700">Change Password</span><ChevronRight className="w-4 h-4 text-gray-400" /></button>
-                                <div className="w-full flex items-center justify-between p-3 bg-white rounded-xl border border-gray-100"><span className="text-sm font-bold text-slate-700">Two-Factor Authentication</span><span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded">Enabled</span></div>
-                                <div className="p-3 bg-white rounded-xl border border-gray-100"><p className="text-xs font-bold text-gray-400 uppercase mb-2">Recent Login</p><div className="flex items-center gap-3"><div className="w-8 h-8 rounded bg-gray-100 flex items-center justify-center"><User className="w-4 h-4 text-gray-500" /></div><div><p className="text-xs font-bold text-slate-900">Windows PC • Jakarta, ID</p><p className="text-[10px] text-emerald-600 font-bold">Active now</p></div></div></div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Left Column: ID Card Style */}
+                <div className="lg:col-span-1 space-y-6">
+                    <div className="bg-white rounded-[2.5rem] p-2 shadow-xl shadow-gray-200/50 border border-gray-100 relative overflow-hidden group">
+                        <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-[2rem] p-8 text-white relative overflow-hidden">
+                            <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition duration-500 transform group-hover:scale-110"><User className="w-40 h-40" /></div>
+                            <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-yellow-400 rounded-full blur-3xl opacity-20"></div>
+
+                            <div className="relative z-10 flex flex-col items-center text-center">
+                                <div className="p-1.5 bg-white/20 backdrop-blur-md rounded-full mb-6 relative">
+                                    <div className="w-28 h-28 rounded-full bg-gray-200 overflow-hidden border-4 border-white shadow-sm">
+                                        <img src={user.avatar} className="w-full h-full object-cover" alt="Profile" />
+                                    </div>
+                                    <div className="absolute bottom-1 right-1 bg-emerald-500 text-white p-1.5 rounded-full border-2 border-white shadow-sm">
+                                        <Check className="w-3 h-3" />
+                                    </div>
+                                </div>
+                                <h3 className="text-2xl font-black mb-1">{user.name}</h3>
+                                <p className="text-emerald-100 font-medium text-sm mb-6">{user.email}</p>
+
+                                <div className="w-full bg-white/10 backdrop-blur-sm rounded-xl p-4 flex justify-between items-center mb-2">
+                                    <div className="text-left">
+                                        <p className="text-[10px] uppercase tracking-wider opacity-70 font-bold">Role</p>
+                                        <p className="font-bold text-sm">Traveler</p>
+                                    </div>
+                                    <div className="h-8 w-px bg-white/20"></div>
+                                    <div className="text-right">
+                                        <p className="text-[10px] uppercase tracking-wider opacity-70 font-bold">Status</p>
+                                        <p className="font-bold text-sm text-emerald-300">Active</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div>
-                            <h4 className="font-bold text-slate-900 mb-4 flex items-center gap-2 text-sm uppercase tracking-wider"><Settings className="w-4 h-4 text-emerald-500" /> Preferences</h4>
-                            <div className="bg-gray-50 rounded-2xl p-4 space-y-2">
-                                <div className="w-full flex items-center justify-between p-3 bg-white rounded-xl border border-gray-100"><span className="text-sm font-bold text-slate-700">Email Notifications</span><div className="w-10 h-5 bg-emerald-500 rounded-full relative cursor-pointer"><div className="absolute right-0.5 top-0.5 w-4 h-4 bg-white rounded-full"></div></div></div>
-                                <div className="w-full flex items-center justify-between p-3 bg-white rounded-xl border border-gray-100"><span className="text-sm font-bold text-slate-700">Language</span><span className="text-xs font-bold text-gray-500">English (US)</span></div>
+                    </div>
+
+                    {/* Quick Stats */}
+                    <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
+                        <h4 className="font-bold text-slate-900 mb-4 text-sm uppercase tracking-wider">Travel Stats</h4>
+                        <div className="space-y-4">
+                            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-2xl">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center text-yellow-600"><Star className="w-5 h-5 fill-current" /></div>
+                                    <span className="font-bold text-slate-700">Total XP</span>
+                                </div>
+                                <span className="font-black text-slate-900">1,250</span>
                             </div>
-                            <h4 className="font-bold text-slate-900 mt-6 mb-4 flex items-center gap-2 text-sm uppercase tracking-wider"><MapPin className="w-4 h-4 text-emerald-500" /> Address Book</h4>
-                            <div className="bg-gray-50 rounded-2xl p-4">
-                                <div className="p-3 bg-white rounded-xl border border-gray-100 flex justify-between items-start">
-                                    <div><p className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded inline-block mb-1">Home</p><p className="text-xs text-slate-600 leading-relaxed font-medium">Jl. Jend. Sudirman No. 12<br />Jakarta Selatan, 12190</p></div>
-                                    <button className="text-gray-400 hover:text-emerald-600"><Settings className="w-4 h-4" /></button>
+                            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-2xl">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600"><MapPin className="w-5 h-5" /></div>
+                                    <span className="font-bold text-slate-700">Trips</span>
+                                </div>
+                                <span className="font-black text-slate-900">12</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Right Column: Detailed Info & Settings */}
+                <div className="lg:col-span-2 space-y-6">
+                    {/* Bio Section */}
+                    <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
+                        <h4 className="font-bold text-slate-900 mb-4 flex items-center gap-2 text-lg">
+                            <span className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600"><User className="w-5 h-5" /></span>
+                            About Me
+                        </h4>
+                        <p className="text-slate-600 leading-relaxed">
+                            {user.bio || "No bio added yet. Tell us about your dream destinations and travel style to get personalized recommendations!"}
+                        </p>
+                    </div>
+
+                    {/* Personal Info Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-gray-100">
+                            <div className="w-12 h-12 rounded-2xl bg-violet-100 flex items-center justify-center text-violet-600 mb-4"><Phone className="w-6 h-6" /></div>
+                            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">{t.dashboard.phone}</p>
+                            <p className="text-xl font-bold text-slate-900">{user.phone || 'Not set'}</p>
+                        </div>
+                        <div className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-gray-100">
+                            <div className="w-12 h-12 rounded-2xl bg-pink-100 flex items-center justify-center text-pink-600 mb-4"><CreditCard className="w-6 h-6" /></div>
+                            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">{t.dashboard.idNumber}</p>
+                            <p className="text-xl font-bold text-slate-900">{user.idNumber || 'Not set'}</p>
+                        </div>
+                    </div>
+
+                    {/* Settings Sections */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
+                            <h4 className="font-bold text-slate-900 mb-6 flex items-center gap-2">
+                                <ShieldCheck className="w-5 h-5 text-emerald-500" /> Security
+                            </h4>
+                            <div className="space-y-3">
+                                <button className="w-full flex items-center justify-between p-4 bg-gray-50 rounded-2xl hover:bg-emerald-50 transition group">
+                                    <span className="font-bold text-slate-700 group-hover:text-emerald-700 transition">Change Password</span>
+                                    <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-emerald-500" />
+                                </button>
+                                <div className="w-full flex items-center justify-between p-4 bg-gray-50 rounded-2xl">
+                                    <span className="font-bold text-slate-700">2FA Status</span>
+                                    <span className="text-xs font-bold text-emerald-600 bg-emerald-100 px-3 py-1 rounded-lg">Enabled</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
+                            <h4 className="font-bold text-slate-900 mb-6 flex items-center gap-2">
+                                <Settings className="w-5 h-5 text-emerald-500" /> Preferences
+                            </h4>
+                            <div className="space-y-3">
+                                <div className="w-full flex items-center justify-between p-4 bg-gray-50 rounded-2xl">
+                                    <span className="font-bold text-slate-700">Notifications</span>
+                                    <div className="w-12 h-6 bg-emerald-500 rounded-full relative cursor-pointer"><div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full shadow-sm"></div></div>
+                                </div>
+                                <div className="w-full flex items-center justify-between p-4 bg-gray-50 rounded-2xl">
+                                    <span className="font-bold text-slate-700">Language</span>
+                                    <span className="text-xs font-bold text-slate-500">English (US)</span>
                                 </div>
                             </div>
                         </div>
@@ -547,62 +736,177 @@ function ProfileView({ user, t, addToast }: ProfileProps) {
     );
 }
 
-function PaymentsView({ t, setActiveModal }: { t: any, setActiveModal: (id: string) => void }) {
+function PaymentsView({ t, setActiveModal, activeModal }: { t: any, setActiveModal: (id: string | null) => void, activeModal: string | null }) {
+    const [methods, setMethods] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const { addToast } = useToast();
+
+    // Fetch methods
+    const fetchMethods = async () => {
+        try {
+            const res = await fetch('/api/user/payment-methods');
+            if (res.ok) {
+                const data = await res.json();
+                setMethods(data);
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchMethods();
+    }, []);
+
+    const handleDelete = async (id: string) => {
+        if (!confirm('Are you sure?')) return;
+        try {
+            const res = await fetch(`/api/user/payment-methods?id=${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                addToast('Payment method removed', 'success');
+                fetchMethods();
+            } else {
+                addToast('Failed to remove', 'error');
+            }
+        } catch (error) {
+            addToast('Error removing method', 'error');
+        }
+    };
+
+    const ewallets = [
+        { id: 'gopay', name: 'GoPay', logo: 'https://upload.wikimedia.org/wikipedia/commons/8/86/Gopay_logo.svg' },
+        { id: 'dana', name: 'DANA', logo: 'https://upload.wikimedia.org/wikipedia/commons/7/72/Logo_dana_blue.svg' },
+        { id: 'ovo', name: 'OVO', logo: 'https://upload.wikimedia.org/wikipedia/commons/e/eb/Logo_ovo_purple.svg' },
+        { id: 'shopeepay', name: 'ShopeePay', logo: 'https://upload.wikimedia.org/wikipedia/commons/f/fe/Shopee.svg' },
+        { id: 'linkaja', name: 'LinkAja', logo: 'https://upload.wikimedia.org/wikipedia/commons/8/85/LinkAja.svg' }
+    ];
+
+
+    // Force rebuild
     return (
         <div className="space-y-6 max-w-2xl">
             <h2 className="text-2xl font-bold text-slate-900">{t.dashboard.paymentMethods}</h2>
-            <div className="grid gap-6">
-                <div className="bg-linear-to-r from-slate-900 to-slate-800 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden group perspective-1000 transition-transform duration-500 hover:rotate-y-2">
-                    <div className="absolute top-0 right-0 p-8 opacity-10"><CreditCard className="w-32 h-32" /></div>
-                    <div className="relative z-10">
-                        <div className="flex justify-between items-start mb-8"><img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" className="w-12 h-auto" alt="Mastercard" /><span className="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">Primary</span></div>
-                        <p className="font-mono opacity-80 mb-8 text-xl tracking-widest text-shadow">**** **** **** 4242</p>
-                        <div className="flex justify-between items-end">
-                            <div><p className="text-[10px] uppercase opacity-60 mb-1 tracking-wider">{t.dashboard.cardHolder}</p><p className="font-bold tracking-wide">JOHN DOE</p></div>
-                            <div><p className="text-[10px] uppercase opacity-60 mb-1 tracking-wider">{t.dashboard.expiryDate}</p><p className="font-bold tracking-wide">12/28</p></div>
+
+            {loading ? (
+                <div className="space-y-4">
+                    <Skeleton className="h-48 w-full rounded-3xl" />
+                    <Skeleton className="h-24 w-full rounded-3xl" />
+                </div>
+            ) : (
+                <div className="grid gap-6">
+                    {methods.length === 0 && (
+                        <div className="text-center py-10 bg-gray-50 rounded-3xl border border-dashed border-gray-200">
+                            <CreditCard className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                            <p className="text-gray-500 font-medium">{t.dashboard.noPaymentMethods || "No saved payment methods"}</p>
                         </div>
-                    </div>
+                    )}
+
+                    {methods.map((method) => {
+                        const wallet = ewallets.find(w => w.id === method.brand);
+
+                        return (
+                            <div key={method.id} className={`rounded-3xl p-6 shadow-md relative overflow-hidden group transition-all duration-300 hover:-translate-y-1 ${method.provider === 'card' ? 'bg-linear-to-r from-slate-900 to-slate-800 text-white' : 'bg-white border border-gray-200'}`}>
+                                {method.provider === 'card' ? (
+                                    <>
+                                        <div className="absolute top-0 right-0 p-8 opacity-10"><CreditCard className="w-32 h-32" /></div>
+                                        <div className="relative z-10">
+                                            <div className="flex justify-between items-start mb-8">
+                                                {/* Brand Logo Placeholder */}
+                                                <div className="text-xl font-bold font-serif italic">{method.brand}</div>
+                                                <button onClick={() => handleDelete(method.id)} className="bg-white/20 hover:bg-red-500 hover:text-white backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider transition">Remove</button>
+                                            </div>
+                                            <p className="font-mono opacity-80 mb-8 text-xl tracking-widest text-shadow">**** **** **** {method.last4}</p>
+                                            <div className="flex justify-between items-end">
+                                                <div><p className="text-[10px] uppercase opacity-60 mb-1 tracking-wider">{t.dashboard.cardHolder}</p><p className="font-bold tracking-wide">{method.holder}</p></div>
+                                                <div><p className="text-[10px] uppercase opacity-60 mb-1 tracking-wider">{t.dashboard.expiryDate}</p><p className="font-bold tracking-wide">{method.expiry}</p></div>
+                                            </div>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <div className="flex justify-between items-center">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-14 h-14 bg-white border border-gray-100 rounded-2xl flex items-center justify-center p-2.5 shadow-sm">
+                                                {wallet ? <img src={wallet.logo} className="w-full h-full object-contain" alt={wallet.name} /> : <Wallet className="w-8 h-8 text-blue-600" />}
+                                            </div>
+                                            <div>
+                                                <h4 className="font-bold text-slate-900 capitalize">{wallet ? wallet.name : method.brand}</h4>
+                                                <p className="text-sm text-gray-500 font-mono">{method.holder}</p>
+                                            </div>
+                                        </div>
+                                        <button onClick={() => handleDelete(method.id)} className="text-sm font-bold text-red-500 hover:text-red-700 transition">Remove</button>
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
                 </div>
-                {/* Transaction History for Card */}
-                <div className="bg-white border text-sm border-gray-200 rounded-3xl p-6">
-                    <h4 className="font-bold text-slate-900 mb-4 flex items-center gap-2"><History className="w-4 h-4 text-gray-400" /> Recent Transactions (Mastercard)</h4>
-                    <div className="space-y-3">
-                        <div className="flex justify-between items-center pb-3 border-b border-gray-50"><div><p className="font-bold text-slate-700">Derawan Dive Trip</p><p className="text-xs text-gray-400">Jan 12, 2024</p></div><span className="font-bold text-slate-900">- IDR 4.500.000</span></div>
-                        <div className="flex justify-between items-center pb-3 border-b border-gray-50"><div><p className="font-bold text-slate-700">Mahakam River Cruise</p><p className="text-xs text-gray-400">Dec 20, 2023</p></div><span className="font-bold text-slate-900">- IDR 2.100.000</span></div>
-                    </div>
-                </div>
-                {/* E-Wallet */}
-                <div className="bg-white border border-gray-200 rounded-3xl p-6 flex flex-col md:flex-row justify-between items-center gap-4 hover:shadow-md transition">
-                    <div className="flex items-center gap-4 w-full md:w-auto">
-                        <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center p-3"><Wallet className="w-8 h-8 text-blue-600" /></div>
-                        <div><h4 className="font-bold text-slate-900">GoPay E-Wallet</h4><p className="text-sm text-gray-500 font-mono">0812 **** 7890</p></div>
-                    </div>
-                    <button className="text-sm font-bold text-red-500 hover:text-red-700 transition">Remove</button>
-                </div>
-            </div>
+            )}
+
             <button onClick={() => setActiveModal('add_card')} className="w-full border-2 border-dashed border-gray-200 rounded-3xl p-6 text-gray-400 font-bold hover:border-emerald-500 hover:text-emerald-600 hover:bg-emerald-50 transition flex items-center justify-center gap-2 group">
                 <div className="w-8 h-8 rounded-full bg-gray-100 group-hover:bg-emerald-500 group-hover:text-white flex items-center justify-center text-gray-400 transition">+</div>{t.dashboard.addNewCard}
             </button>
+            <AddPaymentMethodModal isOpen={activeModal === 'add_card'} onClose={() => setActiveModal(null)} addToast={addToast} />
         </div>
     );
 }
 
 function ChatView({ user, t }: ChatProps) {
-    const [messages, setMessages] = useState([
-        { id: 1, text: "Halo! Ada yang bisa kami bantu hari ini?", sender: 'agent', time: '10:00', read: true }
-    ]);
+    const [messages, setMessages] = useState<any[]>([]);
     const [input, setInput] = useState('');
-    const [isTyping, setIsTyping] = useState(false);
+    const [isSending, setIsSending] = useState(false);
+    const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    const handleSend = (text: string = input) => {
+    // Poll for messages
+    useEffect(() => {
+        const fetchMessages = async () => {
+            try {
+                const res = await fetch('/api/chat');
+                if (res.ok) {
+                    const data = await res.json();
+                    // Only update if different? For now just set
+                    // Ideally compare length or last ID to avoid re-renders or scroll jumps
+                    // But for simple polling this is okay-ish
+                    setMessages(data.messages || []);
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        };
+
+        fetchMessages();
+        const interval = setInterval(fetchMessages, 3000); // Poll every 3s
+        return () => clearInterval(interval);
+    }, []);
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+
+    const handleSend = async (text: string = input) => {
         if (!text.trim()) return;
-        setMessages(prev => [...prev, { id: Date.now(), text: text, sender: 'user', time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), read: false }]);
-        setInput('');
-        setIsTyping(true);
-        setTimeout(() => {
-            setIsTyping(false);
-            setMessages(prev => [...prev.map(m => ({ ...m, read: true })), { id: Date.now() + 1, text: "Terima kasih, tim kami akan segera membalas.", sender: 'agent', time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), read: true }]);
-        }, 2000);
+        setIsSending(true);
+        try {
+            const res = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content: text })
+            });
+            if (res.ok) {
+                const newMsg = await res.json();
+                setMessages(prev => [...prev, newMsg]);
+                setInput('');
+            }
+        } catch (error) {
+            console.error('Failed to send', error);
+        } finally {
+            setIsSending(false);
+        }
     };
 
     return (
@@ -612,25 +916,25 @@ function ChatView({ user, t }: ChatProps) {
                 <div><h4 className="font-bold text-slate-900">BorneoTrip Support</h4><p className="text-xs text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded-full inline-block">Online • Typically replies instantly</p></div>
             </div>
             <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50">
-                <div className="text-center text-xs font-bold text-gray-300 uppercase tracking-widest my-4">Today</div>
+                {messages.length === 0 && (
+                    <div className="text-center text-gray-400 my-10">
+                        <p>No messages yet. Start the conversation!</p>
+                    </div>
+                )}
+
                 {messages.map(m => (
-                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} key={m.id} className={`flex ${m.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                        <div className={`max-w-[75%] p-4 rounded-2xl text-sm shadow-sm ${m.sender === 'user' ? 'bg-emerald-600 text-white rounded-tr-sm' : 'bg-white border border-gray-100 text-gray-700 rounded-tl-sm'}`}>
-                            <p className="leading-relaxed">{m.text}</p>
+                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} key={m.id} className={`flex ${m.senderId === user.id ? 'justify-end' : 'justify-start'}`}>
+                        <div className={`max-w-[75%] p-4 rounded-2xl text-sm shadow-sm ${m.senderId === user.id ? 'bg-emerald-600 text-white rounded-tr-sm' : 'bg-white border border-gray-100 text-gray-700 rounded-tl-sm'}`}>
+                            <p className="leading-relaxed">{m.content}</p>
                             <div className="flex items-center justify-end gap-1 mt-1 opacity-70">
-                                <span className="text-[10px]">{m.time}</span>
-                                {m.sender === 'user' && (m.read ? <CheckCheck className="w-3 h-3 text-white" /> : <CheckCircle className="w-3 h-3 text-white/50" />)}
+                                <span className="text-[10px]">{new Date(m.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                {m.senderId === user.id && (m.read ? <CheckCheck className="w-3 h-3 text-white" /> : <CheckCircle className="w-3 h-3 text-white/50" />)}
                             </div>
                         </div>
                     </motion.div>
                 ))}
-                {isTyping && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
-                        <div className="bg-white border border-gray-100 p-4 rounded-2xl rounded-tl-sm shadow-sm flex gap-1 items-center">
-                            <span className="w-2 h-2 bg-gray-300 rounded-full animate-bounce"></span><span className="w-2 h-2 bg-gray-300 rounded-full animate-bounce delay-75"></span><span className="w-2 h-2 bg-gray-300 rounded-full animate-bounce delay-150"></span>
-                        </div>
-                    </motion.div>
-                )}
+
+                <div ref={messagesEndRef} />
             </div>
             {/* Quick Replies */}
             <div className="px-4 py-2 bg-gray-50 border-t border-gray-100 flex gap-2 overflow-x-auto no-scrollbar">
@@ -643,8 +947,440 @@ function ChatView({ user, t }: ChatProps) {
                     <input type="text" value={input} onChange={e => setInput(e.target.value)} placeholder={t.dashboard.typeMessage} className="flex-1 bg-transparent border-0 py-4 focus:ring-0 text-sm font-medium" />
                     <button type="button" className="text-gray-400 hover:text-emerald-600 transition"><Paperclip className="w-5 h-5" /></button>
                 </div>
-                <button type="submit" disabled={!input.trim()} className="bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed text-white p-4 rounded-2xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-200"><MessageSquare className="w-5 h-5" /></button>
+                <button type="submit" disabled={!input.trim() || isSending} className="bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed text-white p-4 rounded-2xl hover:bg-emerald-700 transition shadow-lg shadow-emerald-200">
+                    {isSending ? <Loader2 className="w-5 h-5 animate-spin" /> : <MessageSquare className="w-5 h-5" />}
+                </button>
             </form>
         </div>
     );
 }
+
+// --- NEW COMPONENTS ---
+
+interface AddressBookProps {
+    t: any;
+    addToast: any;
+}
+
+interface SettingsProps {
+    user: UserType;
+    t: any;
+    addToast: any;
+}
+
+function AddressBookView({ t, addToast }: AddressBookProps) {
+    const [addresses, setAddresses] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [isAdding, setIsAdding] = useState(false);
+
+    const fetchAddresses = async () => {
+        try {
+            const res = await fetch('/api/user/addresses');
+            if (res.ok) {
+                const data = await res.json();
+                setAddresses(data);
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchAddresses();
+    }, []);
+
+    const handleDelete = async (id: string) => {
+        if (!confirm('Delete address?')) return;
+        try {
+            const res = await fetch(`/api/user/addresses?id=${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                addToast('Address deleted', 'success');
+                fetchAddresses();
+            }
+        } catch (error) {
+            addToast('Error deleting address', 'error');
+        }
+    };
+
+    const handleAdd = async (e: FormEvent) => {
+        e.preventDefault();
+        // @ts-ignore
+        const formData = new FormData(e.target);
+        const data = Object.fromEntries(formData.entries());
+        data.isDefault = data.isDefault === 'on';
+
+        try {
+            const res = await fetch('/api/user/addresses', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            if (res.ok) {
+                addToast('Address added', 'success');
+                setIsAdding(false);
+                fetchAddresses();
+            }
+        } catch (error) {
+            addToast('Error adding address', 'error');
+        }
+    };
+
+    return (
+        <div className="space-y-6 max-w-3xl">
+            <h2 className="text-2xl font-bold text-slate-900">Address Book</h2>
+
+            {isAdding ? (
+                <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                    <h3 className="font-bold text-lg mb-4">Add New Address</h3>
+                    <form onSubmit={handleAdd} className="space-y-4">
+                        <div className="grid grid-cols-2 gap-4">
+                            <div><label className="text-xs font-bold uppercase text-gray-400">Label</label><input name="label" placeholder="Home, Office" className="w-full border p-2 rounded-lg" required /></div>
+                            <div><label className="text-xs font-bold uppercase text-gray-400">Recipient</label><input name="recipientName" placeholder="Full Name" className="w-full border p-2 rounded-lg" required /></div>
+                        </div>
+                        <div><label className="text-xs font-bold uppercase text-gray-400">Phone</label><input name="phone" className="w-full border p-2 rounded-lg" required /></div>
+                        <div><label className="text-xs font-bold uppercase text-gray-400">Address</label><textarea name="address" className="w-full border p-2 rounded-lg" required></textarea></div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div><label className="text-xs font-bold uppercase text-gray-400">City</label><input name="city" className="w-full border p-2 rounded-lg" required /></div>
+                            <div><label className="text-xs font-bold uppercase text-gray-400">Postal Code</label><input name="postalCode" className="w-full border p-2 rounded-lg" required /></div>
+                        </div>
+                        <div className="flex items-center gap-2"><input type="checkbox" name="isDefault" id="def" /><label htmlFor="def" className="text-sm font-bold">Set as Default</label></div>
+                        <div className="flex gap-2">
+                            <button type="button" onClick={() => setIsAdding(false)} className="px-4 py-2 rounded-lg border">Cancel</button>
+                            <button type="submit" className="px-4 py-2 rounded-lg bg-emerald-600 text-white font-bold">Save</button>
+                        </div>
+                    </form>
+                </div>
+            ) : (
+                <button onClick={() => setIsAdding(true)} className="flex items-center gap-2 text-emerald-600 font-bold bg-emerald-50 px-4 py-3 rounded-xl hover:bg-emerald-100 transition">+ Add New Address</button>
+            )}
+
+            <div className="grid gap-4">
+                {addresses.map((addr) => (
+                    <div key={addr.id} className="bg-white p-6 rounded-2xl border border-gray-100 flex justify-between items-start">
+                        <div>
+                            <div className="flex items-center gap-2 mb-1">
+                                <span className="font-bold text-slate-900">{addr.label}</span>
+                                {addr.isDefault && <span className="text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold">DEFAULT</span>}
+                            </div>
+                            <p className="font-bold text-sm text-gray-700">{addr.recipientName} ({addr.phone})</p>
+                            <p className="text-sm text-gray-500">{addr.address}, {addr.city} {addr.postalCode}</p>
+                        </div>
+                        <button onClick={() => handleDelete(addr.id)} className="text-red-500 text-xs font-bold hover:underline">Delete</button>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+function SettingsView({ user, t, addToast }: SettingsProps) {
+    const [prefs, setPrefs] = useState({
+        notifications: { email: true, push: true },
+        currency: 'IDR',
+        language: 'en'
+    });
+
+    // 2FA State
+    const [is2FAEnabled, setIs2FAEnabled] = useState(false); // In real app, load from user prop/api 
+    const [setupStep, setSetupStep] = useState(0); // 0: none, 1: qr, 2: verify
+    const [qrData, setQrData] = useState<any>(null);
+    const [token, setToken] = useState('');
+
+    useEffect(() => {
+        // Load initial settings if in user preferences
+        if (user.preferences) {
+            // @ts-ignore
+            setPrefs({ ...prefs, ...user.preferences });
+        }
+        if ((user as any).isTwoFactorEnabled) {
+            setIs2FAEnabled(true);
+        }
+    }, [user]);
+
+    const handleSavePrefs = async () => {
+        try {
+            const res = await fetch('/api/user/settings', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(prefs)
+            });
+            if (res.ok) {
+                addToast('Preferences saved', 'success');
+            }
+        } catch (e) {
+            addToast('Error saving preferences', 'error');
+        }
+    };
+
+    const start2FASetup = async () => {
+        try {
+            const res = await fetch('/api/auth/2fa', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'setup' })
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setQrData(data); // { secret, otpauth }
+                setSetupStep(1);
+            }
+        } catch (e) {
+            addToast('Error starting setup', 'error');
+        }
+    };
+
+    const verify2FA = async () => {
+        try {
+            const res = await fetch('/api/auth/2fa', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'verify', token })
+            });
+            if (res.ok) {
+                addToast('2FA Enabled Successfully', 'success');
+                setIs2FAEnabled(true);
+                setSetupStep(0);
+                setQrData(null);
+            } else {
+                addToast('Invalid Token', 'error');
+            }
+        } catch (e) {
+            addToast('Verification failed', 'error');
+        }
+    };
+
+    return (
+        <div className="space-y-8 max-w-2xl">
+            <h2 className="text-2xl font-bold text-slate-900">Settings</h2>
+
+            {/* PREFERENCES */}
+            <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                <h3 className="font-bold text-lg mb-4">Preferences</h3>
+                <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                        <span className="font-bold text-slate-700">Email Notifications</span>
+                        <div
+                            className={`w-12 h-6 rounded-full relative cursor-pointer px-1 transition-colors ${prefs.notifications.email ? 'bg-emerald-500' : 'bg-gray-200'}`}
+                            onClick={() => setPrefs({ ...prefs, notifications: { ...prefs.notifications, email: !prefs.notifications.email } })}
+                        >
+                            <div className={`w-4 h-4 rounded-full bg-white absolute top-1 transition-all ${prefs.notifications.email ? 'left-7' : 'left-1'}`}></div>
+                        </div>
+                    </div>
+                    <div className="flex justify-between items-center">
+                        <span className="font-bold text-slate-700">Push Notifications</span>
+                        <div
+                            className={`w-12 h-6 rounded-full relative cursor-pointer px-1 transition-colors ${prefs.notifications.push ? 'bg-emerald-500' : 'bg-gray-200'}`}
+                            onClick={() => setPrefs({ ...prefs, notifications: { ...prefs.notifications, push: !prefs.notifications.push } })}
+                        >
+                            <div className={`w-4 h-4 rounded-full bg-white absolute top-1 transition-all ${prefs.notifications.push ? 'left-7' : 'left-1'}`}></div>
+                        </div>
+                    </div>
+                    <div className="pt-4 border-t border-gray-100">
+                        <label className="block text-xs font-bold text-gray-400 uppercase mb-2">Currency</label>
+                        <select
+                            value={prefs.currency}
+                            onChange={(e) => setPrefs({ ...prefs, currency: e.target.value })}
+                            className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2"
+                        >
+                            <option value="IDR">IDR (Indonesian Rupiah)</option>
+                            <option value="USD">USD (US Dollar)</option>
+                        </select>
+                    </div>
+                </div>
+                <div className="mt-6">
+                    <button onClick={handleSavePrefs} className="w-full bg-gray-900 text-white font-bold py-3 rounded-xl hover:bg-black transition">Save Preferences</button>
+                </div>
+            </div>
+
+            {/* 2FA SECURITY */}
+            <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+                <div className="flex items-center gap-3 mb-4">
+                    <ShieldCheck className="w-6 h-6 text-emerald-500" />
+                    <div>
+                        <h3 className="font-bold text-lg">Two-Factor Authentication</h3>
+                        <p className="text-xs text-gray-500">Secure your account with TOTP</p>
+                    </div>
+                </div>
+
+                {!setupStep && !is2FAEnabled && (
+                    <button onClick={start2FASetup} className="bg-emerald-600 text-white font-bold px-6 py-2 rounded-xl hover:bg-emerald-700 transition">Enable 2FA</button>
+                )}
+
+                {setupStep === 1 && qrData && (
+                    <div className="bg-gray-50 p-6 rounded-xl text-center space-y-4">
+                        <p className="text-sm font-bold text-gray-700">Scan this QR Code with Google Authenticator</p>
+                        <div className="w-48 h-48 bg-white mx-auto flex items-center justify-center border">
+                            <img src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrData.otpauth)}`} alt="QR" />
+                        </div>
+                        <p className="text-xs font-mono bg-white p-2 border rounded select-all break-all">{qrData.secret}</p>
+
+                        <input
+                            type="text"
+                            placeholder="Enter 6-digit code"
+                            className="text-center text-xl tracking-widest font-mono w-48 mx-auto border-2 border-emerald-500 rounded-lg p-2"
+                            value={token}
+                            onChange={(e) => setToken(e.target.value)}
+                        />
+                        <button onClick={verify2FA} className="bg-emerald-600 text-white font-bold px-8 py-2 rounded-xl">Verify & Enable</button>
+                    </div>
+                )}
+
+                {is2FAEnabled && (
+                    <div className="bg-emerald-50 border border-emerald-100 p-4 rounded-xl flex justify-between items-center">
+                        <span className="font-bold text-emerald-700 flex items-center gap-2"><CheckCircle className="w-4 h-4" /> 2FA is Enabled</span>
+                        <button className="text-red-500 text-xs font-bold hover:underline">Disable</button>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
+
+function AddPaymentMethodModal({ isOpen, onClose, addToast }: { isOpen: boolean, onClose: () => void, addToast: any }) {
+    const [methodType, setMethodType] = useState<'card' | 'ewallet'>('card');
+    const [selectedEwallet, setSelectedEwallet] = useState<string | null>(null);
+    const [cardNum, setCardNum] = useState('');
+    const [cardExp, setCardExp] = useState('');
+    const [cardCvc, setCardCvc] = useState('');
+    const [cardName, setCardName] = useState('');
+    const [cardBrand, setCardBrand] = useState<string>('card');
+    const [ewalletPhone, setEwalletPhone] = useState('');
+
+    useEffect(() => {
+        const num = cardNum.replace(/\D/g, '');
+        if (num.match(/^4/)) setCardBrand('visa');
+        else if (num.match(/^5[1-5]/)) setCardBrand('mastercard');
+        else if (num.match(/^3[47]/)) setCardBrand('amex');
+        else if (num.match(/^35/)) setCardBrand('jcb');
+        else setCardBrand('card');
+    }, [cardNum]);
+
+    const handleSubmit = async (e: FormEvent) => {
+        e.preventDefault();
+        try {
+            const body = methodType === 'card' ? {
+                provider: 'card',
+                holder: cardName,
+                last4: cardNum.slice(-4),
+                brand: cardBrand !== 'card' ? cardBrand : 'Mastercard', // Fallback
+                expiry: cardExp
+            } : {
+                provider: 'ewallet',
+                holder: ewalletPhone, // Use phone as identifier
+                brand: selectedEwallet,
+                last4: ewalletPhone.slice(-4)
+            };
+
+            const res = await fetch('/api/user/payment-methods', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+
+            if (res.ok) {
+                addToast('Payment method added', 'success');
+                onClose();
+                window.location.reload();
+            } else {
+                addToast('Failed to add method', 'error');
+            }
+        } catch (error) {
+            addToast('Error processing request', 'error');
+        }
+    };
+
+    const ewallets = [
+        { id: 'gopay', name: 'GoPay', logo: 'https://upload.wikimedia.org/wikipedia/commons/8/86/Gopay_logo.svg' },
+        { id: 'dana', name: 'DANA', logo: 'https://upload.wikimedia.org/wikipedia/commons/7/72/Logo_dana_blue.svg' },
+        { id: 'ovo', name: 'OVO', logo: 'https://upload.wikimedia.org/wikipedia/commons/e/eb/Logo_ovo_purple.svg' },
+        { id: 'shopeepay', name: 'ShopeePay', logo: 'https://upload.wikimedia.org/wikipedia/commons/f/fe/Shopee.svg' },
+        { id: 'linkaja', name: 'LinkAja', logo: 'https://upload.wikimedia.org/wikipedia/commons/8/85/LinkAja.svg' }
+    ];
+
+    return (
+        <Modal isOpen={isOpen} onClose={onClose} title="Add Payment Method">
+            <div className="space-y-6">
+                {/* Type Selector */}
+                <div className="flex p-1 bg-gray-100 rounded-xl">
+                    <button onClick={() => setMethodType('card')} className={`flex-1 py-2 rounded-lg text-sm font-bold transition ${methodType === 'card' ? 'bg-white shadow-sm text-slate-900' : 'text-gray-500 hover:text-gray-700'}`}>Credit Card</button>
+                    <button onClick={() => setMethodType('ewallet')} className={`flex-1 py-2 rounded-lg text-sm font-bold transition ${methodType === 'ewallet' ? 'bg-white shadow-sm text-slate-900' : 'text-gray-500 hover:text-gray-700'}`}>E-Wallet</button>
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    {methodType === 'card' ? (
+                        <div className="space-y-4">
+                            {/* Card Preview */}
+                            <div className={`h-48 w-full rounded-2xl p-6 text-white shadow-lg transition-all duration-500 relative overflow-hidden ${cardBrand === 'visa' ? 'bg-[#1A1F71]' : cardBrand === 'mastercard' ? 'bg-[#EB001B]' : cardBrand === 'amex' ? 'bg-[#2E77BC]' : 'bg-slate-800'}`}>
+                                <div className="absolute top-0 right-0 p-6 opacity-20"><CreditCard className="w-32 h-32" /></div>
+                                <div className="relative z-10 flex flex-col justify-between h-full">
+                                    <div className="flex justify-between items-center">
+                                        <div className="w-12 h-8 bg-yellow-400/20 rounded flex items-center justify-center border border-white/20"></div>
+                                        {cardBrand !== 'card' && <span className="font-bold font-mono text-xl uppercase">{cardBrand}</span>}
+                                    </div>
+                                    <div className="space-y-4">
+                                        <div className="font-mono text-xl tracking-widest text-shadow">{cardNum || '0000 0000 0000 0000'}</div>
+                                        <div className="flex justify-between">
+                                            <div><p className="text-[9px] uppercase opacity-70">Holder</p><p className="font-bold text-sm truncate max-w-[150px]">{cardName || 'YOUR NAME'}</p></div>
+                                            <div><p className="text-[9px] uppercase opacity-70">Expires</p><p className="font-bold text-sm">{cardExp || 'MM/YY'}</p></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="col-span-2">
+                                    <label className="block text-xs font-bold text-gray-400 uppercase mb-1">Card Number</label>
+                                    <div className="relative">
+                                        <input value={cardNum} onChange={e => setCardNum(e.target.value)} maxLength={19} placeholder="0000 0000 0000 0000" className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-12 pr-4 py-3 font-mono font-bold focus:ring-2 focus:ring-emerald-500 outline-none transition" required />
+                                        <CreditCard className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
+                                    </div>
+                                </div>
+                                <div className="col-span-2">
+                                    <label className="block text-xs font-bold text-gray-400 uppercase mb-1">Card Holder Name</label>
+                                    <input value={cardName} onChange={e => setCardName(e.target.value.toUpperCase())} placeholder="JOHN DOE" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-bold focus:ring-2 focus:ring-emerald-500 outline-none transition" required />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-400 uppercase mb-1">Expiry</label>
+                                    <input value={cardExp} onChange={e => setCardExp(e.target.value)} placeholder="MM/YY" maxLength={5} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-bold focus:ring-2 focus:ring-emerald-500 outline-none transition" required />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-bold text-gray-400 uppercase mb-1">CVC</label>
+                                    <input value={cardCvc} onChange={e => setCardCvc(e.target.value)} placeholder="123" maxLength={4} type="password" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-bold focus:ring-2 focus:ring-emerald-500 outline-none transition" required />
+                                </div>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="space-y-6">
+                            <div className="grid grid-cols-3 gap-3">
+                                {ewallets.map(ew => (
+                                    <div key={ew.id} onClick={() => setSelectedEwallet(ew.id)} className={`cursor-pointer rounded-xl border p-4 flex flex-col items-center gap-2 transition-all ${selectedEwallet === ew.id ? 'border-emerald-500 bg-emerald-50 ring-2 ring-emerald-500/20' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'}`}>
+                                        <div className="h-8 flex items-center justify-center overflow-hidden"><img src={ew.logo} alt={ew.name} className="h-full object-contain" /></div>
+                                        <p className="text-xs font-bold text-center text-slate-700">{ew.name}</p>
+                                    </div>
+                                ))}
+                            </div>
+                            {selectedEwallet && (
+                                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                                    <label className="block text-xs font-bold text-gray-400 uppercase mb-1">E-Wallet Phone Number</label>
+                                    <div className="relative">
+                                        <input value={ewalletPhone} onChange={e => setEwalletPhone(e.target.value)} placeholder="0812..." className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-12 pr-4 py-3 font-bold focus:ring-2 focus:ring-emerald-500 outline-none transition" required />
+                                        <Phone className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
+                                    </div>
+                                    <p className="text-xs text-gray-500 mt-2">We will send a verification request to this number.</p>
+                                </motion.div>
+                            )}
+                        </div>
+                    )}
+
+                    <button type="submit" className="w-full bg-emerald-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-emerald-200 hover:bg-emerald-700 hover:shadow-emerald-300 transform hover:-translate-y-1 transition-all">
+                        {methodType === 'card' ? 'Add Credit Card' : 'Connect E-Wallet'}
+                    </button>
+                </form>
+            </div>
+        </Modal>
+    );
+}
+
+

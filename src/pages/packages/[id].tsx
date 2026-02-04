@@ -2,6 +2,7 @@ import Layout from '@/components/Layout';
 import { useRouter } from 'next/router';
 import { Clock, MapPin, ShieldCheck, CheckCircle2, Utensils, Bus, Camera, BedDouble, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
+<<<<<<< HEAD
 import { useState, useEffect } from 'react';
 import { DatePicker, Counter, useToast } from '@/components/ui';
 import { TourPackage, ItineraryDetail } from '@/types';
@@ -10,10 +11,20 @@ import { TourPackage, ItineraryDetail } from '@/types';
 interface PackageDetail extends TourPackage {
    itinerary?: ItineraryDetail;
 }
+=======
+import { MapPin, Clock, Star, CheckCircle, ArrowRight, ShieldCheck, Share2, Heart } from 'lucide-react';
+import Image from 'next/image';
+import { useState, useEffect } from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
+>>>>>>> 332fc3d2c0ba159299a2ec965f3ed464edf8bd18
+
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/components/ui';
 
 export default function PackageDetail() {
    const router = useRouter();
    const { id } = router.query;
+<<<<<<< HEAD
    const { addToast } = useToast();
 
    // Helper for localized content
@@ -42,6 +53,26 @@ export default function PackageDetail() {
             .catch(() => setLoading(false));
       }
    }, [id]);
+=======
+   const { packages } = useContent();
+   const { user } = useAuth();
+   const { addToast } = useToast();
+   const { t, locale } = useLanguage();
+   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+   const [pax, setPax] = useState(1);
+   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+   const [itinerary, setItinerary] = useState<any>(null);
+   const [isWishlisted, setIsWishlisted] = useState(false);
+
+   const pkg = id ? packages.find(p => p.id === id) || null : null;
+
+   // Get itinerary from package data (from API)
+   useEffect(() => {
+      if (pkg && (pkg as any).itinerary) {
+         setItinerary((pkg as any).itinerary);
+      }
+   }, [pkg]);
+>>>>>>> 332fc3d2c0ba159299a2ec965f3ed464edf8bd18
 
    if (loading || !pkg) {
       return (
@@ -56,6 +87,7 @@ export default function PackageDetail() {
       );
    }
 
+<<<<<<< HEAD
    // Safe access to itinerary
    const itinerary = pkg.itinerary || {
       days: [],
@@ -72,24 +104,53 @@ export default function PackageDetail() {
       }
 
       const totalPrice = (pkg.price || 0) * pax;
+=======
+   const handleBook = () => {
+      if (!user) {
+         addToast("Please login to book a package", "error");
+         router.push({
+            pathname: '/login',
+            query: { callbackUrl: router.asPath }
+         });
+         return;
+      }
+
+>>>>>>> 332fc3d2c0ba159299a2ec965f3ed464edf8bd18
       router.push({
          pathname: '/checkout',
          query: {
             id: pkg.id,
+<<<<<<< HEAD
             pkg: getLocalized(pkg.title),
             date: date.toLocaleDateString('id-ID'),
             pax: pax,
             price: totalPrice,
+=======
+            pkg: pkg.title[locale === 'en' ? 'en' : 'id'],
+            price: pkg.price, // Fix: Pass unit price
+            image: pkg.imageUrl,
+>>>>>>> 332fc3d2c0ba159299a2ec965f3ed464edf8bd18
             location: pkg.location,
             image: pkg.imageUrl
          }
       });
    };
 
+<<<<<<< HEAD
    // Safe total price
    const currentTotalPrice = (pkg.price || 0) * pax;
 
 
+=======
+   const handleWishlist = () => {
+      setIsWishlisted(!isWishlisted);
+      addToast(t.packageDetail.wishlist + (isWishlisted ? " removed!" : " added!"), "success");
+      // Future: Persist to DB
+   };
+
+   const title = pkg.title[locale === 'en' ? 'en' : 'id'];
+   const description = typeof pkg.description === 'string' ? pkg.description : pkg.description[locale === 'en' ? 'en' : 'id'];
+>>>>>>> 332fc3d2c0ba159299a2ec965f3ed464edf8bd18
 
    return (
       <Layout title={`${getLocalized(pkg.title)} - BorneoTrip`}>
@@ -123,11 +184,148 @@ export default function PackageDetail() {
                      </motion.span>
                   ))}
                </div>
+<<<<<<< HEAD
                <h1 className="text-3xl md:text-5xl lg:text-6xl font-black mb-4 leading-tight drop-shadow-xl">{getLocalized(pkg.title)}</h1>
                <div className="flex flex-wrap items-center gap-6 text-sm md:text-base text-gray-200">
                   <div className="flex items-center gap-2 font-medium bg-black/20 backdrop-blur px-3 py-1 rounded-full"><Clock className="w-5 h-5 text-emerald-400" /> {pkg.duration}</div>
                   <div className="flex items-center gap-2 font-medium bg-black/20 backdrop-blur px-3 py-1 rounded-full"><MapPin className="w-5 h-5 text-emerald-400" /> {pkg.location}</div>
                   <div className="flex items-center gap-2 font-medium bg-black/20 backdrop-blur px-3 py-1 rounded-full"><ShieldCheck className="w-5 h-5 text-emerald-400" /> Eco-Rating {pkg.ecoRating}/5</div>
+=======
+            </div>
+
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
+               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  {/* Main Content */}
+                  <div className="lg:col-span-2 space-y-8">
+
+                     {/* Overview */}
+                     <div className="bg-white rounded-3xl p-8 shadow-xl border border-gray-100">
+                        <h2 className="text-2xl font-bold text-gray-900 mb-4">{t.packageDetail.about}</h2>
+                        <p className="text-gray-600 leading-relaxed text-lg mb-6">{pkg.description[locale === 'en' ? 'en' : 'id']}</p>
+
+                        <div className="grid grid-cols-2 gap-4">
+                           {pkg.facilities.map((fac, idx) => (
+                              <div key={idx} className="flex items-center gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                                 <CheckCircle className="w-5 h-5 text-emerald-500 shrink-0" />
+                                 <span className="font-bold text-gray-700 text-sm">{fac}</span>
+                              </div>
+                           ))}
+                        </div>
+                     </div>
+
+                     {/* Itinerary */}
+                     {itinerary && (
+                        <div className="bg-white rounded-3xl p-8 shadow-xl border border-gray-100">
+                           <h2 className="text-2xl font-bold text-gray-900 mb-8">{t.packageDetail.itinerary}</h2>
+                           <div className="space-y-8 relative">
+                              <div className="absolute left-4 top-4 bottom-4 w-0.5 bg-gray-200"></div>
+                              {itinerary.days.map((day: any, idx: number) => (
+                                 <div key={idx} className="relative pl-12 group">
+                                    <div className="absolute left-0 top-0 w-8 h-8 rounded-full bg-emerald-100 border-4 border-white flex items-center justify-center font-bold text-emerald-600 z-10 group-hover:bg-emerald-500 group-hover:text-white transition shadow-sm">
+                                       {day.day}
+                                    </div>
+                                    <h3 className="text-lg font-bold text-gray-900 mb-4">{day.title}</h3>
+                                    <div className="space-y-4">
+                                       {day.activities.map((act: any, actIdx: number) => (
+                                          <div key={actIdx} className="bg-slate-50 p-4 rounded-2xl hover:bg-slate-100 transition border border-slate-100/50">
+                                             <div className="flex items-center gap-3 mb-1">
+                                                <span className="px-2 py-1 bg-white rounded-lg text-xs font-bold text-emerald-600 border border-emerald-100">{act.time}</span>
+                                                <span className={`text-xs font-bold uppercase tracking-wider ${act.type === 'Meal' ? 'text-orange-500' : 'text-blue-500'}`}>{act.type}</span>
+                                             </div>
+                                             <p className="font-bold text-gray-800">{act.title}</p>
+                                             <p className="text-sm text-gray-500">{act.description}</p>
+                                          </div>
+                                       ))}
+                                    </div>
+                                 </div>
+                              ))}
+                           </div>
+                        </div>
+                     )}
+
+                  </div>
+
+                  {/* Booking Sidebar */}
+                  <div className="lg:col-span-1 relative">
+                     <div className="sticky top-28 space-y-6">
+                        <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 p-6 md:p-8 overflow-hidden relative">
+                           <div className="absolute top-0 right-0 w-40 h-40 bg-emerald-50 rounded-bl-full -z-0 opacity-50"></div>
+
+                           <div className="relative z-10">
+                              <div className="flex items-end gap-2 mb-6">
+                                 <div className="flex flex-col">
+                                    <span className="text-sm text-gray-500 font-bold line-through">Rp {(pkg.price * 1.2).toLocaleString('id-ID')}</span>
+                                    <span className="text-3xl font-black text-gray-900">Rp {pkg.price.toLocaleString('id-ID')}</span>
+                                 </div>
+                                 <span className="text-sm text-gray-500 font-medium mb-1.5">{t.packageDetail.perPerson}</span>
+                              </div>
+
+                              <div className="space-y-4 mb-8">
+                                 <div className="space-y-2">
+                                    <label className="text-xs font-bold text-gray-500 uppercase">{t.packageDetail.selectDate}</label>
+                                    <DatePicker
+                                       label={t.packageDetail.departureDate}
+                                       placeholder={t.packageDetail.selectDate}
+                                       selected={selectedDate}
+                                       onChange={setSelectedDate}
+                                    />
+                                 </div>
+
+                                 <div className="space-y-2">
+                                    <label className="text-xs font-bold text-gray-500 uppercase">{t.packageDetail.participants}</label>
+                                    <div className="flex items-center bg-gray-50 rounded-xl p-2 border border-gray-200">
+                                       <button onClick={() => setPax(Math.max(1, pax - 1))} className="w-10 h-10 bg-white rounded-lg shadow-sm font-bold text-gray-600 hover:bg-gray-100 flex items-center justify-center transition">-</button>
+                                       <div className="flex-1 text-center font-bold text-gray-900">{pax} {t.packageDetail.person}</div>
+                                       <button onClick={() => setPax(pax + 1)} className="w-10 h-10 bg-emerald-500 rounded-lg shadow-emerald-200 shadow-sm font-bold text-white hover:bg-emerald-600 flex items-center justify-center transition">+</button>
+                                    </div>
+                                 </div>
+
+                                 <div className="pt-4 border-t border-dashed border-gray-200">
+                                    <div className="flex justify-between items-center mb-1">
+                                       <span className="text-sm text-gray-500">{t.packageDetail.totalPrice}</span>
+                                       <span className="font-bold text-2xl text-emerald-600">Rp {(pkg.price * pax).toLocaleString('id-ID')}</span>
+                                    </div>
+                                    <p className="text-xs text-gray-400 text-right">{t.packageDetail.taxIncluded}</p>
+                                 </div>
+                              </div>
+
+                              <button
+                                 onClick={handleBook}
+                                 className="w-full py-4 bg-gray-900 hover:bg-emerald-600 text-white font-bold rounded-xl shadow-xl shadow-gray-200 hover:shadow-emerald-200 transition-all duration-300 flex items-center justify-center gap-2 group"
+                              >
+                                 {t.packageDetail.bookNow} <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
+                              </button>
+
+                              <div className="mt-4 flex items-center justify-center gap-2 text-xs text-gray-400 font-medium">
+                                 <ShieldCheck className="w-4 h-4 text-emerald-500" /> {t.packageDetail.bestPrice}
+                              </div>
+                           </div>
+                        </div>
+
+                        <div className="flex gap-4">
+                           <button onClick={() => setIsShareModalOpen(true)} className="flex-1 py-3 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 font-bold text-sm text-gray-600 flex items-center justify-center gap-2 transition">
+                              <Share2 className="w-4 h-4" /> {t.packageDetail.share}
+                           </button>
+                           <ShareModal
+                              isOpen={isShareModalOpen}
+                              onClose={() => setIsShareModalOpen(false)}
+                              title={title}
+                           />
+
+
+                           // ... (existing code)
+
+                           <button
+                              onClick={handleWishlist}
+                              className={`flex-1 py-3 rounded-xl bg-white border font-bold text-sm flex items-center justify-center gap-2 transition group ${isWishlisted ? 'border-red-200 text-red-500' : 'border-gray-200 text-gray-600 hover:border-red-200 hover:text-red-500'}`}
+                           >
+                              <Heart className={`w-4 h-4 ${isWishlisted ? 'fill-red-500 text-red-500' : 'group-hover:fill-red-500'}`} /> {t.packageDetail.wishlist}
+                           </button>
+
+                        </div>
+                     </div>
+                  </div>
+>>>>>>> 332fc3d2c0ba159299a2ec965f3ed464edf8bd18
                </div>
             </motion.div>
          </div>

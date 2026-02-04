@@ -100,7 +100,7 @@ export default function SmartItinerary({ destination }: { destination: string })
                                     <select
                                         value={preferences.interest}
                                         onChange={(e) => setPreferences({ ...preferences, interest: e.target.value })}
-                                        className="w-full py-3 px-4 rounded-xl font-bold border-2 border-gray-100 bg-white focus:border-indigo-500 focus:outline-none text-gray-700 bg-[url('')]"
+                                        className="w-full py-3 px-4 rounded-xl font-bold border-2 border-gray-100 bg-white focus:border-indigo-500 focus:outline-none text-gray-700"
                                     >
                                         <option>Nature & Wildlife</option>
                                         <option>Culture & History</option>

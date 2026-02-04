@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { MapPin } from 'lucide-react';
-import { DESTINATIONS, REGIONS } from '@/data/mockData';
+import { useContent } from '@/contexts/ContentContext';
 
 interface LocationInputProps {
     value: string;
@@ -20,24 +20,24 @@ export default function LocationInput({
     const [suggestions, setSuggestions] = useState<string[]>([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const wrapperRef = useRef<HTMLDivElement>(null);
+    const { destinations } = useContent();
 
-    // Aggregate all unique locations from mock data
+    // Aggregate all unique locations from context data
     const allLocations = useRef<string[]>([]);
 
     useEffect(() => {
         const locations = new Set<string>();
 
-        // Add standalone destinations
-        DESTINATIONS.forEach(d => locations.add(d));
-
         // Add regions and their nested destinations
-        REGIONS.forEach(r => {
+        destinations.forEach((r: any) => {
             locations.add(r.name);
-            r.destinations.forEach(d => locations.add(`${d}, ${r.name}`));
+            if (r.destinations) {
+                r.destinations.forEach((d: string) => locations.add(`${d}, ${r.name}`));
+            }
         });
 
         allLocations.current = Array.from(locations).sort();
-    }, []);
+    }, [destinations]);
 
     useEffect(() => {
         // Close suggestions when clicking outside

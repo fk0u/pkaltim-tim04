@@ -7,7 +7,11 @@ import { useToast } from '@/components/ui';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useLanguage } from '@/contexts/LanguageContext';
+<<<<<<< HEAD
 import { getLocalized } from '@/utils/localization';
+=======
+import { WishlistButton } from '@/components/ui/WishlistButton';
+>>>>>>> 332fc3d2c0ba159299a2ec965f3ed464edf8bd18
 
 export default function EventsPage() {
   const { events } = useContent();
@@ -165,6 +169,9 @@ export default function EventsPage() {
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80"></div>
                         <div className="absolute top-4 right-4 bg-white/30 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-white border border-white/20">
                           {getFilterLabel(event.category)}
+                        </div>
+                        <div className="absolute top-4 left-4 z-10">
+                          <WishlistButton productId={event.id} type="Event" className="bg-white/30 backdrop-blur-md text-white hover:bg-white hover:text-rose-500 border border-white/20" />
                         </div>
                         <div className="absolute bottom-4 left-4 right-4 text-white">
                           <div className="flex items-center gap-2 text-sm font-medium mb-1 text-green-300">

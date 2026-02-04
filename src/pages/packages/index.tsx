@@ -5,7 +5,11 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
+<<<<<<< HEAD
 import { getLocalized } from '@/utils/localization';
+=======
+import { WishlistButton } from '@/components/ui/WishlistButton';
+>>>>>>> 332fc3d2c0ba159299a2ec965f3ed464edf8bd18
 
 export default function PackagesPage() {
     const { packages } = useContent();
@@ -141,6 +145,9 @@ export default function PackagesPage() {
                                                     <span className={`px-3 py-1 rounded-full text-xs font-bold border flex items-center gap-1 shadow-sm ${getEcoColor(pkg.rating)}`}>
                                                         <Leaf className="w-3 h-3" /> {t.packages.card.eco} {pkg.rating}/5
                                                     </span>
+                                                </div>
+                                                <div className="absolute top-4 right-4 z-10">
+                                                    <WishlistButton productId={pkg.id} type="Package" className="bg-white/90 shadow-md backdrop-blur-md hover:bg-white" />
                                                 </div>
                                                 <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-gray-800 flex items-center gap-1 shadow-md">
                                                     <Clock className="w-3 h-3 text-emerald-600" /> {pkg.duration}

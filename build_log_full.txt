@@ -1,0 +1,243 @@
+﻿
+> borneo-trip@0.1.0 build
+> next build
+
+node.exe : ΓÜá 
+Warning: Next.js 
+inferred your 
+workspace root, but 
+it may not be 
+correct.
+At line:1 char:1
++ & "C:\Program Files
+\nodejs/node.exe" 
+"C:\Users\HP 
+VICTUS\AppData\Roam 
+...
++ ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (ΓÜá War   
+ ning: Ne...not b    
+e correct.:Strin    
+g) [], RemoteExc    
+eption
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+ We detected 
+multiple lockfiles 
+and selected the 
+directory of D:\Proje
+ct\package-lock.json 
+as the root 
+directory.
+ To silence this 
+warning, set 
+`turbopack.root` in 
+your Next.js config, 
+or consider removing 
+one of the lockfiles 
+if it's not needed.
+   See https://nextjs
+.org/docs/app/api-ref
+erence/config/next-co
+nfig-js/turbopack#roo
+t-directory for more 
+information.
+ Detected additional 
+lockfiles: 
+   * D:\Project\TIM-0
+4\package-lock.json
+
+Γû▓ Next.js 16.1.2 (Turbopack)
+- Environments: .env.local, .env
+
+ΓÜá The "middleware" 
+file convention is 
+deprecated. Please 
+use "proxy" instead. 
+Learn more: https://n
+extjs.org/docs/messag
+es/middleware-to-prox
+y
+  Running TypeScript ...
+  Creating an optimized production build ...
+
+> Build error 
+occurred
+Error: Turbopack 
+build failed with 2 
+errors:
+./TIM-04/node_modules
+/mapbox-gl/dist/mapbo
+x-gl.css
+Error evaluating 
+Node.js code
+Error: Cannot find 
+module '../lightningc
+ss.win32-x64-msvc.nod
+e'
+Require stack:
+- D:\Project\TIM-04\n
+ode_modules\lightning
+css\node\index.js
+- D:\Project\TIM-04\n
+ode_modules\@tailwind
+css\node\dist\index.j
+s
+- D:\Project\TIM-04\n
+ode_modules\@tailwind
+css\postcss\dist\inde
+x.js
+- D:\Project\TIM-04\.
+next\build\chunks\[ro
+ot-of-the-server]__e9
+81dc06._.js
+- D:\Project\TIM-04\.
+next\build\chunks\[tu
+rbopack]_runtime.js
+- D:\Project\TIM-04\.
+next\build\postcss.js
+    [at Module._resol
+veFilename (node:inte
+rnal/modules/cjs/load
+er:1410:15)]
+    [at 
+defaultResolveImpl (n
+ode:internal/modules/
+cjs/loader:1051:19)]
+    [at resolveForCJS
+WithHooks (node:inter
+nal/modules/cjs/loade
+r:1056:22)]
+    [at Module._load 
+(node:internal/module
+s/cjs/loader:1219:37)
+]
+    [at TracingChanne
+l.traceSync (node:dia
+gnostics_channel:322:
+14)]
+    [at 
+wrapModuleLoad (node:
+internal/modules/cjs/
+loader:238:24)]
+    [at 
+Module.require (node:
+internal/modules/cjs/
+loader:1493:12)]
+    [at require (node
+:internal/modules/hel
+pers:152:16)]
+    [at 
+Object.<anonymous> (D
+:\Project\TIM-04\node
+_modules\lightningcss
+\node\index.js:22:22)
+]
+    [at 
+Module._compile (node
+:internal/modules/cjs
+/loader:1738:14)]
+
+Import trace:
+  Browser:
+    ./TIM-04/node_mod
+ules/mapbox-gl/dist/m
+apbox-gl.css
+    ./TIM-04/src/comp
+onents/InteractiveMap
+.tsx
+    ./TIM-04/src/comp
+onents/AboutEastKalim
+antan.tsx
+    ./TIM-04/src/page
+s/index.tsx
+
+
+./TIM-04/src/styles/g
+lobals.css
+Error evaluating 
+Node.js code
+Error: Cannot find 
+module '../lightningc
+ss.win32-x64-msvc.nod
+e'
+Require stack:
+- D:\Project\TIM-04\n
+ode_modules\lightning
+css\node\index.js
+- D:\Project\TIM-04\n
+ode_modules\@tailwind
+css\node\dist\index.j
+s
+- D:\Project\TIM-04\n
+ode_modules\@tailwind
+css\postcss\dist\inde
+x.js
+- D:\Project\TIM-04\.
+next\build\chunks\[ro
+ot-of-the-server]__e9
+81dc06._.js
+- D:\Project\TIM-04\.
+next\build\chunks\[tu
+rbopack]_runtime.js
+- D:\Project\TIM-04\.
+next\build\postcss.js
+    [at Module._resol
+veFilename (node:inte
+rnal/modules/cjs/load
+er:1410:15)]
+    [at 
+defaultResolveImpl (n
+ode:internal/modules/
+cjs/loader:1051:19)]
+    [at resolveForCJS
+WithHooks (node:inter
+nal/modules/cjs/loade
+r:1056:22)]
+    [at Module._load 
+(node:internal/module
+s/cjs/loader:1219:37)
+]
+    [at TracingChanne
+l.traceSync (node:dia
+gnostics_channel:322:
+14)]
+    [at 
+wrapModuleLoad (node:
+internal/modules/cjs/
+loader:238:24)]
+    [at 
+Module.require (node:
+internal/modules/cjs/
+loader:1493:12)]
+    [at require (node
+:internal/modules/hel
+pers:152:16)]
+    [at 
+Object.<anonymous> (D
+:\Project\TIM-04\node
+_modules\lightningcss
+\node\index.js:22:22)
+]
+    [at 
+Module._compile (node
+:internal/modules/cjs
+/loader:1738:14)]
+
+Import trace:
+  Browser:
+    ./TIM-04/src/styl
+es/globals.css
+    ./TIM-04/src/page
+s/_app.tsx
+
+
+    at ignore-listed 
+frames

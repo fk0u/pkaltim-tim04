@@ -1,6 +1,11 @@
 import { useRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+<<<<<<< HEAD
 import { MapPin, Users, Ruler, Building, Grid, TreePine } from 'lucide-react'; // Removed ArrowRight if unused
+=======
+import { useContent } from '@/contexts/ContentContext';
+import { MapPin, Users, Ruler, Building, ArrowRight, Grid, TreePine } from 'lucide-react';
+>>>>>>> 332fc3d2c0ba159299a2ec965f3ed464edf8bd18
 import Link from 'next/link';
 import InteractiveMap from './InteractiveMap';
 
@@ -21,6 +26,7 @@ interface Region {
 }
 
 export default function RegionExplorer() {
+<<<<<<< HEAD
     const [regions, setRegions] = useState<Region[]>([]);
 
     useEffect(() => {
@@ -34,6 +40,11 @@ export default function RegionExplorer() {
             })
             .catch(err => console.error(err));
     }, []);
+=======
+    const { t } = useLanguage();
+    const { destinations: REGIONS, loading } = useContent();
+
+>>>>>>> 332fc3d2c0ba159299a2ec965f3ed464edf8bd18
 
     return (
         <section className="py-20 md:py-24 bg-gray-50 overflow-hidden" id="region-explorer">

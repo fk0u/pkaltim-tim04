@@ -120,7 +120,7 @@ export default function AboutPage() {
                      initial={{ opacity: 0, x: -50 }}
                      whileInView={{ opacity: 1, x: 0 }}
                      transition={{ delay: 0.2 }}
-                     src="https://images.unsplash.com/photo-1596401057633-565652b5d249?auto=format&fit=crop&q=80"
+                     src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSh00zklFrQev0gZAbiir7FpiuZ12AWB57wDg&s?auto=format&fit=crop&q=80"
                      alt="Masyarakat Lokal"
                      className="rounded-3xl shadow-2xl w-full h-[450px] object-cover rotate-2 hover:rotate-0 transition duration-700"
                   />

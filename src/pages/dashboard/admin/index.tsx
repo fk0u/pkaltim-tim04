@@ -43,6 +43,25 @@ export default function AdminDashboard() {
 
     const STATUS_COLORS = ['#10B981', '#F59E0B', '#EF4444', '#3B82F6'];
 
+    // Category Data (Calculated from bookings)
+    const categoryCounts: { [key: string]: number } = {};
+    bookings.forEach(b => {
+        let cat = 'Other';
+        if (b.event?.category) cat = b.event.category;
+        else if (b.package) cat = 'Tour Package';
+
+        categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
+    });
+
+    const categoryDataParts = Object.entries(categoryCounts).map(([name, value], index) => ({
+        name,
+        value,
+        color: ['#10b981', '#8b5cf6', '#f59e0b', '#ef4444', '#3b82f6'][index % 5]
+    }));
+
+    // meaningful fallback if no data
+    const categoryData = categoryDataParts.length > 0 ? categoryDataParts : [{ name: 'No Data', value: 1, color: '#e5e7eb' }];
+
     return (
         <AdminLayout title="Overview">
             <div className="max-w-7xl mx-auto space-y-8 pb-10">
@@ -83,7 +102,7 @@ export default function AdminDashboard() {
                     />
                 </div>
 
-                <DashboardAnalytics />
+                <DashboardAnalytics revenueData={revenueData} statusData={statusData} categoryData={categoryData} />
 
                 {/* Recent Transactions */}
                 <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
@@ -107,7 +126,7 @@ export default function AdminDashboard() {
                                     <tr key={booking.id} className="hover:bg-gray-50 transition">
                                         <td className="py-4 pl-4 font-bold text-gray-900">{booking.customerName}</td>
                                         <td className="py-4 text-sm text-gray-600">{booking.productName}</td>
-                                        <td className="py-4 text-sm text-gray-500">{booking.date}</td>
+                                        <td className="py-4 text-sm text-gray-500">{new Date(booking.date || booking.createdAt || new Date()).toLocaleDateString()}</td>
                                         <td className="py-4 font-bold text-gray-900">Rp {booking.amount.toLocaleString()}</td>
                                         <td className="py-4">
                                             <span className={`px-3 py-1 rounded-full text-xs font-bold ${booking.status === 'Paid' ? 'bg-emerald-100 text-emerald-700' :

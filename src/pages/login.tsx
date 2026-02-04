@@ -1,14 +1,18 @@
 ﻿import Image from 'next/image';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { useAuth } from '@/contexts/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Lock, ArrowRight, Shield, Briefcase, Mail, Info, Check, ArrowLeft, Send } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useToast } from '@/components/ui';
 
 export default function LoginPage() {
+    const router = useRouter();
     const { login, loginSocial } = useAuth();
+    const { addToast } = useToast();
     const { t } = useLanguage();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -27,9 +31,12 @@ export default function LoginPage() {
         e.preventDefault();
         setIsLoading(true);
 
-        const success = await login(email, password);
-        if (!success) {
-            alert('Login failed. Please check your credentials.');
+        const { callbackUrl } = router.query;
+        const result = await login(email, password, Array.isArray(callbackUrl) ? callbackUrl[0] : callbackUrl);
+        if (!result.success) {
+            addToast(`Login gagal: ${result.error}`, 'error');
+        } else {
+            addToast('Login berhasil! Selamat datang kembali.', 'success');
         }
         setIsLoading(false);
     };
@@ -147,16 +154,7 @@ export default function LoginPage() {
 
                                     <form className="space-y-6" onSubmit={handleLogin}>
                                         {/* Demo Credentials Hint */}
-                                        {activeTab === 'staff' && (
-                                            <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 flex items-start gap-3">
-                                                <Info className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
-                                                <div className="text-xs text-blue-800">
-                                                    <p className="font-bold mb-1">{t.auth.demoHint}</p>
-                                                    <p>Admin: <span className="font-mono bg-blue-100 px-1 rounded">admin@borneotrip.id</span></p>
-                                                    <p>Pass: <span className="font-mono bg-blue-100 px-1 rounded">admin123</span></p>
-                                                </div>
-                                            </div>
-                                        )}
+                                        {/* Demo Credentials Hint Removed */}
 
                                         <div className="space-y-4">
                                             <div>

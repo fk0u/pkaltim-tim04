@@ -5,8 +5,12 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
 import { Save, ArrowLeft, Plus, Trash2, Image as ImageIcon, CheckCircle, List, Clock, MapPin, DollarSign, Star, Globe, XCircle } from 'lucide-react';
+<<<<<<< HEAD
 import { TourPackage, ItineraryDetail, LocalizedString } from '@/types';
 import { ITINERARY_DETAILS } from '@/data/mockData';
+=======
+import { TourPackage, ItineraryDetail } from '@/types';
+>>>>>>> 332fc3d2c0ba159299a2ec965f3ed464edf8bd18
 import ImageUpload from '@/components/ui/ImageUpload';
 import LocationInput from '@/components/ui/LocationInput';
 import { ensureLocalized } from '@/utils/localization';
@@ -39,8 +43,9 @@ export default function PackageForm() {
 
     useEffect(() => {
         if (isEditMode && id && packages.length > 0) {
-            const pkg = packages.find(p => p.id === id);
+            const pkg = packages.find(p => p.id === id) as any;
             if (pkg) {
+<<<<<<< HEAD
                 setFormData({
                     ...pkg,
                     title: ensureLocalized(pkg.title),
@@ -49,6 +54,13 @@ export default function PackageForm() {
                 // Load itinerary from mock/store (Mock for now as it's separate)
                 const itin = ITINERARY_DETAILS.find(i => i.packageId === id);
                 if (itin) setItineraryData(itin);
+=======
+                setFormData(pkg);
+                // Load itinerary from package data (from API)
+                if (pkg.itinerary) {
+                    setItineraryData(pkg.itinerary);
+                }
+>>>>>>> 332fc3d2c0ba159299a2ec965f3ed464edf8bd18
             }
         } else {
             setFormData(prev => ({ ...prev, id: `pkg_${Date.now()}` }));
@@ -92,17 +104,35 @@ export default function PackageForm() {
             return;
         }
 
+        let success = false;
         if (isEditMode) {
+<<<<<<< HEAD
             updatePackage(id as string, formData);
+=======
+            success = await updatePackage(formData);
+>>>>>>> 332fc3d2c0ba159299a2ec965f3ed464edf8bd18
         } else {
-            addPackage(formData);
+            // Remove temp ID
+            const { id: _, ...dataToSend } = formData;
+            // @ts-ignore
+            success = await addPackage(dataToSend);
         }
 
+<<<<<<< HEAD
         // Simulate API delay
         setTimeout(() => {
             setIsLoading(false);
             router.push('/dashboard/admin/products?tab=packages');
         }, 800);
+=======
+        setIsLoading(false);
+
+        if (success) {
+            router.push('/dashboard/admin/products');
+        } else {
+            alert("Failed to save package. Please try again.");
+        }
+>>>>>>> 332fc3d2c0ba159299a2ec965f3ed464edf8bd18
     };
 
     return (

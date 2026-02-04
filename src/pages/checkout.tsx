@@ -3,11 +3,16 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useBooking } from '@/contexts/BookingContext';
 import { useToast } from '@/components/ui';
 import { motion, AnimatePresence } from 'framer-motion';
+<<<<<<< HEAD
 import { ArrowLeft, CheckCircle, ShieldCheck, User, Calendar, Users, MapPin, BadgeCheck, Banknote, Wallet, Building2, QrCode } from 'lucide-react';
+=======
+import { ArrowLeft, CheckCircle, ShieldCheck, User, Calendar, Users, MapPin, BadgeCheck, Banknote, Wallet, Building2, QrCode, AlertCircle, Baby, Ticket, Loader2, CreditCard, Clock } from 'lucide-react';
+>>>>>>> 332fc3d2c0ba159299a2ec965f3ed464edf8bd18
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import PaymentStep from '@/components/checkout/PaymentStep';
 
 export default function CheckoutPage() {
     const { user, login } = useAuth();
@@ -31,7 +36,112 @@ export default function CheckoutPage() {
         setBookingId(`BK-${Math.floor(Math.random() * 1000000)}`);
     }, []);
 
+<<<<<<< HEAD
     const handlePayment = () => {
+=======
+    // Fetch Saved Payment Methods
+    const [savedMethods, setSavedMethods] = useState<any[]>([]);
+    useEffect(() => {
+        if (step === 2 && user) {
+            fetch('/api/user/payment-methods')
+                .then(res => res.json())
+                .then(data => {
+                    if (Array.isArray(data)) setSavedMethods(data);
+                })
+                .catch(err => console.error(err));
+        }
+    }, [step, user]);
+
+    // Validation & Traveler Array Sync
+    useEffect(() => {
+        if (!router.isReady) return;
+
+        // 1. Quota Check
+        const potentialTotal = bookedCount + totalPax;
+        if (potentialTotal > quota) {
+            setQuotaError(`${t.checkout.quotaExceeded} (${quota - bookedCount} ${t.packageDetail.quotaLeft})`);
+            // Only show toast if error wasn't already set to avoid loops
+            if (!quotaError) addToast(t.checkout.quotaExceeded, 'error');
+        } else {
+            setQuotaError(null);
+        }
+
+        // 2. Sync Travelers Array
+        setTravelers(prev => {
+            const currentCount = prev.length;
+            const targetCount = totalPax;
+
+            if (currentCount === targetCount) {
+                // Just update types if counts shifted? 
+                // A bit complex to detect "shift", so we reconstruct if types mismatch
+                const needsUpdate = prev.filter(t => t.type === 'Adult').length !== adultCount;
+                if (!needsUpdate) return prev;
+            }
+
+            const newTravelers: TravelerDetail[] = [];
+
+            // Add Adults
+            for (let i = 0; i < adultCount; i++) {
+                const existingAdult = prev.find((t, idx) => t.type === 'Adult' && idx === i); // Simple heuristic
+                newTravelers.push(existingAdult || {
+                    type: 'Adult',
+                    title: 'Mr',
+                    fullName: (i === 0 && user) ? user.name : '',
+                    idType: 'KTP',
+                    idNumber: (i === 0 && user) ? (user as any).idNumber || '' : '',
+                    nationality: 'Indonesia',
+                    phoneNumber: (i === 0 && user) ? (user as any).phone || '' : '',
+                });
+            }
+
+            // Add Children
+            for (let i = 0; i < childCount; i++) {
+                // Find existing child logic could be improved but simple push is okay for now
+                newTravelers.push({
+                    type: 'Child',
+                    title: 'Ms', // Default for kids? Or Mr/Ms
+                    fullName: '',
+                    idType: 'Passport', // Often kids don't have KTP
+                    idNumber: '', // NIA vs Passport
+                    nationality: 'Indonesia',
+                    age: 5
+                });
+            }
+
+            // Re-assign lead traveler name if simple push lost it (edge case), handled above
+            return newTravelers;
+        });
+
+    }, [adultCount, childCount, bookedCount, quota, router.isReady, user, isEvent, t, addToast]);
+
+
+    const updateTraveler = (index: number, field: keyof TravelerDetail, value: string | number) => {
+        const newTravelers = [...travelers];
+        newTravelers[index] = { ...newTravelers[index], [field]: value };
+        setTravelers(newTravelers);
+    };
+
+    const handleIncrement = (type: 'adult' | 'child') => {
+        if (type === 'adult') {
+            if (totalPax < (quota - bookedCount)) setAdultCount(prev => prev + 1);
+            else addToast(t.checkout.quotaExceeded, 'error');
+        } else {
+            if (totalPax < (quota - bookedCount)) setChildCount(prev => prev + 1);
+            else addToast(t.checkout.quotaExceeded, 'error');
+        }
+    };
+
+    const handleDecrement = (type: 'adult' | 'child') => {
+        if (type === 'adult') {
+            if (adultCount > 1) setAdultCount(prev => prev - 1);
+        } else {
+            if (childCount > 0) setChildCount(prev => prev - 1);
+        }
+    };
+
+
+    const handlePayment = async () => {
+>>>>>>> 332fc3d2c0ba159299a2ec965f3ed464edf8bd18
         if (!user) {
             addToast("Silakan login terlebih dahulu", "error");
             router.push('/login');
@@ -57,10 +167,48 @@ export default function CheckoutPage() {
                 travelers: [],
             });
 
+<<<<<<< HEAD
             setIsProcessing(false);
             setStep(3);
             addToast("Pembayaran Berhasil! Booking terkonfirmasi.", "success");
         }, 2000);
+=======
+        // Simulation Stages
+        const stages = [
+            t.checkout.verifyingQuota,
+            t.checkout.contactingGateway,
+            t.checkout.processingPayment,
+            t.checkout.generatingTicket
+        ];
+
+        for (const stage of stages) {
+            setProcessingStage(stage);
+            await new Promise(r => setTimeout(r, 800));
+        }
+
+        await addBooking({
+            userId: user.id || 'guest',
+            customerName: user.name,
+            productId: (id as string) || 'PKG-CUSTOM',
+            productType: isEvent ? 'Event' : 'Package',
+            productName: pkgName,
+            productImage: pkgImage,
+            location: (location as string) || 'East Kalimantan',
+            date: (date as string) || new Date().toISOString(),
+            amount: totalPrice,
+            adultCount,
+            childCount,
+            totalPax,
+            travelers: travelers,
+            paymentMethod: selectedBank === 'gopay' || selectedBank === 'qris' ? 'E-Wallet' : 'Bank Transfer',
+            eventId: isEvent ? (id as string) : undefined,
+            packageId: !isEvent ? (id as string) : undefined
+        });
+
+        setIsProcessing(false);
+        setStep(3);
+        addToast(t.checkout.paymentSuccess, "success");
+>>>>>>> 332fc3d2c0ba159299a2ec965f3ed464edf8bd18
     };
 
     if (step === 3) {
@@ -72,12 +220,24 @@ export default function CheckoutPage() {
                         animate={{ opacity: 1, scale: 1 }}
                         className="bg-white rounded-3xl p-8 md:p-12 max-w-lg w-full text-center shadow-xl border border-emerald-100"
                     >
+<<<<<<< HEAD
                         <div className="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
                             <CheckCircle className="w-12 h-12 text-emerald-600" />
                         </div>
                         <h1 className="text-3xl font-black text-slate-900 mb-2">Booking Berhasil!</h1>
                         <p className="text-slate-500 mb-8">
                             Tiket elektronik telah dikirim ke email <b>{user?.email}</b>. Silakan cek dashboard untuk melihat status pesanan.
+=======
+                        {/* Confetti / Decor */}
+                        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-400 to-teal-500"></div>
+
+                        <div className="w-24 h-24 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+                            <Clock className="w-12 h-12 text-amber-600" />
+                        </div>
+                        <h1 className="text-3xl font-black text-slate-900 mb-2">{t?.checkout?.paymentSubmitted || "Payment Submitted"}</h1>
+                        <p className="text-slate-500 mb-8">
+                            {t?.checkout?.verificationDesc || "Your payment is being verified by our admin."} <b>{user?.email}</b>. {t?.checkout?.checkDashboard || "You can check the status in your dashboard."}
+>>>>>>> 332fc3d2c0ba159299a2ec965f3ed464edf8bd18
                         </p>
 
                         <div className="bg-slate-50 rounded-2xl p-6 mb-8 text-left border border-slate-100">
@@ -165,6 +325,14 @@ export default function CheckoutPage() {
                                         exit={{ opacity: 0, x: -20 }}
                                         className="bg-white p-6 md:p-8 rounded-3xl shadow-xl shadow-gray-200/40 border border-gray-100"
                                     >
+                                        {/* ... Step 1 Content (Guest Info) remains same, just ensuring we don't break it by replacing the whole block if I selected too much. 
+                                            Wait, the user wants me to replace the payment section which is in Step 2. 
+                                            I should target Step 2 specifically or the whole AnimatePresence block to be safe.
+                                            Actually, I can just replace the Step 2 block. 
+                                        */}
+                                        {/* RE-INSERTING STEP 1 CODE FOR SAFETY if I replace the whole thing, OR easier: just replace step 2 content. 
+                                            Let me check the line numbers again. Step 2 starts around line 514.
+                                        */}
                                         <div className="flex items-center gap-4 mb-8">
                                             <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
                                                 <User className="w-6 h-6" />
@@ -174,6 +342,7 @@ export default function CheckoutPage() {
                                                 <p className="text-sm text-gray-500">Isi data diri untuk E-Ticket.</p>
                                             </div>
                                         </div>
+<<<<<<< HEAD
 
                                         {!user ? (
                                             <div className="bg-linear-to-r from-blue-50 to-indigo-50 p-6 rounded-2xl mb-8 border border-blue-100">
@@ -181,6 +350,13 @@ export default function CheckoutPage() {
                                                     <div className="bg-white p-2 rounded-lg shadow-sm h-fit">
                                                         <User className="w-5 h-5 text-blue-600" />
                                                     </div>
+=======
+                                        {/* GUEST CONFIGURATION */}
+                                        <div className="bg-gray-50 p-6 rounded-2xl mb-8 border border-gray-100">
+                                            <div className="flex items-center justify-between mb-4 pb-4 border-b border-gray-200 last:mb-0 last:pb-0 last:border-0 h-14">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="p-2 bg-white rounded-lg text-gray-600 shadow-sm"><User className="w-5 h-5" /></div>
+>>>>>>> 332fc3d2c0ba159299a2ec965f3ed464edf8bd18
                                                     <div>
                                                         <h3 className="font-bold text-gray-900 mb-1">Anda belum login</h3>
                                                         <p className="text-sm text-gray-600 mb-4">Masuk untuk menyimpan riwayat pesanan dan mendapatkan poin.</p>
@@ -241,9 +417,117 @@ export default function CheckoutPage() {
                                                 <textarea className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none focus:bg-white transition h-24 resize-none" placeholder="Contoh: Saya alergi seafood, tolong sediakan menu ayam." />
                                             </div>
 
+<<<<<<< HEAD
                                             <div className="pt-6">
                                                 <button type="button" onClick={() => setStep(2)} className="w-full bg-gray-900 text-white font-bold py-4 rounded-xl hover:bg-black transition flex items-center justify-center gap-3 shadow-lg shadow-gray-200 hover:shadow-xl hover:scale-[1.01]">
                                                     Lanjut ke Pembayaran <ArrowLeft className="w-4 h-4 rotate-180" />
+=======
+                                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                                        <div className="md:col-span-1 space-y-2">
+                                                            <label className="text-xs font-bold text-gray-500 uppercase">{t.checkout.formTitle}</label>
+                                                            <select
+                                                                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 font-medium focus:ring-2 focus:ring-emerald-500 transition"
+                                                                value={traveler.title}
+                                                                onChange={(e) => updateTraveler(idx, 'title', e.target.value)}
+                                                            >
+                                                                <option value="Mr">Mr</option>
+                                                                <option value="Mrs">Mrs</option>
+                                                                <option value="Ms">Ms</option>
+                                                                <option value="Dr">Dr</option>
+                                                            </select>
+                                                        </div>
+                                                        <div className="md:col-span-3 space-y-2">
+                                                            <div className="flex justify-between items-center mb-1">
+                                                                <label className="text-xs font-bold text-gray-500 uppercase">{t.checkout.formFullName}</label>
+                                                                {user && idx === 0 && (
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => {
+                                                                            if (!user) return;
+                                                                            updateTraveler(idx, 'fullName', user.name || '');
+                                                                            if (traveler.type === 'Adult') {
+                                                                                updateTraveler(idx, 'idNumber', (user as any).idNumber || '');
+                                                                                updateTraveler(idx, 'phoneNumber', (user as any).phone || '');
+                                                                                addToast('Data diambil dari profil', 'success');
+                                                                            }
+                                                                        }}
+                                                                        className="text-[10px] font-bold text-emerald-600 hover:text-emerald-700 bg-emerald-50 px-2 py-1 rounded transition"
+                                                                    >
+                                                                        Isi dari Profil
+                                                                    </button>
+                                                                )}
+                                                            </div>
+                                                            <input
+                                                                type="text"
+                                                                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 font-medium focus:ring-2 focus:ring-emerald-500 transition"
+                                                                value={traveler.fullName}
+                                                                onChange={(e) => updateTraveler(idx, 'fullName', e.target.value)}
+                                                                placeholder="As on ID Card"
+                                                            />
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                                        {traveler.type === 'Child' && (
+                                                            <div className="space-y-2">
+                                                                <label className="text-xs font-bold text-gray-500 uppercase">{t.checkout.formAge}</label>
+                                                                <input
+                                                                    type="number"
+                                                                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 font-medium focus:ring-2 focus:ring-emerald-500 transition"
+                                                                    value={traveler.age || ''}
+                                                                    onChange={(e) => updateTraveler(idx, 'age', parseInt(e.target.value))}
+                                                                    placeholder="2-12"
+                                                                    min={2}
+                                                                    max={12}
+                                                                />
+                                                            </div>
+                                                        )}
+                                                        {traveler.type === 'Adult' && (
+                                                            <>
+                                                                <div className="space-y-2">
+                                                                    <label className="text-xs font-bold text-gray-500 uppercase">{t.checkout.formIdNumber}</label>
+                                                                    <input
+                                                                        type="text"
+                                                                        className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 font-medium focus:ring-2 focus:ring-emerald-500 transition"
+                                                                        value={traveler.idNumber || ''}
+                                                                        onChange={(e) => updateTraveler(idx, 'idNumber', e.target.value)}
+                                                                        placeholder="e.g 6472xxxxxxx"
+                                                                    />
+                                                                </div>
+                                                                <div className="space-y-2">
+                                                                    <label className="text-xs font-bold text-gray-500 uppercase">{t.checkout.formPhoneNumber}</label>
+                                                                    <input
+                                                                        type="tel"
+                                                                        className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 font-medium focus:ring-2 focus:ring-emerald-500 transition"
+                                                                        value={traveler.phoneNumber || ''}
+                                                                        onChange={(e) => updateTraveler(idx, 'phoneNumber', e.target.value)}
+                                                                        placeholder="+62 811..."
+                                                                    />
+                                                                </div>
+                                                            </>
+                                                        )}
+                                                        <div className="space-y-2 md:col-span-2">
+                                                            <label className="text-xs font-bold text-gray-500 uppercase">{t.checkout.formNationality}</label>
+                                                            <input
+                                                                type="text"
+                                                                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3.5 font-medium focus:ring-2 focus:ring-emerald-500 transition"
+                                                                value={traveler.nationality}
+                                                                onChange={(e) => updateTraveler(idx, 'nationality', e.target.value)}
+                                                                placeholder="e.g Indonesia"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+
+                                            <div className="pt-4">
+                                                <button type="button" onClick={() => {
+                                                    const isValid = travelers.every(t => t.fullName && (t.type === 'Child' ? true : (t.idNumber && t.phoneNumber)));
+                                                    if (!isValid) addToast(t.checkout.fillAllDetails, "error");
+                                                    else setStep(2);
+                                                }} className="w-full bg-gray-900 text-white font-bold py-4 rounded-xl hover:bg-black transition flex items-center justify-center gap-3 shadow-lg shadow-gray-200 hover:shadow-xl hover:scale-[1.01]">
+                                                    {t.checkout.continuePayment} <ArrowLeft className="w-4 h-4 rotate-180" />
+>>>>>>> 332fc3d2c0ba159299a2ec965f3ed464edf8bd18
                                                 </button>
                                             </div>
                                         </form>
@@ -251,6 +535,7 @@ export default function CheckoutPage() {
                                 )}
 
                                 {step === 2 && (
+<<<<<<< HEAD
                                     <motion.div
                                         key="step2"
                                         initial={{ opacity: 0, x: 20 }}
@@ -394,6 +679,23 @@ export default function CheckoutPage() {
                                             </Link>
                                         </div>
                                     </motion.div>
+=======
+                                    <PaymentStep
+                                        pkgImage={pkgImage}
+                                        pkgName={pkgName}
+                                        date={date as string}
+                                        location={location as string}
+                                        adultCount={adultCount}
+                                        childCount={childCount}
+                                        savedMethods={savedMethods}
+                                        selectedBank={selectedBank}
+                                        setSelectedBank={setSelectedBank}
+                                        setStep={setStep}
+                                        handlePayment={handlePayment}
+                                        t={t}
+                                        totalPrice={totalPrice}
+                                    />
+>>>>>>> 332fc3d2c0ba159299a2ec965f3ed464edf8bd18
                                 )}
                             </AnimatePresence>
                         </div>

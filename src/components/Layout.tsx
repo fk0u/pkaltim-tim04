@@ -2,6 +2,14 @@ import Head from 'next/head';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import MobileBottomNav from './MobileBottomNav';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/components/ui';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+import dynamic from 'next/dynamic';
+
+const InteractiveCursor = dynamic(() => import('./InteractiveCursor'), { ssr: false });
+
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -29,6 +37,22 @@ export default function Layout({
   hideBottomNav = false
 }: LayoutProps) {
   const siteTitle = title.includes('BorneoTrip') ? title : `${title} | BorneoTrip`;
+
+  const { user } = useAuth();
+  const { addToast } = useToast();
+  const router = useRouter();
+
+  useEffect(() => {
+    // Check if user is logged in, not on onboarding/login/register pages
+    if (user && router.pathname !== '/onboarding' && router.pathname !== '/login' && router.pathname !== '/register') {
+      // Check for missing strict profile fields
+      const isProfileIncomplete = !user.phone || !user.idNumber || !user.bio || !user.onboardingCompleted;
+
+      if (isProfileIncomplete) {
+        addToast('⚠️ Profil belum lengkap. Mohon lengkapi data diri (HP, NIK, Bio) di halaman Profil Saya > Edit.', 'warning', 8000);
+      }
+    }
+  }, [user, router.pathname, addToast]); // Add dependencies
 
   return (
     <div className="min-h-screen min-h-[100dvh] flex flex-col font-sans text-slate-900 bg-slate-50">
@@ -63,6 +87,9 @@ export default function Layout({
 
       {!hideFooter && <Footer />}
       {!hideBottomNav && <MobileBottomNav />}
+
+      {/* Interactive Cursor - Global */}
+      <InteractiveCursor />
     </div>
   );
 }

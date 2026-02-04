@@ -77,11 +77,17 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  role: 'Admin' | 'Customer';
+  role: 'Admin' | 'Customer' | 'client' | 'admin' | 'mitra'; // Expanded based on AuthContext usage
   joinDate: string;
   avatar: string;
   totalSpent: number;
   status: 'Active' | 'Inactive';
+  phone?: string;
+  idNumber?: string;
+  bio?: string;
+  preferences?: any;
+  isTwoFactorEnabled?: boolean;
+  twoFactorSecret?: string;
 }
 
 export interface TravelerDetail {
@@ -99,6 +105,8 @@ export interface Booking {
   id: string;
   userId: string;
   productId: string;
+  eventId?: string;
+  packageId?: string;
   productType: 'Package' | 'Event';
   productName: string; // Denormalized for ease
   date: string;
@@ -109,9 +117,13 @@ export interface Booking {
   travelers: TravelerDetail[]; // Detailed info for each pax
   status: 'Pending' | 'Paid' | 'Cancelled' | 'Completed';
   paymentMethod: 'Credit Card' | 'Bank Transfer' | 'E-Wallet';
+  specialRequest?: string;
   customerName: string; // Denormalized
   productImage?: string; // Denormalized
   location?: string; // Denormalized
+  createdAt?: string;
+  event?: Event;
+  package?: TourPackage;
 }
 
 export interface Destination {

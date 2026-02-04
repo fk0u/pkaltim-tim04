@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useToast } from '@/components/ui';
+import ImageUpload from '@/components/ui/ImageUpload';
 
 export default function DestinationForm() {
     const router = useRouter();
@@ -55,17 +56,32 @@ export default function DestinationForm() {
         }));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        let success = false;
         if (id) {
+<<<<<<< HEAD
             updateDestination(Number(id), formData);
             addToast('Destination updated successfully', 'success');
+=======
+            // @ts-ignore
+            success = await updateDestination(formData);
+            if (success) addToast('Destination updated successfully', 'success');
+>>>>>>> 332fc3d2c0ba159299a2ec965f3ed464edf8bd18
         } else {
-            addDestination({ ...formData, id: Date.now() });
-            addToast('Destination created successfully', 'success');
+            // @ts-ignore
+            // We pass the data without ID, allowing backend to generate it
+            const { id: _, ...dataToSend } = formData;
+            success = await addDestination(dataToSend);
+            if (success) addToast('Destination created successfully', 'success');
         }
-        router.push('/dashboard/admin/destinations');
+
+        if (success) {
+            router.push('/dashboard/admin/destinations');
+        } else {
+            addToast('Failed to save destination. Please try again.', 'error');
+        }
     };
 
     return (
@@ -108,13 +124,10 @@ export default function DestinationForm() {
                             </div>
                             <div>
                                 <label className="block text-sm font-bold text-gray-700 mb-2">Image URL</label>
-                                <div className="flex gap-2">
-                                    <input name="imageUrl" value={formData.imageUrl} onChange={handleChange} className="flex-1 px-4 py-3 rounded-xl bg-gray-50 border-transparent focus:bg-white focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 transition text-sm" placeholder="https://..." />
-                                    <div className="w-12 h-12 rounded-lg bg-gray-100 relative overflow-hidden shrink-0 border border-gray-200">
-                                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                                        <img src={formData.imageUrl} alt="Preview" className="w-full h-full object-cover" />
-                                    </div>
-                                </div>
+                                <ImageUpload
+                                    value={formData.imageUrl}
+                                    onChange={(url) => setFormData(prev => ({ ...prev, imageUrl: url }))}
+                                />
                             </div>
                         </div>
                     </div>

@@ -23,21 +23,21 @@ export default function TripPlanner({ destinationName }: TripPlannerProps) {
 
         if (transport === 'plane') {
             return {
-                price: `Rp ${(baseFlight * (from === 'Jakarta' ? 1 : 1.5)).toLocaleString()}`,
+                price: `Rp ${(baseFlight * (from === 'Jakarta' ? 1 : 1.5)).toLocaleString('id-ID')}`,
                 duration: '2h 15m',
                 routes: ['CGK -> BPN', 'BPN -> Destination'],
                 trend: 'Stable'
             };
         } else if (transport === 'ship') {
             return {
-                price: `Rp ${(baseShip * (from === 'Surabaya' ? 1 : 1.2)).toLocaleString()}`,
+                price: `Rp ${(baseShip * (from === 'Surabaya' ? 1 : 1.2)).toLocaleString('id-ID')}`,
                 duration: '2 Days',
                 routes: ['Tanjung Perak -> Semayang'],
                 trend: 'Low Season'
             };
         } else {
             return {
-                price: `Rp ${baseCar.toLocaleString()} (Fuel)`,
+                price: `Rp ${baseCar.toLocaleString('id-ID')} (Fuel)`,
                 duration: '12-18 Hours',
                 routes: ['Trans Kalimantan'],
                 trend: 'Traffic Heavy'

@@ -11,6 +11,7 @@ datasource db {
 }
 
 model User {
+<<<<<<< HEAD
   id        String    @id @default(cuid())
   name      String
   email     String    @unique
@@ -69,23 +70,195 @@ model ItineraryDetail {
 }
 
 model Booking {
+=======
+  id                  String          @id @default(cuid())
+  name                String
+  email               String          @unique
+  password            String
+  role                String          @default("client") // client, mitra, admin
+  onboardingCompleted Boolean         @default(false)
+  preferences         Json? // { interests: [], budget: "", travelStyle: "", currency: "IDR", language: "en", notifications: { email: true, push: true } }
+  phone               String?
+  bio                 String?         @db.Text
+  idNumber            String?
+  isTwoFactorEnabled  Boolean         @default(false)
+  twoFactorSecret     String?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  bookings            Booking[]
+  paymentMethods      PaymentMethod[]
+  chatSessions        ChatSession[]
+  sentMessages        Message[]
+  addresses           Address[]
+  wishlist            Wishlist[]
+  partnerProfile      PartnerProfile?
+  organizedEvents     Event[]            @relation("EventOrganizer")
+  organizedPackages   TourPackage[]      @relation("PackageOrganizer")
+}
+
+model PartnerProfile {
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  user            User      @relation(fields: [userId], references: [id])
+  businessName    String
+  businessType    String    // "Personal", "EO", "Business"
+  description     String?   @db.Text
+  address         String?   @db.Text
+  website         String?
+  ktpUrl          String?   @db.Text
+  licenseUrl      String?   @db.Text
+  status          String    @default("pending") // pending, verified, rejected
+  rejectionReason String?   @db.Text
+  rating          Float     @default(0)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model Address {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  label         String // Home, Office, etc.
+  recipientName String
+  phone         String
+  address       String   @db.Text
+  city          String
+  postalCode    String
+  isDefault     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model PaymentMethod {
+>>>>>>> 332fc3d2c0ba159299a2ec965f3ed464edf8bd18
   id        String   @id @default(cuid())
   userId    String
   user      User     @relation(fields: [userId], references: [id])
-  eventId   String?
-  event     Event?   @relation(fields: [eventId], references: [id])
-  packageId String?
-  package   TourPackage? @relation(fields: [packageId], references: [id])
-  date      DateTime @default(now())
-  status    String   @default("pending")
+  provider  String // "card" | "wallet" | "bank"
+  last4     String? // For cards
+  brand     String? // visa, mastercard, gopay
+  holder    String?
+  expiry    String? // MM/YY
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model ChatSession {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  status    String    @default("open") // open, closed
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  messages  Message[]
+}
+
+model Message {
+  id        String      @id @default(cuid())
+  sessionId String
+  session   ChatSession @relation(fields: [sessionId], references: [id])
+  senderId  String? // If null, it's system/admin (or add specific admin relation)
+  sender    User?       @relation(fields: [senderId], references: [id])
+  isAdmin   Boolean     @default(false)
+  content   String      @db.Text
+  read      Boolean     @default(false)
+  createdAt DateTime    @default(now())
+}
+
+model Event {
+  id          String    @id @default(cuid())
+  title       Json // LocalizedString { id, en }
+  location    String
+  date        String
+  description Json // LocalizedString { id, en }
+  imageUrl    String    @db.Text
+  category    String
+  tags        Json // string[]
+  price       String?
+  priceChild  Int?
+  organizer   String?   // Keep for display if needed, or use relation
+  organizerId String?
+  organizerUser User?   @relation("EventOrganizer", fields: [organizerId], references: [id])
+  status      String    @default("pending") // pending, approved, rejected, draft
+  adminNote   String?   @db.Text
+  ticketCount Int?      @default(0)
+  quota       Int?      @default(0)
+  bookedCount Int?      @default(0)
+  schedule    Json? // EventSchedule[]
+  gallery     Json? // string[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  bookings    Booking[]
+  wishlist    Wishlist[]
+}
+
+model TourPackage {
+  id          String           @id @default(cuid())
+  title       Json // LocalizedString { id, en }
+  duration    String
+  price       Int
+  priceChild  Int?
+  quota       Int?             @default(0)
+  bookedCount Int?             @default(0)
+  location    String
+  rating      Float
+  ecoRating   Int
+  description Json // LocalizedString { id, en }
+  imageUrl    String           @db.Text
+  facilities  Json // string[]
+  organizerId String?
+  organizerUser User?          @relation("PackageOrganizer", fields: [organizerId], references: [id])
+  status      String           @default("pending") // pending, approved, rejected, draft
+  adminNote   String?          @db.Text
+  itinerary   ItineraryDetail?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  bookings    Booking[]
+  wishlist    Wishlist[]
+}
+
+model ItineraryDetail {
+  id        String      @id @default(cuid())
+  packageId String      @unique
+  package   TourPackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  title     String
+  badges    Json // string[]
+  days      Json // DailyItinerary[]
+}
+
+model Booking {
+  id            String       @id @default(cuid())
+  userId        String
+  user          User         @relation(fields: [userId], references: [id])
+  eventId       String?
+  event         Event?       @relation(fields: [eventId], references: [id])
+  packageId     String?
+  package       TourPackage? @relation(fields: [packageId], references: [id])
+  productType   String       @default("Package") // Package, Event
+  productName   String?
+  productImage  String?      @db.Text
+  location      String?
+  adultCount    Int          @default(1)
+  childCount    Int          @default(0)
+  totalPax      Int          @default(1)
+  travelers     Json? // TravelerDetail[]
+  amount        Int          @default(0)
+ 
+  date          DateTime     @default(now())
+  status        String       @default("pending") // pending, paid, cancelled, completed
+  specialRequest String?     @db.Text
+  paymentMethod String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
 }
 
 model Testimonial {
-  id        String   @id @default(cuid())
+  id        String @id @default(cuid())
   name      String
   role      String
-  avatarUrl String
+  avatarUrl String @db.Text
   rating    Int
+<<<<<<< HEAD
   content   String   @db.Text
 }
 
@@ -104,4 +277,68 @@ model Region {
   longitude   Float
   imageUrl    String
   destinations String   @db.Text // JSON
+=======
+  content   String @db.Text
+}
+
+model Region {
+  id           Int    @id @default(autoincrement())
+  name         String
+  type         String
+  capital      String
+  leader       String
+  area         String
+  population   String
+  density      String
+  districts    Int
+  villages     String
+  latitude     Float
+  longitude    Float
+  imageUrl     String @db.Text
+  destinations Json // string[]
+}
+
+model Voucher {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  discount    Int // percentage
+  description String?  @db.Text
+  validFrom   DateTime
+  validUntil  DateTime
+  usageLimit  Int      @default(0)
+  usedCount   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  name      Json // LocalizedString { id, en }
+  icon      String // Emoji or Lucide icon name
+  imageUrl  String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Wishlist {
+  id        String       @id @default(cuid())
+  userId    String
+  user      User         @relation(fields: [userId], references: [id])
+  packageId String?
+  package   TourPackage? @relation(fields: [packageId], references: [id])
+  eventId   String?
+  event     Event?       @relation(fields: [eventId], references: [id])
+  createdAt DateTime     @default(now())
+  
+  @@unique([userId, packageId, eventId])
+}
+
+model SystemSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+>>>>>>> 332fc3d2c0ba159299a2ec965f3ed464edf8bd18
 }

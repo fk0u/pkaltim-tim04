@@ -16,10 +16,19 @@ export default function ShareModal({ isOpen, onClose, title = "Share this Trip",
     // Use window.location as default if available, otherwise empty string (SSR safety)
     const shareUrl = url || (typeof window !== 'undefined' ? window.location.href : '');
 
-    const handleCopy = () => {
+    const handleCopy = async () => {
         if (!shareUrl) return;
-        navigator.clipboard.writeText(shareUrl);
-        addToast('Link copied to clipboard', 'success');
+        try {
+            if (navigator?.clipboard?.writeText) {
+                await navigator.clipboard.writeText(shareUrl);
+                addToast('Link copied to clipboard', 'success');
+            } else {
+                throw new Error('Clipboard API unavailable');
+            }
+        } catch (err) {
+            console.error('Failed to copy:', err);
+            addToast('Copy feature not supported', 'error');
+        }
     };
 
     const handleShare = (platform: string) => {

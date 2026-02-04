@@ -8,33 +8,57 @@
     "start": "next start",
     "lint": "eslint"
   },
+  "postcss": {
+    "plugins": {
+      "@tailwindcss/postcss": {}
+    }
+  },
   "dependencies": {
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.5.0",
     "@types/formidable": "^3.4.6",
     "@types/mapbox-gl": "^3.4.1",
+<<<<<<< HEAD
+=======
+    "@types/qrcode": "^1.5.6",
+    "@types/three": "^0.182.0",
+>>>>>>> 332fc3d2c0ba159299a2ec965f3ed464edf8bd18
     "bcryptjs": "^3.0.3",
     "cloudinary": "^2.9.0",
     "clsx": "^2.1.1",
+    "cookie": "^1.1.1",
     "dotenv": "^17.2.3",
     "formidable": "^3.5.4",
     "framer-motion": "^12.26.2",
+    "gsap": "^3.14.2",
     "html-to-image": "^1.11.13",
     "html2canvas": "^1.4.1",
     "jsonwebtoken": "^9.0.3",
     "jspdf": "^4.0.0",
+    "lenis": "^1.3.17",
     "lucide-react": "^0.562.0",
+    "maath": "^0.10.8",
     "mapbox-gl": "^3.18.0",
+    "mysql2": "^3.16.2",
     "next": "16.1.2",
+    "otplib": "^13.2.1",
+    "qrcode": "^1.5.4",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-map-gl": "^8.1.0",
     "react-to-print": "^3.2.0",
     "recharts": "^3.7.0",
-    "tailwind-merge": "^3.4.0"
+    "tailwind-merge": "^3.4.0",
+    "three": "^0.182.0"
   },
   "devDependencies": {
     "@prisma/client": "^5.10.0",
     "@tailwindcss/postcss": "^4",
     "@types/bcryptjs": "^2.4.6",
+<<<<<<< HEAD
+=======
+    "@types/cookie": "^0.6.0",
+>>>>>>> 332fc3d2c0ba159299a2ec965f3ed464edf8bd18
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -45,5 +69,8 @@
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
     "typescript": "^5"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
   }
 }

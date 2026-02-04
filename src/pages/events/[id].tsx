@@ -9,11 +9,14 @@ import { useState } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { getLocalized } from '@/utils/localization';
 
+import { useAuth } from '@/contexts/AuthContext';
+
 export default function EventDetail() {
     const router = useRouter();
     const { id } = router.query;
     const { addToast } = useToast();
     const { events } = useContent();
+    const { user } = useAuth();
     const { scrollY } = useScroll();
     const [pax, setPax] = useState(1);
     const { t, locale } = useLanguage();
@@ -74,6 +77,15 @@ export default function EventDetail() {
     };
 
     const handleTicket = () => {
+        if (!user) {
+            addToast("Please login to book a ticket", "error"); // Should use i18n ideally but text is okay for now or reuse existing keys
+            router.push({
+                pathname: '/login',
+                query: { callbackUrl: router.asPath }
+            });
+            return;
+        }
+
         const price = parsePrice(event.price || 'Free');
         const parsedDate = parseDate(event.date); // Use existing date if valid or parser
 
@@ -81,8 +93,13 @@ export default function EventDetail() {
             pathname: '/checkout',
             query: {
                 id: event.id,
+<<<<<<< HEAD
                 pkg: getLocalized(event.title),
                 price: price * pax,
+=======
+                pkg: event.title[locale === 'en' ? 'en' : 'id'],
+                price: price, // Fix: Pass unit price, not total
+>>>>>>> 332fc3d2c0ba159299a2ec965f3ed464edf8bd18
                 image: event.imageUrl,
                 location: event.location,
                 date: parsedDate,
@@ -92,9 +109,18 @@ export default function EventDetail() {
         });
     };
 
-    const handleShare = () => {
-        navigator.clipboard.writeText(window.location.href);
-        addToast(t.events.detail.toastLink, "success");
+    const handleShare = async () => {
+        try {
+            if (navigator?.clipboard?.writeText) {
+                await navigator.clipboard.writeText(window.location.href);
+                addToast(t.events.detail.toastLink, "success");
+            } else {
+                throw new Error('Clipboard API unavailable');
+            }
+        } catch (error) {
+            console.error('Share error:', error);
+            addToast("Share feature not supported", "error");
+        }
     };
 
     const title = getLocalized(event.title);
@@ -119,8 +145,8 @@ export default function EventDetail() {
                             />
                         </div>
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
-                    <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-transparent"></div>
+                    <div className="absolute inset-0 bg-linear-to-t from-black via-transparent to-transparent"></div>
+                    <div className="absolute inset-0 bg-linear-to-b from-black/60 to-transparent"></div>
                 </motion.div>
 
                 <div className="absolute top-0 left-0 p-6 z-20">
@@ -305,7 +331,7 @@ export default function EventDetail() {
                                 </button>
                             </motion.div>
 
-                            <div className="glass-dark bg-gradient-to-br from-emerald-800 to-teal-900 rounded-3xl p-8 text-white shadow-lg overflow-hidden relative">
+                            <div className="glass-dark bg-linear-to-br from-emerald-800 to-teal-900 rounded-3xl p-8 text-white shadow-lg overflow-hidden relative">
                                 <div className="relative z-10">
                                     <Heart className="w-8 h-8 mb-4 text-emerald-300" />
                                     <h3 className="text-xl font-bold mb-2">{t.events.detail.sponsorTitle}</h3>

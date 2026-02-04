@@ -67,16 +67,18 @@ export default function DestinationSearch({ label, placeholder, onSelect, onChan
 
     return (
         <div className="relative w-full" ref={containerRef}>
-            <label className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-wider block mb-1 md:mb-2 px-1">{label}</label>
-            <div className="relative group">
-                <MapPin className={`absolute left-0 top-3 transition w-4 h-4 md:w-6 md:h-6 ${isOpen ? 'text-green-500' : 'text-gray-400'}`} style={{ top: '50%', transform: 'translateY(-50%)' }} />
+            <label className="text-xs font-black text-gray-400 uppercase tracking-widest block mb-1">{label}</label>
+            <div className="relative group flex items-center">
+                <div className={`absolute left-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${isOpen || query.length > 0 ? 'bg-emerald-100 text-emerald-600 scale-100' : 'bg-gray-100 text-gray-400 scale-90'}`}>
+                    <MapPin className="w-4 h-4" />
+                </div>
                 <input
                     type="text"
                     value={query}
                     onChange={handleChange}
                     onFocus={() => setIsOpen(true)}
                     placeholder={placeholder}
-                    className="w-full pl-6 md:pl-8 pr-4 py-2 bg-transparent border-none focus:ring-0 font-bold text-gray-900 placeholder-gray-300 text-sm md:text-lg p-0"
+                    className="w-full pl-10 pr-4 py-1 bg-transparent border-none focus:ring-0 font-black text-gray-800 placeholder-gray-300 text-base md:text-lg p-0 tracking-tight"
                 />
             </div>
 

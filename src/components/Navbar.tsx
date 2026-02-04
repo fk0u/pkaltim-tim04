@@ -165,7 +165,7 @@ export default function Navbar({ isTransparent = true }: { isTransparent?: boole
                                 <button
                                   key={result.id}
                                   onClick={() => handleNavigate(result.url)}
-                                  className="w-full text-left px-4 py-3 hover:bg-emerald-50 rounded-xl flex items-center gap-3 transition group/item"
+                                  className="w-full text-left px-4 py-3 hover:bg-emerald-50 rounded-xl flex items-center gap-3 z  transition group/item"
                                 >
                                   <div className="w-10 h-10 rounded-lg bg-gray-100 overflow-hidden shrink-0">
                                     <img

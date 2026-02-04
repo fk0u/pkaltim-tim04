@@ -1,0 +1,3 @@
+﻿src/pages/api/auth/2fa.ts(4,10): error TS2305: Module '"otplib"' has no exported member 'authenticator'.
+src/pages/dashboard/client.tsx(923,9): error TS2322: Type 'boolean' is not assignable to type 'FormDataEntryValue'.
+src/pages/dashboard/client.tsx(1004,18): error TS2339: Property 'preferences' does not exist on type 'User'.
