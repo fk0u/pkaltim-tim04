@@ -3,17 +3,23 @@ import Head from 'next/head';
 import Link from 'next/link';
 import PartnerLayout from '@/components/layouts/PartnerLayout';
 import { useAuth } from '@/contexts/AuthContext';
-import { Plus, Package, MapPin, Clock, Edit, Trash } from 'lucide-react';
+import { Plus, Package, MapPin, Clock, Edit, Trash, AlertTriangle } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { AlertDialog, useToast } from '@/components/ui';
 
 export default function PartnerPackagesPage() {
     const { user } = useAuth();
+    const { addToast } = useToast();
     const [packages, setPackages] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
+    // Delete State
+    const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+    const [selectedPackage, setSelectedPackage] = useState<any>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
+
     useEffect(() => {
-        if (!user) return;
-        fetchPackages();
+        if (user) fetchPackages();
     }, [user]);
 
     const fetchPackages = async () => {
@@ -24,6 +30,31 @@ export default function PartnerPackagesPage() {
             else setPackages([]);
         } catch (error) { console.error(error); }
         finally { setIsLoading(false); }
+    };
+
+    const promptDelete = (pkg: any) => {
+        setSelectedPackage(pkg);
+        setIsDeleteOpen(true);
+    };
+
+    const handleDelete = async () => {
+        if (!selectedPackage) return;
+        setIsDeleting(true);
+        try {
+            const res = await fetch(`/api/partner/packages/${selectedPackage.id}`, {
+                method: 'DELETE'
+            });
+            if (!res.ok) throw new Error('Gagal menghapus paket');
+
+            setPackages(prev => prev.filter(p => p.id !== selectedPackage.id));
+            addToast('Paket berhasil dihapus', 'success');
+            setIsDeleteOpen(false);
+        } catch (error) {
+            console.error(error);
+            addToast('Gagal menghapus paket', 'error');
+        } finally {
+            setIsDeleting(false);
+        }
     };
 
     const getStatusColor = (status: string) => {
@@ -39,6 +70,16 @@ export default function PartnerPackagesPage() {
             <Head>
                 <title>Kelola Paket - Partner Dashboard</title>
             </Head>
+
+            <AlertDialog
+                isOpen={isDeleteOpen}
+                onClose={() => setIsDeleteOpen(false)}
+                title="Hapus Paket Wisata?"
+                description={`Apakah Anda yakin ingin menghapus "${selectedPackage?.title?.id || selectedPackage?.title}"? Tindakan ini tidak dapat dibatalkan.`}
+                confirmLabel={isDeleting ? 'Menghapus...' : 'Ya, Hapus'}
+                onConfirm={handleDelete}
+                variant="danger"
+            />
 
             <div className="flex justify-between items-center mb-8">
                 <div>

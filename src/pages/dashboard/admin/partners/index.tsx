@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
-import Link from 'next/link';
+import Image from 'next/image';
 import AdminLayout from '@/components/layouts/AdminLayout';
-import { Search, Filter, MoreVertical, Eye, CheckCircle, XCircle, Clock, Building } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Search, CheckCircle, XCircle, Clock, Eye, MoreVertical, Loader2 } from 'lucide-react';
+import { useToast } from '@/components/ui';
 
 export default function AdminPartnersPage() {
+    const { addToast } = useToast();
     const [partners, setPartners] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [filterStatus, setFilterStatus] = useState('all');
@@ -24,19 +25,38 @@ export default function AdminPartnersPage() {
             if (Array.isArray(data)) {
                 setPartners(data);
             } else {
-                console.error('API returned non-array:', data);
                 setPartners([]);
             }
         } catch (error) {
             console.error(error);
+            addToast('Gagal memuat data mitra', 'error');
         } finally {
             setIsLoading(false);
         }
     };
 
+    const handleUpdateStatus = async (id: string, newStatus: string) => {
+        try {
+            const res = await fetch('/api/admin/partners', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, status: newStatus })
+            });
+
+            if (!res.ok) throw new Error('Failed to update');
+
+            setPartners(prev => prev.map(p =>
+                p.id === id ? { ...p, status: newStatus } : p
+            ));
+            addToast(`Status mitra berhasil diperbarui ke ${newStatus}`, 'success');
+        } catch (error) {
+            addToast('Gagal memperbarui status', 'error');
+        }
+    };
+
     const filteredPartners = partners.filter(p =>
-        p.businessName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.user.name.toLowerCase().includes(searchTerm.toLowerCase())
+        p.businessName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.user?.name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const getStatusBadge = (status: string) => {
@@ -51,112 +71,122 @@ export default function AdminPartnersPage() {
         }
     };
 
+    if (isLoading) {
+        return (
+            <AdminLayout title="Kelola Mitra">
+                <div className="flex justify-center p-20">
+                    <Loader2 className="animate-spin w-8 h-8 text-emerald-600" />
+                </div>
+            </AdminLayout>
+        );
+    }
+
     return (
-        <AdminLayout title="Manajemen Mitra">
+        <AdminLayout title="Kelola Mitra (Partners)">
             <Head>
                 <title>Mitra / Partner - Admin Dashboard</title>
             </Head>
 
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                {/* Header Controls */}
-                <div className="p-6 border-b border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div className="flex items-center gap-2">
+            <div className="p-6">
+                <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
+                    <div>
+                        <h1 className="text-2xl font-black text-gray-900">Mitra Terdaftar</h1>
+                        <p className="text-gray-500">Verifikasi dan kelola akun mitra wisata.</p>
+                    </div>
+
+                    <div className="flex items-center gap-3">
                         <div className="relative">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                             <input
                                 type="text"
                                 placeholder="Cari mitra..."
+                                className="pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
                                 value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none w-64 transition"
+                                onChange={e => setSearchTerm(e.target.value)}
                             />
                         </div>
-                        <div className="bg-gray-100 p-1 rounded-lg flex items-center">
-                            {['all', 'pending', 'verified', 'rejected'].map((status) => (
-                                <button
-                                    key={status}
-                                    onClick={() => setFilterStatus(status)}
-                                    className={`px-3 py-1.5 rounded-md text-xs font-bold capitalize transition-all ${filterStatus === status ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
-                                >
-                                    {status}
-                                </button>
-                            ))}
-                        </div>
+                        <select
+                            className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                            value={filterStatus}
+                            onChange={e => setFilterStatus(e.target.value)}
+                        >
+                            <option value="all">Semua Status</option>
+                            <option value="pending">Menunggu Verifikasi</option>
+                            <option value="verified">Terverifikasi</option>
+                            <option value="rejected">Ditolak</option>
+                        </select>
                     </div>
                 </div>
 
-                {/* Table */}
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm text-gray-600">
-                        <thead className="bg-gray-50 text-gray-900 font-bold uppercase text-xs">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <table className="w-full text-left">
+                        <thead className="bg-gray-50 border-b border-gray-100">
                             <tr>
-                                <th className="px-6 py-4">Bisnis / Usaha</th>
-                                <th className="px-6 py-4">Pemilik</th>
-                                <th className="px-6 py-4">Tipe</th>
-                                <th className="px-6 py-4">Tanggal Daftar</th>
-                                <th className="px-6 py-4">Status</th>
-                                <th className="px-6 py-4 text-right">Aksi</th>
+                                <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase">Bisnis / Nama</th>
+                                <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase">Website</th>
+                                <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase">Tanggal Gabung</th>
+                                <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase">Status</th>
+                                <th className="px-6 py-4 text-xs font-bold text-gray-500 uppercase text-right">Aksi</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
-                            <AnimatePresence>
-                                {isLoading ? (
-                                    <tr>
-                                        <td colSpan={6} className="px-6 py-8 text-center">
-                                            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
+                            {filteredPartners.length > 0 ? (
+                                filteredPartners.map((partner) => (
+                                    <tr key={partner.id} className="hover:bg-gray-50 transition-colors">
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold">
+                                                    {partner.businessName?.substring(0, 1) || 'P'}
+                                                </div>
+                                                <div>
+                                                    <p className="font-bold text-gray-900">{partner.businessName}</p>
+                                                    <p className="text-xs text-gray-500">{partner.user?.email}</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 text-sm text-gray-500">
+                                            {partner.website || '-'}
+                                        </td>
+                                        <td className="px-6 py-4 text-sm text-gray-500">
+                                            {new Date(partner.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            {getStatusBadge(partner.status)}
+                                        </td>
+                                        <td className="px-6 py-4 text-right">
+                                            <div className="flex justify-end gap-2">
+                                                {partner.status === 'pending' && (
+                                                    <>
+                                                        <button
+                                                            onClick={() => handleUpdateStatus(partner.id, 'verified')}
+                                                            className="text-emerald-600 hover:bg-emerald-50 p-2 rounded-lg transition"
+                                                            title="Approve"
+                                                        >
+                                                            <CheckCircle className="w-4 h-4" />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleUpdateStatus(partner.id, 'rejected')}
+                                                            className="text-red-600 hover:bg-red-50 p-2 rounded-lg transition"
+                                                            title="Reject"
+                                                        >
+                                                            <XCircle className="w-4 h-4" />
+                                                        </button>
+                                                    </>
+                                                )}
+                                                <button className="text-gray-400 hover:bg-gray-100 p-2 rounded-lg transition">
+                                                    <MoreVertical className="w-4 h-4" />
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
-                                ) : filteredPartners.length > 0 ? (
-                                    filteredPartners.map((partner) => (
-                                        <motion.tr
-                                            key={partner.id}
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            exit={{ opacity: 0 }}
-                                            className="hover:bg-gray-50 transition-colors"
-                                        >
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
-                                                        <Building className="w-5 h-5" />
-                                                    </div>
-                                                    <div>
-                                                        <p className="font-bold text-gray-900">{partner.businessName}</p>
-                                                        <p className="text-xs text-gray-500 truncate max-w-[200px]">{partner.website || '-'}</p>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-2">
-                                                    <img src={partner.user.avatar || `https://ui-avatars.com/api/?name=${partner.user.name}`} className="w-6 h-6 rounded-full" />
-                                                    <span className="font-medium text-gray-900">{partner.user.name}</span>
-                                                </div>
-                                                <p className="text-xs mt-0.5">{partner.user.email}</p>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs font-bold">{partner.businessType}</span>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                {new Date(partner.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                {getStatusBadge(partner.status)}
-                                            </td>
-                                            <td className="px-6 py-4 text-right">
-                                                <Link href={`/dashboard/admin/partners/${partner.id}`} className="inline-flex items-center justify-center w-8 h-8 rounded-full hover:bg-emerald-50 text-gray-400 hover:text-emerald-600 transition-colors">
-                                                    <Eye className="w-5 h-5" />
-                                                </Link>
-                                            </td>
-                                        </motion.tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
-                                            Tidak ada data mitra ditemukan.
-                                        </td>
-                                    </tr>
-                                )}
-                            </AnimatePresence>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
+                                        Tidak ada data mitra ditemukan.
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>

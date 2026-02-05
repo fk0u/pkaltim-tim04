@@ -56,8 +56,25 @@ export default async function handler(
             }
 
             return res.status(200).json(profile);
+        } else if (req.method === 'PUT') {
+            const { userId, businessName, businessType, description, address, website } = req.body;
+
+            if (!userId) return res.status(400).json({ message: 'User ID required' });
+
+            const updated = await prisma.partnerProfile.update({
+                where: { userId },
+                data: {
+                    businessName,
+                    businessType,
+                    description,
+                    address,
+                    website
+                }
+            });
+
+            return res.status(200).json(updated);
         } else {
-            res.setHeader('Allow', ['GET', 'POST']);
+            res.setHeader('Allow', ['GET', 'POST', 'PUT']);
             res.status(405).json({ message: `Method ${req.method} Not Allowed` });
         }
     } catch (error: any) {

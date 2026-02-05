@@ -6,47 +6,68 @@ import PartnerLayout from '@/components/layouts/PartnerLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui';
 import ImageUpload from '@/components/ui/ImageUpload';
-import { ArrowLeft, MapPin, DollarSign, Users, Clock, Plus, Trash, List, CheckSquare, Loader2, Sparkles } from 'lucide-react';
+import { ArrowLeft, MapPin, DollarSign, Users, Clock, Plus, Trash, List, CheckSquare, Loader2, Sparkles, Save } from 'lucide-react';
 
-export default function CreatePackagePage() {
+export default function EditPackagePage() {
     const { user } = useAuth();
     const router = useRouter();
+    const { id } = router.query;
     const { addToast } = useToast();
+
     const [isLoading, setIsLoading] = useState(false);
+    const [isFetching, setIsFetching] = useState(true);
     const [isGenerating, setIsGenerating] = useState(false);
-
-    // Check verification (Simplified copy from events)
-    const [isVerified, setIsVerified] = useState(false);
-    const [checkingStatus, setCheckingStatus] = useState(true);
-
-    useEffect(() => {
-        if (!user) return;
-        const checkStatus = async () => {
-            try {
-                const res = await fetch(`/api/partner/profile?userId=${user.id}`);
-                const data = await res.json();
-                if (data?.status === 'verified') setIsVerified(true);
-                else router.push('/dashboard/partner');
-            } catch (error) { console.error(error); }
-            finally { setCheckingStatus(false); }
-        };
-        checkStatus();
-    }, [user, router]);
 
     const [formData, setFormData] = useState({
         title: '',
         location: '',
-        duration: '', // e.g. "3 Hari 2 Malam"
+        duration: '',
         price: '',
         quota: '',
         description: '',
         imageUrl: '',
-        facilitiesString: '', // Comma separated for UI
+        facilitiesString: '',
     });
 
-    const [itineraryDays, setItineraryDays] = useState<{ day: number, title: string, activity: string }[]>([
-        { day: 1, title: '', activity: '' }
-    ]);
+    const [itineraryDays, setItineraryDays] = useState<{ day: number, title: string, activity: string }[]>([]);
+
+    useEffect(() => {
+        if (!user || !id) return;
+        fetchPackageDetails();
+    }, [user, id]);
+
+    const fetchPackageDetails = async () => {
+        try {
+            const res = await fetch(`/api/partner/packages/${id}`);
+            if (!res.ok) throw new Error('Paket tidak ditemukan');
+            const data = await res.json();
+
+            setFormData({
+                title: typeof data.title === 'string' ? data.title : data.title.id,
+                location: data.location,
+                duration: data.duration,
+                price: data.price.toString(),
+                quota: data.quota.toString(),
+                description: typeof data.description === 'string' ? data.description : data.description.id,
+                imageUrl: data.imageUrl,
+                facilitiesString: Array.isArray(data.facilities) ? data.facilities.join(', ') : '',
+            });
+
+            if (data.itinerary?.days) {
+                setItineraryDays(data.itinerary.days);
+            } else if (data.itinerary) {
+                // Fallback if structure is different
+                setItineraryDays(data.itinerary);
+            }
+
+        } catch (error) {
+            console.error(error);
+            addToast('Gagal mengambil data paket', 'error');
+            router.push('/dashboard/partner/packages');
+        } finally {
+            setIsFetching(false);
+        }
+    };
 
     const addDay = () => {
         setItineraryDays([...itineraryDays, { day: itineraryDays.length + 1, title: '', activity: '' }]);
@@ -65,7 +86,7 @@ export default function CreatePackagePage() {
 
     const handleAIAutofill = async () => {
         if (!formData.title || !formData.location) {
-            addToast('Mohon isi Nama Paket dan Lokasi terlebih dahulu untuk menggunakan AI.', 'error');
+            addToast('Mohon isi Nama Paket dan Lokasi terlebih dahulu.', 'error');
             return;
         }
 
@@ -83,15 +104,15 @@ export default function CreatePackagePage() {
             setFormData(prev => ({
                 ...prev,
                 description: data.description,
-                facilitiesString: data.facilities?.join(', ') || '',
-                price: data.priceEstimate?.toString() || prev.price,
+                facilitiesString: data.facilities?.join(', ') || prev.facilitiesString,
+                // price: data.priceEstimate?.toString() || prev.price, // Keep existing price generally
                 duration: data.duration || prev.duration,
             }));
 
-            setItineraryDays(data.itinerary || []);
-            addToast('Konten berhasil dibuat oleh AI! Silakan review kembali.', 'success');
+            if (data.itinerary) setItineraryDays(data.itinerary);
+
+            addToast('Konten diperbarui oleh AI!', 'success');
         } catch (error: any) {
-            console.error(error);
             addToast(error.message, 'error');
         } finally {
             setIsGenerating(false);
@@ -100,26 +121,23 @@ export default function CreatePackagePage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!formData.imageUrl) { addToast('Mohon upload gambar paket.', 'error'); return; }
-
         setIsLoading(true);
         try {
             const facilities = formData.facilitiesString.split(',').map(s => s.trim()).filter(Boolean);
 
-            const res = await fetch('/api/partner/packages', {
-                method: 'POST',
+            const res = await fetch(`/api/partner/packages/${id}`, {
+                method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     ...formData,
                     facilities,
-                    itineraryDays,
-                    organizerId: user?.id
+                    itineraryDays
                 })
             });
 
-            if (!res.ok) throw new Error('Gagal membuat paket');
+            if (!res.ok) throw new Error('Gagal update paket');
 
-            addToast('Paket Wisata berhasil dibuat! Menunggu persetujuan admin.', 'success');
+            addToast('Perubahan berhasil disimpan!', 'success');
             router.push('/dashboard/partner/packages');
         } catch (error: any) {
             console.error(error);
@@ -129,22 +147,34 @@ export default function CreatePackagePage() {
         }
     };
 
-    if (checkingStatus) return <PartnerLayout><div className="flex justify-center h-96 items-center"><Loader2 className="animate-spin" /></div></PartnerLayout>;
-    if (!isVerified) return null;
+    if (isFetching) {
+        return (
+            <PartnerLayout>
+                <div className="flex justify-center h-96 items-center">
+                    <Loader2 className="animate-spin w-8 h-8 text-emerald-600" />
+                </div>
+            </PartnerLayout>
+        );
+    }
 
     return (
-        <PartnerLayout title="Buat Paket Wisata">
+        <PartnerLayout title="Edit Paket Wisata">
             <Head>
-                <title>Buat Paket - Partner Dashboard</title>
+                <title>Edit Paket - Partner Dashboard</title>
             </Head>
 
             <div className="max-w-4xl mx-auto">
                 <Link href="/dashboard/partner/packages" className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-900 mb-6 font-bold text-sm">
-                    <ArrowLeft className="w-4 h-4" /> Kembali ke Daftar Paket
+                    <ArrowLeft className="w-4 h-4" /> Batal & Kembali
                 </Link>
 
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-                    <h1 className="text-2xl font-black text-gray-900 mb-6">Detail Paket Wisata</h1>
+                    <div className="flex justify-between items-center mb-6">
+                        <h1 className="text-2xl font-black text-gray-900">Edit Paket Wisata</h1>
+                        <span className="bg-blue-50 text-blue-600 px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">
+                            Editing Mode
+                        </span>
+                    </div>
 
                     <form onSubmit={handleSubmit} className="space-y-8">
                         {/* Image Upload */}
@@ -170,7 +200,7 @@ export default function CreatePackagePage() {
                                         className="text-xs bg-linear-to-r from-indigo-500 to-purple-600 text-white px-3 py-1.5 rounded-full font-bold flex items-center gap-1 hover:shadow-lg hover:shadow-purple-500/30 transition-all disabled:opacity-50"
                                     >
                                         {isGenerating ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
-                                        {isGenerating ? 'Generating...' : 'Auto-fill with AI'}
+                                        {isGenerating ? 'Refining...' : 'Refine with AI'}
                                     </button>
                                 </div>
                                 <input
@@ -179,7 +209,6 @@ export default function CreatePackagePage() {
                                     value={formData.title}
                                     onChange={e => setFormData({ ...formData, title: e.target.value })}
                                     className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition"
-                                    placeholder="Contoh: 3D2N Derawan Paradise Trip"
                                 />
                             </div>
 
@@ -207,7 +236,6 @@ export default function CreatePackagePage() {
                                         value={formData.duration}
                                         onChange={e => setFormData({ ...formData, duration: e.target.value })}
                                         className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition"
-                                        placeholder="Contoh: 3 Hari 2 Malam"
                                     />
                                 </div>
                             </div>
@@ -243,7 +271,7 @@ export default function CreatePackagePage() {
                             </div>
 
                             <div className="col-span-full">
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Fasilitas (Pisahkan dengan koma)</label>
+                                <label className="block text-sm font-bold text-gray-700 mb-2">Fasilitas</label>
                                 <div className="relative">
                                     <CheckSquare className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
                                     <textarea
@@ -251,7 +279,6 @@ export default function CreatePackagePage() {
                                         value={formData.facilitiesString}
                                         onChange={e => setFormData({ ...formData, facilitiesString: e.target.value })}
                                         className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition resize-none"
-                                        placeholder="Hotel Bintang 3, Transportasi AC, Makan 7x, Dokumentasi..."
                                     />
                                 </div>
                             </div>
@@ -264,7 +291,6 @@ export default function CreatePackagePage() {
                                     value={formData.description}
                                     onChange={e => setFormData({ ...formData, description: e.target.value })}
                                     className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition resize-none"
-                                    placeholder="Jelaskan highlight perjalanan..."
                                 />
                             </div>
                         </div>
@@ -273,7 +299,7 @@ export default function CreatePackagePage() {
                         <div className="border-t border-gray-100 pt-8">
                             <div className="flex justify-between items-center mb-6">
                                 <h2 className="text-lg font-black text-gray-900 flex items-center gap-2">
-                                    <List className="w-5 h-5 text-emerald-600" /> Rencana Perjalanan (Itinerary)
+                                    <List className="w-5 h-5 text-emerald-600" /> Rencana Perjalanan
                                 </h2>
                                 <button type="button" onClick={addDay} className="text-sm font-bold text-emerald-600 hover:text-emerald-500 flex items-center gap-1">
                                     <Plus className="w-4 h-4" /> Tambah Hari
@@ -294,14 +320,12 @@ export default function CreatePackagePage() {
                                         <div className="space-y-3">
                                             <input
                                                 type="text"
-                                                placeholder="Judul (e.g., Kedatangan di Berau)"
                                                 value={day.title}
                                                 onChange={(e) => updateDay(index, 'title', e.target.value)}
                                                 className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-emerald-500 outline-none text-sm font-bold"
                                             />
                                             <textarea
                                                 rows={2}
-                                                placeholder="Detail aktivitas hari ini..."
                                                 value={day.activity}
                                                 onChange={(e) => updateDay(index, 'activity', e.target.value)}
                                                 className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-emerald-500 outline-none text-sm resize-none"
@@ -318,7 +342,8 @@ export default function CreatePackagePage() {
                                 disabled={isLoading}
                                 className="bg-emerald-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-emerald-500 shadow-lg shadow-emerald-600/20 transition-transform active:scale-95 flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                             >
-                                {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Buat Paket Wisata'}
+                                {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
+                                <span>Simpan Perubahan</span>
                             </button>
                         </div>
                     </form>

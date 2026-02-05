@@ -3,168 +3,145 @@ import Head from 'next/head';
 import Image from 'next/image';
 import AdminLayout from '@/components/layouts/AdminLayout';
 import { useToast } from '@/components/ui';
-import { CheckCircle, XCircle, Calendar, MapPin, DollarSign, User, Package, Clock } from 'lucide-react';
+import { CheckCircle, XCircle, Clock, Eye, Loader2 } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
-export default function ContentApprovalsPage() {
+export default function AdminApprovalsPage() {
     const { addToast } = useToast();
-    const [events, setEvents] = useState<any[]>([]);
-    const [packages, setPackages] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [processingId, setProcessingId] = useState<string | null>(null);
-    const [activeTab, setActiveTab] = useState<'events' | 'packages'>('events');
+    const [items, setItems] = useState<any[]>([]);
 
     useEffect(() => {
-        fetchPendingContent();
+        fetchApprovals();
     }, []);
 
-    const fetchPendingContent = async () => {
+    const fetchApprovals = async () => {
         setIsLoading(true);
         try {
-            const res = await fetch('/api/admin/approvals?type=all');
+            const res = await fetch('/api/admin/approvals');
             const data = await res.json();
-            setEvents(data.events || []);
-            setPackages(data.packages || []);
+            if (Array.isArray(data)) setItems(data);
         } catch (error) {
             console.error(error);
+            addToast('Gagal memuat data approval', 'error');
         } finally {
             setIsLoading(false);
         }
     };
 
-    const handleAction = async (id: string, type: 'event' | 'package', status: 'approved' | 'rejected') => {
-        let note = '';
-        if (status === 'rejected') {
-            note = prompt('Masukkan alasan penolakan:') || '';
-            if (!note) return; // Cancelled
-        }
-
-        setProcessingId(id);
+    const handleAction = async (id: string, newStatus: string) => {
         try {
             const res = await fetch('/api/admin/approvals', {
-                method: 'PUT',
+                method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id, type, status, adminNote: note })
+                body: JSON.stringify({ id, status: newStatus })
             });
 
-            if (!res.ok) throw new Error('Action failed');
+            if (!res.ok) throw new Error('Gagal update status');
 
-            addToast(`Konten berhasil ${status === 'approved' ? 'disetujui' : 'ditolak'}`, 'success');
-            fetchPendingContent(); // Refresh
+            setItems(prev => prev.map(item =>
+                item.id === id ? { ...item, status: newStatus } : item
+            ));
+            addToast(`Konten ${newStatus === 'approved' ? 'disetujui' : 'ditolak'}`, 'success');
         } catch (error) {
             console.error(error);
-            addToast('Gagal memproses permintaan.', 'error');
-        } finally {
-            setProcessingId(null);
+            addToast('Gagal mengubah status', 'error');
         }
     };
 
+    if (isLoading) {
+        return (
+            <AdminLayout title="Approvals">
+                <div className="flex justify-center p-20">
+                    <Loader2 className="animate-spin w-8 h-8 text-emerald-600" />
+                </div>
+            </AdminLayout>
+        );
+    }
+
     return (
-        <AdminLayout title="Persetujuan Konten">
+        <AdminLayout title="Content Approvals">
             <Head>
                 <title>Verifikasi Konten - Admin Dashboard</title>
             </Head>
 
-            <div className="mb-8">
-                <h1 className="text-2xl font-black text-gray-900">Permintaan Publikasi</h1>
-                <p className="text-gray-500">Tinjau dan setujui event atau paket wisata dari mitra.</p>
-            </div>
+            <div className="p-6">
+                <div className="flex justify-between items-center mb-8">
+                    <div>
+                        <h1 className="text-2xl font-black text-gray-900">Persetujuan Konten</h1>
+                        <p className="text-gray-500">Moderasi event dan paket wisata dari mitra.</p>
+                    </div>
 
-            <div className="flex gap-4 mb-6 border-b border-gray-200">
-                <button
-                    onClick={() => setActiveTab('events')}
-                    className={`pb-3 px-2 font-bold text-sm transition-colors border-b-2 ${activeTab === 'events' ? 'border-emerald-600 text-emerald-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
-                >
-                    Event ({events.length})
-                </button>
-                <button
-                    onClick={() => setActiveTab('packages')}
-                    className={`pb-3 px-2 font-bold text-sm transition-colors border-b-2 ${activeTab === 'packages' ? 'border-emerald-600 text-emerald-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
-                >
-                    Paket Wisata ({packages.length})
-                </button>
-            </div>
+                    <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-lg p-1">
+                        <button className="px-4 py-2 bg-gray-100 rounded-md text-sm font-bold text-gray-900 shadow-xs">Semua</button>
+                        <button className="px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 rounded-md">Pending</button>
+                    </div>
+                </div>
 
-            {isLoading ? (
-                <div className="flex justify-center items-center h-64">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
-                </div>
-            ) : (activeTab === 'events' && events.length === 0) || (activeTab === 'packages' && packages.length === 0) ? (
-                <div className="bg-white rounded-2xl border border-gray-100 p-12 text-center">
-                    <CheckCircle className="w-16 h-16 text-emerald-100 mx-auto mb-4" />
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">Semua Bersih!</h3>
-                    <p className="text-gray-500">Tidak ada permintaan {activeTab === 'events' ? 'event' : 'paket'} yang menunggu persetujuan.</p>
-                </div>
-            ) : (
-                <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                    {(activeTab === 'events' ? events : packages).map((item) => (
-                        <div key={item.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col sm:flex-row">
-                            <div className="relative w-full sm:w-48 h-48 sm:h-auto bg-gray-200 shrink-0">
-                                {item.imageUrl && (
-                                    <Image src={item.imageUrl} alt="Content" fill className="object-cover" />
-                                )}
-                                <div className="absolute top-2 left-2 bg-black/50 backdrop-blur-md text-white px-2 py-1 rounded text-xs font-bold uppercase">
-                                    {activeTab === 'events' ? 'Event' : 'Package'}
+                <div className="space-y-4">
+                    {items.length === 0 ? (
+                        <div className="text-center py-20 bg-gray-50 rounded-2xl border border-dashed border-gray-200 text-gray-500">
+                            <CheckCircle className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+                            <p className="font-bold">Semua Bersih!</p>
+                            <p className="text-sm">Tidak ada konten yang menunggu persetujuan.</p>
+                        </div>
+                    ) : (
+                        items.map((item) => (
+                            <div key={item.id} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col md:flex-row gap-6">
+                                <div className="w-full md:w-48 h-32 bg-gray-100 rounded-xl overflow-hidden shrink-0 relative">
+                                    {item.imageUrl ? (
+                                        <img src={item.imageUrl} alt="Content" className="w-full h-full object-cover" />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">No Image</div>
+                                    )}
                                 </div>
-                            </div>
-                            <div className="p-6 flex-1 flex flex-col">
-                                <div className="flex justify-between items-start mb-2">
-                                    <div>
-                                        <h3 className="text-lg font-black text-gray-900 line-clamp-1">{typeof item.title === 'string' ? item.title : item.title?.id}</h3>
-                                        <div className="flex items-center gap-2 text-sm text-gray-500 mt-1">
-                                            <User className="w-4 h-4" />
-                                            <span className="font-medium text-emerald-600">{item.organizerUser?.name}</span>
-                                            <span className="text-gray-300">•</span>
-                                            <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">{item.organizerUser?.partnerProfile?.businessName}</span>
+                                <div className="flex-1">
+                                    <div className="flex justify-between items-start mb-2">
+                                        <div>
+                                            <span className="inline-block px-2 py-1 bg-indigo-50 text-indigo-600 text-[10px] font-bold uppercase tracking-wider rounded-md mb-2">
+                                                Tour Package
+                                            </span>
+                                            <h3 className="text-lg font-bold text-gray-900 mb-1">
+                                                {typeof item.title === 'string' ? item.title : item.title?.id || item.title?.en}
+                                            </h3>
+                                            <p className="text-sm text-gray-500">
+                                                By <span className="font-bold text-gray-700">{item.organizer?.partnerProfile?.businessName || item.organizer?.user?.name}</span> • {new Date(item.createdAt).toLocaleDateString()}
+                                            </p>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            {item.status === 'verified' || item.status === 'approved' ? (
+                                                <span className="flex items-center gap-1 text-emerald-600 text-sm font-bold bg-emerald-50 px-3 py-1 rounded-full"><CheckCircle className="w-4 h-4" /> Approved</span>
+                                            ) : item.status === 'rejected' ? (
+                                                <span className="flex items-center gap-1 text-red-600 text-sm font-bold bg-red-50 px-3 py-1 rounded-full"><XCircle className="w-4 h-4" /> Rejected</span>
+                                            ) : (
+                                                <span className="flex items-center gap-1 text-yellow-600 text-sm font-bold bg-yellow-50 px-3 py-1 rounded-full"><Clock className="w-4 h-4" /> Pending</span>
+                                            )}
                                         </div>
                                     </div>
-                                </div>
 
-                                <div className="space-y-2 mb-6 flex-1">
-                                    {activeTab === 'events' ? (
-                                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                                            <Calendar className="w-4 h-4 text-gray-400" />
-                                            {new Date(item.date).toLocaleDateString()}
-                                        </div>
-                                    ) : (
-                                        <div className="flex items-center gap-2 text-sm text-gray-600">
-                                            <Clock className="w-4 h-4 text-gray-400" />
-                                            {item.duration}
+                                    <p className="text-sm text-gray-600 mb-6 line-clamp-2">
+                                        {typeof item.description === 'string' ? item.description : item.description?.id || item.description?.en}
+                                    </p>
+
+                                    {item.status === 'pending' && (
+                                        <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
+                                            <button onClick={() => handleAction(item.id, 'approved')} className="bg-emerald-600 text-white px-5 py-2 rounded-lg text-sm font-bold hover:bg-emerald-700 transition flex items-center gap-2 shadow-emerald-200 shadow-md">
+                                                <CheckCircle className="w-4 h-4" /> Approve
+                                            </button>
+                                            <button onClick={() => handleAction(item.id, 'rejected')} className="bg-white border border-red-200 text-red-600 px-5 py-2 rounded-lg text-sm font-bold hover:bg-red-50 transition flex items-center gap-2">
+                                                <XCircle className="w-4 h-4" /> Reject
+                                            </button>
+                                            <button className="bg-white border border-gray-200 text-gray-600 px-5 py-2 rounded-lg text-sm font-bold hover:bg-gray-50 transition flex items-center gap-2 ml-auto">
+                                                <Eye className="w-4 h-4" /> Review Details
+                                            </button>
                                         </div>
                                     )}
-                                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                                        <MapPin className="w-4 h-4 text-gray-400" />
-                                        {item.location}
-                                    </div>
-                                    <div className="flex items-center gap-2 text-sm text-gray-600">
-                                        <DollarSign className="w-4 h-4 text-gray-400" />
-                                        IDR {parseInt(item.price).toLocaleString()}
-                                    </div>
-                                    <p className="text-gray-500 text-sm line-clamp-2 mt-2">
-                                        {typeof item.description === 'string' ? item.description : item.description?.id}
-                                    </p>
-                                </div>
-
-                                <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
-                                    <button
-                                        onClick={() => handleAction(item.id, activeTab === 'events' ? 'event' : 'package', 'rejected')}
-                                        disabled={processingId === item.id}
-                                        className="flex-1 px-4 py-2 border border-gray-200 text-gray-600 rounded-lg text-sm font-bold hover:bg-gray-50 hover:text-red-600 transition disabled:opacity-50"
-                                    >
-                                        Tolak
-                                    </button>
-                                    <button
-                                        onClick={() => handleAction(item.id, activeTab === 'events' ? 'event' : 'package', 'approved')}
-                                        disabled={processingId === item.id}
-                                        className="flex-1 px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-bold hover:bg-emerald-500 shadow-lg shadow-emerald-500/20 transition disabled:opacity-50"
-                                    >
-                                        {processingId === item.id ? 'Memproses...' : 'Setujui'}
-                                    </button>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        ))
+                    )}
                 </div>
-            )}
+            </div>
         </AdminLayout>
     );
 }

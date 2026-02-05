@@ -5,7 +5,14 @@ import { useState, useRef, Suspense } from 'react';
 
 function Fireflies(props: any) {
     const ref = useRef<any>(null);
-    const [sphere] = useState(() => random.inSphere(new Float32Array(5000), { radius: 1.5 }));
+    const [sphere] = useState(() => {
+        const data = random.inSphere(new Float32Array(5000), { radius: 1.5 });
+        // Validate to prevent NaNs
+        for (let i = 0; i < data.length; i++) {
+            if (isNaN(data[i])) data[i] = 0;
+        }
+        return data;
+    });
 
     useFrame((state, delta) => {
         if (ref.current && ref.current.geometry && ref.current.geometry.attributes.position) {

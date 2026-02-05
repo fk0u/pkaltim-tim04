@@ -1,11 +1,12 @@
+```javascript
 import AdminLayout from '@/components/layouts/AdminLayout';
 import { useContent } from '@/contexts/ContentContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { Save, ArrowLeft, Image as ImageIcon, Calendar, MapPin, Tag, List, AlertTriangle } from 'lucide-react';
+import { Save, ArrowLeft, Image as ImageIcon, Calendar, MapPin, Tag, List, AlertTriangle, Sparkles, Loader2 } from 'lucide-react';
 import { Event } from '@/types';
-import { DatePicker } from '@/components/ui';
+import { DatePicker, useToast } from '@/components/ui';
 import ImageUpload from '@/components/ui/ImageUpload';
 import LocationInput from '@/components/ui/LocationInput';
 
@@ -14,6 +15,7 @@ export default function EventForm() {
     const { id } = router.query;
     const { events, addEvent, updateEvent } = useContent();
     const { t } = useLanguage();
+    const { addToast } = useToast();
     const isEditMode = !!id;
 
     const emptyEvent: Event = {
@@ -34,6 +36,7 @@ export default function EventForm() {
     const [formData, setFormData] = useState<Event>(emptyEvent);
     const [activeLang, setActiveLang] = useState<'id' | 'en'>('id');
     const [isLoading, setIsLoading] = useState(false);
+    const [isGenerating, setIsGenerating] = useState(false);
     const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
 
     const [initialDate, setInitialDate] = useState<string | null>(null);
@@ -47,7 +50,7 @@ export default function EventForm() {
                 setInitialDate(evt.date); // Capture initial date
             }
         } else {
-            setFormData(prev => ({ ...prev, id: `evt_${Date.now()}` }));
+            setFormData(prev => ({ ...prev, id: `evt_${ Date.now() } ` }));
         }
     }, [id, events, isEditMode]);
 
@@ -134,14 +137,14 @@ export default function EventForm() {
                             <button
                                 type="button"
                                 onClick={() => setActiveLang('id')}
-                                className={`px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition ${activeLang === 'id' ? 'bg-emerald-50 text-emerald-700' : 'text-gray-500 hover:bg-gray-50'}`}
+                                className={`px - 4 py - 2 rounded - lg text - sm font - bold flex items - center gap - 2 transition ${ activeLang === 'id' ? 'bg-emerald-50 text-emerald-700' : 'text-gray-500 hover:bg-gray-50' } `}
                             >
                                 🇮🇩 Indonesia
                             </button>
                             <button
                                 type="button"
                                 onClick={() => setActiveLang('en')}
-                                className={`px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition ${activeLang === 'en' ? 'bg-blue-50 text-blue-700' : 'text-gray-500 hover:bg-gray-50'}`}
+                                className={`px - 4 py - 2 rounded - lg text - sm font - bold flex items - center gap - 2 transition ${ activeLang === 'en' ? 'bg-blue-50 text-blue-700' : 'text-gray-500 hover:bg-gray-50' } `}
                             >
                                 🇬🇧 English
                             </button>

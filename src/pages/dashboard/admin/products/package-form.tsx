@@ -4,10 +4,11 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
-import { Save, ArrowLeft, Plus, Trash2, Image as ImageIcon, CheckCircle, List, Clock, MapPin, DollarSign, Star, Globe, XCircle } from 'lucide-react';
+import { Save, ArrowLeft, Plus, Trash2, Image as ImageIcon, CheckCircle, List, Clock, MapPin, DollarSign, Star, Globe, XCircle, Sparkles, Loader2 } from 'lucide-react';
 import { TourPackage, ItineraryDetail } from '@/types';
 import ImageUpload from '@/components/ui/ImageUpload';
 import LocationInput from '@/components/ui/LocationInput';
+import { useToast } from '@/components/ui';
 
 export default function PackageForm() {
     const router = useRouter();
@@ -83,6 +84,59 @@ export default function PackageForm() {
         }));
     };
 
+    const [isGenerating, setIsGenerating] = useState(false);
+    const { addToast } = useToast();
+
+    const handleAIAutofill = async () => {
+        if (!formData.title[activeLang] || !formData.location) {
+            addToast('Please enter Title and Location first.', 'error');
+            return;
+        }
+
+        setIsGenerating(true);
+        try {
+            const res = await fetch('/api/ai/generate-package', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    title: formData.title[activeLang],
+                    location: formData.location,
+                    type: 'package'
+                })
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || 'Failed to generate');
+
+            setFormData(prev => ({
+                ...prev,
+                description: { ...prev.description, [activeLang]: data.description },
+                facilities: [...prev.facilities, ...(data.facilities || [])],
+                price: data.priceEstimate || prev.price,
+                duration: data.duration || prev.duration
+            }));
+
+            // Map AI itinerary to structure
+            if (data.itinerary && Array.isArray(data.itinerary)) {
+                const mappedDays = data.itinerary.map((item: any, idx: number) => ({
+                    day: idx + 1,
+                    title: item.title,
+                    description: item.activity,
+                    meals: [],
+                    accommodation: '',
+                    image: ''
+                }));
+                setItineraryData(prev => ({ ...prev, days: mappedDays }));
+            }
+
+            addToast('Package content generated!', 'success');
+        } catch (error: any) {
+            addToast(error.message, 'error');
+        } finally {
+            setIsGenerating(false);
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
@@ -150,15 +204,26 @@ export default function PackageForm() {
 
                         {/* Basic Info */}
                         <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 space-y-6">
-                            <div>
-                                <label className="block text-sm font-bold text-gray-700 mb-2">Package Title ({activeLang.toUpperCase()}) <span className="text-red-500">*</span></label>
-                                <input
-                                    type="text"
-                                    value={formData.title[activeLang]}
-                                    onChange={(e) => handleLocalizedChange('title', e.target.value)}
-                                    className="w-full p-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 outline-none font-bold text-lg"
-                                    placeholder={activeLang === 'id' ? "Contoh: Pesona Derawan 3H2M" : "Ex: Derawan Charm 3D2N"}
-                                />
+                            <div className="flex justify-between items-start">
+                                <div className="flex-1">
+                                    <label className="block text-sm font-bold text-gray-700 mb-2">Package Title ({activeLang.toUpperCase()}) <span className="text-red-500">*</span></label>
+                                    <input
+                                        type="text"
+                                        value={formData.title[activeLang]}
+                                        onChange={(e) => handleLocalizedChange('title', e.target.value)}
+                                        className="w-full p-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 outline-none font-bold text-lg"
+                                        placeholder={activeLang === 'id' ? "Contoh: Pesona Derawan 3H2M" : "Ex: Derawan Charm 3D2N"}
+                                    />
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={handleAIAutofill}
+                                    disabled={isGenerating || !formData.title[activeLang]}
+                                    className="ml-4 mt-8 bg-linear-to-r from-purple-600 to-indigo-600 text-white p-3 rounded-xl shadow-lg shadow-purple-200 hover:shadow-xl hover:scale-105 transition-all disabled:opacity-50 disabled:scale-100"
+                                    title="Auto-fill with AI"
+                                >
+                                    {isGenerating ? <Loader2 className="w-6 h-6 animate-spin" /> : <Sparkles className="w-6 h-6" />}
+                                </button>
                             </div>
 
                             <div>
