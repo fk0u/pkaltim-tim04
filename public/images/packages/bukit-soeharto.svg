@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#166534"/>
+  <path d="M50 280 L100 150 L150 200 L200 100 L250 180 L300 120 L350 200 L400 150 L400 300 L0 300 Z" fill="#22c55e"/>
+  <circle cx="320" cy="80" r="40" fill="#fbbf24"/>
+  <text x="200" y="270" text-anchor="middle" fill="white" font-size="14" font-family="Arial" font-weight="bold">Bukit Soeharto</text>
+</svg>

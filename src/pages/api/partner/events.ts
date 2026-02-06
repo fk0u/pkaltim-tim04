@@ -55,7 +55,7 @@ export default async function handler(
                     ticketCount: 0,
                     tags: [],
                     organizerId,
-                    status: 'pending' // Default to pending
+                    status: 'approved' // Auto-approve
                 }
             });
 

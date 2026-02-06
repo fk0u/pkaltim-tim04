@@ -34,8 +34,8 @@ export default function AdminLayout({ children, title }: AdminLayoutProps) {
 
     const menuItems = [
         { icon: LayoutDashboard, label: t.admin.sidebar.overview, href: '/dashboard/admin' },
-        { icon: Users, label: 'Verifikasi Mitra', href: '/dashboard/admin/partners' },
-        { icon: CheckSquare, label: 'Persetujuan Konten', href: '/dashboard/admin/approvals' },
+        // { icon: Users, label: 'Verifikasi Mitra', href: '/dashboard/admin/partners' }, // Removed
+        // { icon: CheckSquare, label: 'Persetujuan Konten', href: '/dashboard/admin/approvals' }, // Removed
         { icon: Package, label: t.admin.sidebar.products, href: '/dashboard/admin/products' },
         { icon: Globe, label: t.admin.sidebar.categories, href: '/dashboard/admin/categories' },
         { icon: MapPin, label: t.admin.sidebar.destinations, href: '/dashboard/admin/destinations' },

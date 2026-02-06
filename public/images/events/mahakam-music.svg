@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#7c3aed"/>
+  <rect x="100" y="80" width="200" height="120" fill="#a78bfa" rx="10"/>
+  <circle cx="150" cy="140" r="20" fill="#c4b5fd"/>
+  <circle cx="200" cy="140" r="20" fill="#c4b5fd"/>
+  <circle cx="250" cy="140" r="20" fill="#c4b5fd"/>
+  <text x="200" y="270" text-anchor="middle" fill="white" font-size="14" font-family="Arial" font-weight="bold">Mahakam Music Fest</text>
+</svg>

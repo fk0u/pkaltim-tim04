@@ -24,6 +24,7 @@ export default function PackageForm() {
         price: 0,
         duration: '',
         location: '',
+        category: 'Marine & Islands',
         imageUrl: '',
         rating: 5.0,
         ecoRating: 5,

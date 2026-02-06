@@ -30,9 +30,9 @@ export default async function handler(
                     description,
                     address,
                     website,
-                    ktpUrl,
-                    licenseUrl,
-                    status: 'pending'
+                    // ktpUrl, // Removed as per requirement
+                    // licenseUrl, // Removed as per requirement
+                    status: 'verified' // Auto-verify
                 }
             });
             return res.status(201).json(profile);

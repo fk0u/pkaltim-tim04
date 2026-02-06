@@ -189,7 +189,7 @@ export default function CheckoutPage() {
             await new Promise(r => setTimeout(r, 800));
         }
 
-        await addBooking({
+        const success = await addBooking({
             userId: user.id || 'guest',
             customerName: user.name,
             productId: (id as string) || 'PKG-CUSTOM',
@@ -209,8 +209,13 @@ export default function CheckoutPage() {
         });
 
         setIsProcessing(false);
-        setStep(3);
-        addToast(t.checkout.paymentSuccess, "success");
+
+        if (success) {
+            setStep(3);
+            addToast(t.checkout.paymentSuccess, "success");
+        } else {
+            addToast("Gagal membuat pesanan. Silakan coba lagi.", "error");
+        }
     };
 
     if (quotaError && step === 1 && !adultCount) { // Only show blocked error if count is stuck? 

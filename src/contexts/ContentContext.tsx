@@ -23,7 +23,7 @@ interface ContentContextType {
     updateEvent: (evt: Event) => Promise<boolean>;
 
     // Booking Methods
-    addBooking: (booking: Omit<Booking, 'id' | 'status' | 'createdAt'>) => Promise<void>;
+    addBooking: (booking: Omit<Booking, 'id' | 'status' | 'createdAt'>) => Promise<boolean>;
     updateBookingStatus: (id: string, status: Booking['status']) => Promise<void>;
     deleteBooking: (id: string) => Promise<void>;
 
@@ -98,11 +98,14 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
                     customerName: b.customerName || b.user?.name || 'Guest',
                     productImage: b.productImage || b.package?.imageUrl || b.event?.imageUrl || 'https://via.placeholder.com/150',
                     location: b.location || b.package?.location || b.event?.location || 'Borneo',
-                    location: b.location || b.package?.location || b.event?.location || 'Borneo',
                     // Normalize status to Title Case to match frontend filters
                     status: b.status ? b.status.charAt(0).toUpperCase() + b.status.slice(1).toLowerCase() : 'Pending',
                     specialRequest: b.specialRequest
                 }));
+                // Check if any promises failed and log
+                if (!packagesRes.ok) console.error('Failed to fetch packages');
+                if (!eventsRes.ok) console.error('Failed to fetch events');
+
                 setBookings(mappedBookings);
             }
 
@@ -254,6 +257,7 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(booking)
             });
+
             if (res.ok) {
                 const newBooking = await res.json();
                 const mappedBooking = {
@@ -264,9 +268,12 @@ export function ContentProvider({ children }: { children: React.ReactNode }) {
                     status: newBooking.status ? newBooking.status.charAt(0).toUpperCase() + newBooking.status.slice(1).toLowerCase() : 'Pending'
                 };
                 setBookings(prev => [mappedBooking, ...prev]);
+                return true;
             }
+            return false;
         } catch (error) {
             console.error('Error adding booking:', error);
+            return false;
         }
     };
 

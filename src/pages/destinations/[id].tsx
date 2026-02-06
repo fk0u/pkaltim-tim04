@@ -298,7 +298,7 @@ export default function DestinationDetail({ region, relatedPackages }: Destinati
                                     </div>
 
                                     {/* Logistics Widget */}
-                                    <TripPlanner destinationName={region.name} coordinates={{ lat: region.latitude, lng: region.longitude }} />
+                                    <TripPlanner destinationName={region.name} coordinates={region.coordinates || { lat: 0, lng: 0 }} />
 
                                     {/* Share / Save */}
                                     <div className="flex gap-4">

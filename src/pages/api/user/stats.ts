@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
-import { verify } from 'jsonwebtoken';
+import { verifyToken } from '@/lib/auth';
 import { serialize } from 'cookie';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -15,7 +15,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     try {
-        const decoded: any = verify(token, process.env.JWT_SECRET || 'fallback-secret');
+        const decoded = verifyToken(token);
+        if (!decoded) {
+            throw new Error('Invalid token');
+        }
         const userId = decoded.userId;
 
         const [bookings, user] = await Promise.all([

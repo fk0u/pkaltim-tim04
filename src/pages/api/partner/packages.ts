@@ -49,7 +49,7 @@ export default async function handler(
                     imageUrl,
                     facilities: facilities || [],
                     organizerId,
-                    status: 'pending',
+                    status: 'approved', // Auto-approve
                     itinerary: {
                         create: {
                             title: `Itinerary for ${title}`,

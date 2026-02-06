@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'; // Re-trigger build
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     X, User, Mail, Phone, Calendar, MapPin,
     CreditCard, ShoppingBag, Star, Activity, Edit3
 } from 'lucide-react';
 import { User as UserType, Booking } from '../../types';
-import { StatusBadge } from '@/pages/dashboard/admin/bookings';
+import { StatusBadge } from '@/components/admin/StatusBadge';
 import { useContent } from '@/contexts/ContentContext';
 
 interface CustomerDetailModalProps {

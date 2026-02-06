@@ -5,7 +5,7 @@ import {
     CreditCard, Calendar, MapPin, User, Download, RefreshCw
 } from 'lucide-react';
 import { Booking, User as UserType } from '../../types';
-import { StatusBadge } from '@/pages/dashboard/admin/bookings';
+import { StatusBadge } from '@/components/admin/StatusBadge';
 import { useReactToPrint } from 'react-to-print';
 
 interface BookingDetailModalProps {

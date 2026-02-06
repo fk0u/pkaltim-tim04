@@ -228,42 +228,44 @@ export default function Home() {
                            }}
                            className="relative w-[280px] md:w-[320px] h-[450px] md:h-[500px] rounded-[2.5rem] overflow-hidden shrink-0 group shadow-2xl shadow-gray-200/50"
                         >
-                           <Image
-                              src={cat.imageUrl}
-                              alt={cat.name[locale === 'en' ? 'en' : 'id']}
-                              fill
-                              className="object-cover group-hover:scale-110 transition duration-1000 ease-in-out"
-                              sizes="(max-width: 768px) 100vw, 33vw"
-                           />
-
-                           {/* Gradient Overlay */}
-                           <div className="absolute inset-0 bg-linear-to-b from-black/10 via-transparent to-black/90 group-hover:to-black/80 transition-all duration-500" />
-
-                           {/* Floating Badge */}
-                           <div className="absolute top-6 right-6 w-12 h-12 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center text-xl shadow-lg ring-1 ring-white/10 group-hover:bg-emerald-500 group-hover:text-white group-hover:rotate-12 transition-all duration-300">
-                              {cat.icon}
-                           </div>
-
-                           {/* Content */}
-                           <div className="absolute bottom-0 left-0 p-8 w-full transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-                              <motion.div
-                                 className="w-10 h-1 bg-emerald-500 mb-6 rounded-full"
-                                 initial={{ width: 0 }}
-                                 whileInView={{ width: 40 }}
+                           <Link href={`/packages?category=${encodeURIComponent(cat.name[locale === 'en' ? 'en' : 'id'])}`} className="block w-full h-full relative">
+                              <Image
+                                 src={cat.imageUrl}
+                                 alt={cat.name[locale === 'en' ? 'en' : 'id']}
+                                 fill
+                                 className="object-cover group-hover:scale-110 transition duration-1000 ease-in-out"
+                                 sizes="(max-width: 768px) 100vw, 33vw"
                               />
-                              <h3 className="text-3xl font-bold text-white mb-3 leading-tight">
-                                 {cat.name[locale === 'en' ? 'en' : 'id']}
-                              </h3>
-                              <p className="text-white/60 text-sm opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-100 line-clamp-2 mb-4">
-                                 {t.homepage.categoryDesc.replace('{category}', cat.name[locale === 'en' ? 'en' : 'id'])}
-                              </p>
-                              <div className="flex items-center gap-3 text-emerald-300 font-bold uppercase tracking-widest text-xs opacity-80 group-hover:opacity-100 group-hover:gap-5 transition-all duration-300">
-                                 <span>{t.homepage.viewAllDestinations}</span>
-                                 <div className="w-8 h-8 rounded-full border border-emerald-300/30 flex items-center justify-center group-hover:bg-emerald-500 group-hover:border-emerald-500 group-hover:text-white transition-all">
-                                    <ArrowRight className="w-3 h-3" />
+
+                              {/* Gradient Overlay */}
+                              <div className="absolute inset-0 bg-linear-to-b from-black/10 via-transparent to-black/90 group-hover:to-black/80 transition-all duration-500" />
+
+                              {/* Floating Badge */}
+                              <div className="absolute top-6 right-6 w-12 h-12 bg-white/10 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center text-xl shadow-lg ring-1 ring-white/10 group-hover:bg-emerald-500 group-hover:text-white group-hover:rotate-12 transition-all duration-300">
+                                 {cat.icon}
+                              </div>
+
+                              {/* Content */}
+                              <div className="absolute bottom-0 left-0 p-8 w-full transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+                                 <motion.div
+                                    className="w-10 h-1 bg-emerald-500 mb-6 rounded-full"
+                                    initial={{ width: 0 }}
+                                    whileInView={{ width: 40 }}
+                                 />
+                                 <h3 className="text-3xl font-bold text-white mb-3 leading-tight">
+                                    {cat.name[locale === 'en' ? 'en' : 'id']}
+                                 </h3>
+                                 <p className="text-white/60 text-sm opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-100 line-clamp-2 mb-4">
+                                    {t.homepage.categoryDesc.replace('{category}', cat.name[locale === 'en' ? 'en' : 'id'])}
+                                 </p>
+                                 <div className="flex items-center gap-3 text-emerald-300 font-bold uppercase tracking-widest text-xs opacity-80 group-hover:opacity-100 group-hover:gap-5 transition-all duration-300">
+                                    <span>{t.homepage.viewAllDestinations}</span>
+                                    <div className="w-8 h-8 rounded-full border border-emerald-300/30 flex items-center justify-center group-hover:bg-emerald-500 group-hover:border-emerald-500 group-hover:text-white transition-all">
+                                       <ArrowRight className="w-3 h-3" />
+                                    </div>
                                  </div>
                               </div>
-                           </div>
+                           </Link>
                         </motion.div>
                      ))}
                   </motion.div>
@@ -384,7 +386,7 @@ export default function Home() {
             {/* --- TESTIMONIALS --- */}
             <Testimonials />
 
-         </div>
-      </Layout>
+         </div >
+      </Layout >
    );
 }

@@ -1,22 +1,31 @@
 import Layout from '@/components/Layout';
 import { useContent } from '@/contexts/ContentContext';
-import { Calendar, MapPin, Search, Ticket, Share2 } from 'lucide-react';
-import { useState } from 'react';
+import { Calendar, MapPin, Search, Ticket, Share2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '@/components/ui';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { WishlistButton } from '@/components/ui/WishlistButton';
+import { PlatformBadges } from '@/components/integrations';
+
+const ITEMS_PER_PAGE = 6;
 
 export default function EventsPage() {
   const { events } = useContent();
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
   const { addToast } = useToast();
   const { t, locale } = useLanguage();
 
   const categories = ['All', 'Culture', 'Nature', 'Sustainability', 'Culinary'];
+
+  // Reset page when filter or search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeCategory, searchTerm]);
 
   // Helper to translate filter keys to display text
   const getFilterLabel = (filterKey: string) => {
@@ -37,6 +46,18 @@ export default function EventsPage() {
       event.location.toLowerCase().includes(searchTerm.toLowerCase());
     return matchCategory && matchSearch;
   });
+
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredEvents.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedEvents = filteredEvents.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+  const goToPage = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+      window.scrollTo({ top: 600, behavior: 'smooth' });
+    }
+  };
 
   const featuredEvent = events.length > 0 ? events[0] : null;
 
@@ -135,16 +156,21 @@ export default function EventsPage() {
 
         {/* 3. EVENTS GRID */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-            <Calendar className="w-6 h-6 text-green-600" /> {t.events.upcomingTitle}
-          </h2>
-          {filteredEvents.length > 0 ? (
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+              <Calendar className="w-6 h-6 text-green-600" /> {t.events.upcomingTitle}
+            </h2>
+            <span className="text-gray-500 text-sm">
+              Menampilkan {paginatedEvents.length} dari {filteredEvents.length} event
+            </span>
+          </div>
+          {paginatedEvents.length > 0 ? (
             <motion.div
               layout
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
             >
               <AnimatePresence mode="popLayout">
-                {filteredEvents.map((event, idx) => (
+                {paginatedEvents.map((event, idx) => (
                   <motion.div
                     layout
                     key={event.id}
@@ -217,8 +243,43 @@ export default function EventsPage() {
               <button onClick={() => { setActiveCategory('All'); setSearchTerm(''); }} className="mt-6 text-green-600 font-bold hover:underline">{t.events.card.resetBtn}</button>
             </div>
           )}
+
+          {/* PAGINATION */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-2 mt-12">
+              <button
+                onClick={() => goToPage(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="p-3 rounded-xl bg-white border border-gray-200 text-gray-600 hover:bg-green-50 hover:border-green-200 hover:text-green-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => goToPage(page)}
+                  className={`w-12 h-12 rounded-xl font-bold transition ${currentPage === page
+                    ? 'bg-green-600 text-white shadow-lg shadow-green-200'
+                    : 'bg-white border border-gray-200 text-gray-600 hover:bg-green-50 hover:border-green-200 hover:text-green-600'
+                    }`}
+                >
+                  {page}
+                </button>
+              ))}
+
+              <button
+                onClick={() => goToPage(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="p-3 rounded-xl bg-white border border-gray-200 text-gray-600 hover:bg-green-50 hover:border-green-200 hover:text-green-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </Layout>
   );
 }
+

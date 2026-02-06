@@ -1,18 +1,16 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
-import { verify } from 'jsonwebtoken';
+import { verifyToken } from '@/lib/auth';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const token = req.cookies.token;
     if (!token) return res.status(401).json({ message: 'Unauthorized' });
 
-    let userId: string;
-    try {
-        const decoded: any = verify(token, process.env.JWT_SECRET || 'fallback-secret');
-        userId = decoded.userId;
-    } catch (error) {
+    const decoded = verifyToken(token);
+    if (!decoded) {
         return res.status(401).json({ message: 'Invalid token' });
     }
+    const userId = decoded.userId;
 
     if (req.method !== 'PUT') {
         return res.status(405).json({ message: 'Method not allowed' });

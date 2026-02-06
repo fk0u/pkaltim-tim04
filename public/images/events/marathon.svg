@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#1e40af"/>
+  <circle cx="200" cy="100" r="50" fill="#fbbf24"/>
+  <path d="M100 180 L150 140 L200 160 L250 130 L300 150 L350 120" stroke="#60a5fa" stroke-width="4" fill="none"/>
+  <text x="200" y="270" text-anchor="middle" fill="white" font-size="14" font-family="Arial" font-weight="bold">Balikpapan Marathon</text>
+</svg>

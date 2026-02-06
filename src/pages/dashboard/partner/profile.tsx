@@ -92,15 +92,9 @@ export default function PartnerProfilePage() {
         );
     }
 
+    // Simplified status badge - since auto verified, we can just show Verified or nothing
     const getStatusBadge = (status: string) => {
-        switch (status) {
-            case 'verified':
-                return <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-1 rounded-full"><BadgeCheck className="w-4 h-4" /> Terverifikasi</span>;
-            case 'rejected':
-                return <span className="inline-flex items-center gap-1 bg-red-100 text-red-800 text-xs font-bold px-2 py-1 rounded-full"><XCircle className="w-4 h-4" /> Ditolak</span>;
-            default:
-                return <span className="inline-flex items-center gap-1 bg-yellow-100 text-yellow-800 text-xs font-bold px-2 py-1 rounded-full"><Clock className="w-4 h-4" /> Menunggu Verifikasi</span>;
-        }
+        return <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-1 rounded-full"><BadgeCheck className="w-4 h-4" /> Terverifikasi</span>;
     };
 
     return (
@@ -216,8 +210,8 @@ export default function PartnerProfilePage() {
                         </div>
                     </div>
 
-                    {/* Sidebar Documents */}
-                    <div className="space-y-6">
+                    {/* Sidebar Documents - Removed as per requirement */}
+                    {/* <div className="space-y-6">
                         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
                             <h3 className="font-bold text-gray-900 mb-4">Dokumen Legalitas</h3>
                             <div className="space-y-4">
@@ -244,7 +238,7 @@ export default function PartnerProfilePage() {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </PartnerLayout>

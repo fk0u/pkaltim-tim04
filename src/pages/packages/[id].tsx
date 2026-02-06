@@ -10,6 +10,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui';
+import { TripAdvisorRating, PlatformBadges, ExternalBookingWidget } from '@/components/integrations';
 
 export default function PackageDetail() {
    const router = useRouter();
@@ -108,6 +109,16 @@ export default function PackageDetail() {
                               <Star className="w-5 h-5 text-amber-400 fill-amber-400" /> {pkg.rating} ({pkg.ecoRating}/5 Eco-Rating)
                            </div>
                         </div>
+                        {/* TripAdvisor Rating */}
+                        <div className="mt-4">
+                           <TripAdvisorRating
+                              rating={4.5}
+                              reviewCount={Math.floor(Math.random() * 200) + 50}
+                              packageName={pkg.title[locale === 'en' ? 'en' : 'id']}
+                              destination={pkg.location}
+                              size="md"
+                           />
+                        </div>
                      </motion.div>
                   </div>
                </div>
@@ -122,6 +133,13 @@ export default function PackageDetail() {
                      <div className="bg-white rounded-3xl p-8 shadow-xl border border-gray-100">
                         <h2 className="text-2xl font-bold text-gray-900 mb-4">{t.packageDetail.about}</h2>
                         <p className="text-gray-600 leading-relaxed text-lg mb-6">{pkg.description[locale === 'en' ? 'en' : 'id']}</p>
+
+                        {/* Platform Badges */}
+                        <PlatformBadges
+                           packageName={pkg.title[locale === 'en' ? 'en' : 'id']}
+                           destination={pkg.location}
+                           className="mb-6"
+                        />
 
                         <div className="grid grid-cols-2 gap-4">
                            {pkg.facilities.map((fac, idx) => (
@@ -243,6 +261,14 @@ export default function PackageDetail() {
                            </button>
 
                         </div>
+
+                        {/* External Booking Widget */}
+                        <ExternalBookingWidget
+                           packageName={pkg.title[locale === 'en' ? 'en' : 'id']}
+                           destination={pkg.location}
+                           price={pkg.price}
+                           className="mt-6"
+                        />
                      </div>
                   </div>
                </div>

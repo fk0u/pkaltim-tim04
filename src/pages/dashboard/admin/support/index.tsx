@@ -98,7 +98,7 @@ export default function AdminSupport() {
                 if (silent && selectedTicket) {
                     const currentInList = data.find((t: any) => t.id === selectedTicket.id);
                     if (currentInList && currentInList.status !== selectedTicket.status) {
-                        setSelectedTicket(prev => ({ ...prev, status: currentInList.status }));
+                        setSelectedTicket((prev: any) => ({ ...prev, status: currentInList.status }));
                     }
                 }
             }
@@ -155,7 +155,7 @@ export default function AdminSupport() {
 
             if (res.ok) {
                 const newMsg = await res.json();
-                setMessages(prev => [...prev, newMsg]);
+                setMessages((prev: any[]) => [...prev, newMsg]);
                 setReply('');
                 fetchTickets(); // Refresh list to update "last message"
             } else {
@@ -175,8 +175,8 @@ export default function AdminSupport() {
                 body: JSON.stringify({ status })
             });
             if (res.ok) {
-                setTickets(prev => prev.map(t => t.id === selectedTicket.id ? { ...t, status } : t));
-                setSelectedTicket(prev => ({ ...prev, status }));
+                setTickets((prev: any[]) => prev.map(t => t.id === selectedTicket.id ? { ...t, status } : t));
+                setSelectedTicket((prev: any) => ({ ...prev, status }));
                 addToast(`Ticket marked as ${status}`, 'success');
             }
         } catch (error) {

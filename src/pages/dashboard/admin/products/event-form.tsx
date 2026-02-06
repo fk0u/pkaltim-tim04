@@ -1,4 +1,3 @@
-```javascript
 import AdminLayout from '@/components/layouts/AdminLayout';
 import { useContent } from '@/contexts/ContentContext';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -50,7 +49,7 @@ export default function EventForm() {
                 setInitialDate(evt.date); // Capture initial date
             }
         } else {
-            setFormData(prev => ({ ...prev, id: `evt_${ Date.now() } ` }));
+            setFormData(prev => ({ ...prev, id: `evt_${Date.now()} ` }));
         }
     }, [id, events, isEditMode]);
 
@@ -137,14 +136,14 @@ export default function EventForm() {
                             <button
                                 type="button"
                                 onClick={() => setActiveLang('id')}
-                                className={`px - 4 py - 2 rounded - lg text - sm font - bold flex items - center gap - 2 transition ${ activeLang === 'id' ? 'bg-emerald-50 text-emerald-700' : 'text-gray-500 hover:bg-gray-50' } `}
+                                className={`px - 4 py - 2 rounded - lg text - sm font - bold flex items - center gap - 2 transition ${activeLang === 'id' ? 'bg-emerald-50 text-emerald-700' : 'text-gray-500 hover:bg-gray-50'} `}
                             >
                                 🇮🇩 Indonesia
                             </button>
                             <button
                                 type="button"
                                 onClick={() => setActiveLang('en')}
-                                className={`px - 4 py - 2 rounded - lg text - sm font - bold flex items - center gap - 2 transition ${ activeLang === 'en' ? 'bg-blue-50 text-blue-700' : 'text-gray-500 hover:bg-gray-50' } `}
+                                className={`px - 4 py - 2 rounded - lg text - sm font - bold flex items - center gap - 2 transition ${activeLang === 'en' ? 'bg-blue-50 text-blue-700' : 'text-gray-500 hover:bg-gray-50'} `}
                             >
                                 🇬🇧 English
                             </button>

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#7c2d12"/>
+  <ellipse cx="200" cy="200" rx="150" ry="80" fill="#a16207"/>
+  <rect x="170" y="80" width="60" height="100" fill="#78350f" rx="10"/>
+  <text x="200" y="270" text-anchor="middle" fill="white" font-size="14" font-family="Arial" font-weight="bold">Pesut Mahakam</text>
+</svg>

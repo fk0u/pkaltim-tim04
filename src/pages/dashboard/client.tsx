@@ -1008,14 +1008,22 @@ function AddressBookView({ t, addToast }: AddressBookProps) {
         e.preventDefault();
         // @ts-ignore
         const formData = new FormData(e.target);
-        const data = Object.fromEntries(formData.entries());
-        data.isDefault = data.isDefault === 'on';
+        const formEntries = Object.fromEntries(formData.entries());
+        const body = {
+            label: formEntries.label as string,
+            recipientName: formEntries.recipientName as string,
+            phone: formEntries.phone as string,
+            address: formEntries.address as string,
+            city: formEntries.city as string,
+            postalCode: formEntries.postalCode as string,
+            isDefault: formEntries.isDefault === 'on'
+        };
 
         try {
             const res = await fetch('/api/user/addresses', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
+                body: JSON.stringify(body)
             });
             if (res.ok) {
                 addToast('Address added', 'success');

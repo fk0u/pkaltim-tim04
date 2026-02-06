@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#0f766e"/>
+  <rect x="50" y="50" width="300" height="200" fill="#14b8a6" rx="20"/>
+  <ellipse cx="150" cy="180" rx="60" ry="40" fill="#0d9488"/>
+  <ellipse cx="250" cy="160" rx="50" ry="35" fill="#0d9488"/>
+  <circle cx="100" cy="100" r="30" fill="#fbbf24"/>
+  <text x="200" y="270" text-anchor="middle" fill="white" font-size="14" font-family="Arial" font-weight="bold">Pantai Amal</text>
+</svg>

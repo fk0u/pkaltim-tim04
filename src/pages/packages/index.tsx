@@ -1,19 +1,30 @@
 import Layout from '@/components/Layout';
 import { useContent } from '@/contexts/ContentContext';
-import { Search, MapPin, Filter, Star, Clock, ArrowUpRight, Leaf } from 'lucide-react';
-import { useState } from 'react';
+import { Search, MapPin, Filter, Star, Clock, ArrowUpRight, Leaf, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { WishlistButton } from '@/components/ui/WishlistButton';
 
+import { useRouter } from 'next/router';
+
+const ITEMS_PER_PAGE = 6;
+
 export default function PackagesPage() {
     const { packages } = useContent();
+    const router = useRouter();
     const [activeFilter, setActiveFilter] = useState('All');
     const [searchTerm, setSearchTerm] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
     const { t, locale } = useLanguage();
 
     const filters = ['All', 'Popular', 'Eco-Friendly', 'Short Trip', 'Long Exploration'];
+
+    // Reset page when filter or search changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [activeFilter, searchTerm, router.query.category]);
 
     // Helper to translate filter keys to display text
     const getFilterLabel = (filterKey: string) => {
@@ -43,14 +54,35 @@ export default function PackagesPage() {
         let matchesFilter = true;
         if (activeFilter === 'Eco-Friendly') matchesFilter = (pkg.rating || 0) >= 4.5;
 
+
         // Parse "3D2N" or "1 Hari" to number
         const durationNum = parseInt(pkg.duration) || 1;
 
         if (activeFilter === 'Short Trip') matchesFilter = durationNum <= 3;
         if (activeFilter === 'Long Exploration') matchesFilter = durationNum > 3;
 
+        // Category Filter (from URL)
+        const { category } = router.query;
+        if (category && typeof category === 'string') {
+            // Basic mapping or direct comparison
+            matchesFilter = matchesFilter && (pkg.category?.includes(category) || false);
+        }
+
+
         return matchesSearch && matchesFilter;
     });
+
+    // Pagination calculations
+    const totalPages = Math.ceil(filteredPackages.length / ITEMS_PER_PAGE);
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const paginatedPackages = filteredPackages.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+    const goToPage = (page: number) => {
+        if (page >= 1 && page <= totalPages) {
+            setCurrentPage(page);
+            window.scrollTo({ top: 400, behavior: 'smooth' });
+        }
+    };
 
     return (
         <Layout title={`${t.packages.title} - BorneoTrip`} description={t.packages.heroSubtitle}>
@@ -58,7 +90,7 @@ export default function PackagesPage() {
             {/* HEADER HERO */}
             <div className="bg-emerald-950 text-white relative overflow-hidden pt-48 pb-32 rounded-b-[3rem] shadow-2xl mb-12">
                 <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1596401057633-565652b5d249?auto=format&fit=crop&q=80')] bg-cover bg-center opacity-20"></div>
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-emerald-950/90"></div>
+                <div className="absolute inset-0 bg-linear-to-b from-transparent to-emerald-950/90"></div>
 
                 <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
                     <motion.h1
@@ -117,14 +149,19 @@ export default function PackagesPage() {
                     ))}
                 </div>
 
+                {/* Results count */}
+                <div className="text-center text-gray-500 text-sm mb-6">
+                    Menampilkan {paginatedPackages.length} dari {filteredPackages.length} paket wisata
+                </div>
+
                 {/* GRID */}
-                {filteredPackages.length > 0 ? (
+                {paginatedPackages.length > 0 ? (
                     <motion.div
                         layout
                         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
                     >
                         <AnimatePresence>
-                            {filteredPackages.map((pkg, idx) => (
+                            {paginatedPackages.map((pkg, idx) => (
                                 <motion.div
                                     layout
                                     key={pkg.id}
@@ -185,7 +222,42 @@ export default function PackagesPage() {
                     </div>
                 )}
 
+                {/* PAGINATION */}
+                {totalPages > 1 && (
+                    <div className="flex items-center justify-center gap-2 mt-12">
+                        <button
+                            onClick={() => goToPage(currentPage - 1)}
+                            disabled={currentPage === 1}
+                            className="p-3 rounded-xl bg-white border border-gray-200 text-gray-600 hover:bg-emerald-50 hover:border-emerald-200 hover:text-emerald-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <ChevronLeft className="w-5 h-5" />
+                        </button>
+
+                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                            <button
+                                key={page}
+                                onClick={() => goToPage(page)}
+                                className={`w-12 h-12 rounded-xl font-bold transition ${currentPage === page
+                                        ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-200'
+                                        : 'bg-white border border-gray-200 text-gray-600 hover:bg-emerald-50 hover:border-emerald-200 hover:text-emerald-600'
+                                    }`}
+                            >
+                                {page}
+                            </button>
+                        ))}
+
+                        <button
+                            onClick={() => goToPage(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                            className="p-3 rounded-xl bg-white border border-gray-200 text-gray-600 hover:bg-emerald-50 hover:border-emerald-200 hover:text-emerald-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <ChevronRight className="w-5 h-5" />
+                        </button>
+                    </div>
+                )}
+
             </div>
         </Layout>
     );
 }
+

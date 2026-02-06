@@ -41,6 +41,7 @@ export interface TourPackage {
   quota?: number; // Total available slots
   bookedCount?: number; // Currently booked slots
   priceChild?: number;
+  category: string;
 }
 
 export interface Activity {

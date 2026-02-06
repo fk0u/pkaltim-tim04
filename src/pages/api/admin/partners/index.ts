@@ -15,7 +15,7 @@ export default async function handler(
                 where: whereClause,
                 include: {
                     user: {
-                        select: { name: true, email: true, avatar: true }
+                        select: { name: true, email: true }
                     }
                 },
                 orderBy: { createdAt: 'desc' }

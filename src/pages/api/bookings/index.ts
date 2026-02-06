@@ -38,8 +38,11 @@ export default async function handler(
             const {
                 userId, eventId, packageId, productType, productName, productImage,
                 location, adultCount, childCount, totalPax, travelers, amount,
-                status, paymentMethod, specialRequest
+                status, paymentMethod, specialRequest, customerName
             } = req.body;
+
+            // Log payload for debugging
+            console.log('Creating booking with payload:', { userId, eventId, packageId, totalPax, amount, customerName });
 
             if (!userId || (!eventId && !packageId)) {
                 return res.status(400).json({ message: 'User ID and Product (event or package) ID are required' });
@@ -60,9 +63,9 @@ export default async function handler(
                     travelers: travelers || [],
                     amount: amount || 0,
                     status: status || 'pending',
-                    status: status || 'pending',
                     paymentMethod,
-                    specialRequest
+                    specialRequest,
+                    customerName: customerName || (travelers && travelers[0]?.fullName) || 'Guest'
                 },
                 include: {
                     user: { select: { id: true, name: true, email: true } },

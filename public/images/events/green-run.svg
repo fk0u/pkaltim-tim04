@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#0891b2"/>
+  <path d="M50 250 Q100 150 150 200 Q200 100 250 180 Q300 120 350 200 L400 250 L50 250 Z" fill="#06b6d4"/>
+  <circle cx="320" cy="70" r="35" fill="#fbbf24"/>
+  <text x="200" y="270" text-anchor="middle" fill="white" font-size="14" font-family="Arial" font-weight="bold">Green Run IKN</text>
+</svg>

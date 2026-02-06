@@ -143,6 +143,7 @@ model TourPackage {
   rating      Float
   ecoRating   Int
   description Json // LocalizedString { id, en }
+  category    String           @default("General")
   imageUrl    String           @db.Text
   facilities  Json // string[]
   organizerId String?
@@ -182,6 +183,7 @@ model Booking {
   totalPax      Int          @default(1)
   travelers     Json? // TravelerDetail[]
   amount        Int          @default(0)
+  customerName  String?
  
   date          DateTime     @default(now())
   status        String       @default("pending") // pending, paid, cancelled, completed

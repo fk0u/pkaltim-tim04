@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#831843"/>
+  <circle cx="200" cy="150" r="80" fill="#ec4899"/>
+  <path d="M120 150 Q200 80 280 150 Q200 220 120 150" fill="#f472b6"/>
+  <text x="200" y="270" text-anchor="middle" fill="white" font-size="14" font-family="Arial" font-weight="bold">Festival Dayak</text>
+</svg>

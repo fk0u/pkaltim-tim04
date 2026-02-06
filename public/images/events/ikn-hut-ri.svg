@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#ea580c"/>
+  <rect x="100" y="80" width="80" height="120" fill="#f97316" rx="5"/>
+  <rect x="220" y="100" width="80" height="100" fill="#fb923c" rx="5"/>
+  <ellipse cx="200" cy="240" rx="160" ry="30" fill="#fdba74"/>
+  <text x="200" y="280" text-anchor="middle" fill="white" font-size="14" font-family="Arial" font-weight="bold">HUT RI IKN 2026</text>
+</svg>

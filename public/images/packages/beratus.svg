@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <rect width="400" height="300" fill="#44403c"/>
+  <circle cx="200" cy="130" r="60" fill="#78716c"/>
+  <path d="M140 130 L200 50 L260 130 Z" fill="#57534e"/>
+  <rect x="50" y="200" width="300" height="80" fill="#a8a29e"/>
+  <text x="200" y="270" text-anchor="middle" fill="white" font-size="14" font-family="Arial" font-weight="bold">Gunung Beratus</text>
+</svg>
