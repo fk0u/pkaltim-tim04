@@ -8,6 +8,8 @@ import { Booking, User as UserType } from '../../types';
 import { StatusBadge } from '@/components/admin/StatusBadge';
 import { useReactToPrint } from 'react-to-print';
 
+import { ETicket } from './ETicket';
+
 interface BookingDetailModalProps {
     booking: Booking | null;
     customer?: UserType;
@@ -17,11 +19,12 @@ interface BookingDetailModalProps {
 }
 
 export default function BookingDetailModal({ booking, customer, isOpen, onClose, onStatusUpdate }: BookingDetailModalProps) {
-    const componentRef = useRef<HTMLDivElement>(null);
+    const componentRef = useRef<HTMLDivElement>(null); // For the invoice view (standard)
+    const ticketRef = useRef<HTMLDivElement>(null); // For the E-Ticket (PDF)
 
     const handlePrint = useReactToPrint({
-        contentRef: componentRef,
-        documentTitle: booking ? `Invoice-${booking.id}` : 'Invoice',
+        contentRef: ticketRef, // Use ticketRef instead of componentRef for printing
+        documentTitle: booking ? `ETicket-${booking.id}` : 'ETicket',
     });
 
     if (!isOpen || !booking) return null;
@@ -212,6 +215,10 @@ export default function BookingDetailModal({ booking, customer, isOpen, onClose,
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    {/* Hidden E-Ticket for Printing */}
+                    <div className="hidden">
+                        <ETicket ref={ticketRef} booking={booking} />
                     </div>
                 </motion.div>
             </div>
