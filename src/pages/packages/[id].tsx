@@ -38,10 +38,10 @@ export default function PackageDetail() {
 
    const handleBook = () => {
       if (!user) {
-         addToast("Please login to book a package", "error");
+         addToast("Silakan daftar atau login untuk memesan paket", "error");
          router.push({
             pathname: '/login',
-            query: { callbackUrl: router.asPath }
+            query: { mode: 'register', callbackUrl: router.asPath }
          });
          return;
       }

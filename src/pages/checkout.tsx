@@ -163,8 +163,11 @@ export default function CheckoutPage() {
 
     const handlePayment = async () => {
         if (!user) {
-            addToast("Silakan login terlebih dahulu", "error");
-            router.push('/login');
+            addToast("Silakan daftar atau login terlebih dahulu", "error");
+            router.push({
+                pathname: '/login',
+                query: { mode: 'register', callbackUrl: router.asPath }
+            });
             return;
         }
 

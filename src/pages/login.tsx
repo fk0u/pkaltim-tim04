@@ -3,22 +3,29 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/contexts/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Lock, ArrowRight, Shield, Briefcase, Mail, Info, Check, ArrowLeft, Send } from 'lucide-react';
+import { User, Lock, ArrowRight, Shield, Briefcase, Mail, Info, Check, ArrowLeft, Send, Sparkles } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useToast } from '@/components/ui';
 
 export default function LoginPage() {
     const router = useRouter();
-    const { login, loginSocial } = useAuth();
+    const { login, loginSocial, register } = useAuth();
     const { addToast } = useToast();
     const { t } = useLanguage();
+
+    // Auth Mode: 'login' or 'register'
+    const [authMode, setAuthMode] = useState<'login' | 'register'>('login');
+
+    // Form Fields
+    const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [activeTab, setActiveTab] = useState<'client' | 'staff'>('client');
+
+    // UI States
     const [isLoading, setIsLoading] = useState(false);
-    const [view, setView] = useState<'login' | 'forgot_password' | 'social_auth'>('login');
+    const [view, setView] = useState<'main' | 'forgot_password' | 'social_auth'>('main');
     const [socialProvider, setSocialProvider] = useState<'google' | 'facebook' | null>(null);
     const [socialLoading, setSocialLoading] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
@@ -27,17 +34,42 @@ export default function LoginPage() {
     const [resetEmail, setResetEmail] = useState('');
     const [isResetSent, setIsResetSent] = useState(false);
 
-    const handleLogin = async (e: React.FormEvent) => {
+    // Initialize mode from query param
+    useEffect(() => {
+        if (router.isReady && router.query.mode === 'register') {
+            setAuthMode('register');
+        }
+    }, [router.isReady, router.query]);
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
 
         const { callbackUrl } = router.query;
-        const result = await login(email, password, Array.isArray(callbackUrl) ? callbackUrl[0] : callbackUrl);
-        if (!result.success) {
-            addToast(`Login gagal: ${result.error}`, 'error');
+        const redirectUrl = Array.isArray(callbackUrl) ? callbackUrl[0] : callbackUrl;
+
+        if (authMode === 'login') {
+            // Login Logic
+            const result = await login(email, password, redirectUrl);
+            if (!result.success) {
+                addToast(`Login gagal: ${result.error}`, 'error');
+            } else {
+                addToast('Login berhasil! Selamat datang kembali.', 'success');
+            }
         } else {
-            addToast('Login berhasil! Selamat datang kembali.', 'success');
+            // Register Logic
+            // Default role is 'client' (Traveler). Partners should use specific partner onboarding flow if needed, 
+            // but for general registration it's client.
+            const result = await register(name, email, password, 'client');
+            if (!result.success) {
+                addToast(`Registrasi gagal: ${result.error}`, 'error');
+            } else {
+                addToast('Registrasi berhasil! Silakan cek email Anda.', 'success');
+                // Auto login or redirect handled by context, but typically we might want to switch to login or auto-login
+                // Context register function currently redirects to /onboarding
+            }
         }
+
         setIsLoading(false);
     };
 
@@ -70,7 +102,7 @@ export default function LoginPage() {
     return (
         <>
             <Head>
-                <title>{`${view === 'login' ? t.auth.loginTitle : t.auth.forgotPasswordTitle} - BorneoTrip`}</title>
+                <title>{`${view === 'main' ? (authMode === 'login' ? t.auth.loginTitle : 'Daftar Akun') : t.auth.forgotPasswordTitle} - BorneoTrip`}</title>
                 <meta name="description" content="Akses akun BorneoTrip Anda." />
             </Head>
 
@@ -111,7 +143,7 @@ export default function LoginPage() {
                                 BorneoTrip<span className="text-emerald-400">.</span>
                             </h1>
                         </Link>
-                        <p className="text-emerald-100/80 text-lg font-medium">{t.auth.subtitle}</p>
+                        <p className="text-emerald-100/80 text-lg font-medium">{authMode === 'login' ? t.auth.subtitle : 'Mulai Petualangan Anda'}</p>
                     </div>
 
                     <div className="glass-panel py-10 px-8 rounded-[2.5rem] relative overflow-hidden">
@@ -119,44 +151,64 @@ export default function LoginPage() {
                         <div className="absolute top-0 left-0 w-full h-1.5 bg-linear-to-r from-emerald-400 via-teal-500 to-cyan-500"></div>
 
                         <AnimatePresence mode="wait">
-                            {view === 'login' ? (
+                            {view === 'main' ? (
                                 <motion.div
-                                    key="login"
+                                    key="main"
                                     initial={{ opacity: 0, x: -20 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     exit={{ opacity: 0, x: -20 }}
                                     transition={{ duration: 0.3 }}
                                 >
-                                    {/* Role Switcher */}
+                                    {/* Auth Mode Switcher (Login vs Register) */}
                                     <div className="flex p-1.5 bg-gray-100/80 rounded-2xl mb-8 relative">
                                         <motion.div
                                             className="absolute top-1.5 bottom-1.5 rounded-xl bg-white shadow-sm z-0"
                                             initial={false}
                                             animate={{
-                                                left: activeTab === 'client' ? '6px' : '50%',
+                                                left: authMode === 'login' ? '6px' : '50%',
                                                 width: 'calc(50% - 6px)'
                                             }}
                                             transition={{ type: "spring", stiffness: 300, damping: 30 }}
                                         />
                                         <button
-                                            onClick={() => setActiveTab('client')}
-                                            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-colors relative z-10 ${activeTab === 'client' ? 'text-emerald-900' : 'text-gray-500 hover:text-gray-700'}`}
+                                            onClick={() => setAuthMode('login')}
+                                            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-colors relative z-10 ${authMode === 'login' ? 'text-emerald-900' : 'text-gray-500 hover:text-gray-700'}`}
                                         >
-                                            <User className="w-4 h-4" /> {t.auth.traveler}
+                                            <User className="w-4 h-4" /> Masuk
                                         </button>
                                         <button
-                                            onClick={() => setActiveTab('staff')}
-                                            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-colors relative z-10 ${activeTab === 'staff' ? 'text-emerald-900' : 'text-gray-500 hover:text-gray-700'}`}
+                                            onClick={() => setAuthMode('register')}
+                                            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-colors relative z-10 ${authMode === 'register' ? 'text-emerald-900' : 'text-gray-500 hover:text-gray-700'}`}
                                         >
-                                            <Briefcase className="w-4 h-4" /> {t.auth.staff}
+                                            <Sparkles className="w-4 h-4" /> Daftar
                                         </button>
                                     </div>
 
-                                    <form className="space-y-6" onSubmit={handleLogin}>
-                                        {/* Demo Credentials Hint */}
-                                        {/* Demo Credentials Hint Removed */}
-
+                                    <form className="space-y-6" onSubmit={handleSubmit}>
                                         <div className="space-y-4">
+                                            {authMode === 'register' && (
+                                                <motion.div
+                                                    initial={{ opacity: 0, height: 0 }}
+                                                    animate={{ opacity: 1, height: 'auto' }}
+                                                    exit={{ opacity: 0, height: 0 }}
+                                                >
+                                                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 ml-1">Nama Lengkap</label>
+                                                    <div className="relative group">
+                                                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                                            <User className="h-5 w-5 text-gray-400 group-focus-within:text-emerald-500 transition-colors" />
+                                                        </div>
+                                                        <input
+                                                            type="text"
+                                                            required={authMode === 'register'}
+                                                            value={name}
+                                                            onChange={(e) => setName(e.target.value)}
+                                                            className="block w-full pl-12 pr-4 py-4 border border-gray-200 rounded-2xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition bg-gray-50 focus:bg-white font-medium"
+                                                            placeholder="John Doe"
+                                                        />
+                                                    </div>
+                                                </motion.div>
+                                            )}
+
                                             <div>
                                                 <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 ml-1">{t.auth.emailLabel}</label>
                                                 <div className="relative group">
@@ -171,7 +223,7 @@ export default function LoginPage() {
                                                         value={email}
                                                         onChange={(e) => setEmail(e.target.value)}
                                                         className="block w-full pl-12 pr-4 py-4 border border-gray-200 rounded-2xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition bg-gray-50 focus:bg-white font-medium"
-                                                        placeholder={activeTab === 'staff' ? 'admin@borneotrip.id' : t.auth.emailPlaceholder}
+                                                        placeholder={t.auth.emailPlaceholder}
                                                     />
                                                 </div>
                                             </div>
@@ -196,7 +248,7 @@ export default function LoginPage() {
                                             </div>
                                         </div>
 
-                                        {activeTab === 'client' && (
+                                        {authMode === 'login' && (
                                             <div className="flex items-center justify-between">
                                                 <div className="flex items-center">
                                                     <button
@@ -235,36 +287,34 @@ export default function LoginPage() {
                                                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                                                 ) : (
                                                     <>
-                                                        {activeTab === 'staff' ? t.auth.dashboardBtn : t.auth.loginBtn} <ArrowRight className="w-4 h-4" />
+                                                        {authMode === 'login' ? 'Masuk Sekarang' : 'Daftar Sekarang'} <ArrowRight className="w-4 h-4" />
                                                     </>
                                                 )}
                                             </button>
                                         </div>
 
                                         {/* Social Login Divider */}
-                                        {activeTab === 'client' && (
-                                            <div className="mt-8">
-                                                <div className="relative">
-                                                    <div className="absolute inset-0 flex items-center">
-                                                        <div className="w-full border-t border-gray-200"></div>
-                                                    </div>
-                                                    <div className="relative flex justify-center text-sm">
-                                                        <span className="px-4 bg-white text-gray-400 font-medium">{t.auth.orLoginWith}</span>
-                                                    </div>
+                                        <div className="mt-8">
+                                            <div className="relative">
+                                                <div className="absolute inset-0 flex items-center">
+                                                    <div className="w-full border-t border-gray-200"></div>
                                                 </div>
-
-                                                <div className="mt-6 grid grid-cols-2 gap-4">
-                                                    <button type="button" onClick={() => handleSocialLogin('google')} className="flex items-center justify-center px-4 py-3 border border-gray-200 rounded-xl shadow-sm bg-white text-sm font-bold text-gray-600 hover:bg-gray-50 transition-all">
-                                                        <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" /><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" /><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" /><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" /></svg>
-                                                        Google
-                                                    </button>
-                                                    <button type="button" onClick={() => handleSocialLogin('facebook')} className="flex items-center justify-center px-4 py-3 border border-gray-200 rounded-xl shadow-sm bg-[#1877F2] text-sm font-bold text-white hover:bg-[#166fe5] transition-all">
-                                                        <svg className="h-5 w-5 mr-3" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" /></svg>
-                                                        Facebook
-                                                    </button>
+                                                <div className="relative flex justify-center text-sm">
+                                                    <span className="px-4 bg-white text-gray-400 font-medium">{t.auth.orLoginWith}</span>
                                                 </div>
                                             </div>
-                                        )}
+
+                                            <div className="mt-6 grid grid-cols-2 gap-4">
+                                                <button type="button" onClick={() => handleSocialLogin('google')} className="flex items-center justify-center px-4 py-3 border border-gray-200 rounded-xl shadow-sm bg-white text-sm font-bold text-gray-600 hover:bg-gray-50 transition-all">
+                                                    <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" /><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" /><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" /><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" /></svg>
+                                                    Google
+                                                </button>
+                                                <button type="button" onClick={() => handleSocialLogin('facebook')} className="flex items-center justify-center px-4 py-3 border border-gray-200 rounded-xl shadow-sm bg-[#1877F2] text-sm font-bold text-white hover:bg-[#166fe5] transition-all">
+                                                    <svg className="h-5 w-5 mr-3" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" /></svg>
+                                                    Facebook
+                                                </button>
+                                            </div>
+                                        </div>
                                     </form>
                                 </motion.div>
                             ) : view === 'social_auth' ? (
@@ -275,6 +325,7 @@ export default function LoginPage() {
                                     exit={{ opacity: 0, x: 20 }}
                                     transition={{ duration: 0.3 }}
                                 >
+                                    {/* Social Auth View - Keeping mostly same as before */}
                                     {socialLoading ? (
                                         <div className="flex flex-col items-center justify-center py-12">
                                             <div className="w-10 h-10 border-3 border-emerald-100 border-t-emerald-500 rounded-full animate-spin mb-4" />
@@ -327,7 +378,7 @@ export default function LoginPage() {
 
                                                 <div className="flex items-center justify-between gap-3 mt-8">
                                                     <button
-                                                        onClick={() => setView('login')}
+                                                        onClick={() => setView('main')}
                                                         className="flex-1 py-2.5 px-4 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors border border-gray-200"
                                                     >
                                                         {t.auth.cancel}
@@ -346,7 +397,7 @@ export default function LoginPage() {
                                     transition={{ duration: 0.3 }}
                                 >
                                     <button
-                                        onClick={() => setView('login')}
+                                        onClick={() => setView('main')}
                                         className="flex items-center text-sm font-bold text-gray-500 hover:text-emerald-600 mb-6 transition-colors group"
                                     >
                                         <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
@@ -411,7 +462,7 @@ export default function LoginPage() {
                                                 onClick={() => {
                                                     setIsResetSent(false);
                                                     setResetEmail('');
-                                                    setView('login');
+                                                    setView('main');
                                                 }}
                                                 className="text-green-700 font-bold text-sm hover:underline"
                                             >
@@ -425,14 +476,6 @@ export default function LoginPage() {
                     </div>
 
                     <div className="mt-8 text-center relative z-10">
-                        {view === 'login' && (
-                            <p className="text-white/80 text-sm font-medium">
-                                {t.auth.noAccount}{' '}
-                                <Link href="/register" className="font-bold text-emerald-300 hover:text-emerald-200 underline decoration-2 underline-offset-4">
-                                    {t.auth.registerLink}
-                                </Link>
-                            </p>
-                        )}
                         <p className="mt-4 text-xs text-white/40">
                             &copy; 2026 BorneoTrip. Sustainable Tourism for East Kalimantan.
                         </p>

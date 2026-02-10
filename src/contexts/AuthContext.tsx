@@ -80,14 +80,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setUser(data.user);
 
             // Redirect based on role or callback
-            if (callbackUrl && callbackUrl.startsWith('/')) {
-                router.push(callbackUrl);
-            } else if (data.user.role === 'admin' || data.user.role === 'Admin') {
+            // Redirect based on role or callback
+            const { role } = data.user;
+
+            // Admin and Partner always go to dashboard
+            if (role === 'admin' || role === 'Admin') {
                 router.push('/dashboard/admin');
-            } else if (data.user.role === 'mitra') {
+            } else if (role === 'mitra') {
                 router.push('/dashboard/partner');
             } else {
-                router.push('/dashboard/client');
+                // Client/Traveler behavior:
+                // If there's a callbackUrl (e.g. from a package page), go there.
+                // Otherwise, go to client dashboard.
+                if (callbackUrl && callbackUrl.startsWith('/')) {
+                    router.push(callbackUrl);
+                } else {
+                    router.push('/dashboard/client');
+                }
             }
             return { success: true };
         } catch (e) {

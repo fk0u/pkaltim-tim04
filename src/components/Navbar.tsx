@@ -328,7 +328,7 @@ export default function Navbar({ isTransparent = true }: { isTransparent?: boole
                   </AnimatePresence>
                 </div>
               ) : (
-                <Link href="/login" className={`flex items-center gap-2 text-sm font-bold px-6 py-2.5 rounded-full transition shadow-lg hover:shadow-xl hover:-translate-y-0.5 ${isSolid
+                <Link href={`/login?callbackUrl=${encodeURIComponent(router.asPath)}`} className={`flex items-center gap-2 text-sm font-bold px-6 py-2.5 rounded-full transition shadow-lg hover:shadow-xl hover:-translate-y-0.5 ${isSolid
                   ? 'text-white bg-green-800 hover:bg-green-900'
                   : 'text-green-900 bg-white hover:bg-gray-50'
                   }`}>
